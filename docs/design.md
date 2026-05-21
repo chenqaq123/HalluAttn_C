@@ -6,7 +6,10 @@ methodology section of a paper.
 
 > Status: current implementation design. PAS is treated as the comparison
 > baseline; SinkDetect focuses on de-biased visual-attention shape signals and
-> explicit ablations for sink removal and top-mass visual masking.
+> explicit ablations for sink removal and top-mass visual masking. A key
+> empirical finding from the row-cache run is that global AUROC is strongly
+> confounded by object generation position, so position-controlled evaluation
+> is now required for any paper-facing claim.
 
 ---
 
@@ -37,9 +40,19 @@ These two are **confounders**: they contribute mass to `A[q, V]` without
 representing content-driven grounding. Existing summary statistics conflate
 the confounders with the signal.
 
+The latest experiments reveal a third confounder:
+
+3. **Object generation position prior.** In LLaVA captions, objects generated
+   later are much more likely to be CHAIR hallucinations. The generated-token
+   position `gen_pos = token_pos − prompt_end_idx` alone reaches AUROC
+   0.8304 on the current COCO/LLaVA run. Any score that drifts monotonically
+   with `gen_pos` can obtain high global AUROC without detecting visual
+   grounding within a fixed position range.
+
 **Gap statement.** Existing detectors measure *how much* a query attends to
 visual tokens, not *whether that attention has the shape of real grounding*.
-The shape carries information that is invariant to sink/RoPE bias.
+The shape should carry information beyond sink/RoPE bias and beyond the
+generation-position prior.
 
 ---
 
@@ -116,6 +129,13 @@ weights. When enabled, the same sink/top-mass variants are emitted:
 This no-RoPE branch is more expensive because it materializes an additional
 attention matrix per layer. It should be used for targeted ablations and
 shape-cache generation, not as the default full-run setting.
+
+Important: removing RoPE from attention weights is **not** enough to remove
+the generation-position prior. RoPE is an attention-level relative-position
+mechanism; `gen_pos` is a decoding/data-distribution confounder. The current
+results show that no-RoPE scores can still be position-correlated, and raw
+scores can remain high under global AUROC only because later object mentions
+are more often hallucinated.
 
 ---
 
@@ -201,6 +221,34 @@ across images and does not depend on the generated object word. Local
 generated-token nulls are implementation-level exploratory features and should
 not be part of the main method unless a later ablation justifies them.
 
+### 5.1.1 Position-Calibrated CVG
+
+The row-cache experiments show that instruction-token and uniform nulls can be
+dominated by generation position. In particular, `sink_only_cvg_kl_uniform`
+reaches high global AUROC but falls to roughly random under position bins. The
+next design target is therefore a position-calibrated CVG:
+
+    PC-CVG(t) = S_CVG(t) − E[ S_CVG | gen_pos=t ]
+
+or a local contrastive version:
+
+    PC-CVG_local(t) = −D( a_obj_noRoPE(t) || a_local_null_noRoPE(t) )
+
+where `a_local_null` is the average visual attention row of nearby generated
+non-object tokens. The local null is intended to share the same image, similar
+context length, and similar residual position bias as the object token. A
+strong object-specific grounding signal should appear as a difference between
+the object row and this local non-object baseline.
+
+The current local-null implementation is deliberately conservative and weak:
+it only takes nearby non-object generated tokens. Refinements to test:
+
+- exclude punctuation, stopwords, subword fragments, and generic function
+  tokens from the local null;
+- weight local null rows by distance from the object token;
+- compare deltas in concentration and peak overlap, not only KL/JSD;
+- evaluate only with position-controlled metrics (see §5.5).
+
 ### 5.2 Concentration
 
 Shape statistics of the test distribution, no null required:
@@ -246,6 +294,44 @@ first** (not the scores), then applies the same formula. That is:
 
 This is structurally different from "average the per-layer scores" and the
 two should *not* be expected to give the same answer.
+
+### 5.5 Evaluation metrics: global vs position-controlled
+
+Global AUROC is still useful as a diagnostic, but it is insufficient for the
+main claim. AUROC means the probability that a random hallucinated object
+receives a higher score than a random grounded object. If hallucinated objects
+occur later and a score increases with generation position, global AUROC will
+be high even when the score has no within-position discriminative power.
+
+For the current COCO/LLaVA row-cache run:
+
+    AUROC(gen_pos only) = 0.8304
+
+For `sink_only_conc_top10_mass_layer_0`:
+
+    global AUROC     = 0.8099
+    same-bin AUROC   = 0.5087
+    cross-bin AUROC  = 0.8267
+    same-bin pairs   = 5.29%
+    cross-bin pairs  = 94.71%
+
+Thus the apparent global performance is dominated by cross-bin comparisons,
+mostly late hallucinated objects versus early grounded objects.
+
+Paper-facing evaluation should report:
+
+- **Overall AUROC**: legacy comparability only.
+- **Position-only AUROC**: `gen_pos` as a baseline confounder.
+- **Within-bin AUROC**: AUROC inside generation-position bins, then weighted
+  by valid sample count.
+- **Matched-pair AUROC**: AUROC over positive/negative pairs with
+  `|gen_pos_pos − gen_pos_neg| ≤ δ`.
+- **Residual AUROC**: regress or smooth out `E[score | gen_pos]`, then compute
+  AUROC on the residual.
+
+A useful attention score must beat the position-only baseline in a meaningful
+way or retain above-random performance under within-bin/matched-pair/residual
+evaluation.
 
 ---
 
@@ -451,26 +537,30 @@ and `π_R`. A rigorous proof needs Pinsker plus a tail bound; not done.
 
 ## 11. Open questions to validate empirically
 
-These are the questions the AUROC table in `experiments/<exp>/metrics.json`
-will answer:
+These questions must now be answered under position-controlled evaluation, not
+only global AUROC:
 
-1. Does `purified_cvg_*` beat raw `cvg_*` and PAS image/prelim attention?
-2. Does `purified_shape` beat both `sink_only_shape` and `topmass_only_shape`?
-3. Which component matters more: sink removal or top-mass visual filtering?
-4. Does `clc_gen_jsd` carry signal without any null reference?
-5. Which layers contribute most to CVG / Concentration / CLC?
-6. Does concentration already match CVG, or does the instruction-prior null
-   add real signal?
-7. Are CVG, Concentration, CLC, and PAS complementary under simple fusion?
+1. Which scores retain signal under within-bin or matched-pair AUROC?
+2. Does no-RoPE improve position-controlled performance, not just global AUROC?
+3. Does a local non-object null outperform the instruction null after
+   controlling for `gen_pos`?
+4. Can PC-CVG or local delta-concentration beat the position-only baseline?
+5. Which layers contribute after position control? Current evidence points to
+   no-RoPE layer 1 concentration and CLC, while global layer 0 concentration is
+   likely position-confounded.
+6. Is top-mass helpful after position control, or only under global AUROC?
+7. Do CVG, Concentration, and CLC remain complementary after residualizing
+   position?
 
 Answer pattern that would support the design:
 
-- (1) yes: shape > magnitude.
-- (2) yes: full de-biasing is better than either ablation alone.
-- (3) either sink or top-mass dominates: simplify the method accordingly.
-- (4) yes: cross-layer consistency is a free signal.
-- (6) CVG > concentration: the instruction-prior null does useful work.
-- (7) yes: families are complementary, suggesting a fused detector.
+- A score has within-bin or matched-pair AUROC clearly above 0.5, not merely
+  high global AUROC.
+- The score's advantage over `gen_pos` remains after residualization.
+- Local-null CVG or local delta-concentration outperforms instruction-null
+  CVG, showing that same-position baselines matter.
+- CLC or no-RoPE concentration keeps modest but stable signal across position
+  bins.
 
 If any of these fail, the design needs revision (see §12).
 
@@ -481,6 +571,19 @@ If any of these fail, the design needs revision (see §12).
 - **Instruction null is too close to object null.** Mitigation: switch to
   noise-image null. Cost: small one-time calibration pass; clean theoretical
   story.
+- **Instruction null is position-mismatched.** The instruction tokens occur
+  before generation, while object tokens can appear much later. This can make
+  CVG reflect query position and context length more than grounding.
+  Mitigation: prefer local non-object nulls near the object token and report
+  PC-CVG.
+- **Global AUROC is position-confounded.** Observed in the current row-cache
+  run: `gen_pos` alone reaches AUROC 0.8304, and the strongest layer-0
+  concentration scores collapse to roughly random within position bins.
+  Mitigation: make within-bin, matched-pair, and residual AUROC mandatory.
+- **No-RoPE does not remove generation-position bias.** Pre-RoPE attention
+  removes the rotary component from attention weights but not the decoding
+  prior that later objects hallucinate more often. Mitigation: combine no-RoPE
+  with local-position-controlled contrasts.
 - **Sink detection is unstable across layers.** Mitigation: use a fixed,
   globally-shared sink set estimated from a calibration pass.
 - **Top-mass dominates everything.** Mitigation: drop explicit sink removal
@@ -504,7 +607,43 @@ If any of these fail, the design needs revision (see §12).
 
 ---
 
-## 13. References (from memory; verify before submission)
+## 13. Current empirical notes
+
+Current row-cache run:
+
+    experiments/coco_llava_7b_rows
+    objects: 16426
+    hallucinated: 4009
+    layers cached: [0, 1, 2, 3, 4]
+
+Global AUROC findings:
+
+- Best global score: `sink_only_conc_top10_mass_layer_0` /
+  `purified_conc_top10_mass_layer_0`, AUROC 0.8099.
+- Best CVG-uniform: `sink_only_cvg_kl_uniform_layer_0`, AUROC 0.7954.
+- Best no-RoPE instruction CVG: `no_rope_purified_cvg_jsd_instr_layer_4`,
+  AUROC 0.7246.
+
+Position-controlled findings:
+
+- `gen_pos` alone: AUROC 0.8304.
+- `sink_only_conc_top10_mass_layer_0`: same-bin AUROC 0.5087; cross-bin AUROC
+  0.8267.
+- Best within-bin scores found so far:
+  - `no_rope_topmass_only_conc_top1_mass_layer_1`: weighted within-bin AUROC
+    0.5751.
+  - `clc_gen_jsd`: weighted within-bin AUROC 0.5670.
+  - `no_rope_topmass_only_cvg_jsd_local_nonobj_layer_2`: weighted within-bin
+    AUROC 0.5565.
+
+Interpretation: high global AUROC from early-layer concentration and
+uniform-null CVG is not yet evidence of visual grounding detection. The most
+promising direction is no-RoPE plus local position-controlled contrasts, with
+CLC as a complementary weak signal.
+
+---
+
+## 14. References (from memory; verify before submission)
 
 - Xiao et al., *Efficient Streaming Language Models with Attention Sinks*,
   ICLR 2024.
