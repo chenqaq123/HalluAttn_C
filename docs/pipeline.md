@@ -66,6 +66,43 @@ If `--save_shape_cache` is enabled, each shard also writes
 `shape_cache_shard{i}.npz`, containing the per-mention visual rows needed to
 recompute CVG / Concentration / CLC without another model forward pass.
 
+## Stage 2a / 2b — Attention-row cache path
+
+For the current no-RoPE and sink/top-mass ablations, prefer the independent
+row-cache path when iterating on metrics:
+
+```bash
+python scripts/cache_attention_rows.py \
+  --model_path /path/to/llava-1.5-7b-hf \
+  --coco_path /path/to/coco-2014 \
+  --generation_json experiments/<exp>/generation.json \
+  --output_dir experiments/<exp>_rows \
+  --chair_pkl ../pas/data/chair_coco.pkl \
+  --cache_layers 0,1,2,3,4 \
+  --device 0
+
+python scripts/recompute_from_row_cache.py \
+  --cache experiments/<exp>_rows/attention_row_cache.npz \
+  --ratio 0.5
+```
+
+Stage 2a caches only the rows needed by the metrics: object-query rows,
+instruction-null rows, nearby non-object local-null rows, sink masks, labels,
+and metadata. It saves both original attention and true no-RoPE attention.
+Stage 2b derives raw, sink-only, top-mass-only, and purified score families
+from that cache, so changing `--ratio` or metric formulas does not require
+another VLM forward.
+
+For sharded runs, launch `cache_attention_rows.py` with matching
+`--shard_idx/--num_shards`, then merge:
+
+```bash
+python scripts/merge_shards.py \
+  --mode row_cache \
+  --output_dir experiments/<exp>_rows \
+  --num_shards 4
+```
+
 ## Merge
 
 `scripts/merge_shards.py --mode detect`:
@@ -73,6 +110,8 @@ recompute CVG / Concentration / CLC without another model forward pass.
 - Concatenates all per-shard `raw_scores_shard{i}.npz` arrays.
 - If present, concatenates all per-shard `shape_cache_shard{i}.npz` arrays into
   `shape_cache.npz`.
+- In `--mode row_cache`, concatenates `attention_row_cache_shard{i}.npz` into
+  `attention_row_cache.npz` without requiring raw score shards.
 - Re-computes AUROC on the **pooled** data (this is the headline number,
   not the per-shard AUROC).
 - Aggregates CHAIRi across shards by weighted sum on object counts.
@@ -85,6 +124,8 @@ SinkDetect/
 ├── scripts/
 │   ├── caption.py            # Stage 1 worker
 │   ├── detect.py             # Stage 2 worker
+│   ├── cache_attention_rows.py # Stage 2a row-cache worker
+│   ├── recompute_from_row_cache.py # Stage 2b metric recompute
 │   ├── merge_shards.py       # Cross-shard merge + global AUROC
 │   ├── run.sh                # Single-GPU runner (logical GPU 0-3)
 │   └── run_parallel.sh       # 4-way data-parallel runner
@@ -104,7 +145,9 @@ SinkDetect/
 │   ├── raw_scores.npz        # per-mention scores (merged)
 │   ├── raw_scores_shard{i}.npz
 │   ├── shape_cache.npz       # optional: cached rows for fast shape-score recompute
-│   └── shape_cache_shard{i}.npz
+│   ├── shape_cache_shard{i}.npz
+│   ├── attention_row_cache.npz       # optional: compact orig/no-RoPE rows
+│   └── attention_row_cache_shard{i}.npz
 └── docs/                     # this directory
 ```
 

@@ -7,10 +7,13 @@ Modes:
   detect  — concatenates raw_scores_shard{i}.npz files (one per shard) and
             recomputes AUROC on the pooled data; writes metrics.json +
             raw_scores.npz.
+  row_cache — concatenates attention_row_cache_shard{i}.npz files into
+              attention_row_cache.npz.
 
 Usage:
   python scripts/merge_shards.py --mode caption --output_dir <exp_dir> --num_shards 4
   python scripts/merge_shards.py --mode detect  --output_dir <exp_dir> --num_shards 4
+  python scripts/merge_shards.py --mode row_cache --output_dir <exp_dir> --num_shards 4
 """
 
 import argparse
@@ -19,7 +22,11 @@ import logging
 from pathlib import Path
 
 import numpy as np
-from sklearn.metrics import roc_auc_score
+
+try:
+    from sklearn.metrics import roc_auc_score
+except ImportError:
+    roc_auc_score = None
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -69,6 +76,9 @@ def merge_detect(output_dir: Path, num_shards: int) -> None:
     labels = merged.pop("labels").astype(np.int32)
 
     # Recompute AUROC on the pooled data
+    if roc_auc_score is None:
+        raise RuntimeError("scikit-learn is required for --mode detect AUROC recomputation")
+
     roc_auc: dict[str, float] = {}
     for k, v in merged.items():
         v = np.asarray(v, dtype=np.float64)
@@ -129,6 +139,7 @@ def merge_detect(output_dir: Path, num_shards: int) -> None:
             logger.info("  %2d. %s: %.4f", i + 1, k, v)
 
     merge_shape_cache_if_present(output_dir, num_shards)
+    merge_attention_row_cache_if_present(output_dir, num_shards)
 
 
 def merge_shape_cache_if_present(output_dir: Path, num_shards: int) -> None:
@@ -150,9 +161,35 @@ def merge_shape_cache_if_present(output_dir: Path, num_shards: int) -> None:
     logger.info("Merged %d shape-cache shards → %s", len(shard_data), out)
 
 
+def merge_attention_row_cache_if_present(output_dir: Path, num_shards: int) -> None:
+    shard_data = []
+    for i in range(num_shards):
+        p = output_dir / f"attention_row_cache_shard{i}.npz"
+        if p.exists():
+            shard_data.append(dict(np.load(p)))
+
+    if not shard_data:
+        return
+
+    common_keys = set(shard_data[0].keys())
+    for s in shard_data[1:]:
+        common_keys &= set(s.keys())
+
+    metadata_keys = {"layer_indices"}
+    merged = {}
+    for key in common_keys:
+        if key in metadata_keys:
+            merged[key] = shard_data[0][key]
+        else:
+            merged[key] = np.concatenate([s[key] for s in shard_data])
+    out = output_dir / "attention_row_cache.npz"
+    np.savez_compressed(out, **merged)
+    logger.info("Merged %d attention-row-cache shards → %s", len(shard_data), out)
+
+
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--mode", choices=["caption", "detect"], required=True)
+    p.add_argument("--mode", choices=["caption", "detect", "row_cache"], required=True)
     p.add_argument("--output_dir", type=str, required=True)
     p.add_argument("--num_shards", type=int, required=True)
     args = p.parse_args()
@@ -160,8 +197,10 @@ def main():
     output_dir = Path(args.output_dir)
     if args.mode == "caption":
         merge_captions(output_dir, args.num_shards)
-    else:
+    elif args.mode == "detect":
         merge_detect(output_dir, args.num_shards)
+    else:
+        merge_attention_row_cache_if_present(output_dir, args.num_shards)
 
 
 if __name__ == "__main__":

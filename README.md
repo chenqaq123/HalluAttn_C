@@ -14,6 +14,9 @@ shape of the attention distribution over image tokens. Active signals:
 3. **No-RoPE branch** — when enabled, recompute attention weights from
    pre-RoPE Q/K to test whether removing positional rotation improves the
    shape metrics.
+4. **Attention-row cache** — cache compact original/no-RoPE visual rows once,
+   then recompute CVG, concentration, CLC, sink removal, and top-mass ablations
+   without another VLM forward.
 
 The pipeline mirrors PAS (CVPR 2026) for apples-to-apples comparison on
 COCO val2014 with CHAIR labels.
@@ -25,6 +28,8 @@ SinkDetect/
 ├── scripts/
 │   ├── caption.py     # Stage 1: vanilla LLaVA-1.5 greedy captioning
 │   ├── detect.py      # Stage 2: forward pass + score + AUROC
+│   ├── cache_attention_rows.py       # Stage 2a: compact row cache
+│   ├── recompute_from_row_cache.py   # Stage 2b: metric recompute
 │   └── run.sh         # One-click runner (Stage 1 → Stage 2)
 ├── src/sinkdetect/
 │   ├── adapter.py     # DetectionAdapter — drop-in LlamaAttention replacement
@@ -171,6 +176,26 @@ The cache stores per-mention object→visual rows, instruction-null→visual row
 sink masks, and labels for `orig`, `sink_only`, `topmass_only`, and `purified`
 branches. It is meant for changing scoring formulas and AUROC/fusion analysis;
 changing the top-mass ratio or sink detector still requires rerunning Stage 2.
+
+For the current no-RoPE ablation work, use the newer row-cache path. It stores
+only `orig` and `no_rope` object/null visual rows plus sink masks; sink-only,
+top-mass-only, and purified variants are derived during recompute, so `--ratio`
+can be swept from cache:
+
+```bash
+python scripts/cache_attention_rows.py \
+  --model_path /path/to/llava-1.5-7b-hf \
+  --coco_path /path/to/coco-2014 \
+  --generation_json experiments/coco_llava_7b/generation.json \
+  --output_dir experiments/coco_llava_7b_rows \
+  --chair_pkl ../pas/data/chair_coco.pkl \
+  --cache_layers 0,1,2,3,4 \
+  --device 0
+
+python scripts/recompute_from_row_cache.py \
+  --cache experiments/coco_llava_7b_rows/attention_row_cache.npz \
+  --ratio 0.5
+```
 
 The instruction-token null is free: it's just the row-average of the same
 attention matrix over instruction-token query positions. Since the

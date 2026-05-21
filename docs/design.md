@@ -253,7 +253,9 @@ two should *not* be expected to give the same answer.
 
 Changing CVG signs, KL/JSD variants, concentration formulas, CLC aggregation,
 or fusion groups should not require another LLaVA forward pass. Stage 2 can
-therefore save a compact shape cache:
+therefore save compact caches.
+
+### 6.1 Legacy branch cache
 
     SAVE_SHAPE_CACHE=1 bash scripts/run_parallel.sh
 
@@ -273,6 +275,44 @@ Then shape metrics can be recomputed with:
 This cache is valid for formula-level iteration. It is **not** valid if the
 model, prompt, sink detector, top-mass ratio, or purification operation itself
 changes, because those change the cached rows.
+
+### 6.2 Attention-row cache for current ablations
+
+The current experimental path is an explicit two-stage attention-row cache:
+
+    python scripts/cache_attention_rows.py \
+        --generation_json experiments/<exp>/generation.json \
+        --output_dir experiments/<exp>_rows \
+        --cache_layers 0,1,2,3,4
+
+This stage caches the minimal visual rows needed by all shape metrics:
+
+- object-query visual row;
+- instruction-null visual row after filtering likely object words from the
+  instruction span;
+- local generated non-object visual row within a small window around the
+  object mention;
+- sink mask per cached layer;
+- the same rows for both original attention and true no-RoPE attention
+  recomputed from pre-RoPE Q/K.
+
+It intentionally does **not** store `sink_only`, `topmass_only`, or
+`purified` rows. Those are derived in the recompute stage by zeroing cached
+sink columns and/or applying top-mass masks to the cached object row:
+
+    python scripts/recompute_from_row_cache.py \
+        --cache experiments/<exp>_rows/attention_row_cache.npz \
+        --ratio 0.5
+
+This means `ratio`, CVG null choice, KL/JSD sign, concentration formulas, CLC
+aggregation, and sink-removal ablations can be changed without another model
+forward. The cache remains invalid if the model, prompt, generated captions,
+cached layer set, RoPE-removal definition, or sink detector changes.
+
+The row cache is also shardable:
+
+    python scripts/cache_attention_rows.py ... --shard_idx 0 --num_shards 4
+    python scripts/merge_shards.py --mode row_cache --output_dir experiments/<exp>_rows --num_shards 4
 
 ---
 
@@ -300,16 +340,18 @@ The current implementation therefore follows two efficiency principles:
    This makes later metric changes cheap while keeping the cache tied to the
    exact prompt/model/purification configuration.
 
-This still leaves a structural bottleneck: the implementation currently
-materializes full `(seq_len × seq_len)` attention matrices even though the
-shape scores mostly use only a small set of query rows:
+This still leaves a structural bottleneck: the current row-cache worker still
+runs the model in a mode that exposes attention, then copies only selected
+visual rows to CPU. That is much cheaper for iteration, but the forward itself
+still materializes full `(seq_len × seq_len)` attention matrices even though
+the shape scores mostly use only a small set of query rows:
 
 - object mention positions;
 - instruction-token positions for the null;
 - optional nearby non-object positions;
 - optional per-head rows for selected layers.
 
-The next implementation target is therefore **row-level attention extraction**:
+The next implementation target is therefore **true row-level attention extraction**:
 compute or retain only selected query rows over the visual span `V`, rather
 than storing the full matrix. The method definition does not require full
 attention; it requires distributions of the form
