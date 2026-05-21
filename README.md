@@ -183,6 +183,13 @@ top-mass-only, and purified variants are derived during recompute, so `--ratio`
 can be swept from cache:
 
 ```bash
+bash scripts/run_row_cache_parallel.sh
+```
+
+The script assumes `experiments/coco_llava_7b/generation.json` already exists
+from Stage 1. Manual equivalent:
+
+```bash
 python scripts/cache_attention_rows.py \
   --model_path /path/to/llava-1.5-7b-hf \
   --coco_path /path/to/coco-2014 \
