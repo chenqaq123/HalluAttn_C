@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 DetectionAdapter: single-branch attention adapter for hallucination detection.
 
