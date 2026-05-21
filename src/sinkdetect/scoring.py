@@ -1,8 +1,9 @@
 """
 Hallucination detection score computation and AUROC evaluation.
 
-Computes per-object detection scores from both original and purified
-attention maps, plus sink statistics and attention shift signals.
+Computes per-object shape scores from original and purified attention maps.
+PAS-style attention-mass baselines are intentionally not emitted by the
+current pipeline.
 """
 
 from typing import Optional
@@ -34,16 +35,15 @@ def compute_all_scores(
         mentions: List of first-mention dicts with {word, pos, hallucinated}.
                   pos is relative to the start of the generated caption.
         orig_attn_layers: List of (seq_len, seq_len) original attention
-                          matrices, one per layer, on CPU.
+                          matrices, one per layer.
         sink_only_attn_layers: Same shape, sink-removal-only matrices.
         topmass_only_attn_layers: Same shape, top-mass-only matrices.
         purified_attn_layers: Same shape, purified attention matrices.
         sink_stats_layers: List of dicts with sink_count, sink_positions.
-        token_masks: Dict with bos_mask, image_mask, instruction_mask,
-                     output_mask — CPU bool tensors.
+        token_masks: Dict with instruction_mask and output_mask bool tensors.
         prompt_end_idx: Absolute index of first generated token.
-        per_head_attn: Optional mapping layer_idx → (n_heads, seq, seq) CPU
-                       float, for key layers only (PER_HEAD_LAYERS).
+        per_head_attn: Optional mapping layer_idx → (n_heads, seq, seq) tensor,
+                       for key layers only (PER_HEAD_LAYERS).
         cross_image_nulls: Optional list of per-layer null distributions from
                            other images. Each element is a list of (n_v,) tensors.
                            Used for cross-image CVG scores.
@@ -53,21 +53,8 @@ def compute_all_scores(
         None values indicate the score could not be computed.
     """
     n_layers = len(orig_attn_layers)
-    bos_mask = token_masks["bos_mask"]
-    image_mask = token_masks["image_mask"]
     instruction_mask = token_masks["instruction_mask"]
     output_mask = token_masks["output_mask"]
-
-    # Pre-compute global (mean across layers) attention matrices
-    orig_attn_stack = torch.stack(orig_attn_layers)  # (n_layers, seq_len, seq_len)
-    sink_only_stack = torch.stack(sink_only_attn_layers)
-    topmass_only_stack = torch.stack(topmass_only_attn_layers)
-    purified_attn_stack = torch.stack(purified_attn_layers)
-
-    global_orig = orig_attn_stack.mean(dim=0)  # (seq_len, seq_len)
-    global_sink_only = sink_only_stack.mean(dim=0)
-    global_topmass_only = topmass_only_stack.mean(dim=0)
-    global_purified = purified_attn_stack.mean(dim=0)
 
     # Initialize score containers
     scores: dict[str, list[Optional[float]]] = {}
@@ -85,179 +72,7 @@ def compute_all_scores(
             object_positions=object_positions,
         )
 
-        # ── Per-layer scores ──
-        for layer_idx in range(n_layers):
-            orig = orig_attn_layers[layer_idx]
-            sink_only = sink_only_attn_layers[layer_idx]
-            topmass_only = topmass_only_attn_layers[layer_idx]
-            purified = purified_attn_layers[layer_idx]
-
-            # Original attention scores (same as PAS)
-            _append_score(
-                scores, f"orig_prelim_attn_layer_{layer_idx}",
-                orig[token_pos, prompt_end_idx:].sum().item(),
-            )
-            _append_score(
-                scores, f"orig_image_attn_layer_{layer_idx}",
-                -orig[token_pos, image_mask].sum().item(),  # negated
-            )
-            _append_score(
-                scores, f"orig_bos_attn_layer_{layer_idx}",
-                -orig[token_pos, bos_mask].sum().item(),  # negated
-            )
-
-            # Sink-removal-only attention scores
-            _append_score(
-                scores, f"sink_only_prelim_attn_layer_{layer_idx}",
-                sink_only[token_pos, prompt_end_idx:].sum().item(),
-            )
-            _append_score(
-                scores, f"sink_only_image_attn_layer_{layer_idx}",
-                -sink_only[token_pos, image_mask].sum().item(),
-            )
-            _append_score(
-                scores, f"sink_only_bos_attn_layer_{layer_idx}",
-                -sink_only[token_pos, bos_mask].sum().item(),
-            )
-
-            # Top-mass-only attention scores
-            _append_score(
-                scores, f"topmass_only_prelim_attn_layer_{layer_idx}",
-                topmass_only[token_pos, prompt_end_idx:].sum().item(),
-            )
-            _append_score(
-                scores, f"topmass_only_image_attn_layer_{layer_idx}",
-                -topmass_only[token_pos, image_mask].sum().item(),
-            )
-            _append_score(
-                scores, f"topmass_only_bos_attn_layer_{layer_idx}",
-                -topmass_only[token_pos, bos_mask].sum().item(),
-            )
-
-            # Purified attention scores
-            _append_score(
-                scores, f"purified_prelim_attn_layer_{layer_idx}",
-                purified[token_pos, prompt_end_idx:].sum().item(),
-            )
-            _append_score(
-                scores, f"purified_image_attn_layer_{layer_idx}",
-                -purified[token_pos, image_mask].sum().item(),  # negated
-            )
-            _append_score(
-                scores, f"purified_bos_attn_layer_{layer_idx}",
-                -purified[token_pos, bos_mask].sum().item(),  # negated
-            )
-
-            # Sink attention mass (negated: more sink attn ⇒ less visual grounding ⇒ hallucination)
-            sink_pos = sink_stats_layers[layer_idx].get("sink_positions", [])
-            if sink_pos:
-                sink_pos_t = torch.tensor(sink_pos, dtype=torch.long, device=orig.device)
-                _append_score(
-                    scores, f"sink_attn_mass_layer_{layer_idx}",
-                    -orig[token_pos, sink_pos_t].sum().item(),
-                )
-            else:
-                _append_score(scores, f"sink_attn_mass_layer_{layer_idx}", 0.0)
-
-            # Sink count
-            _append_score(
-                scores, f"sink_count_layer_{layer_idx}",
-                float(sink_stats_layers[layer_idx]["sink_count"]),
-            )
-
-            # Attention shift scores
-            orig_img_raw = orig[token_pos, image_mask].sum().item()
-            purified_img_raw = purified[token_pos, image_mask].sum().item()
-            orig_prelim_raw = orig[token_pos, prompt_end_idx:].sum().item()
-            purified_prelim_raw = purified[token_pos, prompt_end_idx:].sum().item()
-
-            _append_score(
-                scores, f"attn_shift_visual_layer_{layer_idx}",
-                -(purified_img_raw - orig_img_raw),  # negated: positive shift = non-hallu
-            )
-            _append_score(
-                scores, f"attn_shift_prelim_layer_{layer_idx}",
-                purified_prelim_raw - orig_prelim_raw,
-            )
-
-        # ── Global scores (mean across layers) ──
-        _append_score(
-            scores, "global_orig_prelim_attn",
-            global_orig[token_pos, prompt_end_idx:].sum().item(),
-        )
-        _append_score(
-            scores, "global_orig_image_attn",
-            -global_orig[token_pos, image_mask].sum().item(),
-        )
-        _append_score(
-            scores, "global_orig_bos_attn",
-            -global_orig[token_pos, bos_mask].sum().item(),
-        )
-
-        _append_score(
-            scores, "global_purified_prelim_attn",
-            global_purified[token_pos, prompt_end_idx:].sum().item(),
-        )
-        _append_score(
-            scores, "global_sink_only_prelim_attn",
-            global_sink_only[token_pos, prompt_end_idx:].sum().item(),
-        )
-        _append_score(
-            scores, "global_sink_only_image_attn",
-            -global_sink_only[token_pos, image_mask].sum().item(),
-        )
-        _append_score(
-            scores, "global_sink_only_bos_attn",
-            -global_sink_only[token_pos, bos_mask].sum().item(),
-        )
-        _append_score(
-            scores, "global_topmass_only_prelim_attn",
-            global_topmass_only[token_pos, prompt_end_idx:].sum().item(),
-        )
-        _append_score(
-            scores, "global_topmass_only_image_attn",
-            -global_topmass_only[token_pos, image_mask].sum().item(),
-        )
-        _append_score(
-            scores, "global_topmass_only_bos_attn",
-            -global_topmass_only[token_pos, bos_mask].sum().item(),
-        )
-        _append_score(
-            scores, "global_purified_image_attn",
-            -global_purified[token_pos, image_mask].sum().item(),
-        )
-        _append_score(
-            scores, "global_purified_bos_attn",
-            -global_purified[token_pos, bos_mask].sum().item(),
-        )
-
-        # Global sink mass (negated: more sink attn ⇒ less visual grounding ⇒ hallucination)
-        total_sink_mass = 0.0
-        for layer_idx in range(n_layers):
-            sink_pos = sink_stats_layers[layer_idx].get("sink_positions", [])
-            if sink_pos:
-                sink_pos_t = torch.tensor(
-                    sink_pos,
-                    dtype=torch.long,
-                    device=orig_attn_layers[layer_idx].device,
-                )
-                total_sink_mass += orig_attn_layers[layer_idx][token_pos, sink_pos_t].sum().item()
-        _append_score(scores, "global_sink_attn_mass", -(total_sink_mass / n_layers))
-
-        # Global sink count
-        total_sink_count = sum(s["sink_count"] for s in sink_stats_layers)
-        _append_score(scores, "global_sink_count", float(total_sink_count))
-
-        # Global attention shift
-        g_orig_img = global_orig[token_pos, image_mask].sum().item()
-        g_pur_img = global_purified[token_pos, image_mask].sum().item()
-        g_orig_prelim = global_orig[token_pos, prompt_end_idx:].sum().item()
-        g_pur_prelim = global_purified[token_pos, prompt_end_idx:].sum().item()
-
-        _append_score(scores, "global_attn_shift_visual", -(g_pur_img - g_orig_img))
-        _append_score(scores, "global_attn_shift_prelim", g_pur_prelim - g_orig_prelim)
-
-        # ── NEW: Counterfactual Visual Grounding family ─────────────────────
+        # ── Counterfactual Visual Grounding family ──────────────────────────
         # Adds: cvg_kl_instr_*, cvg_kl_uniform_*, cvg_jsd_instr_*,
         #       conc_entropy_*, conc_top{1,5,10}_mass_*, conc_max_over_mean_*,
         #       clc_gen_jsd, clc_mean_pairwise_jsd, clc_gen_jsd_midlate,
@@ -305,8 +120,8 @@ def compute_all_scores(
             _append_score(scores, k, v)
 
         # Same shape-based grounding scores computed on purified attention.
-        # These are the main de-biased variants: sink/RoPE-like visual bias is
-        # removed before comparing the object query to null distributions.
+        # This is sink-removal + top-mass purification; it is not a strict
+        # no-RoPE attention branch.
         purified_grounding_scores = compute_grounding_scores_for_mention(
             token_pos=token_pos,
             attn_layers=purified_attn_layers,

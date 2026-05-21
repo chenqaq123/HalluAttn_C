@@ -290,7 +290,9 @@ def main():
                 },
             )
 
-        # Compute scores (PAS-style + sink + CVG/CLC grounding family + per-head + cross-image)
+        # Compute shape scores only: CVG / concentration / CLC, plus optional
+        # per-head and cross-image null variants. PAS-style attention-mass
+        # baselines are intentionally not emitted in current runs.
         scores, labels = compute_all_scores(
             first_mentions,
             orig_attn_layers,

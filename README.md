@@ -136,11 +136,12 @@ python scripts/detect.py \
     --ratio 0.5
 ```
 
-## Counterfactual Visual Grounding (CVG) — the new score family
+## Counterfactual Visual Grounding (CVG)
 
-Beyond the PAS-style "how much attention to image" summary statistics, we
-score the **shape** of the object query's visual attention distribution
-relative to a content-independent null. Three sub-families:
+SinkDetect now focuses on the **shape** of the object query's visual attention
+distribution relative to a content-independent null. PAS-style attention-mass
+scores are treated as external baselines and are not emitted by current runs.
+Three active sub-families:
 
 | family | per-layer keys (also `global_*`) | high score ⇒ hallucination |
 |---|---|---|
@@ -175,22 +176,15 @@ sink + RoPE + generic-prompt bias for this image.
 
 ## What the scores mean
 
-Per-mention scores collected in `raw_scores.npz`. The interesting families:
+Per-mention scores are collected in `raw_scores.npz`. The active families:
 
-- `orig_*_layer_{i}` / `global_orig_*` — PAS baselines on raw attention.
-- `sink_only_*_layer_{i}` / `global_sink_only_*` — same metrics after sink
-  removal but without visual top-mass masking.
-- `topmass_only_*_layer_{i}` / `global_topmass_only_*` — same metrics after
-  visual top-mass masking but before sink removal.
-- `purified_*_layer_{i}` / `global_purified_*` — same metrics after full sink
-  + visual-bias purification (visual top-mass mask, sink rows zeroed for text
-  queries, then per-row renormalization).
-- `sink_attn_mass_layer_{i}` / `global_sink_attn_mass` — how much each text
-  query spends on detected sinks (raw attention).
-- `sink_count_layer_{i}` / `global_sink_count` — number of detected sinks.
-- `attn_shift_{visual,prelim}_layer_{i}` / `global_attn_shift_*` — change in
-  attention mass when going from raw → purified. Positive shift on visual means
-  the image was being "drowned" by sinks; the magnitude itself is the signal.
+- `cvg_*`, `conc_*`, `clc_*` — shape scores on raw attention.
+- `sink_only_cvg_*`, `sink_only_conc_*`, `sink_only_clc_*` — same shape scores
+  after sink removal but without visual top-mass masking.
+- `topmass_only_cvg_*`, `topmass_only_conc_*`, `topmass_only_clc_*` — same
+  shape scores after visual top-mass masking but before sink removal.
+- `purified_cvg_*`, `purified_conc_*`, `purified_clc_*` — same shape scores
+  after sink removal + visual top-mass masking.
 
 A label of `1` = hallucinated mention (CHAIR), `0` = grounded. `metrics.json`
 sorts AUROCs descending so the top entries are the strongest detectors in your

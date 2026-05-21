@@ -1,8 +1,8 @@
 # Score Reference
 
-Exhaustive list of every key written into `experiments/<exp>/raw_scores.npz`
-and `metrics.json::roc_auc`. Sign convention everywhere: **higher value ⇒
-more likely hallucination**.
+Exhaustive list of every key written into new `experiments/<exp>/raw_scores.npz`
+and `metrics.json::roc_auc` runs. Sign convention everywhere: **higher value
+⇒ more likely hallucination**.
 
 For score families that have both per-layer and global variants, only the
 template is shown. `{l}` runs `0..n_layers-1` (32 for LLaVA-1.5-7B).
@@ -20,7 +20,6 @@ and [grounding.py](../src/sinkdetect/grounding.py).
 - `A'`             — fully purified attention after sink removal and top-mass masking.
 - `q`               — `token_pos`, absolute index of the token preceding the object word.
 - `V`               — visual token span `[vis_start, vis_end)`, dynamically detected per image.
-- `T`               — generated-token range `[prompt_end_idx, seq_len)` ("prelim").
 - `S^{(l)}`         — sink positions detected in layer `l` (subset of `V`).
 - `instr_mask`      — bool mask over instruction tokens (system + user + ASSISTANT:).
 - `ã_q`             — `normalize( strip_sinks( A[q, vis_start:vis_end] ) )`.
@@ -28,21 +27,7 @@ and [grounding.py](../src/sinkdetect/grounding.py).
 
 ---
 
-## PAS-family (reproduces the baseline)
-
-| key | formula | sign |
-|---|---|---|
-| `orig_prelim_attn_layer_{l}`   | `A[q, T].sum()`                  | high = hallu (no negation) |
-| `orig_image_attn_layer_{l}`    | `-A[q, V].sum()`                 | high = hallu (negated) |
-| `orig_bos_attn_layer_{l}`      | `-A[q, BOS].sum()`               | high = hallu (negated) |
-| `global_orig_prelim_attn`      | same on `mean_l A^{(l)}`         | — |
-| `global_orig_image_attn`       | same on `mean_l A^{(l)}`         | — |
-| `global_orig_bos_attn`         | same on `mean_l A^{(l)}`         | — |
-
-> `orig_image_attn` ≈ what PAS publishes as "Image Attention"; `orig_prelim_attn`
-> ≈ "PAS / Prelim". They are kept verbatim so we reproduce PAS in-distribution.
-
-## Sink-purified PAS-family
+## Branches
 
 `A^S` is the sink-removal-only ablation: sink columns zeroed for text queries,
 then row-renormalized.
@@ -55,45 +40,14 @@ and top-mass-`ratio` visual mask applied, then row-renormalized. Comparing
 `A^S`, `A^T`, and `A'` tests whether sink removal, top-mass masking, or their
 combination adds detection signal.
 
-| key | formula |
-|---|---|
-| `sink_only_prelim_attn_layer_{l}`   | `A^S[q, T].sum()` |
-| `sink_only_image_attn_layer_{l}`    | `-A^S[q, V].sum()` |
-| `sink_only_bos_attn_layer_{l}`      | `-A^S[q, BOS].sum()` |
-| `topmass_only_prelim_attn_layer_{l}` | `A^T[q, T].sum()` |
-| `topmass_only_image_attn_layer_{l}`  | `-A^T[q, V].sum()` |
-| `topmass_only_bos_attn_layer_{l}`    | `-A^T[q, BOS].sum()` |
-| `purified_prelim_attn_layer_{l}`    | `A'[q, T].sum()` |
-| `purified_image_attn_layer_{l}`     | `-A'[q, V].sum()` |
-| `purified_bos_attn_layer_{l}`       | `-A'[q, BOS].sum()` |
-| `global_purified_prelim_attn`       | same on `mean_l A'^{(l)}` |
-| `global_purified_image_attn`        | same on `mean_l A'^{(l)}` |
-| `global_purified_bos_attn`          | same on `mean_l A'^{(l)}` |
-
-## Sink statistics
-
-| key | formula |
-|---|---|
-| `sink_attn_mass_layer_{l}`     | `−A[q, S^{(l)}].sum()` — negated: more sink mass = less visual = hallu |
-| `sink_count_layer_{l}`         | `|S^{(l)}|` |
-| `global_sink_attn_mass`        | `−mean_l A^{(l)}[q, S^{(l)}].sum()` — negated |
-| `global_sink_count`            | `sum_l |S^{(l)}|` |
-
-## Purification shift (differential)
-
-| key | formula |
-|---|---|
-| `attn_shift_visual_layer_{l}`   | `-( A'[q, V].sum() − A[q, V].sum() )` |
-| `attn_shift_prelim_layer_{l}`   | `A'[q, T].sum() − A[q, T].sum()` |
-| `global_attn_shift_visual`      | analogous on `mean_l A`, `mean_l A'` |
-| `global_attn_shift_prelim`      | analogous |
-
-These quantify how much mass moved when we zeroed sinks and applied
-top-mass truncation.
+New runs intentionally do **not** emit PAS-style scalar attention-mass keys
+(`*_prelim_attn`, `*_image_attn`, `*_bos_attn`) or their differential shift
+variants. PAS is now treated as an external baseline, not part of the active
+score output.
 
 ---
 
-# New (CVG / CLC / Concentration) family
+# CVG / CLC / Concentration family
 
 ## CVG — distance from null
 

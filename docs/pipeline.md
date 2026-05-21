@@ -51,13 +51,11 @@ For each image:
    scanning `input_ids` for runs of the image-token id. Pushed into every
    layer's adapter before the forward (`_set_adapter_bounds`).
 5. **Score computation**. For each object mention's `token_pos`:
-   - PAS-family scores on `A` (`orig_*`) and `A'` (`purified_*`).
-   - Sink-only ablation scores on `A^S` (`sink_only_*`).
-   - Top-mass-only ablation scores on `A^T` (`topmass_only_*`).
-   - Sink statistics (`sink_attn_mass_*`, `sink_count_*`).
-   - Purification shifts (`attn_shift_*`).
-   - **CVG / Concentration / CLC family** (the new design — see
-     [design.md §5](design.md#5-scoring-families)).
+   - **CVG / Concentration / CLC family** on `A`, `A^S`, `A^T`, and `A'`
+     (see [design.md §5](design.md#5-scoring-families)).
+   - Optional per-head and cross-image null variants.
+   - PAS-family scalar attention-mass scores are not emitted by current runs;
+     PAS is treated as an external baseline.
 6. AUROC over `(scores, labels)` per shard → `metrics_shard{i}.json`.
    Per-mention scores → `raw_scores_shard{i}.npz`.
 
