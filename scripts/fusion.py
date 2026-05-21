@@ -70,6 +70,18 @@ def _classify_keys(keys):
     topmass_only_cvg_keys = [k for k in keys if k.startswith("topmass_only_cvg_") or k.startswith("topmass_only_global_cvg_")]
     topmass_only_conc_keys = [k for k in keys if k.startswith("topmass_only_conc_") or k.startswith("topmass_only_global_conc_")]
     topmass_only_clc_keys = [k for k in keys if k.startswith("topmass_only_clc_")]
+    no_rope_cvg_keys = [k for k in keys if k.startswith("no_rope_cvg_") or k.startswith("no_rope_global_cvg_")]
+    no_rope_conc_keys = [k for k in keys if k.startswith("no_rope_conc_") or k.startswith("no_rope_global_conc_")]
+    no_rope_clc_keys = [k for k in keys if k.startswith("no_rope_clc_")]
+    no_rope_sink_only_cvg_keys = [k for k in keys if k.startswith("no_rope_sink_only_cvg_") or k.startswith("no_rope_sink_only_global_cvg_")]
+    no_rope_sink_only_conc_keys = [k for k in keys if k.startswith("no_rope_sink_only_conc_") or k.startswith("no_rope_sink_only_global_conc_")]
+    no_rope_sink_only_clc_keys = [k for k in keys if k.startswith("no_rope_sink_only_clc_")]
+    no_rope_topmass_only_cvg_keys = [k for k in keys if k.startswith("no_rope_topmass_only_cvg_") or k.startswith("no_rope_topmass_only_global_cvg_")]
+    no_rope_topmass_only_conc_keys = [k for k in keys if k.startswith("no_rope_topmass_only_conc_") or k.startswith("no_rope_topmass_only_global_conc_")]
+    no_rope_topmass_only_clc_keys = [k for k in keys if k.startswith("no_rope_topmass_only_clc_")]
+    no_rope_purified_cvg_keys = [k for k in keys if k.startswith("no_rope_purified_cvg_") or k.startswith("no_rope_purified_global_cvg_")]
+    no_rope_purified_conc_keys = [k for k in keys if k.startswith("no_rope_purified_conc_") or k.startswith("no_rope_purified_global_conc_")]
+    no_rope_purified_clc_keys = [k for k in keys if k.startswith("no_rope_purified_clc_")]
     ph_keys = [k for k in keys if k.startswith("ph_")]
     shift_keys = [k for k in keys if k.startswith(("attn_shift_", "global_attn_shift_"))]
     return {
@@ -90,6 +102,18 @@ def _classify_keys(keys):
         "topmass_only_cvg": topmass_only_cvg_keys,
         "topmass_only_concentration": topmass_only_conc_keys,
         "topmass_only_clc": topmass_only_clc_keys,
+        "no_rope_cvg": no_rope_cvg_keys,
+        "no_rope_concentration": no_rope_conc_keys,
+        "no_rope_clc": no_rope_clc_keys,
+        "no_rope_sink_only_cvg": no_rope_sink_only_cvg_keys,
+        "no_rope_sink_only_concentration": no_rope_sink_only_conc_keys,
+        "no_rope_sink_only_clc": no_rope_sink_only_clc_keys,
+        "no_rope_topmass_only_cvg": no_rope_topmass_only_cvg_keys,
+        "no_rope_topmass_only_concentration": no_rope_topmass_only_conc_keys,
+        "no_rope_topmass_only_clc": no_rope_topmass_only_clc_keys,
+        "no_rope_purified_cvg": no_rope_purified_cvg_keys,
+        "no_rope_purified_concentration": no_rope_purified_conc_keys,
+        "no_rope_purified_clc": no_rope_purified_clc_keys,
         "per_head": ph_keys,
         "shift": shift_keys,
     }
@@ -184,6 +208,18 @@ def main():
                     + families["topmass_only_cvg"]
                     + families["topmass_only_concentration"]
                     + families["topmass_only_clc"]
+                    + families["no_rope_cvg"]
+                    + families["no_rope_concentration"]
+                    + families["no_rope_clc"]
+                    + families["no_rope_sink_only_cvg"]
+                    + families["no_rope_sink_only_concentration"]
+                    + families["no_rope_sink_only_clc"]
+                    + families["no_rope_topmass_only_cvg"]
+                    + families["no_rope_topmass_only_concentration"]
+                    + families["no_rope_topmass_only_clc"]
+                    + families["no_rope_purified_cvg"]
+                    + families["no_rope_purified_concentration"]
+                    + families["no_rope_purified_clc"]
                     + families["per_head"]),
         "sink_only_shape": (
             families["sink_only_cvg"]
@@ -197,6 +233,16 @@ def main():
         ),
         "purified_shape": (families["purified_cvg"] + families["purified_concentration"]
                            + families["purified_clc"]),
+        "no_rope_shape": (
+            families["no_rope_cvg"]
+            + families["no_rope_concentration"]
+            + families["no_rope_clc"]
+        ),
+        "no_rope_purified_shape": (
+            families["no_rope_purified_cvg"]
+            + families["no_rope_purified_concentration"]
+            + families["no_rope_purified_clc"]
+        ),
         "all_signals": list(data.keys()),
     }
 

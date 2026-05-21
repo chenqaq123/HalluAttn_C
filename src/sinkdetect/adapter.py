@@ -67,8 +67,13 @@ class DetectionAdapter(LlamaAttention):
         self.last_sink_only_attn: Optional[torch.Tensor] = None
         self.last_topmass_only_attn: Optional[torch.Tensor] = None
         self.last_purified_attn: Optional[torch.Tensor] = None
+        self.last_no_rope_attn: Optional[torch.Tensor] = None
+        self.last_no_rope_sink_only_attn: Optional[torch.Tensor] = None
+        self.last_no_rope_topmass_only_attn: Optional[torch.Tensor] = None
+        self.last_no_rope_purified_attn: Optional[torch.Tensor] = None
         self.last_per_head_attn: Optional[torch.Tensor] = None  # (n_heads, seq, seq) CPU, only for PER_HEAD_LAYERS
         self.last_sink_stats: dict = {}
+        self.compute_no_rope_attention: bool = False
 
     @deprecate_kwarg("past_key_value", new_name="past_key_values", version="4.58")
     def forward(
@@ -93,6 +98,9 @@ class DetectionAdapter(LlamaAttention):
         all_pos = torch.arange(key_norms.size(0), device=key_norms.device)
         vis_pos = all_pos[(all_pos >= self.vis_start) & (all_pos < self.vis_end)]
         sink_pos = auto_detect_sinks(key_norms, vis_pos) if vis_pos.numel() > 0 else vis_pos
+
+        query_states_pre_rope = query_states
+        key_states_pre_rope = key_states
 
         # ── Apply RoPE ──
         cos, sin = position_embeddings
@@ -171,6 +179,49 @@ class DetectionAdapter(LlamaAttention):
             )
             self.last_purified_attn = purified
 
+            if self.compute_no_rope_attention:
+                no_rope_mean = self._compute_no_rope_attention(
+                    query_states_pre_rope,
+                    key_states_pre_rope,
+                    attention_mask,
+                )
+                self.last_no_rope_attn = no_rope_mean
+                self.last_no_rope_sink_only_attn = purify_attention(
+                    no_rope_mean,
+                    sink_pos.detach(),
+                    prompt_end_idx=self.text_start,
+                    vis_start=self.vis_start,
+                    vis_end=self.vis_end,
+                    ratio=self.purify_ratio,
+                    remove_sinks=True,
+                    apply_top_mass=False,
+                )
+                self.last_no_rope_topmass_only_attn = purify_attention(
+                    no_rope_mean,
+                    sink_pos.detach(),
+                    prompt_end_idx=self.text_start,
+                    vis_start=self.vis_start,
+                    vis_end=self.vis_end,
+                    ratio=self.purify_ratio,
+                    remove_sinks=False,
+                    apply_top_mass=True,
+                )
+                self.last_no_rope_purified_attn = purify_attention(
+                    no_rope_mean,
+                    sink_pos.detach(),
+                    prompt_end_idx=self.text_start,
+                    vis_start=self.vis_start,
+                    vis_end=self.vis_end,
+                    ratio=self.purify_ratio,
+                    remove_sinks=True,
+                    apply_top_mass=True,
+                )
+            else:
+                self.last_no_rope_attn = None
+                self.last_no_rope_sink_only_attn = None
+                self.last_no_rope_topmass_only_attn = None
+                self.last_no_rope_purified_attn = None
+
             # ── Store per-head attention for key layers ──
             if self.layer_idx in PER_HEAD_LAYERS:
                 # (n_heads, seq_q, seq_k), squeeze batch dim, keep on device
@@ -182,6 +233,10 @@ class DetectionAdapter(LlamaAttention):
             self.last_sink_only_attn = None
             self.last_topmass_only_attn = None
             self.last_purified_attn = None
+            self.last_no_rope_attn = None
+            self.last_no_rope_sink_only_attn = None
+            self.last_no_rope_topmass_only_attn = None
+            self.last_no_rope_purified_attn = None
             self.last_per_head_attn = None
             self._sink_pos = None
 
@@ -196,6 +251,33 @@ class DetectionAdapter(LlamaAttention):
         attn_output = attn_output.reshape(*input_shape, -1).contiguous()
         attn_output = self.o_proj(attn_output)
         return attn_output, attn_weights
+
+    def _compute_no_rope_attention(
+        self,
+        query_states: torch.Tensor,
+        key_states: torch.Tensor,
+        attention_mask: Optional[torch.Tensor],
+    ) -> torch.Tensor:
+        """Return mean-over-head attention weights computed before RoPE."""
+        key_states = repeat_kv(key_states, self.num_key_value_groups)
+        attn_logits = torch.matmul(
+            query_states.float(),
+            key_states.float().transpose(2, 3),
+        ) * self.scaling
+        if attention_mask is not None:
+            attn_logits = attn_logits + attention_mask[:, :, :, : key_states.shape[-2]]
+        else:
+            q_len = attn_logits.shape[-2]
+            k_len = attn_logits.shape[-1]
+            causal = torch.ones(
+                q_len,
+                k_len,
+                dtype=torch.bool,
+                device=attn_logits.device,
+            ).triu(diagonal=1 + k_len - q_len)
+            attn_logits = attn_logits.masked_fill(causal, torch.finfo(attn_logits.dtype).min)
+        attn_weights = torch.softmax(attn_logits, dim=-1, dtype=torch.float32)
+        return attn_weights.mean(dim=1).squeeze(0).detach()
 
 
 def get_llm_layers(model) -> torch.nn.ModuleList:
@@ -221,6 +303,7 @@ def inject_detection_adapter(
     end_layer: int,
     device: torch.device,
     ratio: float = 0.5,
+    compute_no_rope_attention: bool = False,
 ):
     """Replace LlamaAttention layers with DetectionAdapter instances.
 
@@ -236,5 +319,6 @@ def inject_detection_adapter(
             purify_ratio=ratio,
         )
         adapter.load_state_dict(layer.self_attn.state_dict())
+        adapter.compute_no_rope_attention = compute_no_rope_attention
         adapter = adapter.to(device=device, dtype=next(model.parameters()).dtype)
         layer.self_attn = adapter

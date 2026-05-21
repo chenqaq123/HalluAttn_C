@@ -5,15 +5,15 @@
 > walk-through in [docs/pipeline.md](docs/pipeline.md).
 
 Token-level hallucination detection for LVLMs (LLaVA-1.5-7B) by mining the
-attention distribution over image tokens. Two complementary signals:
+shape of the attention distribution over image tokens. Active signals:
 
-1. **Purified attention** — strip sink tokens and RoPE-induced bias on visual
-   tokens, then re-measure how much the model still attends to the image.
-   Hypothesis: hallucinated objects should rely less on visual content even
-   after de-biasing.
-2. **Sink-targeted detection** — measure the attention mass spent on
-   auto-detected sink tokens. Hypothesis: hallucinations show more severe
-   sink reliance.
+1. **Shape scores** — CVG, concentration, and cross-layer consistency over
+   object-token visual attention distributions.
+2. **Ablations** — raw, sink-only, top-mass-only, purified, and optional
+   no-RoPE branches.
+3. **No-RoPE branch** — when enabled, recompute attention weights from
+   pre-RoPE Q/K to test whether removing positional rotation improves the
+   shape metrics.
 
 The pipeline mirrors PAS (CVPR 2026) for apples-to-apples comparison on
 COCO val2014 with CHAIR labels.
@@ -97,6 +97,9 @@ bash scripts/run.sh
 
 # regenerate captions even if generation.json exists
 FORCE_REGEN=1 bash scripts/run.sh
+
+# cache raw + no-RoPE branches for shape-only analysis
+SAVE_SHAPE_CACHE=1 COMPUTE_NO_ROPE_ATTENTION=1 bash scripts/run_parallel.sh
 ```
 
 All knobs (with defaults):
@@ -115,6 +118,7 @@ All knobs (with defaults):
 | `DEVICE` | 0 | CUDA device index |
 | `SEED` | 42 | sampling seed for stage 1 |
 | `SAVE_SHAPE_CACHE` | 0 | save `shape_cache.npz` for fast CVG/Concentration/CLC recomputation |
+| `COMPUTE_NO_ROPE_ATTENTION` | 0 | also score/cache no-RoPE attention branches from pre-RoPE Q/K |
 
 ## Manual two-stage usage
 
@@ -185,6 +189,10 @@ Per-mention scores are collected in `raw_scores.npz`. The active families:
   shape scores after visual top-mass masking but before sink removal.
 - `purified_cvg_*`, `purified_conc_*`, `purified_clc_*` — same shape scores
   after sink removal + visual top-mass masking.
+- `no_rope_cvg_*`, `no_rope_conc_*`, `no_rope_clc_*` — same shape scores on
+  attention recomputed from pre-RoPE Q/K. When enabled, corresponding
+  `no_rope_sink_only_*`, `no_rope_topmass_only_*`, and `no_rope_purified_*`
+  branches are also emitted.
 
 A label of `1` = hallucinated mention (CHAIR), `0` = grounded. `metrics.json`
 sorts AUROCs descending so the top entries are the strongest detectors in your

@@ -26,6 +26,10 @@ def compute_all_scores(
     prompt_end_idx: int,
     vis_start: int,
     vis_end: int,
+    no_rope_attn_layers: Optional[list[torch.Tensor]] = None,
+    no_rope_sink_only_attn_layers: Optional[list[torch.Tensor]] = None,
+    no_rope_topmass_only_attn_layers: Optional[list[torch.Tensor]] = None,
+    no_rope_purified_attn_layers: Optional[list[torch.Tensor]] = None,
     per_head_attn: Optional[dict[int, torch.Tensor]] = None,
     cross_image_nulls: Optional[list[list[torch.Tensor]]] = None,
 ) -> tuple[dict[str, list[Optional[float]]], list[int]]:
@@ -39,6 +43,8 @@ def compute_all_scores(
         sink_only_attn_layers: Same shape, sink-removal-only matrices.
         topmass_only_attn_layers: Same shape, top-mass-only matrices.
         purified_attn_layers: Same shape, purified attention matrices.
+        no_rope_*_attn_layers: Optional pre-RoPE-Q/K attention branches and
+            their sink/top-mass purification variants.
         sink_stats_layers: List of dicts with sink_count, sink_positions.
         token_masks: Dict with instruction_mask and output_mask bool tensors.
         prompt_end_idx: Absolute index of first generated token.
@@ -134,6 +140,64 @@ def compute_all_scores(
         )
         for k, v in purified_grounding_scores.items():
             _append_score(scores, k, v)
+
+        if no_rope_attn_layers is not None:
+            no_rope_grounding_scores = compute_grounding_scores_for_mention(
+                token_pos=token_pos,
+                attn_layers=no_rope_attn_layers,
+                sink_stats_layers=sink_stats_layers,
+                instruction_mask=instruction_mask,
+                vis_start=vis_start,
+                vis_end=vis_end,
+                score_prefix="no_rope_",
+                local_null_positions=local_null_positions,
+            )
+            for k, v in no_rope_grounding_scores.items():
+                _append_score(scores, k, v)
+
+        if no_rope_sink_only_attn_layers is not None:
+            no_rope_sink_only_scores = compute_grounding_scores_for_mention(
+                token_pos=token_pos,
+                attn_layers=no_rope_sink_only_attn_layers,
+                sink_stats_layers=sink_stats_layers,
+                instruction_mask=instruction_mask,
+                vis_start=vis_start,
+                vis_end=vis_end,
+                score_prefix="no_rope_sink_only_",
+                local_null_positions=local_null_positions,
+                strip_sink_tokens=True,
+            )
+            for k, v in no_rope_sink_only_scores.items():
+                _append_score(scores, k, v)
+
+        if no_rope_topmass_only_attn_layers is not None:
+            no_rope_topmass_only_scores = compute_grounding_scores_for_mention(
+                token_pos=token_pos,
+                attn_layers=no_rope_topmass_only_attn_layers,
+                sink_stats_layers=sink_stats_layers,
+                instruction_mask=instruction_mask,
+                vis_start=vis_start,
+                vis_end=vis_end,
+                score_prefix="no_rope_topmass_only_",
+                local_null_positions=local_null_positions,
+                strip_sink_tokens=False,
+            )
+            for k, v in no_rope_topmass_only_scores.items():
+                _append_score(scores, k, v)
+
+        if no_rope_purified_attn_layers is not None:
+            no_rope_purified_scores = compute_grounding_scores_for_mention(
+                token_pos=token_pos,
+                attn_layers=no_rope_purified_attn_layers,
+                sink_stats_layers=sink_stats_layers,
+                instruction_mask=instruction_mask,
+                vis_start=vis_start,
+                vis_end=vis_end,
+                score_prefix="no_rope_purified_",
+                local_null_positions=local_null_positions,
+            )
+            for k, v in no_rope_purified_scores.items():
+                _append_score(scores, k, v)
 
         # ── Per-head scores (if available) ────────────────────────────────
         if per_head_attn:

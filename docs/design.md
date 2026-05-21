@@ -79,7 +79,7 @@ Hallucination hypothesis: π_C → 0.
 
 Detection objective: estimate π_C (or any monotone proxy).
 
-The implementation keeps four attention branches for each layer:
+The implementation keeps four standard attention branches for each layer:
 
     A       = original attention
     A^S     = sink-only: zero sink columns for text queries, no top-mass mask
@@ -98,6 +98,24 @@ This gives a 2×2 ablation:
 The headline method should compare `purified_*` against `topmass_only_*` and
 `sink_only_*`: if full purification wins, sink removal and top-mass filtering
 are complementary; if one ablation dominates, the method can be simplified.
+
+For the explicit RoPE ablation, Stage 2 can additionally compute
+
+    A^R = softmax(Q_preRoPE K_preRoPE^T / sqrt(d) + causal_mask)
+
+where `Q_preRoPE` and `K_preRoPE` are captured inside the attention adapter
+before applying rotary position embeddings. This branch tests whether the
+shape scores improve when the positional rotation is removed from attention
+weights. When enabled, the same sink/top-mass variants are emitted:
+
+    no_rope_*,
+    no_rope_sink_only_*,
+    no_rope_topmass_only_*,
+    no_rope_purified_*.
+
+This no-RoPE branch is more expensive because it materializes an additional
+attention matrix per layer. It should be used for targeted ablations and
+shape-cache generation, not as the default full-run setting.
 
 ---
 

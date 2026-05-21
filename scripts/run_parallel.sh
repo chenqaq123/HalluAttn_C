@@ -24,6 +24,7 @@
 #   START_LAYER=0  END_LAYER=32
 #   SEED=42
 #   SAVE_SHAPE_CACHE=1             save shape_cache.npz for fast metric recompute
+#   COMPUTE_NO_ROPE_ATTENTION=1    cache/score no-RoPE attention branches
 #   FORCE_REGEN=1                  rerun stage 1 even if generation.json exists
 
 set -euo pipefail
@@ -64,6 +65,7 @@ START_LAYER="${START_LAYER:-0}"
 END_LAYER="${END_LAYER:-32}"
 SEED="${SEED:-42}"
 SAVE_SHAPE_CACHE="${SAVE_SHAPE_CACHE:-0}"
+COMPUTE_NO_ROPE_ATTENTION="${COMPUTE_NO_ROPE_ATTENTION:-0}"
 
 # ── Validation ──────────────────────────────────────────────────────────────
 # NUM_SHARDS must be in 1..4 (we only have 4 GPUs visible).
@@ -163,6 +165,10 @@ shape_cache_arg=()
 if [[ "$SAVE_SHAPE_CACHE" == "1" ]]; then
     shape_cache_arg=(--save_shape_cache)
 fi
+no_rope_arg=()
+if [[ "$COMPUTE_NO_ROPE_ATTENTION" == "1" ]]; then
+    no_rope_arg=(--compute_no_rope_attention)
+fi
 pids=()
 for ((i=0; i<NUM_SHARDS; i++)); do
     log="$LOG_DIR/stage2_shard${i}.log"
@@ -180,7 +186,8 @@ for ((i=0; i<NUM_SHARDS; i++)); do
             --device          "$i" \
             --shard_idx       "$i" \
             --num_shards      "$NUM_SHARDS" \
-            "${shape_cache_arg[@]}"
+            "${shape_cache_arg[@]}" \
+            "${no_rope_arg[@]}"
     ) > "$log" 2>&1 &
     pids+=($!)
 done

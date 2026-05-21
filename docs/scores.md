@@ -18,6 +18,7 @@ and [grounding.py](../src/sinkdetect/grounding.py).
 - `A^S`            — sink-removal-only attention, without top-mass masking.
 - `A^T`            — top-mass-only attention, without sink removal.
 - `A'`             — fully purified attention after sink removal and top-mass masking.
+- `A^R`            — no-RoPE attention recomputed from pre-RoPE Q/K.
 - `q`               — `token_pos`, absolute index of the token preceding the object word.
 - `V`               — visual token span `[vis_start, vis_end)`, dynamically detected per image.
 - `S^{(l)}`         — sink positions detected in layer `l` (subset of `V`).
@@ -44,6 +45,14 @@ New runs intentionally do **not** emit PAS-style scalar attention-mass keys
 (`*_prelim_attn`, `*_image_attn`, `*_bos_attn`) or their differential shift
 variants. PAS is now treated as an external baseline, not part of the active
 score output.
+
+If `--compute_no_rope_attention` is enabled, the same shape families are also
+computed on no-RoPE branches:
+
+- `no_rope_*` on `A^R`;
+- `no_rope_sink_only_*` on sink-removed `A^R`;
+- `no_rope_topmass_only_*` on top-mass-only `A^R`;
+- `no_rope_purified_*` on sink-removed + top-mass `A^R`.
 
 ---
 

@@ -214,8 +214,14 @@ def main() -> None:
         "sink_only_": ("sink_only", True),
         "topmass_only_": ("topmass_only", False),
         "purified_": ("purified", True),
+        "no_rope_": ("no_rope", True),
+        "no_rope_sink_only_": ("no_rope_sink_only", True),
+        "no_rope_topmass_only_": ("no_rope_topmass_only", False),
+        "no_rope_purified_": ("no_rope_purified", True),
     }
     for prefix, (name, strip_sinks) in variants.items():
+        if f"{name}_obj" not in data or f"{name}_null" not in data:
+            continue
         _append_scores(
             scores=scores,
             prefix=prefix,

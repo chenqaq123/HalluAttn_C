@@ -84,6 +84,9 @@ def parse_args():
     p.add_argument("--save_shape_cache", action="store_true",
                    help="Save per-mention visual object/null rows for fast "
                         "metric recomputation without another model forward.")
+    p.add_argument("--compute_no_rope_attention", action="store_true",
+                   help="Also recompute attention from pre-RoPE Q/K and cache/score "
+                        "no_rope_* shape branches. Slower and more memory intensive.")
     return p.parse_args()
 
 
@@ -142,9 +145,16 @@ def main():
     model, _ = load_model_and_processor(args.model_path, device)
 
     n_layers = args.end_layer - args.start_layer
-    logger.info("Injecting DetectionAdapter (layers %d-%d, ratio=%.2f) ...",
-                args.start_layer, args.end_layer, args.ratio)
-    inject_detection_adapter(model, args.start_layer, args.end_layer, device, ratio=args.ratio)
+    logger.info("Injecting DetectionAdapter (layers %d-%d, ratio=%.2f, no_rope=%s) ...",
+                args.start_layer, args.end_layer, args.ratio, args.compute_no_rope_attention)
+    inject_detection_adapter(
+        model,
+        args.start_layer,
+        args.end_layer,
+        device,
+        ratio=args.ratio,
+        compute_no_rope_attention=args.compute_no_rope_attention,
+    )
 
     # ── Forward pass loop ──
     all_scores = {}
@@ -211,6 +221,10 @@ def main():
         sink_only_attn_layers = []
         topmass_only_attn_layers = []
         purified_attn_layers = []
+        no_rope_attn_layers = []
+        no_rope_sink_only_attn_layers = []
+        no_rope_topmass_only_attn_layers = []
+        no_rope_purified_attn_layers = []
         sink_stats_layers = []
         per_head_attn: dict[int, torch.Tensor] = {}
 
@@ -222,6 +236,11 @@ def main():
                     sink_only_attn_layers.append(adapter.last_sink_only_attn)
                     topmass_only_attn_layers.append(adapter.last_topmass_only_attn)
                     purified_attn_layers.append(adapter.last_purified_attn)
+                    if args.compute_no_rope_attention:
+                        no_rope_attn_layers.append(adapter.last_no_rope_attn)
+                        no_rope_sink_only_attn_layers.append(adapter.last_no_rope_sink_only_attn)
+                        no_rope_topmass_only_attn_layers.append(adapter.last_no_rope_topmass_only_attn)
+                        no_rope_purified_attn_layers.append(adapter.last_no_rope_purified_attn)
                     sink_stats_layers.append(adapter.last_sink_stats)
                     # Collect per-head attention for key layers
                     if adapter.last_per_head_attn is not None:
@@ -273,6 +292,19 @@ def main():
         cross_nulls_for_scoring = cross_image_null_buffer[:-1] if len(cross_image_null_buffer) > 1 else None
 
         if shape_cache is not None:
+            cache_variants = {
+                "orig": orig_attn_layers,
+                "sink_only": sink_only_attn_layers,
+                "topmass_only": topmass_only_attn_layers,
+                "purified": purified_attn_layers,
+            }
+            if args.compute_no_rope_attention:
+                cache_variants.update({
+                    "no_rope": no_rope_attn_layers,
+                    "no_rope_sink_only": no_rope_sink_only_attn_layers,
+                    "no_rope_topmass_only": no_rope_topmass_only_attn_layers,
+                    "no_rope_purified": no_rope_purified_attn_layers,
+                })
             _append_shape_cache(
                 cache=shape_cache,
                 mentions=first_mentions,
@@ -282,12 +314,7 @@ def main():
                 vis_start=vis_start,
                 vis_end=vis_end,
                 sink_stats_layers=sink_stats_layers,
-                variants={
-                    "orig": orig_attn_layers,
-                    "sink_only": sink_only_attn_layers,
-                    "topmass_only": topmass_only_attn_layers,
-                    "purified": purified_attn_layers,
-                },
+                variants=cache_variants,
             )
 
         # Compute shape scores only: CVG / concentration / CLC, plus optional
@@ -304,6 +331,16 @@ def main():
             prompt_end_idx,
             vis_start=vis_start,
             vis_end=vis_end,
+            no_rope_attn_layers=no_rope_attn_layers if args.compute_no_rope_attention else None,
+            no_rope_sink_only_attn_layers=(
+                no_rope_sink_only_attn_layers if args.compute_no_rope_attention else None
+            ),
+            no_rope_topmass_only_attn_layers=(
+                no_rope_topmass_only_attn_layers if args.compute_no_rope_attention else None
+            ),
+            no_rope_purified_attn_layers=(
+                no_rope_purified_attn_layers if args.compute_no_rope_attention else None
+            ),
             per_head_attn=per_head_attn if per_head_attn else None,
             cross_image_nulls=cross_nulls_for_scoring,
         )
@@ -366,6 +403,7 @@ def main():
             "end_layer": args.end_layer,
             "model_path": args.model_path,
             "generation_json": args.generation_json,
+            "compute_no_rope_attention": args.compute_no_rope_attention,
         },
         "roc_auc": roc_auc,
     }
@@ -443,7 +481,16 @@ def _init_shape_cache() -> dict:
         "words": [],
         "sink_mask": [],
     }
-    for name in ("orig", "sink_only", "topmass_only", "purified"):
+    for name in (
+        "orig",
+        "sink_only",
+        "topmass_only",
+        "purified",
+        "no_rope",
+        "no_rope_sink_only",
+        "no_rope_topmass_only",
+        "no_rope_purified",
+    ):
         cache[f"{name}_obj"] = []
         cache[f"{name}_null"] = []
     return cache
@@ -502,9 +549,19 @@ def _save_shape_cache(cache: dict, path: Path) -> None:
         "words": np.asarray(cache["words"], dtype="U64"),
         "sink_mask": np.stack(cache["sink_mask"], axis=0).astype(np.bool_),
     }
-    for name in ("orig", "sink_only", "topmass_only", "purified"):
-        arrays[f"{name}_obj"] = np.stack(cache[f"{name}_obj"], axis=0).astype(np.float16)
-        arrays[f"{name}_null"] = np.stack(cache[f"{name}_null"], axis=0).astype(np.float16)
+    for name in (
+        "orig",
+        "sink_only",
+        "topmass_only",
+        "purified",
+        "no_rope",
+        "no_rope_sink_only",
+        "no_rope_topmass_only",
+        "no_rope_purified",
+    ):
+        if cache[f"{name}_obj"]:
+            arrays[f"{name}_obj"] = np.stack(cache[f"{name}_obj"], axis=0).astype(np.float16)
+            arrays[f"{name}_null"] = np.stack(cache[f"{name}_null"], axis=0).astype(np.float16)
     np.savez_compressed(path, **arrays)
 
 

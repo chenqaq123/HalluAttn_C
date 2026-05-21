@@ -53,6 +53,8 @@ For each image:
 5. **Score computation**. For each object mention's `token_pos`:
    - **CVG / Concentration / CLC family** on `A`, `A^S`, `A^T`, and `A'`
      (see [design.md §5](design.md#5-scoring-families)).
+   - If `--compute_no_rope_attention` is enabled, the same shape scores on
+     `no_rope_*` branches recomputed from pre-RoPE Q/K.
    - Optional per-head and cross-image null variants.
    - PAS-family scalar attention-mass scores are not emitted by current runs;
      PAS is treated as an external baseline.

@@ -46,6 +46,7 @@ LIMIT="${LIMIT:-0}"               # 0 = use all generated captions in detect
 DEVICE="${DEVICE:-0}"
 SEED="${SEED:-42}"
 SAVE_SHAPE_CACHE="${SAVE_SHAPE_CACHE:-0}"
+COMPUTE_NO_ROPE_ATTENTION="${COMPUTE_NO_ROPE_ATTENTION:-0}"
 
 # DEVICE is a *logical* index into CUDA_VISIBLE_DEVICES, so 0..3 is the valid range.
 if ! [[ "$DEVICE" =~ ^[0-3]$ ]]; then
@@ -96,6 +97,10 @@ shape_cache_arg=()
 if [[ "$SAVE_SHAPE_CACHE" == "1" ]]; then
     shape_cache_arg=(--save_shape_cache)
 fi
+no_rope_arg=()
+if [[ "$COMPUTE_NO_ROPE_ATTENTION" == "1" ]]; then
+    no_rope_arg=(--compute_no_rope_attention)
+fi
 python "$SCRIPT_DIR/detect.py" \
     --model_path      "$MODEL_PATH" \
     --coco_path       "$COCO_PATH" \
@@ -107,7 +112,8 @@ python "$SCRIPT_DIR/detect.py" \
     --end_layer       "$END_LAYER" \
     --device          "$DEVICE" \
     --limit           "$LIMIT" \
-    "${shape_cache_arg[@]}"
+    "${shape_cache_arg[@]}" \
+    "${no_rope_arg[@]}"
 
 echo
 echo "Done. Outputs:"
