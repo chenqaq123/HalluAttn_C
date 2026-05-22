@@ -71,6 +71,54 @@ or CGC-only should be treated as ablations, not separate baselines.
 5. When possible, evaluate all baselines on the same generated captions and
    CHAIR-derived object labels.
 
+## Unified Runner
+
+The v1 reproduction runner lives at:
+
+```bash
+python baselines/run_all_baselines.py
+```
+
+Default inputs match the current SinkDetect experiment:
+
+- `experiments/coco_llava_7b/generation.json`
+- `experiments/coco_llava_7b_rows/attention_row_cache.npz`
+- `experiments/coco_llava_7b_rows/row_cache_scores.npz`
+
+Outputs are written to `baselines/results/coco_llava_7b/`:
+
+- `object_cache.jsonl`
+- `baseline_scores.npz`
+- `baseline_scores.csv`
+- `metrics.json`
+- `run_config.json`
+
+Smoke test without loading the VLM:
+
+```bash
+python baselines/run_all_baselines.py \
+  --skip_model_baselines \
+  --limit 20 \
+  --output_dir baselines/results/smoke_skip_model
+```
+
+Full baseline run on one GPU:
+
+```bash
+python baselines/run_all_baselines.py --device 0
+```
+
+Implementation notes:
+
+- PAS formulas follow the local sibling repo `../pas`, especially
+  `scripts/compute_scores.py`.
+- GLSim formulas follow the official repository
+  `deeplearning-wisc/glsim`; v1 adapts its global-local cosine computation to
+  the teacher-forced captions already generated in this project.
+- Beyond Global Scores currently has no official implementation available in
+  the checked sources, so v1 marks ADS+CGC as `paper_reimplementation` in
+  `run_config.json`.
+
 ## Primary References
 
 - PAS: *Prelim Attention Score for Detecting Object Hallucinations in Large
