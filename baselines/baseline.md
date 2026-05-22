@@ -14,7 +14,9 @@ the final method used as its main experimental detector.
 | GLSim | Representation | Global-local similarity between visual representations and object semantics | Representation-based image-object compatibility baseline. |
 | SVAR | Global attention | Summed Visual Attention Ratio from object token to image tokens | Strong global image-attention baseline. |
 | PAS | Prelim attention | Layer-0 Prelim Attention Score | Final PAS detector; do not separately list PAS ablations such as instruction/image/BOS attention or MI variants. |
-| Beyond Global Scores | Fine-grained patch grounding | Final ADS+CGC combined detector | Combines patch-level Attention Dispersion Score and Cross-modal Grounding Consistency. Do not list ADS and CGC as separate baselines unless doing ablation. |
+| Beyond-ADS | Fine-grained patch grounding | Attention Dispersion Score | Tests whether object-to-patch attention is diffuse. |
+| Beyond-CGC | Fine-grained patch grounding | Cross-modal Grounding Consistency | Tests whether object and attended patch representations are semantically aligned. |
+| Beyond-ADS+CGC | Fine-grained patch grounding | Combined ADS+CGC detector | Final combined detector; report alongside ADS and CGC to diagnose which component contributes. |
 
 ## Grouping
 
@@ -47,21 +49,24 @@ PAS is the primary baseline for our project because it is the strongest recent
 training-free attention-based detector and is directly comparable to our
 attention-row pipeline.
 
-### Fine-Grained Grounding Baseline
+### Fine-Grained Grounding Baselines
 
-- **Beyond Global Scores / ADS+CGC**: patch-level detector that combines:
-  - Attention dispersion: whether token-to-patch attention is localized or
-    diffuse.
-  - Cross-modal grounding consistency: whether token and patch representations
-    show local semantic alignment.
+- **Beyond-ADS**: attention dispersion, testing whether object-to-patch
+  attention is localized or diffuse.
+- **Beyond-CGC**: cross-modal grounding consistency, testing whether the object
+  representation aligns with the attended patch representations.
+- **Beyond-ADS+CGC**: combined detector using both signals.
 
-For final comparison, use the combined detector reported by the paper. ADS-only
-or CGC-only should be treated as ablations, not separate baselines.
+We report all three scores. ADS and CGC are useful diagnostic baselines because
+they reveal whether the combined detector is helped by attention localization,
+representation consistency, or both.
 
 ## Reporting Rules
 
-1. Use each paper's final detector as the baseline.
-2. Do not list internal ablations as independent baselines.
+1. Use each paper's final detector as the main baseline when the paper reports
+   one.
+2. For Beyond Global Scores, report ADS, CGC, and ADS+CGC separately because
+   the two components test different grounding assumptions.
 3. Report overall AUROC for comparability with prior work.
 4. Also report position-controlled metrics for our analysis:
    - position-only AUROC;
