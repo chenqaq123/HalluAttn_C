@@ -110,6 +110,9 @@ def compute_model_baselines(
     local_index = _local_index_by_object_id(records)
     device = torch.device(f"cuda:{device_index}")
     model, processor = load_model_and_processor(model_path, device)
+    model.eval()
+    for param in model.parameters():
+        param.requires_grad_(False)
     lm_head = _get_lm_head(model)
     prompt_text = build_caption_prompt()
     grouped = _group_by_image(records)
@@ -135,7 +138,7 @@ def compute_model_baselines(
         except ValueError:
             continue
 
-        with torch.inference_mode():
+        with torch.no_grad():
             outputs = model.forward(
                 **inputs,
                 output_attentions=True,
@@ -159,6 +162,8 @@ def compute_model_baselines(
         beyond_mean = attentions[beyond_l].mean(dim=1).squeeze(0)
         prompt_global = hidden_states[image_l][0, max(0, prompt_end_idx - 1), :]
         visual_hidden = hidden_states[image_l][0, vis_start:vis_end, :]
+        visual_logits = lm_head(visual_hidden).float()
+        visual_probs_all = torch.nn.functional.softmax(visual_logits, dim=-1)
 
         for record in image_records:
             object_id = int(record["object_id"])
@@ -181,8 +186,7 @@ def compute_model_baselines(
 
             # IC: visual logit-lens confidence for the generated object token.
             # Grounded objects should be more visually predictable, so hallu_score is negated.
-            visual_logits = lm_head(visual_hidden).float()
-            visual_probs = torch.nn.functional.softmax(visual_logits, dim=-1)[:, target_token]
+            visual_probs = visual_probs_all[:, target_token]
             visual_conf = visual_probs.max()
             scores["ic_hallu_score"][row_idx] = float(-visual_conf.item())
 
@@ -211,7 +215,7 @@ def compute_model_baselines(
             scores["beyond_cgc_hallu_score"][row_idx] = float(-cgc_grounded.item())
             scores["beyond_adscgc_hallu_score"][row_idx] = float(-adscgc_grounded.item())
 
-        del inputs, outputs, logits, hidden_states, attentions
+        del inputs, outputs, logits, hidden_states, attentions, visual_logits, visual_probs_all
         gc.collect()
         torch.cuda.empty_cache()
 
