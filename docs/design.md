@@ -4,12 +4,13 @@ This document is the source of truth for *why* we compute the scores we compute.
 It's written for a future-me reading the repo cold, and as the seed of the
 methodology section of a paper.
 
-> Status: current implementation design. PAS is treated as the comparison
-> baseline; SinkDetect focuses on de-biased visual-attention shape signals and
-> explicit ablations for sink removal and top-mass visual masking. A key
-> empirical finding from the row-cache run is that global AUROC is strongly
-> confounded by object generation position, so position-controlled evaluation
-> is now required for any paper-facing claim.
+> Status: current research framing. The strongest verified result is not yet a
+> new training-free detector, but a controlled re-evaluation: global AUROC for
+> attention-based hallucination detection is strongly confounded by object
+> generation position, and mean-over-head attention aggregation hides much of
+> the signal that survives in late-layer per-head features. Mitigation-side
+> claims (e.g. whether attention/visual-enhancement methods shift the answer
+> prior on POPE) remain hypotheses until reproduced under controlled metrics.
 
 ---
 
@@ -22,9 +23,12 @@ families of detection signals exist in the literature:
 - **Logit-based**: NLL, Entropy, DoLa-style contrastive logits. Captures
   cases where the model is internally uncertain; fails for confident
   hallucinations.
-- **Attention summary**: PAS (`A[q, T].sum()`), Image-Attention (IC,
-  `A[q, V].sum()`), GLSim. Reduces a `|V|`-dim attention distribution to a
-  single scalar, throwing away the *shape*.
+- **Representation / logit-lens**: IC, GLSim. Captures whether internal visual
+  states support the object, often more robust than attention mass.
+- **Attention summary**: PAS (`A[q, T].sum()`), SVAR/image-attention
+  (`A[q, V].sum()`), and related visual-mass scores. These reduce a
+  high-dimensional attention pattern to a scalar, throwing away head/layer
+  structure and spatial shape.
 
 Two parallel architectural observations motivate the de-biasing step:
 
@@ -49,14 +53,52 @@ The latest experiments reveal a third confounder:
    with `gen_pos` can obtain high global AUROC without detecting visual
    grounding within a fixed position range.
 
-**Gap statement.** Existing detectors measure *how much* a query attends to
-visual tokens, not *whether that attention has the shape of real grounding*.
-The shape should carry information beyond sink/RoPE bias and beyond the
-generation-position prior.
+**Gap statement.** Existing attention detectors often measure *how much* a
+query attends to visual/text tokens, not whether the attention evidence is
+position-controlled, head-specific, and genuinely grounded. Aggregate metrics
+then make this worse: global AUROC can reward generation position, and POPE
+accuracy/F1 can reward a shifted yes/no answer prior. The current project
+therefore treats evaluation confounds and attention aggregation as the central
+objects of study.
 
 ---
 
-## 2. Core hypothesis
+## 2. Current Claim Structure
+
+We separate claims into what is already supported by experiments and what
+remains a hypothesis.
+
+### 2.1 Verified Claims
+
+1. **Detection scores are position-confounded.** On the current
+   LLaVA-1.5-7B / COCO run, object generation position alone reaches AUROC
+   0.8304. PAS and SVAR obtain high global AUROC but collapse under
+   within-bin, matched-pair, and residual evaluation.
+2. **Mean-over-head attention is too coarse.** Closed-form shape scores on
+   mean-over-head attention mostly fail under position control.
+3. **Attention is not empty.** A supervised diagnostic probe over late-layer
+   per-head attention-shape features recovers substantial position-controlled
+   signal. This suggests that the failure is not attention itself, but coarse
+   aggregation and uncontrolled evaluation.
+
+### 2.2 Hypotheses Still Under Test
+
+1. **Mitigation metrics may also be confounded.** On POPE-style yes/no
+   benchmarks, training-free interventions such as visual-signal enhancement
+   or attention amplification may improve aggregate scores by shifting the
+   answer prior toward "yes", rather than by improving visual grounding. This
+   is a plausible diagnostic lens, not a result yet.
+2. **Head-selection mitigation may be a positive counterexample.** Papers that
+   select or enhance specific heads might align with the per-head diagnostic
+   finding. They must be reproduced before we claim that mitigation methods are
+   generally flawed.
+3. **A fair training-free per-head detector is not implemented yet.** The
+   supervised per-head probe is an evidence test / upper bound, not an
+   apples-to-apples detector against PAS, SVAR, IC, or GLSim.
+
+---
+
+## 3. Original Shape Hypothesis
 
 > **A grounded object generation produces a visual attention distribution
 > that is (i) concentrated on a small set of content-relevant tokens,
@@ -68,9 +110,14 @@ generation-position prior.
 This reframes detection as testing the shape of a distribution against a
 null, rather than measuring the mass of a single summary.
 
+The row-cache experiments only weakly support this hypothesis for
+mean-over-head attention. The per-head diagnostic revises it: if shape carries
+grounding information, it appears to live in specific late-layer heads and is
+washed out by averaging.
+
 ---
 
-## 3. De-biasing model and ablations
+## 4. De-biasing model and ablations
 
 Let `a^{(l)}_q ∈ Δ^{|V|}` be the row of layer-*l* attention from query
 position *q* (the object's preceding token) restricted to the visual span
@@ -139,7 +186,7 @@ are more often hallucinated.
 
 ---
 
-## 4. Estimating the null without extra forward passes
+## 5. Estimating the null without extra forward passes
 
 The cleanest estimator of `p_RoPE` would be to run forward passes on
 **noise images** (or all-mean-token replacements), averaging the attention
@@ -180,7 +227,7 @@ A noise-image null is a planned extension (`docs/roadmap.md` once written).
 
 ---
 
-## 5. Scoring families
+## 6. Scoring families
 
 All distributions below are visual-token distributions extracted from one of
 the four branches above. For branches that remove sinks (`sink_only_*` and
@@ -193,7 +240,7 @@ pre-RoPE key L2 norms within the visual span, then clamped to `[3, 30]`.
 
 For a single object mention at query position *q*:
 
-### 5.1 CVG — Counterfactual Visual Grounding
+### 6.1 CVG — Counterfactual Visual Grounding
 
 Closeness between the object query's visual distribution and the
 instruction null:
@@ -221,7 +268,7 @@ across images and does not depend on the generated object word. Local
 generated-token nulls are implementation-level exploratory features and should
 not be part of the main method unless a later ablation justifies them.
 
-### 5.1.1 Position-Calibrated CVG
+### 6.1.1 Position-Calibrated CVG
 
 The row-cache experiments show that instruction-token and uniform nulls can be
 dominated by generation position. In particular, `sink_only_cvg_kl_uniform`
@@ -247,9 +294,9 @@ it only takes nearby non-object generated tokens. Refinements to test:
   tokens from the local null;
 - weight local null rows by distance from the object token;
 - compare deltas in concentration and peak overlap, not only KL/JSD;
-- evaluate only with position-controlled metrics (see §5.5).
+- evaluate only with position-controlled metrics (see §6.5).
 
-### 5.2 Concentration
+### 6.2 Concentration
 
 Shape statistics of the test distribution, no null required:
 
@@ -259,7 +306,7 @@ Shape statistics of the test distribution, no null required:
 
 These test the "concentrated on a small region" property directly.
 
-### 5.3 CLC — Cross-Layer Consistency
+### 6.3 CLC — Cross-Layer Consistency
 
 Stack the per-layer sink-stripped distributions into a matrix
 `P ∈ R^{L × |V|}` (one row per layer). Compute:
@@ -276,7 +323,7 @@ A "mid-late layers only" version restricts to `[L/2−2, L−4]` because
 grounding is typically cleanest in mid-late layers in the literature
 (empirical, layer-range is a hyperparameter).
 
-### 5.4 Branch prefixes and global versions
+### 6.4 Branch prefixes and global versions
 
 For every shape score, the branch name is encoded in the key:
 
@@ -295,7 +342,7 @@ first** (not the scores), then applies the same formula. That is:
 This is structurally different from "average the per-layer scores" and the
 two should *not* be expected to give the same answer.
 
-### 5.5 Evaluation metrics: global vs position-controlled
+### 6.5 Evaluation metrics: global vs position-controlled
 
 Global AUROC is still useful as a diagnostic, but it is insufficient for the
 main claim. AUROC means the probability that a random hallucinated object
@@ -335,15 +382,15 @@ evaluation.
 
 ---
 
-## 6. Fast metric iteration cache
+## 7. Fast metric iteration cache
 
 Changing CVG signs, KL/JSD variants, concentration formulas, CLC aggregation,
 or fusion groups should not require another LLaVA forward pass. Stage 2 can
 therefore save compact caches.
 
-### 6.1 Legacy branch cache
+### 7.1 Legacy branch cache
 
-    SAVE_SHAPE_CACHE=1 bash scripts/run_parallel.sh
+    SAVE_SHAPE_CACHE=1 bash detection/scripts/legacy/run_parallel.sh
 
 The cache stores, for each object mention and layer:
 
@@ -355,18 +402,18 @@ The cache stores, for each object mention and layer:
 
 Then shape metrics can be recomputed with:
 
-    python scripts/recompute_shape_from_cache.py \
+    python detection/scripts/legacy/recompute_shape_from_cache.py \
         --cache experiments/<exp>/shape_cache.npz
 
 This cache is valid for formula-level iteration. It is **not** valid if the
 model, prompt, sink detector, top-mass ratio, or purification operation itself
 changes, because those change the cached rows.
 
-### 6.2 Attention-row cache for current ablations
+### 7.2 Attention-row cache for current ablations
 
 The current experimental path is an explicit two-stage attention-row cache:
 
-    python scripts/cache_attention_rows.py \
+    python detection/scripts/cache_attention_rows.py \
         --generation_json experiments/<exp>/generation.json \
         --output_dir experiments/<exp>_rows \
         --cache_layers 0,1,2,3,4
@@ -386,7 +433,7 @@ It intentionally does **not** store `sink_only`, `topmass_only`, or
 `purified` rows. Those are derived in the recompute stage by zeroing cached
 sink columns and/or applying top-mass masks to the cached object row:
 
-    python scripts/recompute_from_row_cache.py \
+    python detection/scripts/recompute_from_row_cache.py \
         --cache experiments/<exp>_rows/attention_row_cache.npz \
         --ratio 0.5
 
@@ -397,12 +444,12 @@ cached layer set, RoPE-removal definition, or sink detector changes.
 
 The row cache is also shardable:
 
-    python scripts/cache_attention_rows.py ... --shard_idx 0 --num_shards 4
-    python scripts/merge_shards.py --mode row_cache --output_dir experiments/<exp>_rows --num_shards 4
+    python detection/scripts/cache_attention_rows.py ... --shard_idx 0 --num_shards 4
+    python detection/scripts/merge_shards.py --mode row_cache --output_dir experiments/<exp>_rows --num_shards 4
 
 ---
 
-## 7. Efficiency design
+## 8. Efficiency design
 
 The main computational cost is not CHAIR or score aggregation. It is the
 white-box attention extraction pass. Stage 2 currently runs a teacher-forced
@@ -452,7 +499,7 @@ larger scale.
 
 ---
 
-## 8. Model-agnostic extension for commercial VLMs
+## 9. Model-agnostic extension for commercial VLMs
 
 Commercial VLMs usually do not expose attention maps, hidden states, logits,
 or decoding internals. A naive black-box extension based on image
@@ -498,9 +545,49 @@ surrogate-verifier transfer to commercial VLM outputs.
 
 ---
 
-## 9. Theoretical hook (for a paper)
+## 10. Mitigation-side diagnostic: currently a hypothesis
 
-Under the generative model in §3:
+The same evaluation concern may apply to hallucination **mitigation**
+benchmarks. In POPE-style object-existence QA, a method can improve aggregate
+accuracy or F1 by changing the answer prior, not necessarily by improving
+grounding. In particular, an intervention that makes the model answer "yes"
+more often will tend to:
+
+- increase recall / TPR on positive object queries;
+- increase false positives / FPR on negative object queries;
+- sometimes improve F1 while worsening hallucination on absent-object cases.
+
+The mitigation-side diagnostic should therefore report:
+
+- **Yes rate**: fraction of all responses judged as yes.
+- **TPR / Recall**: yes rate on present-object queries.
+- **FPR**: yes rate on absent-object queries.
+- **TNR / Specificity**: no rate on absent-object queries.
+- **Balanced accuracy**: `(TPR + TNR) / 2`.
+- **MCC**: correlation-style metric less sensitive to yes/no skew.
+- **Asymmetric gain**: `ΔTPR − ΔFPR` relative to the base model.
+
+Interpretation:
+
+| pattern | interpretation |
+|---|---|
+| `ΔTPR > 0`, `ΔFPR <= 0` | genuine mitigation candidate |
+| `ΔTPR > ΔFPR > 0` | useful but answer-prior shift exists |
+| `ΔFPR >= ΔTPR > 0` | likely yes-bias / threshold shift |
+| `ΔTPR ≈ ΔFPR` | mostly global answer-prior movement |
+
+This section is intentionally conservative. ClearSight, PAI, VCD-style
+methods, and head-selection / head-enhancement methods should be analyzed
+under this protocol before making any paper-facing claim. The current project
+has only the observation that some prior POPE runs appeared to move samples
+one-sidedly toward "yes"; it has not yet reproduced those methods in this
+repository.
+
+---
+
+## 11. Theoretical hook (for a paper)
+
+Under the generative model in §4:
 
 > **Proposition (informal).** Suppose hallucinated mentions satisfy
 > `π_C = 0` and grounded mentions satisfy `π_C ≥ c_0 > 0`, and that
@@ -521,21 +608,23 @@ and `π_R`. A rigorous proof needs Pinsker plus a tail bound; not done.
 
 ---
 
-## 10. What this is **not**
+## 12. What this is **not**
 
-- Not a learned probe — every score is closed-form on the attention matrix.
+- Not currently a learned detector — the main closed-form SinkDetect scores
+  are training-free. The per-head logistic model is a **diagnostic probe** and
+  must be reported separately from training-free baselines.
 - Not a decoding intervention — purely a detector/verifier. (Future: feed
   CVG into decoding-time early stopping or reranking; would be a follow-up
   paper.)
-- Not single-attention-head — heads are averaged before any of this. Per-head
-  analysis is a planned ablation.
+- Not yet a final head-selection method — per-head analysis shows where signal
+  lives, but a fair training-free head-selection detector is still open.
 - Not multi-pass — single forward pass per image.
 - Not a black-box perturbation detector — the model-agnostic extension uses a
   white-box verifier, rather than perturbing the commercial generator.
 
 ---
 
-## 11. Open questions to validate empirically
+## 13. Open questions to validate empirically
 
 These questions must now be answered under position-controlled evaluation, not
 only global AUROC:
@@ -551,6 +640,10 @@ only global AUROC:
 6. Is top-mass helpful after position control, or only under global AUROC?
 7. Do CVG, Concentration, and CLC remain complementary after residualizing
    position?
+8. Can a training-free late-layer head subset match the supervised per-head
+   probe without using labels at test time?
+9. Do mitigation methods improve grounding or merely shift the yes/no answer
+   prior on POPE-style benchmarks?
 
 Answer pattern that would support the design:
 
@@ -562,11 +655,11 @@ Answer pattern that would support the design:
 - CLC or no-RoPE concentration keeps modest but stable signal across position
   bins.
 
-If any of these fail, the design needs revision (see §12).
+If any of these fail, the design needs revision (see §14).
 
 ---
 
-## 12. Likely failure modes and revision paths
+## 14. Likely failure modes and revision paths
 
 - **Instruction null is too close to object null.** Mitigation: switch to
   noise-image null. Cost: small one-time calibration pass; clean theoretical
@@ -604,10 +697,15 @@ If any of these fail, the design needs revision (see §12).
 - **Full attention extraction is too slow.** Mitigation: implement row-level
   visual attention extraction for object/instruction/null query rows, and
   restrict expensive per-head analysis to a small layer set.
+- **Mitigation-side critique overreaches.** If head-selection or
+  visual-enhancement methods improve TPR without increasing FPR, the story
+  should not be "mitigation methods are flawed." It should be "aggregate POPE
+  metrics need answer-prior controls, and some methods pass them while others
+  do not."
 
 ---
 
-## 13. Current empirical notes
+## 15. Current empirical notes
 
 Current row-cache run:
 
@@ -641,14 +739,14 @@ uniform-null CVG is not yet evidence of visual grounding detection. The most
 promising direction is no-RoPE plus local position-controlled contrasts, with
 CLC as a complementary weak signal.
 
-### 13.1 Per-head diagnostic: the signal is washed out, not absent
+### 15.1 Per-head diagnostic: the signal is washed out, not absent
 
 The mean-over-heads shape scores above collapse to chance under position
 control. To test whether this is because (a) attention carries no
 position-independent grounding signal, or (b) it does but head/layer averaging
 destroys it, we cached **per-head** attention-shape features at layers
-`[0, 1, 10, 22, 31]` (script `scripts/cache_per_head_rows.py`) and ran a
-position-controlled probe (`scripts/diagnose_per_head.py`). Per head we take
+`[0, 1, 10, 22, 31]` (script `detection/scripts/cache_per_head_rows.py`) and ran a
+position-controlled probe (`detection/scripts/diagnose_per_head.py`). Per head we take
 the L1-normalized visual-attention row and compute four shape features:
 entropy, `-top1_mass`, `-top5_mass`, `-max_over_mean`. Sinks are **not**
 stripped (the question here is head granularity, not sinks).
@@ -679,18 +777,18 @@ Caveat for the paper: the 0.73 probe is **supervised** whereas IC/PAS/SVAR are
 training-free, so "beats IC (0.686)" is not yet an apples-to-apples claim. The
 *scientific* claim (signal exists, deepens with layer, is washed out by
 averaging) is established by the within-probe layer comparison; a fair
-detector comparison requires a training-free variant (§13.2) or giving IC the
+detector comparison requires a training-free variant (§15.2) or giving IC the
 same probe treatment.
 
-### 13.2 LH-Shape: late-layer per-head attention-shape detector (proposed)
+### 15.2 LH-Shape: late-layer per-head attention-shape detector (proposed)
 
-Motivated by §13.1, the constructive method for the paper. **LH-Shape** scores
+Motivated by §15.1, the constructive method for the paper. **LH-Shape** scores
 the *shape* of each late-layer head's visual-attention distribution and
 aggregates, rather than averaging heads first.
 
 - **Features.** For the object query at the last layer (and optionally a small
   late-layer set, e.g. `{22, 31}`), per head `h`: the L1-normalized visual row's
-  entropy, top-`k` mass, and `max_over_mean` (the §13.1 features). Sink removal
+  entropy, top-`k` mass, and `max_over_mean` (the §15.1 features). Sink removal
   optional as an ablation.
 - **Supervised variant (signal ceiling).** Linear probe over the per-head
   feature vector; report position-controlled within-bin / matched-pair /
@@ -715,12 +813,12 @@ aggregates, rather than averaging heads first.
 3. Sweep which late layers / how many heads are needed (cost vs signal).
 4. Test sink removal and no-RoPE as ablations on the per-head features.
 
-Reproduce: `scripts/cache_per_head_rows.py` (GPU, dumps per-head shape
-features) then `scripts/diagnose_per_head.py` (CPU, position-controlled probe).
+Reproduce: `detection/scripts/cache_per_head_rows.py` (GPU, dumps per-head shape
+features) then `detection/scripts/diagnose_per_head.py` (CPU, position-controlled probe).
 
 ---
 
-## 14. References (from memory; verify before submission)
+## 16. References (from memory; verify before submission)
 
 - Xiao et al., *Efficient Streaming Language Models with Attention Sinks*,
   ICLR 2024.

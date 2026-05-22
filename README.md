@@ -1,11 +1,22 @@
 # SinkDetect — Sink-Purified Attention for Hallucination Detection
 
-> 📑 **Docs**: design rationale in [docs/design.md](docs/design.md);
-> per-score reference in [docs/scores.md](docs/scores.md); pipeline
-> walk-through in [docs/pipeline.md](docs/pipeline.md).
+> 📑 **Docs**: research framing in [docs/design.md](docs/design.md);
+> target project structure in [docs/project_structure.md](docs/project_structure.md);
+> per-score reference in [detection/docs/scores.md](detection/docs/scores.md); pipeline
+> walk-through in [detection/docs/pipeline.md](detection/docs/pipeline.md).
 
-Token-level hallucination detection for LVLMs (LLaVA-1.5-7B) by mining the
-shape of the attention distribution over image tokens. Active signals:
+Token-level hallucination analysis for LVLMs (LLaVA-1.5-7B). The current
+project has two tracks:
+
+1. **Detection**: controlled evaluation of attention/logit/representation
+   hallucination detectors under generation-position confounds.
+2. **Mitigation**: planned controlled evaluation of intervention methods under
+   yes/no answer-prior shifts on POPE-style benchmarks.
+
+The detection track is implemented. The mitigation track currently has only
+documentation scaffolding; no mitigation method has been reproduced here yet.
+
+Active detection signals:
 
 1. **Shape scores** — CVG, concentration, and cross-layer consistency over
    object-token visual attention distributions.
@@ -25,20 +36,21 @@ COCO val2014 with CHAIR labels.
 
 ```
 SinkDetect/
-├── scripts/
-│   ├── caption.py     # Stage 1: vanilla LLaVA-1.5 greedy captioning
-│   ├── detect.py      # Stage 2: forward pass + score + AUROC
-│   ├── cache_attention_rows.py       # Stage 2a: compact row cache
-│   ├── recompute_from_row_cache.py   # Stage 2b: metric recompute
-│   └── run.sh         # One-click runner (Stage 1 → Stage 2)
-├── src/sinkdetect/
-│   ├── adapter.py     # DetectionAdapter — drop-in LlamaAttention replacement
-│   ├── sink_utils.py  # sink detection + attention purification
-│   ├── scoring.py     # per-mention score computation + AUROC
-│   ├── chair.py       # CHAIR evaluation + token-level labeling
-│   └── utils.py       # model loading, token partitioning, prompts
+├── detection/
+│   ├── baselines/   # detection baseline implementation + docs
+│   ├── docs/        # detection design, score reference, pipeline, summary
+│   ├── scripts/     # detection runners, row-cache, diagnostics, legacy scripts
+│   └── src/         # SinkDetect detection source package
+├── mitigation/
+│   ├── baselines/   # mitigation methods to reproduce
+│   ├── docs/        # future mitigation design notes
+│   ├── scripts/     # future POPE / answer-prior scripts
+│   └── src/         # future mitigation code
 └── experiments/<exp>/ # outputs: generation.json, metrics.json, raw_scores.npz
 ```
+
+There are no top-level compatibility wrappers now. Detection code and commands
+live under `detection/`.
 
 ## Requirements
 
@@ -52,10 +64,10 @@ SinkDetect/
 
 ```bash
 # Single GPU (logical index 0, with CUDA_VISIBLE_DEVICES locked to 0-3)
-bash scripts/run.sh
+bash detection/scripts/legacy/run.sh
 
 # 4-way data parallel on GPUs 0,1,2,3
-bash scripts/run_parallel.sh
+bash detection/scripts/legacy/run_parallel.sh
 ```
 
 Both runners set `CUDA_VISIBLE_DEVICES=0,1,2,3` by default so the pipeline can
@@ -63,10 +75,10 @@ never touch GPUs 4-7. Outputs go to `experiments/coco_llava_7b/`.
 
 ### Parallel mode details
 
-`run_parallel.sh` launches `NUM_SHARDS` (default 4) worker processes, each
+`detection/scripts/legacy/run_parallel.sh` launches `NUM_SHARDS` (default 4) worker processes, each
 loading its own copy of LLaVA-1.5-7B onto one logical GPU. Each worker takes a
 deterministic stride (`data[shard_idx::num_shards]`) of the input list. After
-all workers finish, `scripts/merge_shards.py` concatenates results and
+all workers finish, `detection/scripts/merge_shards.py` concatenates results and
 recomputes AUROC on the pooled set.
 
 Per-shard logs land in `experiments/<exp>/logs/stage{1,2}_shard{i}.log`.
@@ -74,37 +86,37 @@ If any worker fails, the runner prints the last 30 lines of its log and aborts.
 
 ```bash
 # Smoke test on small data
-NUM_SAMPLES=200 bash scripts/run_parallel.sh
+NUM_SAMPLES=200 bash detection/scripts/legacy/run_parallel.sh
 
 # Sweep ratio
 for r in 0.3 0.5 0.7; do
-  EXP_NAME=coco_llava_7b_r${r/./} RATIO=$r bash scripts/run_parallel.sh
+  EXP_NAME=coco_llava_7b_r${r/./} RATIO=$r bash detection/scripts/legacy/run_parallel.sh
 done
 
 # Use only 2 of the 4 GPUs (e.g. if 2,3 are occupied)
-CUDA_VISIBLE_DEVICES=0,1 NUM_SHARDS=2 bash scripts/run_parallel.sh
+CUDA_VISIBLE_DEVICES=0,1 NUM_SHARDS=2 bash detection/scripts/legacy/run_parallel.sh
 ```
 
 ### Common overrides
 
 ```bash
 # small smoke test
-NUM_SAMPLES=200 LIMIT=200 bash scripts/run.sh
+NUM_SAMPLES=200 LIMIT=200 bash detection/scripts/legacy/run.sh
 
 # sweep the purification ratio
-EXP_NAME=coco_llava_7b_r03 RATIO=0.3 bash scripts/run.sh
+EXP_NAME=coco_llava_7b_r03 RATIO=0.3 bash detection/scripts/legacy/run.sh
 
 # custom paths
 MODEL_PATH=/path/to/llava-1.5-7b-hf \
 COCO_PATH=/path/to/coco-2014 \
 CHAIR_PKL=/path/to/chair_coco.pkl \
-bash scripts/run.sh
+bash detection/scripts/legacy/run.sh
 
 # regenerate captions even if generation.json exists
-FORCE_REGEN=1 bash scripts/run.sh
+FORCE_REGEN=1 bash detection/scripts/legacy/run.sh
 
 # cache raw + no-RoPE branches for shape-only analysis
-SAVE_SHAPE_CACHE=1 COMPUTE_NO_ROPE_ATTENTION=1 bash scripts/run_parallel.sh
+SAVE_SHAPE_CACHE=1 COMPUTE_NO_ROPE_ATTENTION=1 bash detection/scripts/legacy/run_parallel.sh
 ```
 
 All knobs (with defaults):
@@ -129,14 +141,14 @@ All knobs (with defaults):
 
 ```bash
 # Stage 1
-python scripts/caption.py \
+python detection/scripts/caption.py \
     --model_path /path/to/llava-1.5-7b-hf \
     --coco_path  /path/to/coco-2014 \
     --output_path experiments/coco_llava_7b/generation.json \
     --num_samples 5000
 
 # Stage 2
-python scripts/detect.py \
+python detection/scripts/legacy/detect.py \
     --model_path /path/to/llava-1.5-7b-hf \
     --coco_path  /path/to/coco-2014 \
     --generation_json experiments/coco_llava_7b/generation.json \
@@ -160,15 +172,15 @@ Three active sub-families:
 
 All distributions are **sink-stripped then renormalized** before scoring, so
 massive-activation sinks cannot dominate either the test distribution or the
-null. See [src/sinkdetect/grounding.py](src/sinkdetect/grounding.py) for the
+null. See [grounding.py](detection/src/sinkdetect/grounding.py) for the
 exact formulas.
 
 To iterate on shape metrics without another model forward pass, run detection
 with caching:
 
 ```bash
-SAVE_SHAPE_CACHE=1 bash scripts/run_parallel.sh
-python scripts/recompute_shape_from_cache.py \
+SAVE_SHAPE_CACHE=1 bash detection/scripts/legacy/run_parallel.sh
+python detection/scripts/legacy/recompute_shape_from_cache.py \
   --cache experiments/coco_llava_7b/shape_cache.npz
 ```
 
@@ -183,14 +195,14 @@ top-mass-only, and purified variants are derived during recompute, so `--ratio`
 can be swept from cache:
 
 ```bash
-bash scripts/run_row_cache_parallel.sh
+bash detection/scripts/run_row_cache_parallel.sh
 ```
 
 The script assumes `experiments/coco_llava_7b/generation.json` already exists
 from Stage 1. Manual equivalent:
 
 ```bash
-python scripts/cache_attention_rows.py \
+python detection/scripts/cache_attention_rows.py \
   --model_path /path/to/llava-1.5-7b-hf \
   --coco_path /path/to/coco-2014 \
   --generation_json experiments/coco_llava_7b/generation.json \
@@ -199,7 +211,7 @@ python scripts/cache_attention_rows.py \
   --cache_layers 0,1,2,3,4 \
   --device 0
 
-python scripts/recompute_from_row_cache.py \
+python detection/scripts/recompute_from_row_cache.py \
   --cache experiments/coco_llava_7b_rows/attention_row_cache.npz \
   --ratio 0.5
 ```
