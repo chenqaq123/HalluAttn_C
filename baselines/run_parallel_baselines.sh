@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 4-way parallel runner for unified baseline reproduction.
+# Multi-GPU parallel runner for unified baseline reproduction.
 #
 # This assumes the current COCO/LLaVA generation and row-cache files exist:
 #   experiments/coco_llava_7b/generation.json
@@ -68,8 +68,16 @@ if [[ "$CHAIR_PKL" != /* ]]; then
     CHAIR_PKL="$PROJ_ROOT/$CHAIR_PKL"
 fi
 
-if ! [[ "$NUM_SHARDS" =~ ^[1-4]$ ]]; then
-    echo "[err] NUM_SHARDS=$NUM_SHARDS must be in 1..4 for this runner." >&2
+if ! [[ "$NUM_SHARDS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[err] NUM_SHARDS=$NUM_SHARDS must be a positive integer." >&2
+    exit 1
+fi
+
+IFS=',' read -ra VISIBLE_GPU_LIST <<< "$CUDA_VISIBLE_DEVICES"
+NUM_VISIBLE_GPUS="${#VISIBLE_GPU_LIST[@]}"
+if (( NUM_SHARDS > NUM_VISIBLE_GPUS )); then
+    echo "[err] NUM_SHARDS=$NUM_SHARDS exceeds visible GPU count=$NUM_VISIBLE_GPUS from CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES." >&2
+    echo "[err] Use NUM_SHARDS <= $NUM_VISIBLE_GPUS, or expose more GPUs." >&2
     exit 1
 fi
 

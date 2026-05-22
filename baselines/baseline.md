@@ -108,7 +108,7 @@ Full baseline run on one GPU:
 python baselines/run_all_baselines.py --device 0
 ```
 
-Four-GPU parallel run:
+Multi-GPU parallel run:
 
 ```bash
 bash baselines/run_parallel_baselines.sh
@@ -119,6 +119,15 @@ Useful overrides:
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3 \
 NUM_SHARDS=4 \
+BASELINE_EXP_NAME=coco_llava_7b_baselines \
+bash baselines/run_parallel_baselines.sh
+```
+
+For eight visible GPUs:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
+NUM_SHARDS=8 \
 BASELINE_EXP_NAME=coco_llava_7b_baselines \
 bash baselines/run_parallel_baselines.sh
 ```
