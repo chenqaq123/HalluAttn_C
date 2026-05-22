@@ -641,6 +641,83 @@ uniform-null CVG is not yet evidence of visual grounding detection. The most
 promising direction is no-RoPE plus local position-controlled contrasts, with
 CLC as a complementary weak signal.
 
+### 13.1 Per-head diagnostic: the signal is washed out, not absent
+
+The mean-over-heads shape scores above collapse to chance under position
+control. To test whether this is because (a) attention carries no
+position-independent grounding signal, or (b) it does but head/layer averaging
+destroys it, we cached **per-head** attention-shape features at layers
+`[0, 1, 10, 22, 31]` (script `scripts/cache_per_head_rows.py`) and ran a
+position-controlled probe (`scripts/diagnose_per_head.py`). Per head we take
+the L1-normalized visual-attention row and compute four shape features:
+entropy, `-top1_mass`, `-top5_mass`, `-max_over_mean`. Sinks are **not**
+stripped (the question here is head granularity, not sinks).
+
+Results on LLaVA-1.5-7B / MSCOCO (same 16426 mentions; IC reference within-bin
+0.686; mean-over-heads SinkDetect within-bin ~0.50):
+
+- **Single feature** (best of layer × head × feature): within-bin AUROC 0.595
+  (`layer 31, head 9`). Above PAS/SVAR (~0.58) but below 0.60 — no single head
+  suffices.
+- **Multivariate linear probe** (logistic regression, all per-head features,
+  5-fold CV): within-bin AUROC 0.672; stable across L2 ∈ [0.1, 50] (0.664–0.672),
+  so not an overfitting artifact.
+- **Signal increases monotonically with depth.** Per-layer probe within-bin
+  AUROC: layer 1 → 0.523, layer 0 → 0.603, layer 10 → 0.645, layer 22 → 0.690,
+  **layer 31 → 0.730**. Layer 31 alone (0.730) beats the full 5-layer
+  combination (0.672): early layers are noise that dilutes the probe.
+- **No image-level leakage.** Grouping the 5-fold CV by `image_id` (4977 images,
+  3.3 mentions/image) leaves the numbers essentially unchanged: layer 31
+  within-bin 0.7313 (vs 0.7300 mention-split); all-layers 0.6704.
+
+**Conclusion.** Position-independent grounding signal *is present* in attention
+but lives in **individual late-layer heads** and is destroyed by mean-over-heads
+aggregation and by mixing in early layers. The culprit in SinkDetect's negative
+result is the readout (head averaging + early/all layers), not attention per se.
+
+Caveat for the paper: the 0.73 probe is **supervised** whereas IC/PAS/SVAR are
+training-free, so "beats IC (0.686)" is not yet an apples-to-apples claim. The
+*scientific* claim (signal exists, deepens with layer, is washed out by
+averaging) is established by the within-probe layer comparison; a fair
+detector comparison requires a training-free variant (§13.2) or giving IC the
+same probe treatment.
+
+### 13.2 LH-Shape: late-layer per-head attention-shape detector (proposed)
+
+Motivated by §13.1, the constructive method for the paper. **LH-Shape** scores
+the *shape* of each late-layer head's visual-attention distribution and
+aggregates, rather than averaging heads first.
+
+- **Features.** For the object query at the last layer (and optionally a small
+  late-layer set, e.g. `{22, 31}`), per head `h`: the L1-normalized visual row's
+  entropy, top-`k` mass, and `max_over_mean` (the §13.1 features). Sink removal
+  optional as an ablation.
+- **Supervised variant (signal ceiling).** Linear probe over the per-head
+  feature vector; report position-controlled within-bin / matched-pair /
+  residual AUROC. Establishes the upper bound (~0.73 within-bin) and the
+  depth/aggregation story.
+- **Training-free variant (fair baseline comparison).** No per-mention labels
+  used at scoring time. Options to evaluate: (i) mean over heads of a single
+  shape feature at layer 31 (tests whether *late-layer* mean already beats
+  *all-layer* mean); (ii) unsupervised head weighting (e.g. weight heads by
+  dispersion/peakedness consistency); (iii) a fixed head subset selected on a
+  disjoint split. This is what gets compared head-to-head with PAS, SVAR, IC,
+  GLSim under the position-controlled protocol.
+- **Why it should help.** It keeps the per-head, late-layer information that the
+  diagnostic shows is discriminative, instead of collapsing it by averaging.
+
+**Open items before this is a paper claim:**
+
+1. Build the training-free variant and compare fairly to IC (no supervision
+   advantage).
+2. Replicate the "late-layer per-head recovers signal" trend on ≥1 more LVLM
+   (InstructBLIP / Qwen-VL) and ≥1 more dataset (Objects365).
+3. Sweep which late layers / how many heads are needed (cost vs signal).
+4. Test sink removal and no-RoPE as ablations on the per-head features.
+
+Reproduce: `scripts/cache_per_head_rows.py` (GPU, dumps per-head shape
+features) then `scripts/diagnose_per_head.py` (CPU, position-controlled probe).
+
 ---
 
 ## 14. References (from memory; verify before submission)
