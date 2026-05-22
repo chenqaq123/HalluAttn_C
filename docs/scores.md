@@ -111,19 +111,6 @@ Let `P ∈ R^{L × |V|}` be the per-layer sink-stripped object distributions.
 CLC is a single number per mention (not per layer). High generalised JSD ⇒
 layers disagree ⇒ hallucination.
 
-## CVG — shuffled null
-
-A permuted version of `ã_q` used as a content-free null. If the original
-distribution is close to its shuffle, it is weakly structured (diffuse =
-hallucination).
-
-| key | formula |
-|---|---|
-| `cvg_kl_shuffled_layer_{l}`       | `−KL( ã^{(l)}_q  \|\|  permute(ã^{(l)}_q) )` — close to shuffle = unstructured = hallu |
-| `cvg_jsd_shuffled_layer_{l}`      | `−JSD( ã^{(l)}_q,  permute(ã^{(l)}_q) )` |
-| `global_cvg_kl_shuffled`          | `−KL( ã_avg  \|\|  permute(ã_avg) )` |
-| `global_cvg_jsd_shuffled`         | `−JSD( ã_avg,  permute(ã_avg) )` |
-
 ## CVG — cross-image null
 
 Instruction null distributions from other images, averaged, provide an

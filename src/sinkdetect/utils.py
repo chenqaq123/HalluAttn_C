@@ -161,7 +161,4 @@ def load_generation_json(path: str) -> list[dict]:
     """
     with open(path) as f:
         data = json.load(f)
-    for entry in data:
-        if isinstance(entry.get("output_ids"), list):
-            entry["output_ids"] = entry["output_ids"]
     return data

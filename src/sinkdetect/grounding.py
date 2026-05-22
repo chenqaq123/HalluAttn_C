@@ -24,6 +24,7 @@ All scores are sign-aligned so that larger value ⇒ more likely hallucination.
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Sequence
 
 import torch
@@ -173,13 +174,6 @@ def compute_grounding_scores_for_mention(
             u[sink_rel] = 0.0
         a_unif = _safe_normalize(u)
 
-        # (5) Shuffled null: randomly permute the object-query visual attention
-        # to create a content-free version of the same distribution.
-        # A grounded query should be structured enough to move away from this
-        # permutation null.
-        a_obj_shuffled = a_obj_clean[torch.randperm(n_v, device=A.device)]
-        a_obj_shuffled = _safe_normalize(a_obj_shuffled)
-
         # ── CVG scores: closeness to null ────────────────────────────────────
         # The instruction-token null is a language/prompt-prior visual gaze.
         # If the object query stays close to that prior, it has not developed
@@ -189,17 +183,9 @@ def compute_grounding_scores_for_mention(
         kl_unif = _kl(a_obj_clean, a_unif).item()
         jsd_instr = _jsd(a_obj_clean, a_null_clean).item()
 
-        # KL/JSD from shuffled null: LARGE distance ⇒ the original distribution
-        # has non-random structure ⇒ grounded ⇒ NOT hallucination.
-        # So we NEGATE (high = grounded, negated → high = hallu).
-        kl_shuffled = _kl(a_obj_clean, a_obj_shuffled).item()
-        jsd_shuffled = _jsd(a_obj_clean, a_obj_shuffled).item()
-
         out[f"{score_prefix}cvg_kl_instr_layer_{l}"] = -kl_instr
         out[f"{score_prefix}cvg_kl_uniform_layer_{l}"] = -kl_unif
         out[f"{score_prefix}cvg_jsd_instr_layer_{l}"] = -jsd_instr
-        out[f"{score_prefix}cvg_kl_shuffled_layer_{l}"] = -kl_shuffled
-        out[f"{score_prefix}cvg_jsd_shuffled_layer_{l}"] = -jsd_shuffled
         if a_local_null_clean is not None:
             out[f"{score_prefix}cvg_kl_local_nonobj_layer_{l}"] = -_kl(
                 a_obj_clean, a_local_null_clean
@@ -263,12 +249,6 @@ def compute_grounding_scores_for_mention(
         out[f"{score_prefix}global_cvg_jsd_local_nonobj"] = -_jsd(
             obj_avg, local_null_avg
         ).item()
-
-    # Global shuffled null: permute the layer-averaged distribution
-    obj_avg_shuffled = obj_avg[torch.randperm(n_v, device=obj_avg.device)]
-    obj_avg_shuffled = _safe_normalize(obj_avg_shuffled)
-    out[f"{score_prefix}global_cvg_kl_shuffled"] = -_kl(obj_avg, obj_avg_shuffled).item()
-    out[f"{score_prefix}global_cvg_jsd_shuffled"] = -_jsd(obj_avg, obj_avg_shuffled).item()
 
     out[f"{score_prefix}global_conc_entropy"] = _entropy(obj_avg).item()
     sorted_vals, _ = obj_avg.sort(descending=True)
@@ -358,41 +338,23 @@ def compute_per_head_scores(
         # Per-head visual attention mass (sink-stripped, renormalized)
         head_vis_mass = []
         head_conc = []
+        head_argmax = []
         for h in range(n_heads):
             a_h = attn_heads[h, token_pos, vis_start:vis_end].float()
             a_h_clean = _strip_sinks(a_h, sink_rel)
-            total = a_h_clean.sum().item()
-            head_vis_mass.append(total)
-
-            # Concentration: entropy per head
+            head_vis_mass.append(a_h_clean.sum().item())
             a_h_norm = _safe_normalize(a_h_clean)
             head_conc.append(_entropy(a_h_norm).item())
+            head_argmax.append(a_h_clean.argmax().item())
 
         head_vis_mass_t = torch.tensor(head_vis_mass, device=attn_heads.device)
         head_conc_t = torch.tensor(head_conc, device=attn_heads.device)
 
-        # ── Inter-head variance of visual mass ────────────────────────────
-        # Low variance = heads agree on visual grounding; high variance = some
-        # heads ignore visual tokens (hallucination signal).
         out[f"ph_vis_mass_std_layer_{layer_idx}"] = head_vis_mass_t.std().item()
-
-        # ── Inter-head mean visual mass (negated) ─────────────────────────
-        # Same as the mean-over-heads image_attn but computed per-head first.
         out[f"ph_vis_mass_mean_layer_{layer_idx}"] = -head_vis_mass_t.mean().item()
 
-        # ── Head agreement: fraction of heads attending to same argmax visual pos ──
-        argmaxes = []
-        for h in range(n_heads):
-            a_h = attn_heads[h, token_pos, vis_start:vis_end].float()
-            a_h_clean = _strip_sinks(a_h, sink_rel)
-            argmaxes.append(a_h_clean.argmax().item())
-        # Mode (most common argmax)
-        from collections import Counter
-        counts = Counter(argmaxes)
-        mode_count = counts.most_common(1)[0][1]
-        agreement = mode_count / n_heads
-        # High agreement = grounded → negate
-        out[f"ph_argmax_agreement_layer_{layer_idx}"] = -agreement
+        mode_count = Counter(head_argmax).most_common(1)[0][1]
+        out[f"ph_argmax_agreement_layer_{layer_idx}"] = -(mode_count / n_heads)
 
         # ── Per-head concentration spread ─────────────────────────────────
         # High std of per-head entropy = heads disagree on peakedness.

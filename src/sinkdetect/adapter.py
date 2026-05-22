@@ -143,43 +143,25 @@ class DetectionAdapter(LlamaAttention):
             self._orig_attn_for_purify = orig_mean
 
             # Sink removal only: isolates the effect of removing sinks.
-            sink_only = purify_attention(
-                orig_mean,
-                sink_pos.detach(),
-                prompt_end_idx=self.text_start,
+            _purify_kw = dict(
+                sink_pos=sink_pos.detach(),
                 vis_start=self.vis_start,
                 vis_end=self.vis_end,
                 ratio=self.purify_ratio,
-                remove_sinks=True,
-                apply_top_mass=False,
             )
-            self.last_sink_only_attn = sink_only
+            self.last_sink_only_attn = purify_attention(
+                orig_mean, **_purify_kw, remove_sinks=True, apply_top_mass=False,
+            )
 
             # Top-mass visual masking only: isolates the effect of top-mass.
-            topmass_only = purify_attention(
-                orig_mean,
-                sink_pos.detach(),
-                prompt_end_idx=self.text_start,
-                vis_start=self.vis_start,
-                vis_end=self.vis_end,
-                ratio=self.purify_ratio,
-                remove_sinks=False,
-                apply_top_mass=True,
+            self.last_topmass_only_attn = purify_attention(
+                orig_mean, **_purify_kw, remove_sinks=False, apply_top_mass=True,
             )
-            self.last_topmass_only_attn = topmass_only
 
             # Full purification: sink removal plus top-mass visual masking.
-            purified = purify_attention(
-                orig_mean,
-                sink_pos.detach(),
-                prompt_end_idx=self.text_start,
-                vis_start=self.vis_start,
-                vis_end=self.vis_end,
-                ratio=self.purify_ratio,
-                remove_sinks=True,
-                apply_top_mass=True,
+            self.last_purified_attn = purify_attention(
+                orig_mean, **_purify_kw, remove_sinks=True, apply_top_mass=True,
             )
-            self.last_purified_attn = purified
 
             if self.compute_no_rope_attention:
                 no_rope_mean = self._compute_no_rope_attention(
@@ -189,34 +171,13 @@ class DetectionAdapter(LlamaAttention):
                 )
                 self.last_no_rope_attn = no_rope_mean
                 self.last_no_rope_sink_only_attn = purify_attention(
-                    no_rope_mean,
-                    sink_pos.detach(),
-                    prompt_end_idx=self.text_start,
-                    vis_start=self.vis_start,
-                    vis_end=self.vis_end,
-                    ratio=self.purify_ratio,
-                    remove_sinks=True,
-                    apply_top_mass=False,
+                    no_rope_mean, **_purify_kw, remove_sinks=True, apply_top_mass=False,
                 )
                 self.last_no_rope_topmass_only_attn = purify_attention(
-                    no_rope_mean,
-                    sink_pos.detach(),
-                    prompt_end_idx=self.text_start,
-                    vis_start=self.vis_start,
-                    vis_end=self.vis_end,
-                    ratio=self.purify_ratio,
-                    remove_sinks=False,
-                    apply_top_mass=True,
+                    no_rope_mean, **_purify_kw, remove_sinks=False, apply_top_mass=True,
                 )
                 self.last_no_rope_purified_attn = purify_attention(
-                    no_rope_mean,
-                    sink_pos.detach(),
-                    prompt_end_idx=self.text_start,
-                    vis_start=self.vis_start,
-                    vis_end=self.vis_end,
-                    ratio=self.purify_ratio,
-                    remove_sinks=True,
-                    apply_top_mass=True,
+                    no_rope_mean, **_purify_kw, remove_sinks=True, apply_top_mass=True,
                 )
             else:
                 self.last_no_rope_attn = None

@@ -35,6 +35,7 @@ from sinkdetect.chair import (
     find_first_mentions,
     load_chair_evaluator,
 )
+from sinkdetect.grounding import _safe_normalize, _sinks_within_visual, _strip_sinks
 from sinkdetect.scoring import compute_all_scores, compute_auroc
 from sinkdetect.sink_utils import find_vis_bounds
 from sinkdetect.utils import (
@@ -269,7 +270,6 @@ def main():
         instruction_mask = token_masks["instruction_mask"]
         current_null_layers = []
         n_v = vis_end - vis_start
-        from sinkdetect.grounding import _sinks_within_visual, _strip_sinks, _safe_normalize
         for l, A in enumerate(orig_attn_layers):
             sink_rel = _sinks_within_visual(
                 sink_stats_layers[l].get("sink_positions", []),

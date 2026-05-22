@@ -92,7 +92,6 @@ def top_mass_mask_visual(
 def purify_attention(
     attn: torch.Tensor,
     sink_pos: torch.Tensor,
-    prompt_end_idx: int,
     vis_start: int = VIS_START,
     vis_end: int = VIS_END,
     ratio: float = 0.5,
@@ -104,9 +103,7 @@ def purify_attention(
     Args:
         attn: Attention weights of shape (seq_len, seq_len), already softmax'd
               and mean-over-heads reduced.
-        sink_pos: 1-D tensor of sink token positions.
-        prompt_end_idx: Index of first generated token.  Only text positions
-              (>= TEXT_START) have their sink attention zeroed.
+        sink_pos: 1-D tensor of sink token positions within the visual span.
         vis_start, vis_end: Visual token range.
         ratio: Fraction of visual attention mass to retain.
         remove_sinks: If False, keep sink columns and only apply top-mass
@@ -119,8 +116,10 @@ def purify_attention(
     """
     purified = attn.clone()
 
-    # Step 1: Optionally zero out sink attention for text query positions.
-    # "Text" = everything after the visual span, i.e. instruction + generated.
+    # Step 1: Optionally zero out sink attention for all non-visual query
+    # positions. Pre-image text rows have zero visual attention due to
+    # causal masking, so this effectively targets post-image text queries
+    # (instruction tokens after the image + generated tokens).
     text_start = vis_end
     if remove_sinks and sink_pos.numel() > 0 and purified.size(0) > text_start:
         purified[text_start:, sink_pos] = 0.0

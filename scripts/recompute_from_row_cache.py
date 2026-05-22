@@ -66,10 +66,9 @@ def _prepare_branch(
         instr_null[sink_mask] = 0.0
         local_null[sink_mask] = 0.0
     if apply_top_mass:
-        mask = _top_mass_mask(obj, ratio)
-        obj[~mask] = 0.0
-        instr_null[~mask] = 0.0
-        local_null[~mask] = 0.0
+        obj[~_top_mass_mask(obj, ratio)] = 0.0
+        instr_null[~_top_mass_mask(instr_null, ratio)] = 0.0
+        local_null[~_top_mass_mask(local_null, ratio)] = 0.0
     return _normalize(obj), _normalize(instr_null), _normalize(local_null)
 
 
@@ -144,7 +143,7 @@ def _append_scores(
 
     mean_dist = _normalize(obj.mean(axis=1))
     scores[f"{prefix}clc_gen_jsd"] = _entropy(mean_dist) - _entropy(obj).mean(axis=1)
-    lo, hi = max(0, n_layers // 2 - 2), min(n_layers, n_layers - 1)
+    lo, hi = max(0, n_layers // 2 - 2), min(n_layers, n_layers - 4)
     if hi - lo >= 2:
         mid = obj[:, lo:hi]
         mid_mean = _normalize(mid.mean(axis=1))
