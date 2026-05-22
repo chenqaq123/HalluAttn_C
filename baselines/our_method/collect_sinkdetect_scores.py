@@ -18,6 +18,7 @@ DEFAULT_SINKDETECT_KEYS = {
 def collect_sinkdetect_scores(
     row_score_path: str | Path,
     num_objects: int,
+    object_ids: list[int] | np.ndarray | None = None,
     key_map: dict[str, str] | None = None,
 ) -> dict[str, np.ndarray]:
     path = Path(row_score_path)
@@ -30,11 +31,16 @@ def collect_sinkdetect_scores(
         if source_key not in data.files:
             continue
         values = data[source_key].astype(np.float32)
-        if values.shape[0] != num_objects:
+        if object_ids is not None:
+            ids = np.asarray(object_ids, dtype=np.int64)
+            aligned = np.full(num_objects, np.nan, dtype=np.float32)
+            valid = ids < values.shape[0]
+            aligned[valid] = values[ids[valid]]
+            values = aligned
+        elif values.shape[0] != num_objects:
             trimmed = np.full(num_objects, np.nan, dtype=np.float32)
             n = min(num_objects, values.shape[0])
             trimmed[:n] = values[:n]
             values = trimmed
         out[output_key] = values
     return out
-

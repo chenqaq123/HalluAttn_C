@@ -108,6 +108,27 @@ Full baseline run on one GPU:
 python baselines/run_all_baselines.py --device 0
 ```
 
+Four-GPU parallel run:
+
+```bash
+bash baselines/run_parallel_baselines.sh
+```
+
+Useful overrides:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+NUM_SHARDS=4 \
+BASELINE_EXP_NAME=coco_llava_7b_baselines \
+bash baselines/run_parallel_baselines.sh
+```
+
+The parallel runner writes each shard under
+`baselines/results/<BASELINE_EXP_NAME>/shard{i}/`, then merges all object-level
+scores into `baselines/results/<BASELINE_EXP_NAME>/`. By default it shards by
+image, so all object mentions from the same image stay on one GPU and the model
+does not repeat the same image forward on multiple cards.
+
 Implementation notes:
 
 - PAS formulas follow the local sibling repo `../pas`, especially

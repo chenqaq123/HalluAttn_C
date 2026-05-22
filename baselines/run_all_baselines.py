@@ -77,11 +77,10 @@ def _write_scores_csv(records: list[dict[str, Any]], scores: dict[str, np.ndarra
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
-        for record in records:
-            object_id = int(record["object_id"])
+        for row_idx, record in enumerate(records):
             row = {key: record.get(key, "") for key in fields[:6]}
             for key, values in scores.items():
-                value = values[object_id]
+                value = values[row_idx] if row_idx < len(values) else np.nan
                 row[key] = "" if not np.isfinite(value) else float(value)
             writer.writerow(row)
 
@@ -129,6 +128,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device", type=int, default=0)
     p.add_argument("--limit", type=int, default=0, help="Limit number of object mentions; 0 means all.")
     p.add_argument("--skip_model_baselines", action="store_true", help="Only build cache and collect existing SinkDetect scores.")
+    p.add_argument("--shard_idx", type=int, default=0)
+    p.add_argument("--num_shards", type=int, default=1)
+    p.add_argument("--shard_by", choices=["image", "object"], default="image")
     p.add_argument("--bin_width", type=int, default=10)
     p.add_argument("--matched_delta", type=int, default=5)
     p.add_argument("--glsim_top_k", type=int, default=32)
@@ -150,6 +152,9 @@ def main() -> None:
         chair_pkl=args.chair_pkl,
         model_path=args.model_path,
         limit=args.limit,
+        shard_idx=args.shard_idx,
+        num_shards=args.num_shards,
+        shard_by=args.shard_by,
     )
     write_jsonl(records, output_dir / "object_cache.jsonl")
     labels = np.asarray([int(r["label"]) for r in records], dtype=np.int32)
@@ -172,7 +177,8 @@ def main() -> None:
             )
         )
 
-    scores.update(collect_sinkdetect_scores(args.row_scores, num_objects=len(records)))
+    object_ids = [int(r["object_id"]) for r in records]
+    scores.update(collect_sinkdetect_scores(args.row_scores, num_objects=len(records), object_ids=object_ids))
 
     _write_scores_npz(scores, labels, gen_pos, output_dir / "baseline_scores.npz")
     _write_scores_csv(records, scores, output_dir / "baseline_scores.csv")
@@ -188,6 +194,9 @@ def main() -> None:
         "coco_path": str(args.coco_path),
         "chair_pkl": str(args.chair_pkl),
         "limit": args.limit,
+        "shard_idx": args.shard_idx,
+        "num_shards": args.num_shards,
+        "shard_by": args.shard_by,
         "bin_width": args.bin_width,
         "matched_delta": args.matched_delta,
         "glsim": {

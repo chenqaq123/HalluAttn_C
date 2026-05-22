@@ -40,6 +40,10 @@ def _group_by_image(records: list[dict[str, Any]]) -> dict[int, list[dict[str, A
     return dict(grouped)
 
 
+def _local_index_by_object_id(records: list[dict[str, Any]]) -> dict[int, int]:
+    return {int(record["object_id"]): i for i, record in enumerate(records)}
+
+
 def _get_lm_head(model):
     if hasattr(model, "language_model") and hasattr(model.language_model, "lm_head"):
         return model.language_model.lm_head
@@ -103,6 +107,7 @@ def compute_model_baselines(
     if n == 0:
         return scores
 
+    local_index = _local_index_by_object_id(records)
     device = torch.device(f"cuda:{device_index}")
     model, processor = load_model_and_processor(model_path, device)
     lm_head = _get_lm_head(model)
@@ -157,6 +162,7 @@ def compute_model_baselines(
 
         for record in image_records:
             object_id = int(record["object_id"])
+            row_idx = local_index[object_id]
             token_pos = int(record["token_pos"])
             target_pos = token_pos + 1
             if token_pos < 0 or target_pos >= input_ids.numel() or token_pos >= logits.shape[0]:
@@ -165,20 +171,20 @@ def compute_model_baselines(
             target_token = int(input_ids[target_pos].item())
             log_probs = torch.nn.functional.log_softmax(logits[token_pos].float(), dim=-1)
             probs = torch.nn.functional.softmax(logits[token_pos].float(), dim=-1)
-            scores["nll_hallu_score"][object_id] = float(-log_probs[target_token].item())
-            scores["entropy_hallu_score"][object_id] = float(_entropy_from_probs(probs).item())
+            scores["nll_hallu_score"][row_idx] = float(-log_probs[target_token].item())
+            scores["entropy_hallu_score"][row_idx] = float(_entropy_from_probs(probs).item())
 
             prelim_mass = layer0_mean[token_pos, prompt_end_idx:].sum()
             image_mass = layer0_mean[token_pos, image_mask].sum()
-            scores["pas_layer0_hallu_score"][object_id] = float(prelim_mass.item())
-            scores["svar_layer0_hallu_score"][object_id] = float(-image_mass.item())
+            scores["pas_layer0_hallu_score"][row_idx] = float(prelim_mass.item())
+            scores["svar_layer0_hallu_score"][row_idx] = float(-image_mass.item())
 
             # IC: visual logit-lens confidence for the generated object token.
             # Grounded objects should be more visually predictable, so hallu_score is negated.
             visual_logits = lm_head(visual_hidden).float()
             visual_probs = torch.nn.functional.softmax(visual_logits, dim=-1)[:, target_token]
             visual_conf = visual_probs.max()
-            scores["ic_hallu_score"][object_id] = float(-visual_conf.item())
+            scores["ic_hallu_score"][row_idx] = float(-visual_conf.item())
 
             token_hidden = hidden_states[text_l][0, target_pos, :]
             token_norm = _normalize(token_hidden)
@@ -189,9 +195,9 @@ def compute_model_baselines(
             topk_hidden = visual_hidden[topk_idx]
             local_cos = torch.matmul(_normalize(topk_hidden), token_norm).mean()
             glsim_grounded = glsim_w * global_cos + (1.0 - glsim_w) * local_cos
-            scores["glsim_global_hallu_score"][object_id] = float(-global_cos.item())
-            scores["glsim_local_hallu_score"][object_id] = float(-local_cos.item())
-            scores["glsim_hallu_score"][object_id] = float(-glsim_grounded.item())
+            scores["glsim_global_hallu_score"][row_idx] = float(-global_cos.item())
+            scores["glsim_local_hallu_score"][row_idx] = float(-local_cos.item())
+            scores["glsim_hallu_score"][row_idx] = float(-glsim_grounded.item())
 
             # Beyond Global Scores paper-level reimplementation.
             image_row = beyond_mean[token_pos, vis_start:vis_end].float()
@@ -201,9 +207,9 @@ def compute_model_baselines(
             top_attn_idx = torch.topk(image_row, k=k).indices
             cgc_grounded = torch.matmul(_normalize(visual_hidden[top_attn_idx]), token_norm).mean()
             adscgc_grounded = 0.5 * ads_grounded + 0.5 * cgc_grounded
-            scores["beyond_ads_hallu_score"][object_id] = float(norm_entropy.item())
-            scores["beyond_cgc_hallu_score"][object_id] = float(-cgc_grounded.item())
-            scores["beyond_adscgc_hallu_score"][object_id] = float(-adscgc_grounded.item())
+            scores["beyond_ads_hallu_score"][row_idx] = float(norm_entropy.item())
+            scores["beyond_cgc_hallu_score"][row_idx] = float(-cgc_grounded.item())
+            scores["beyond_adscgc_hallu_score"][row_idx] = float(-adscgc_grounded.item())
 
         del inputs, outputs, logits, hidden_states, attentions
         gc.collect()

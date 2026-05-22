@@ -106,18 +106,41 @@ def _from_chair(
     return records
 
 
+def _filter_shard(records: list[dict[str, Any]], shard_idx: int, num_shards: int, shard_by: str) -> list[dict[str, Any]]:
+    if num_shards <= 1:
+        return records
+    if shard_idx < 0 or shard_idx >= num_shards:
+        raise ValueError(f"shard_idx={shard_idx} must be in [0, {num_shards})")
+    if shard_by == "object":
+        return [r for r in records if int(r["object_id"]) % num_shards == shard_idx]
+    if shard_by != "image":
+        raise ValueError(f"Unknown shard_by={shard_by!r}; expected 'image' or 'object'")
+
+    image_to_shard: dict[int, int] = {}
+    for record in records:
+        image_id = int(record["image_id"])
+        if image_id not in image_to_shard:
+            image_to_shard[image_id] = len(image_to_shard) % num_shards
+    return [r for r in records if image_to_shard[int(r["image_id"])] == shard_idx]
+
+
 def build_object_cache(
     generation_json: str | Path,
     row_cache: str | Path | None,
     chair_pkl: str | Path,
     model_path: str,
     limit: int = 0,
+    shard_idx: int = 0,
+    num_shards: int = 1,
+    shard_by: str = "image",
 ) -> list[dict[str, Any]]:
     generation_json = Path(generation_json)
     row_cache_path = Path(row_cache) if row_cache else None
     if row_cache_path and row_cache_path.exists():
-        return _from_row_cache(row_cache_path, generation_json, limit=limit)
-    return _from_chair(generation_json, Path(chair_pkl), model_path, limit=limit)
+        records = _from_row_cache(row_cache_path, generation_json, limit=limit)
+    else:
+        records = _from_chair(generation_json, Path(chair_pkl), model_path, limit=limit)
+    return _filter_shard(records, shard_idx=shard_idx, num_shards=num_shards, shard_by=shard_by)
 
 
 def write_jsonl(records: list[dict[str, Any]], path: str | Path) -> None:
