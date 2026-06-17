@@ -176,6 +176,13 @@ predictions shows a consistent FPR gap: related-present negatives are much more
 likely to receive false-positive `yes` answers than plain absent negatives for
 vanilla, PAI, ClearSight, and VisAttnSink.
 
+A first executable TDEV-zero prototype using global CLIP target-vs-neighbor
+margin is now implemented. Direct `margin > 0` scoring lowers macro FPR to
+5.9% but has only 32.9% TPR; as a calibrated gate over vanilla it ties vanilla
+macro MCC (0.730 vs. 0.731) and barely reduces adversarial related-present FPR
+(16.4% to 16.0%). This rules out whole-image CLIP margin as the final method
+and points to region/head-conditioned TDEV as the next necessary step.
+
 ### E3. TDEV Detection
 
 Compare:
