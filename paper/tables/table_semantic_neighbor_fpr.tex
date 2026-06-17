@@ -7,21 +7,24 @@
 Split & Method & All neg. FPR & Related-present FPR & Plain-absent FPR & Gap \\
 \midrule
 random & vanilla & 3.7 & 5.5 & 1.4 & +4.1 \\
+random & VCD-greedy & 4.5 & 6.1 & 2.4 & +3.6 \\
 random & PAI-attn-only & 3.5 & 5.1 & 1.4 & +3.8 \\
 random & ClearSight & 6.1 & 8.3 & 3.3 & +5.0 \\
 random & VisAttnSink & 4.4 & 6.2 & 2.1 & +4.1 \\
 \midrule
 popular & vanilla & 7.7 & 10.0 & 3.5 & +6.5 \\
+popular & VCD-greedy & 9.2 & 11.8 & 4.2 & +7.6 \\
 popular & PAI-attn-only & 7.5 & 9.7 & 3.5 & +6.2 \\
 popular & ClearSight & 11.1 & 14.4 & 4.8 & +9.6 \\
 popular & VisAttnSink & 8.6 & 10.9 & 4.2 & +6.7 \\
 \midrule
 adversarial & vanilla & 14.7 & 16.4 & 5.3 & +11.1 \\
+adversarial & VCD-greedy & 16.2 & 17.8 & 7.5 & +10.3 \\
 adversarial & PAI-attn-only & 14.3 & 15.9 & 5.3 & +10.6 \\
 adversarial & ClearSight & 20.2 & 22.3 & 8.3 & +14.0 \\
 adversarial & VisAttnSink & 15.8 & 17.3 & 7.5 & +9.8 \\
 \bottomrule
 \end{tabular}
-\caption{POPE false-positive rate (\%) on semantic-neighbor negative subsets. Related-present negatives contain a COCO-annotated co-occurrence neighbor or same-supercategory object for the absent target. All attention-only interventions remain more likely to answer ``yes'' when related evidence is visible.}
+\caption{POPE false-positive rate (\%) on semantic-neighbor negative subsets. Related-present negatives contain a COCO-annotated co-occurrence neighbor or same-supercategory object for the absent target. Attention and decoding ports remain more likely to answer ``yes'' when related evidence is visible.}
 \label{tab:semantic-neighbor-fpr}
 \end{table*}

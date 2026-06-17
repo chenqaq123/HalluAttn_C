@@ -91,6 +91,12 @@ def check_mitigation_behavior() -> None:
         for row in csv.DictReader((PROJECT_ROOT / "mitigation/results/coco_llava_7b_attention_only/audit_pope_macro.csv").open())
         if row["split"] == "macro"
     }
+    vcd_rows = {
+        row["method"]: row
+        for row in csv.DictReader((PROJECT_ROOT / "mitigation/results/pope_full_vcd_greedy_audit/audit_pope_macro.csv").open())
+        if row["split"] == "macro"
+    }
+    pope_rows.update({"vcd": vcd_rows["vcd"]})
     chair_rows = {
         row["method"]: row
         for row in csv.DictReader((PROJECT_ROOT / "mitigation/results/coco_llava_7b_attention_only/audit_chair.csv").open())
@@ -100,20 +106,24 @@ def check_mitigation_behavior() -> None:
         "PAI-attn-only": "pai",
         "ClearSight": "clearsight",
         "VisAttnSink": "visattnsink",
+        "VCD-greedy": "vcd",
     }
     for row_label, method in mapping.items():
         pope = pope_rows[method]
-        chair = chair_rows[method]
         expected = [
             float(pope["delta_accuracy"]),
             float(pope["delta_mcc"]),
             float(pope["delta_yes_rate"]),
             float(pope["delta_recall_tpr"]),
             float(pope["delta_fpr"]),
-            float(chair["delta_CHAIRi"]),
-            float(chair["delta_mean_object_mentions"]),
-            float(chair["delta_mean_hallucinated_mentions"]),
         ]
+        if method in chair_rows:
+            chair = chair_rows[method]
+            expected.extend([
+                float(chair["delta_CHAIRi"]),
+                float(chair["delta_mean_object_mentions"]),
+                float(chair["delta_mean_hallucinated_mentions"]),
+            ])
         actual = _numbers_from_row(table, row_label)
         rounded = [round(value, 3) for value in expected[:6]] + [round(value, 2) for value in expected[6:]]
         if actual != rounded:
@@ -153,18 +163,28 @@ def check_semantic_neighbor_fpr() -> None:
             (PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/attention_only_subset_eval/semantic_neighbor_subset_metrics.csv").open()
         )
     )
+    rows.extend(
+        row
+        for row in csv.DictReader(
+            (PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/vcd_greedy_subset_eval/semantic_neighbor_subset_metrics.csv").open()
+        )
+        if row["method"] == "vcd"
+    )
     lookup = {(row["split"], row["method"], row["subset"]): float(row["fpr"]) * 100 for row in rows}
     table = (PAPER_ROOT / "tables/table_semantic_neighbor_fpr.tex").read_text()
     row_labels = {
         ("random", "vanilla"): "random & vanilla",
+        ("random", "vcd"): "random & VCD-greedy",
         ("random", "pai"): "random & PAI-attn-only",
         ("random", "clearsight"): "random & ClearSight",
         ("random", "visattnsink"): "random & VisAttnSink",
         ("popular", "vanilla"): "popular & vanilla",
+        ("popular", "vcd"): "popular & VCD-greedy",
         ("popular", "pai"): "popular & PAI-attn-only",
         ("popular", "clearsight"): "popular & ClearSight",
         ("popular", "visattnsink"): "popular & VisAttnSink",
         ("adversarial", "vanilla"): "adversarial & vanilla",
+        ("adversarial", "vcd"): "adversarial & VCD-greedy",
         ("adversarial", "pai"): "adversarial & PAI-attn-only",
         ("adversarial", "clearsight"): "adversarial & ClearSight",
         ("adversarial", "visattnsink"): "adversarial & VisAttnSink",
