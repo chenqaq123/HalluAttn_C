@@ -79,6 +79,29 @@ def _safe_layer_index(num_hidden_layers: int, preferred: int) -> int:
     return max(0, min(preferred, num_hidden_layers - 1))
 
 
+def _check_teacher_forcing_alignment(input_ids, entry: dict[str, Any], image_records: list[dict[str, Any]]) -> str | None:
+    recorded = entry.get("output_ids")
+    if recorded is None:
+        return "generation entry has no output_ids; cannot verify teacher-forcing alignment"
+    if not image_records:
+        return None
+    max_target_pos = max(int(record["token_pos"]) + 1 for record in image_records)
+    if max_target_pos < 0:
+        return None
+    needed = max_target_pos + 1
+    if len(recorded) < needed or int(input_ids.numel()) < needed:
+        return (
+            f"sequence too short for max target position {max_target_pos}: "
+            f"recorded={len(recorded)}, reencoded={int(input_ids.numel())}"
+        )
+    reencoded = [int(x) for x in input_ids[:needed].detach().cpu().tolist()]
+    recorded_prefix = [int(x) for x in recorded[:needed]]
+    for idx, (got, expected) in enumerate(zip(reencoded, recorded_prefix)):
+        if got != expected:
+            return f"token mismatch at absolute position {idx}: reencoded={got}, recorded={expected}"
+    return None
+
+
 def compute_model_baselines(
     records: list[dict[str, Any]],
     generation_json: str | Path,
@@ -90,6 +113,7 @@ def compute_model_baselines(
     text_layer: int = 31,
     image_layer: int = 32,
     beyond_layer: int = 1,
+    alignment_policy: str = "error",
 ) -> dict[str, np.ndarray]:
     import sys
 
@@ -101,6 +125,9 @@ def compute_model_baselines(
         sys.path.insert(0, str(SRC_DIR))
     from sinkdetect.sink_utils import find_vis_bounds
     from sinkdetect.utils import build_caption_prompt, load_model_and_processor, partition_tokens
+
+    if alignment_policy not in {"error", "warn", "skip"}:
+        raise ValueError(f"Unknown alignment_policy={alignment_policy!r}")
 
     n = len(records)
     scores = _nan_scores(n)
@@ -130,13 +157,25 @@ def compute_model_baselines(
         image = Image.open(img_path).convert("RGB")
         full_text = prompt_text + " " + str(entry["caption"])
         inputs = processor(images=image, text=full_text, return_tensors="pt").to(device, dtype=torch.float16)
+        alignment_error = _check_teacher_forcing_alignment(inputs["input_ids"][0], entry, image_records)
+        if alignment_error:
+            message = f"image_id={image_id}: {alignment_error}"
+            if alignment_policy == "error":
+                raise ValueError(message)
+            print(f"[WARN] {message}", file=sys.stderr)
+            if alignment_policy == "skip":
+                del inputs
+                image.close()
+                continue
         img_token_id = getattr(processor, "image_token_id", None)
         if img_token_id is None:
             img_token_id = getattr(processor, "image_token_index", 32000)
         try:
             vis_start, vis_end = find_vis_bounds(inputs["input_ids"][0], img_token_id)
         except ValueError:
+            image.close()
             continue
+        image.close()
 
         with torch.no_grad():
             outputs = model.forward(

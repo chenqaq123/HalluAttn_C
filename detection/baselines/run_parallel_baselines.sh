@@ -58,6 +58,7 @@ CHAIR_PKL="${CHAIR_PKL:-$PROJ_ROOT/../pas/data/chair_coco.pkl}"
 LIMIT="${LIMIT:-0}"
 BIN_WIDTH="${BIN_WIDTH:-10}"
 MATCHED_DELTA="${MATCHED_DELTA:-5}"
+ALIGNMENT_POLICY="${ALIGNMENT_POLICY:-error}"
 GLSIM_TOP_K="${GLSIM_TOP_K:-32}"
 GLSIM_W="${GLSIM_W:-0.6}"
 TEXT_LAYER="${TEXT_LAYER:-31}"
@@ -117,6 +118,7 @@ echo "[baseline] row_cache=$ROW_CACHE"
 echo "[baseline] row_scores=$ROW_SCORES"
 echo "[baseline] output_dir=$OUT_DIR"
 echo "[baseline] num_shards=$NUM_SHARDS shard_by=$SHARD_BY limit=$LIMIT skip_model=$SKIP_MODEL_BASELINES"
+echo "[baseline] alignment_policy=$ALIGNMENT_POLICY"
 
 extra_args=()
 if [[ "$SKIP_MODEL_BASELINES" == "1" ]]; then
@@ -145,6 +147,7 @@ for ((i=0; i<NUM_SHARDS; i++)); do
             --shard_by "$SHARD_BY" \
             --bin_width "$BIN_WIDTH" \
             --matched_delta "$MATCHED_DELTA" \
+            --alignment_policy "$ALIGNMENT_POLICY" \
             --glsim_top_k "$GLSIM_TOP_K" \
             --glsim_w "$GLSIM_W" \
             --text_layer "$TEXT_LAYER" \

@@ -100,6 +100,7 @@ def load_model_and_processor(
     device: torch.device,
     attn_implementation: str = "eager",
     dtype: torch.dtype = torch.float16,
+    cache_dir: Optional[str] = None,
 ) -> tuple[LlavaForConditionalGeneration, LlavaProcessor]:
     """Load LlavaForConditionalGeneration and LlavaProcessor.
 
@@ -110,12 +111,33 @@ def load_model_and_processor(
     rely on the cache; if you want to enforce offline mode export
     ``TRANSFORMERS_OFFLINE=1`` before running.
     """
-    processor = LlavaProcessor.from_pretrained(model_path)
+    kwargs = {"cache_dir": cache_dir} if cache_dir else {}
+    processor = LlavaProcessor.from_pretrained(model_path, **kwargs)
     model = LlavaForConditionalGeneration.from_pretrained(
         model_path,
         torch_dtype=dtype,
         attn_implementation=attn_implementation,
+        **kwargs,
     ).to(device)
+
+    # Newer transformers versions expect these processor attributes at call
+    # time, while older LLaVA-1.5 checkpoints often omit them from the saved
+    # processor config. Fill them from the model config to keep local cached
+    # checkpoints reproducible across transformer versions.
+    vision_config = getattr(model.config, "vision_config", None)
+    if getattr(processor, "patch_size", None) is None and vision_config is not None:
+        processor.patch_size = getattr(vision_config, "patch_size", None)
+    if getattr(processor, "vision_feature_select_strategy", None) is None:
+        processor.vision_feature_select_strategy = getattr(
+            model.config, "vision_feature_select_strategy", "default"
+        )
+    additional_image_tokens = getattr(processor, "num_additional_image_tokens", None)
+    if additional_image_tokens is None or int(additional_image_tokens) == 0:
+        # LLaVA-1.5 generation caches in this project were produced with 576
+        # image placeholder tokens. Current transformers computes 575 for the
+        # default feature-selection path unless the CLS token count is supplied.
+        processor.num_additional_image_tokens = 1
+
     model.eval()
     return model, processor
 

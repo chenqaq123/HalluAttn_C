@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run unified baseline reproduction on the current SinkDetect COCO setting."""
+"""Run controlled/adapted baselines on the current SinkDetect COCO setting."""
 
 from __future__ import annotations
 
@@ -119,7 +119,7 @@ def _compute_all_metrics(
 
 def parse_args() -> argparse.Namespace:
     env = _read_env(PROJECT_ROOT / ".env")
-    p = argparse.ArgumentParser(description="Run all reproduced baselines on current COCO/LLaVA setting")
+    p = argparse.ArgumentParser(description="Run controlled/adapted baselines on current COCO/LLaVA setting")
     p.add_argument("--generation_json", default=str(PROJECT_ROOT / "experiments/coco_llava_7b/generation.json"))
     p.add_argument("--row_cache", default=str(PROJECT_ROOT / "experiments/coco_llava_7b_rows/attention_row_cache.npz"))
     p.add_argument("--row_scores", default=str(PROJECT_ROOT / "experiments/coco_llava_7b_rows/row_cache_scores.npz"))
@@ -140,6 +140,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--text_layer", type=int, default=31)
     p.add_argument("--image_layer", type=int, default=32)
     p.add_argument("--beyond_layer", type=int, default=1)
+    p.add_argument("--alignment_policy", choices=["error", "warn", "skip"], default="error")
     return p.parse_args()
 
 
@@ -176,6 +177,7 @@ def main() -> None:
                 text_layer=args.text_layer,
                 image_layer=args.image_layer,
                 beyond_layer=args.beyond_layer,
+                alignment_policy=args.alignment_policy,
             )
         )
 
@@ -201,8 +203,10 @@ def main() -> None:
         "shard_by": args.shard_by,
         "bin_width": args.bin_width,
         "matched_delta": args.matched_delta,
+        "alignment_policy": args.alignment_policy,
         "glsim": {
-            "source": "official GitHub deeplearning-wisc/glsim read for implementation",
+            "source": "adapted_from_official_deeplearning_wisc_glsim",
+            "note": "Ported to this project's teacher-forced object-level cache; not a bit-level official rerun.",
             "top_k": args.glsim_top_k,
             "w": args.glsim_w,
             "text_layer": args.text_layer,
@@ -210,7 +214,7 @@ def main() -> None:
         },
         "beyond_global_scores": {
             "source": "paper_reimplementation",
-            "note": "No official GitHub repository was found during implementation; ADS+CGC is a deterministic paper-level reproduction.",
+            "note": "No official GitHub repository was found during implementation; ADS+CGC is a deterministic paper-level reimplementation.",
             "ads_attention_layer": args.beyond_layer,
         },
     }
