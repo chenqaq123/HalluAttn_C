@@ -166,3 +166,42 @@ changing CLIP pooling:
    connected patches;
 3. evaluate at fixed TPR or with an abstention budget, because direct yes/no
    replacement is too brittle.
+
+## Attention-Weighted Detection TDEV
+
+`detection/scripts/evaluate_attention_weighted_tdev.py` tests whether the cached LLaVA object-token attention row can rescue CLIP patch evidence on the CHAIR object-mention detection task. The script resizes each cached 24x24 visual attention row to CLIP 7x7 patch grid and computes:
+
+```text
+margin(o) = sum_p a_p sim(p, o) - max_c sum_p a_p sim(p, c)
+```
+
+where `c` is a COCO co-occurrence neighbor. Detection scores are `-margin`, so larger values mean more likely hallucinated.
+
+Run:
+
+```bash
+CUDA_VISIBLE_DEVICES=1 \
+HF_HOME=/home/chenguanxu/common_model/huggingface \
+TRANSFORMERS_OFFLINE=1 \
+python detection/scripts/evaluate_attention_weighted_tdev.py \
+  --row_cache experiments/coco_llava_7b_rows/attention_row_cache.npz \
+  --object_cache detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl \
+  --neighbors_json mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --output_dir detection/baselines/results/attention_weighted_tdev \
+  --device cuda:0 \
+  --batch_size 128
+```
+
+Full-data result on 16,426 object mentions:
+
+| Score | Overall AUROC | Within-bin AUROC | Matched-pair AUROC | Residual AUROC |
+|---|---:|---:|---:|---:|
+| attention-weighted TDEV mean | 0.582 | 0.560 | 0.551 | 0.524 |
+| attention-weighted patch-margin mean | 0.581 | 0.551 | 0.542 | 0.517 |
+| best cached layer | 0.590 | 0.562 | 0.552 | 0.527 |
+
+This is a negative result. Mean-over-head early-layer attention from the current row cache does not make CLIP target-vs-neighbor evidence competitive with the audited baselines. It is far below IC/entropy/NLL under controlled metrics and should not be reported as a successful TDEV method.
+
+The result narrows the next implementation target: TDEV needs late object-query/head-specific evidence or proposal-constrained regions. Simply combining CLIP patch similarities with cached average attention is insufficient.
+
