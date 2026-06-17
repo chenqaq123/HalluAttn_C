@@ -31,6 +31,8 @@ class InterventionConfig:
     vas_rho: float = 0.5
     vas_visual_mass: float = 0.2
     vas_keep: float = 0.6
+    spin_routed_heads: float = 0.8
+    spin_small_num_mask: float = 0.1
 
 
 class AttentionIntervention(LlamaAttention):
@@ -156,6 +158,37 @@ class AttentionIntervention(LlamaAttention):
         weights[:, :, q_slice, :] = selected
         return weights
 
+    def _spin_head_mask(self, weights: torch.Tensor) -> torch.Tensor | None:
+        q_len, kv_len = weights.shape[-2:]
+        vis_start = min(self.vis_start, kv_len)
+        vis_end = min(self.vis_end, kv_len)
+        if vis_end <= vis_start:
+            return None
+
+        q_slice = self._text_query_slice(q_len, kv_len)
+        if q_slice.start >= q_slice.stop:
+            return None
+
+        bsz, num_heads = weights.shape[:2]
+        keep = max(1, min(num_heads, int(round(self.intervention.spin_routed_heads * num_heads))))
+        visual_mass = weights[:, :, q_slice, vis_start:vis_end].sum(dim=-1).transpose(1, 2)
+        indices = torch.topk(visual_mass, k=keep, dim=-1).indices
+        selected = torch.zeros(
+            (bsz, q_slice.stop - q_slice.start, num_heads),
+            device=weights.device,
+            dtype=weights.dtype,
+        )
+        selected.scatter_(-1, indices, 1.0)
+        selected = torch.where(
+            selected > 0,
+            selected,
+            torch.full_like(selected, float(self.intervention.spin_small_num_mask)),
+        )
+
+        mask = torch.ones((bsz, q_len, num_heads), device=weights.device, dtype=weights.dtype)
+        mask[:, q_slice, :] = selected
+        return mask
+
     @deprecate_kwarg("past_key_value", new_name="past_key_values", version="4.58")
     def forward(
         self,
@@ -197,8 +230,12 @@ class AttentionIntervention(LlamaAttention):
         if self.intervention.method == "visattnsink":
             weights = self._apply_visattnsink(weights)
         self._record_audit(pre_weights, weights, q_len=q_len, kv_len=kv_len)
-        output = torch.matmul(weights, value).transpose(1, 2).contiguous()
-        output = self.o_proj(output.reshape(*input_shape, -1))
+        head_output = torch.matmul(weights, value).transpose(1, 2).contiguous()
+        if self.intervention.method == "spin":
+            mask = self._spin_head_mask(weights)
+            if mask is not None:
+                head_output = head_output * mask.unsqueeze(-1)
+        output = self.o_proj(head_output.reshape(*input_shape, -1))
         return output, weights
 
 
@@ -217,6 +254,8 @@ def _default_layers(method: str) -> tuple[int, int]:
         return 9, 15
     if method == "visattnsink":
         return 2, 32
+    if method == "spin":
+        return 0, 32
     return 0, 0
 
 
@@ -235,6 +274,8 @@ def install_intervention(model, method: str, device, **kwargs) -> InterventionCo
         vas_rho=float(kwargs.get("vas_rho", 0.5)),
         vas_visual_mass=float(kwargs.get("vas_visual_mass", 0.2)),
         vas_keep=float(kwargs.get("vas_keep", 0.6)),
+        spin_routed_heads=float(kwargs.get("spin_routed_heads", 0.8)),
+        spin_small_num_mask=float(kwargs.get("spin_small_num_mask", 0.1)),
     )
     layers = get_llm_layers(model)
     for layer_idx in range(intervention.start_layer, min(intervention.end_layer, len(layers))):

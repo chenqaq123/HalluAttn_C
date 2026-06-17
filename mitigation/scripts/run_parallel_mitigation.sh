@@ -13,7 +13,7 @@ ENV_OVERRIDE_KEYS=(
     CHAIR_PKL INVALID_POLICY CHAIR_MANIFEST POPE_DIR POPE_PATH LIMIT SEED
     POPE_MAX_NEW_TOKENS CHAIR_MAX_NEW_TOKENS PAI_ALPHA VAF_ENHANCE
     VAF_SUPPRESS VAS_TAU VAS_RHO VAS_VISUAL_MASS VAS_KEEP VCD_ALPHA
-    VCD_BETA VCD_NOISE_STEP
+    VCD_BETA VCD_NOISE_STEP SPIN_ROUTED_HEADS SPIN_SMALL_NUM_MASK
 )
 declare -A CALLER_ENV=()
 for key in "${ENV_OVERRIDE_KEYS[@]}"; do
@@ -64,6 +64,8 @@ VAS_KEEP="${VAS_KEEP:-0.6}"
 VCD_ALPHA="${VCD_ALPHA:-0.5}"
 VCD_BETA="${VCD_BETA:-0.1}"
 VCD_NOISE_STEP="${VCD_NOISE_STEP:-500}"
+SPIN_ROUTED_HEADS="${SPIN_ROUTED_HEADS:-0.8}"
+SPIN_SMALL_NUM_MASK="${SPIN_SMALL_NUM_MASK:-0.1}"
 
 if [[ "$CHAIR_PKL" != /* ]]; then
     CHAIR_PKL="$PROJECT_ROOT/$CHAIR_PKL"
@@ -138,6 +140,8 @@ run_method_task() {
                 --vcd_alpha "$VCD_ALPHA" \
                 --vcd_beta "$VCD_BETA" \
                 --vcd_noise_step "$VCD_NOISE_STEP" \
+                --spin_routed_heads "$SPIN_ROUTED_HEADS" \
+                --spin_small_num_mask "$SPIN_SMALL_NUM_MASK" \
                 "${extra_args[@]}"
         ) > "$log_dir/shard${i}.log" 2>&1 &
         pids+=($!)

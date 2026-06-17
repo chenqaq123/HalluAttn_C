@@ -21,6 +21,7 @@ Mitigation/gating baselines currently audited in paper tables:
 - ClearSight VAF component.
 - Visual Attention Sink redistribution component.
 - VCD-greedy controlled decoding baseline on all POPE splits.
+- SPIN controlled head-suppression port smoke-tested on POPE-random; full audit pending.
 - TDEV direct and vanilla-gate rules on POPE semantic-neighbor splits.
 
 Current evidence supports the paper's scoped claim: aggregate attention mass,
@@ -50,7 +51,7 @@ select heads or regions more carefully than mean attention.
 
 | Baseline | Source | Why it matters | Integration status |
 |---|---|---|---|
-| SPIN | arXiv:2505.16411 | image-guided dynamic head suppression; direct counterpoint to mean-head attention failure | not implemented locally; likely fits existing attention hook stack |
+| SPIN | arXiv:2505.16411 | image-guided dynamic head suppression; direct counterpoint to mean-head attention failure | controlled HF port implemented; 8-row POPE-random smoke passes with strict yes/no parsing; full POPE/semantic-neighbor audit pending |
 | CAI | arXiv:2506.23590 | caption-sensitive attention intervention; tests prompt-paired head selection | not implemented locally; code availability/compatibility to check |
 | CAST | arXiv:2605.04641 | caption-guided visual attention steering; newer CAI-style method | not implemented locally; current as of 2026-06 |
 | Region-Aware Attention Recalibration | arXiv:2605.24957 | region-aware inter-head recalibration; close to TDEV's region/neighbor motivation | not implemented locally; current as of 2026-06 |
@@ -59,11 +60,13 @@ select heads or regions more carefully than mean attention.
 
 1. OPERA on the same subset if the official search-time logic ports cleanly to
    HuggingFace LLaVA-1.5.
-2. SPIN or DAMRO as the first head/attention positive control, because existing
-   local code already patches LLaMA attention modules.
-3. LURE-style factors as an analysis baseline: co-occurrence, uncertainty, and
+2. Finish SPIN full POPE and semantic-neighbor audits now that the controlled
+   head-suppression port runs under the local LLaVA stack.
+3. DAMRO as the next attention-shape counterpoint, because existing local code
+   already patches LLaMA attention modules.
+4. LURE-style factors as an analysis baseline: co-occurrence, uncertainty, and
    generation position are already available or cheap to compute in this repo.
-4. Woodpecker/Volcano only if the paper needs a high-latency post-hoc correction
+5. Woodpecker/Volcano only if the paper needs a high-latency post-hoc correction
    comparison; they are less central to the allocation-vs-verification claim.
 
 ## Required Metrics for Any Added Baseline
@@ -97,6 +100,9 @@ paths completed for vanilla, PAI, ClearSight, and VisAttnSink with strict
 yes/no parsing and matched sample IDs. The VCD-greedy port has now completed
 all three POPE splits with `invalid=0` and matched sample IDs. It does not
 improve the current conclusion: macro MCC drops from 0.732 to 0.720 and
-related-present negative FPR rises on every split. OPERA/SPIN-style baselines
-can therefore build on the tracked mitigation runtime instead of depending on
-uncommitted infrastructure.
+related-present negative FPR rises on every split. The SPIN controlled port now
+runs through the same tracked mitigation runtime: an 8-row POPE-random smoke
+run finished with `invalid=0` and produced audit files under
+`mitigation/results/pope_spin_smoke/`. The smoke set is too small for paper
+claims, but it confirms that OPERA/DAMRO-style follow-up baselines can build on
+tracked infrastructure instead of uncommitted runner changes.

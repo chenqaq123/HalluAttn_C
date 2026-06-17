@@ -12,6 +12,7 @@ hallucination mitigation analysis on LLaVA-1.5-7B.
 | `clearsight` | ClearSight / Visual Amplification Fusion | VAF attention intervention port with dynamic image bounds | layers `[9, 15)`, visual `1.15`, system/prefix `0.95` |
 | `visattnsink` | See What You Are Told / Visual Attention Sink | sink identification, head filtering, visual attention redistribution port | layers `[2, 32)`, `tau=20`, `rho=0.5`, `summ=0.2`, `p=0.6` |
 | `vcd` | Visual Contrastive Decoding | deterministic greedy port using original/noisy image logits | `alpha=0.5`, `beta=0.1`, `noise_step=500` |
+| `spin` | Image-Guided Head Suppression | controlled HF port of visual-attention top-head routing and non-routed head suppression | layers `[0, 32)`, `routed_heads=0.8`, `small_num_mask=0.1` |
 
 Attention-intervention implementation lives in
 [`mitigation/src/interventions.py`](../src/interventions.py). Decoding-time VCD
@@ -47,3 +48,4 @@ or simply shorter, less object-rich captions.
 - [`clearsight/README.md`](clearsight/README.md)
 - [`visattnsink/README.md`](visattnsink/README.md)
 - [`vcd/README.md`](vcd/README.md)
+- [`spin/README.md`](spin/README.md)

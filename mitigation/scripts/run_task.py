@@ -28,7 +28,7 @@ from src.interventions import install_intervention, set_visual_bounds
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Generate POPE answers or CHAIR captions with mitigation interventions")
     p.add_argument("--task", choices=["pope", "chair"], required=True)
-    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink", "vcd"], required=True)
+    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink", "vcd", "spin"], required=True)
     p.add_argument("--model_path", default="llava-hf/llava-1.5-7b-hf")
     p.add_argument("--cache_dir", default="")
     p.add_argument("--coco_path", required=True)
@@ -54,6 +54,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--vcd_alpha", type=float, default=0.5)
     p.add_argument("--vcd_beta", type=float, default=0.1)
     p.add_argument("--vcd_noise_step", type=int, default=500)
+    p.add_argument("--spin_routed_heads", type=float, default=0.8)
+    p.add_argument("--spin_small_num_mask", type=float, default=0.1)
     return p.parse_args()
 
 
@@ -106,6 +108,8 @@ def main() -> None:
         vas_rho=args.vas_rho,
         vas_visual_mass=args.vas_visual_mass,
         vas_keep=args.vas_keep,
+        spin_routed_heads=args.spin_routed_heads,
+        spin_small_num_mask=args.spin_small_num_mask,
     )
 
     output_path = Path(args.output_file)

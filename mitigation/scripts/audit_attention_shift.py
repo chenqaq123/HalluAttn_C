@@ -26,7 +26,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "detection" / "src"))
 from src.evaluation import normalize_yes_no, pope_metrics, read_jsonl, write_json
 
 
-METHODS = ("vanilla", "pai", "clearsight", "visattnsink")
+METHODS = ("vanilla", "pai", "clearsight", "visattnsink", "spin")
 
 
 def _default_layers(method: str) -> tuple[int, int]:
@@ -34,6 +34,8 @@ def _default_layers(method: str) -> tuple[int, int]:
         return 9, 15
     if method in {"pai", "visattnsink"}:
         return 2, 32
+    if method == "spin":
+        return 0, 32
     return 2, 32
 
 
@@ -63,6 +65,8 @@ def _install_audit_wrappers(model, method: str, device, args: argparse.Namespace
         vas_rho=args.vas_rho,
         vas_visual_mass=args.vas_visual_mass,
         vas_keep=args.vas_keep,
+        spin_routed_heads=args.spin_routed_heads,
+        spin_small_num_mask=args.spin_small_num_mask,
     )
     noop_config = InterventionConfig(
         method="vanilla",
@@ -401,6 +405,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--vas_rho", type=float, default=0.5)
     p.add_argument("--vas_visual_mass", type=float, default=0.2)
     p.add_argument("--vas_keep", type=float, default=0.6)
+    p.add_argument("--spin_routed_heads", type=float, default=0.8)
+    p.add_argument("--spin_small_num_mask", type=float, default=0.1)
     return p.parse_args()
 
 

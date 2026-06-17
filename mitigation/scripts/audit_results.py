@@ -90,6 +90,7 @@ def _pope_split_rows(result_root: Path, methods: list[str]) -> list[dict]:
                     "clearsight": "ported_attention_intervention",
                     "visattnsink": "ported_attention_intervention",
                     "vcd": "ported_decoding_intervention",
+                    "spin": "ported_head_suppression_intervention",
                 }.get(method, "ported_mitigation")
                 row = {
                     "task": "pope",

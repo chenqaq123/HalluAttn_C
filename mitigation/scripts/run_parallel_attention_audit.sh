@@ -12,6 +12,7 @@ ENV_OVERRIDE_KEYS=(
     MODEL_PATH CACHE_DIR HF_HUB_CACHE HF_HOME COCO_PATH POPE_DIR POPE_PATH
     LIMIT SEED MAX_NEW_TOKENS AUDIT_START_LAYER AUDIT_END_LAYER PAI_ALPHA
     VAF_ENHANCE VAF_SUPPRESS VAS_TAU VAS_RHO VAS_VISUAL_MASS VAS_KEEP
+    SPIN_ROUTED_HEADS SPIN_SMALL_NUM_MASK
 )
 declare -A CALLER_ENV=()
 for key in "${ENV_OVERRIDE_KEYS[@]}"; do
@@ -54,6 +55,8 @@ VAS_TAU="${VAS_TAU:-20}"
 VAS_RHO="${VAS_RHO:-0.5}"
 VAS_VISUAL_MASS="${VAS_VISUAL_MASS:-0.2}"
 VAS_KEEP="${VAS_KEEP:-0.6}"
+SPIN_ROUTED_HEADS="${SPIN_ROUTED_HEADS:-0.8}"
+SPIN_SMALL_NUM_MASK="${SPIN_SMALL_NUM_MASK:-0.1}"
 
 IFS=',' read -ra GPU_LIST <<< "$CUDA_VISIBLE_DEVICES"
 if (( NUM_SHARDS < 1 || NUM_SHARDS > ${#GPU_LIST[@]} )); then
@@ -113,7 +116,9 @@ run_method_split() {
                 --vas_tau "$VAS_TAU" \
                 --vas_rho "$VAS_RHO" \
                 --vas_visual_mass "$VAS_VISUAL_MASS" \
-                --vas_keep "$VAS_KEEP"
+                --vas_keep "$VAS_KEEP" \
+                --spin_routed_heads "$SPIN_ROUTED_HEADS" \
+                --spin_small_num_mask "$SPIN_SMALL_NUM_MASK"
         ) > "$log_dir/shard${i}.log" 2>&1 &
         pids+=($!)
     done
