@@ -205,3 +205,67 @@ This is a negative result. Mean-over-head early-layer attention from the current
 
 The result narrows the next implementation target: TDEV needs late object-query/head-specific evidence or proposal-constrained regions. Simply combining CLIP patch similarities with cached average attention is insufficient.
 
+## OWLv2 Region-Evidence Baseline
+
+`mitigation/scripts/evaluate_owlv2_tdev_pope.py` evaluates a stronger region-evidence baseline with the local OWLv2 checkpoint:
+
+```text
+/home/chenguanxu/common_model/huggingface/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d
+```
+
+For each image, the script queries all 80 COCO object names used by the semantic-neighbor audit and stores each object's highest OWLv2 box score. Two scores are then evaluated:
+
+- `target_score`: highest OWLv2 region score for the queried object;
+- `tdev_margin`: `target_score - max_neighbor_score` over COCO co-occurrence neighbors.
+
+Run:
+
+```bash
+CUDA_VISIBLE_DEVICES=1 \
+HF_HOME=/home/chenguanxu/common_model/huggingface \
+TRANSFORMERS_OFFLINE=1 \
+python mitigation/scripts/evaluate_owlv2_tdev_pope.py \
+  --pope_dir /home/chenguanxu/common_dataset/pope \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --audit_csv mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv \
+  --neighbors_json mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json \
+  --output_dir mitigation/results/semantic_neighbor_audit/owlv2_tdev_zero \
+  --device cuda:0 \
+  --batch_size 4
+```
+
+Additional calibrated direct-score evaluations are produced by:
+
+```bash
+python mitigation/scripts/evaluate_direct_score.py \
+  --predictions_csv mitigation/results/semantic_neighbor_audit/owlv2_tdev_zero/owlv2_tdev_predictions.csv \
+  --output_dir mitigation/results/semantic_neighbor_audit/owlv2_target_score_direct \
+  --score_field target_score \
+  --threshold_mode calibrate_mcc \
+  --calibration_split random
+
+python mitigation/scripts/evaluate_direct_score.py \
+  --predictions_csv mitigation/results/semantic_neighbor_audit/owlv2_tdev_zero/owlv2_tdev_predictions.csv \
+  --output_dir mitigation/results/semantic_neighbor_audit/owlv2_margin_direct_cal \
+  --score_field tdev_margin \
+  --threshold_mode calibrate_mcc \
+  --calibration_split random
+```
+
+Full POPE results with random-split MCC calibration:
+
+| Score / use | Macro MCC | TPR | FPR | Related FPR | Plain FPR | Adversarial related FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| OWLv2 `target_score` direct | 0.777 | 0.911 | 0.134 | 0.184 | 0.025 | 0.281 |
+| OWLv2 `tdev_margin` direct | 0.445 | 0.359 | 0.013 | 0.010 | 0.019 | 0.010 |
+| OWLv2 `target_score` gate over vanilla | 0.738 | 0.812 | 0.078 | 0.105 | 0.017 | 0.156 |
+| OWLv2 `tdev_margin` gate over vanilla | 0.730 | 0.813 | 0.087 | 0.114 | 0.028 | 0.164 |
+
+Interpretation:
+
+- OWLv2 `target_score` is a strong open-vocabulary detector baseline and beats vanilla macro MCC, but its adversarial related-present FPR rises to 28.1%. This confirms that even region-level object evidence is vulnerable to semantically associated objects.
+- OWLv2 target-vs-neighbor margin is a high-precision verifier, reducing related-present FPR to about 1%, but recall falls to 35.9%. It is not a direct POPE answerer.
+- As a gate over vanilla, OWLv2 `target_score` gives only a small improvement over vanilla and CLIP gates. It is useful as a baseline and design clue, not yet an ICML-level solution.
+
+The constructive method should combine the useful part of OWLv2-style target localization with a less recall-destructive discriminative check, possibly via proposal-level target/neighbor calibration, abstention, or LVLM-conditioned object queries.
+

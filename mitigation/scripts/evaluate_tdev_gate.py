@@ -19,6 +19,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--result_root", required=True, help="Root containing pope/<split>/<method>/predictions.jsonl")
     p.add_argument("--output_dir", required=True)
     p.add_argument("--base_method", default="vanilla")
+    p.add_argument("--score_field", default="tdev_margin")
     p.add_argument("--splits", default="random,popular,adversarial")
     p.add_argument("--calibration_split", default="random")
     p.add_argument("--threshold_mode", choices=["zero", "calibrate_mcc"], default="calibrate_mcc")
@@ -91,7 +92,13 @@ def load_tdev_rows(path: Path) -> dict[tuple[str, str], dict]:
         return {(row["split"], str(row["question_id"])): row for row in csv.DictReader(f)}
 
 
-def load_base_rows(result_root: Path, splits: list[str], method: str, tdev_rows: dict[tuple[str, str], dict]) -> list[dict]:
+def load_base_rows(
+    result_root: Path,
+    splits: list[str],
+    method: str,
+    tdev_rows: dict[tuple[str, str], dict],
+    score_field: str,
+) -> list[dict]:
     rows = []
     for split in splits:
         pred_path = result_root / "pope" / split / method / "predictions.jsonl"
@@ -103,7 +110,8 @@ def load_base_rows(result_root: Path, splits: list[str], method: str, tdev_rows:
                 "question_id": str(row["question_id"]),
                 "label": str(row["label"]).lower(),
                 "base_prediction": normalize_yes_no(row.get("text", row.get("prediction", ""))),
-                "tdev_margin": float(tdev["tdev_margin"]),
+                "gate_score": float(tdev[score_field]),
+                "tdev_margin": float(tdev["tdev_margin"]) if "tdev_margin" in tdev else float(tdev[score_field]),
                 "negative_type": tdev["negative_type"],
                 "target": tdev["target"],
             })
@@ -113,13 +121,13 @@ def load_base_rows(result_root: Path, splits: list[str], method: str, tdev_rows:
 def apply_gate(rows: list[dict], threshold: float) -> list[dict]:
     gated = []
     for row in rows:
-        pred = "yes" if row["base_prediction"] == "yes" and row["tdev_margin"] > threshold else "no"
+        pred = "yes" if row["base_prediction"] == "yes" and row["gate_score"] > threshold else "no"
         gated.append({**row, "prediction": pred})
     return gated
 
 
 def choose_threshold(rows: list[dict]) -> tuple[float, dict]:
-    margins = sorted({row["tdev_margin"] for row in rows})
+    margins = sorted({row["gate_score"] for row in rows})
     candidates = [margins[0] - 1e-6, margins[-1] + 1e-6]
     candidates.extend((a + b) / 2 for a, b in zip(margins, margins[1:]))
     best_threshold = 0.0
@@ -139,7 +147,9 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     splits = [split.strip() for split in args.splits.split(",") if split.strip()]
     tdev_rows = load_tdev_rows(Path(args.tdev_predictions_csv))
-    base_rows = load_base_rows(Path(args.result_root), splits, args.base_method, tdev_rows)
+    if args.score_field not in next(iter(tdev_rows.values())):
+        raise KeyError(f"{args.score_field!r} is not a column in {args.tdev_predictions_csv}")
+    base_rows = load_base_rows(Path(args.result_root), splits, args.base_method, tdev_rows, args.score_field)
 
     if args.threshold_mode == "zero":
         threshold = 0.0
@@ -169,6 +179,7 @@ def main() -> None:
         "calibration_split": args.calibration_split,
         "calibration_metrics": calibration_metrics,
         "base_method": args.base_method,
+        "score_field": args.score_field,
     }
     with (output_dir / "tdev_gate_config.json").open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, sort_keys=True)

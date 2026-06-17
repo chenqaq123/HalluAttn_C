@@ -191,9 +191,18 @@ resizing the cached mean-over-head LLaVA object attention rows to CLIP patches
 and scoring target-vs-neighbor margins reaches only 0.582 overall AUROC, 0.560
 within-bin AUROC, 0.551 matched-pair AUROC, and 0.524 residual AUROC on 16,426
 CHAIR object mentions. This rules out the current early-layer average-attention
-cache as a successful TDEV implementation. The next method should therefore use
-late LVLM object-query heads or proposal-constrained regions, not CLIP pooling
-or cached mean attention alone.
+cache as a successful TDEV implementation.
+
+A stronger OWLv2 region-evidence baseline changes the picture. Calibrating the
+raw target object detection score on the random split gives macro MCC 0.777,
+TPR 0.911, and FPR 0.134, which beats vanilla on aggregate but has high
+adversarial related-present FPR (0.281). The target-vs-neighbor OWLv2 margin
+nearly removes related-present false positives (macro related FPR 0.010) but
+collapses recall to 0.359. As a gate over vanilla, OWLv2 target score gives only
+a small improvement (macro MCC 0.738, FPR 0.078, related FPR 0.105) over vanilla
+and CLIP gates. This suggests the final method should use proposal-constrained
+region evidence, but must avoid both detector-only semantic confusion and
+margin-only recall collapse.
 
 ### E3. TDEV Detection
 
