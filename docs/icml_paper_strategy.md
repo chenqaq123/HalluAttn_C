@@ -166,6 +166,13 @@ Expected contribution:
 > Attention methods fail hardest when related evidence is present, proving that
 > the key missing ingredient is target discrimination rather than visual routing.
 
+Current implementation status: `mitigation/scripts/build_semantic_neighbor_audit.py`
+now builds this split from COCO val2014 annotations and POPE questions. On the
+full 9,000-row POPE set, related-present negatives account for 56.0% of random,
+65.3% of popular, and 84.8% of adversarial negatives, with zero unparsed targets.
+This supports using the split as the first stress test for TDEV and existing
+mitigation methods.
+
 ### E3. TDEV Detection
 
 Compare:
