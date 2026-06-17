@@ -56,3 +56,36 @@ This confirms that POPE adversarial negatives are much more concentrated in
 related-object contexts than random negatives. The next evaluation step is to
 join these labels with each method's POPE predictions and report FPR/MCC by
 negative subset.
+
+## Attention-Only Mitigation Check
+
+Run:
+
+```bash
+python mitigation/scripts/evaluate_semantic_neighbor_subsets.py \
+  --result_root mitigation/results/coco_llava_7b_attention_only \
+  --audit_csv mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv \
+  --output_dir mitigation/results/semantic_neighbor_audit/attention_only_subset_eval
+```
+
+Current FPR by negative subset:
+
+| Split | Method | All negatives | Related-present | Plain absent | Gap |
+|---|---|---:|---:|---:|---:|
+| random | vanilla | 3.7% | 5.5% | 1.4% | +4.1% |
+| random | PAI | 3.5% | 5.1% | 1.4% | +3.8% |
+| random | ClearSight | 6.1% | 8.3% | 3.3% | +5.0% |
+| random | VisAttnSink | 4.4% | 6.2% | 2.1% | +4.1% |
+| popular | vanilla | 7.7% | 10.0% | 3.5% | +6.5% |
+| popular | PAI | 7.5% | 9.7% | 3.5% | +6.2% |
+| popular | ClearSight | 11.1% | 14.4% | 4.8% | +9.6% |
+| popular | VisAttnSink | 8.6% | 10.9% | 4.2% | +6.7% |
+| adversarial | vanilla | 14.7% | 16.4% | 5.3% | +11.1% |
+| adversarial | PAI | 14.3% | 15.9% | 5.3% | +10.6% |
+| adversarial | ClearSight | 20.2% | 22.3% | 8.3% | +14.0% |
+| adversarial | VisAttnSink | 15.8% | 17.3% | 7.5% | +9.8% |
+
+The gap is consistent across all methods and grows on harder POPE splits. This
+supports the current paper claim that attention-only interventions do not solve
+target-discriminative verification: related visible objects remain the main
+source of false-positive yes answers.

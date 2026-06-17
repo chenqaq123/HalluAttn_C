@@ -171,7 +171,10 @@ now builds this split from COCO val2014 annotations and POPE questions. On the
 full 9,000-row POPE set, related-present negatives account for 56.0% of random,
 65.3% of popular, and 84.8% of adversarial negatives, with zero unparsed targets.
 This supports using the split as the first stress test for TDEV and existing
-mitigation methods.
+mitigation methods. Joining the split with existing attention-only POPE
+predictions shows a consistent FPR gap: related-present negatives are much more
+likely to receive false-positive `yes` answers than plain absent negatives for
+vanilla, PAI, ClearSight, and VisAttnSink.
 
 ### E3. TDEV Detection
 
