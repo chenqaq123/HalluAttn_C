@@ -100,6 +100,43 @@ Macro pattern from saved metrics:
 A two-sample real POPE smoke run using the strict parser also completed with
 `invalid=0`.
 
+### Current Runtime Pilot
+
+After committing the shared mitigation runtime stack, a fresh real-model pilot
+was run with the local paths supplied for this workspace:
+
+```text
+model: /home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9
+COCO:  /home/chenguanxu/common_dataset/coco-2014-dataset
+POPE:  /home/chenguanxu/common_dataset/pope
+GPUs:  CUDA_VISIBLE_DEVICES=1,5, NUM_SHARDS=2
+```
+
+Result root:
+
+```text
+mitigation/results/pope_random_limit100_runtime_audit/
+```
+
+The run covers 100 POPE-random rows and verifies that the tracked runner,
+dataset loader, local checkpoint, strict yes/no parser, shard merge, and method
+comparison all execute end-to-end. All methods have `invalid=0`, and
+`compare_methods.py` confirms matched sample IDs against vanilla.
+
+| Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| vanilla | 0.870 | 0.744 | 0.820 | 0.080 | 0.450 | anchor |
+| PAI attention-only | 0.870 | 0.744 | 0.820 | 0.080 | 0.450 | 0.000 |
+| ClearSight | 0.860 | 0.721 | 0.840 | 0.120 | 0.480 | -0.020 |
+| VisAttnSink | 0.890 | 0.781 | 0.860 | 0.080 | 0.470 | +0.040 |
+
+This pilot is not the paper-facing full-data result, but it validates the
+current tracked runtime against the local model/data environment. It also
+matches the broader conclusion that unselective attention interventions are
+not reliable mitigation: PAI is unchanged, ClearSight increases FPR more than
+TPR, and the small VisAttnSink gain needs full-split and semantic-neighbor
+confirmation before it can be treated as a real effect.
+
 ## Mitigation CHAIR
 
 CHAIR caption metrics support the same scoped conclusion: current attention
@@ -120,7 +157,8 @@ ports do not reliably reduce object hallucination under caption-style controls.
 3. Non-attention uncertainty and representation baselines retain more
    position-controlled signal than PAS/SVAR/Beyond in the current run.
 4. Current attention-only mitigation ports do not provide reliable object-level
-   mitigation under POPE/CHAIR diagnostics.
+   mitigation under POPE/CHAIR diagnostics; a new 100-row runtime pilot also
+   shows no robust attention-only improvement.
 5. Claims must remain scoped: these are controlled ports/adapted baselines, not
    proof that every attention-based method or every official method fails.
 
@@ -129,7 +167,8 @@ ports do not reliably reduce object hallucination under caption-style controls.
 - Official-code parity checks on small subsets for PAI, ClearSight, and
   VisAttnSink where feasible.
 - Multi-model replication beyond LLaVA-1.5-7B.
-- Semantic-neighbor negative audit to test whether plausible but non-target
-  evidence is the dominant failure mode.
+- Full regeneration of POPE/CHAIR mitigation results with the now-tracked
+  runtime stack, or a documented hash-level equivalence check against the
+  existing full run.
 - Head-selection or head-specific mitigation baselines as positive
   counterexamples to unselective attention amplification.

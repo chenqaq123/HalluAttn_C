@@ -86,8 +86,14 @@ mentions without passing the semantic-neighbor and answer-prior controls.
 
 ## Current Code Implication
 
-The tracked mitigation scripts include the semantic-neighbor and TDEV evaluation
-utilities, but the current runnable generation stack (`mitigation/scripts/run_task.py`
-and `mitigation/src/`) is still partly untracked in the working tree. Before
-adding VCD/OPERA/SPIN code, first commit or deliberately reorganize that runtime
-stack so baseline implementations do not depend on untracked infrastructure.
+The mitigation generation stack is now tracked and smoke-tested. Commit
+`fc74867` adds the shared POPE/CHAIR runtime, attention-only method hooks,
+merge/evaluation scripts, and method comparison utilities. Commit `e4df8d2`
+ensures explicit environment variables for model, data, and GPU selection take
+precedence over stale `.env` defaults.
+
+A 100-row POPE-random pilot using the local LLaVA checkpoint and COCO/POPE
+paths completed for vanilla, PAI, ClearSight, and VisAttnSink with strict
+yes/no parsing and matched sample IDs. New VCD/OPERA/SPIN-style baselines can
+therefore build on the tracked mitigation runtime instead of depending on
+uncommitted infrastructure.
