@@ -7,9 +7,24 @@ MITIGATION_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 PROJECT_ROOT="$( cd "$MITIGATION_ROOT/.." && pwd )"
 cd "$PROJECT_ROOT"
 
+ENV_OVERRIDE_KEYS=(
+    CUDA_VISIBLE_DEVICES NUM_SHARDS METHODS POPE_SPLITS ATTN_AUDIT_EXP_NAME
+    MODEL_PATH CACHE_DIR HF_HUB_CACHE HF_HOME COCO_PATH POPE_DIR POPE_PATH
+    LIMIT SEED MAX_NEW_TOKENS AUDIT_START_LAYER AUDIT_END_LAYER PAI_ALPHA
+    VAF_ENHANCE VAF_SUPPRESS VAS_TAU VAS_RHO VAS_VISUAL_MASS VAS_KEEP
+)
+declare -A CALLER_ENV=()
+for key in "${ENV_OVERRIDE_KEYS[@]}"; do
+    if [[ -v "$key" ]]; then
+        CALLER_ENV["$key"]="${!key}"
+    fi
+done
 if [[ -f "$PROJECT_ROOT/.env" ]]; then
     set -a
     source "$PROJECT_ROOT/.env"
+    for key in "${!CALLER_ENV[@]}"; do
+        export "$key=${CALLER_ENV[$key]}"
+    done
     set +a
     echo "[env] sourced $PROJECT_ROOT/.env"
 fi
