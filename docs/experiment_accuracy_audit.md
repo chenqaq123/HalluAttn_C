@@ -137,31 +137,51 @@ not reliable mitigation: PAI is unchanged, ClearSight increases FPR more than
 TPR, and the small VisAttnSink gain needs full-split and semantic-neighbor
 confirmation before it can be treated as a real effect.
 
-### VCD-Greedy Pilot
+### VCD-Greedy Full POPE Audit
 
-A second 100-row POPE-random pilot was run after adding the controlled
-VCD-greedy port. It uses the official VCD contrastive logit form and diffusion
-noise schedule, but keeps greedy decoding to match the rest of this repository's
+`vcd` is a controlled greedy port of Visual Contrastive Decoding: it uses the
+official original/noisy-image contrastive logit form and diffusion noise
+schedule, but keeps greedy decoding to match the rest of this repository's
 POPE/CHAIR generation setup.
 
 Result root:
 
 ```text
-mitigation/results/pope_random_limit100_vcd_seeded_audit/
+mitigation/results/pope_full_vcd_greedy_audit/
 ```
 
-The vanilla anchor exactly repeats the previous 100-row pilot. VCD-greedy has
-`invalid=0` and matched sample IDs, but does not improve this subset:
+The run covers all 9,000 POPE rows across random, popular, and adversarial
+splits. Vanilla anchors exactly match the existing full-run metrics. VCD-greedy
+has `invalid=0` and matched sample IDs, but does not improve POPE; it slightly
+raises TPR while raising FPR more, so MCC and accuracy drop on every split.
 
-| Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
-|---|---:|---:|---:|---:|---:|---:|
-| vanilla | 0.870 | 0.744 | 0.820 | 0.080 | 0.450 | anchor |
-| VCD-greedy | 0.860 | 0.725 | 0.800 | 0.080 | 0.440 | -0.020 |
+| Split | Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
+|---|---|---:|---:|---:|---:|---:|---:|
+| random | vanilla | 0.889 | 0.786 | 0.814 | 0.037 | 0.425 | anchor |
+| random | VCD-greedy | 0.886 | 0.780 | 0.817 | 0.045 | 0.431 | -0.005 |
+| popular | vanilla | 0.869 | 0.742 | 0.814 | 0.077 | 0.445 | anchor |
+| popular | VCD-greedy | 0.862 | 0.728 | 0.817 | 0.092 | 0.454 | -0.013 |
+| adversarial | vanilla | 0.834 | 0.668 | 0.813 | 0.145 | 0.479 | anchor |
+| adversarial | VCD-greedy | 0.827 | 0.654 | 0.815 | 0.162 | 0.489 | -0.014 |
+| macro | vanilla | 0.864 | 0.732 | 0.814 | 0.086 | 0.450 | anchor |
+| macro | VCD-greedy | 0.858 | 0.720 | 0.816 | 0.100 | 0.458 | -0.011 |
 
-This is early negative evidence for deterministic VCD under the current greedy
-POPE protocol, not a final statement about the official stochastic VCD setup.
-The next check is full-split VCD-greedy plus, if needed, a small official-style
-sampling parity check.
+Semantic-neighbor subset audit shows the same failure mode. VCD-greedy increases
+FPR on related-present negatives in all three splits:
+
+| Split | Method | Related-present FPR | Plain-absent FPR | Related-minus-plain gap |
+|---|---|---:|---:|---:|
+| random | vanilla | 0.055 | 0.014 | 0.041 |
+| random | VCD-greedy | 0.061 | 0.024 | 0.036 |
+| popular | vanilla | 0.099 | 0.035 | 0.064 |
+| popular | VCD-greedy | 0.118 | 0.042 | 0.076 |
+| adversarial | vanilla | 0.162 | 0.053 | 0.109 |
+| adversarial | VCD-greedy | 0.178 | 0.075 | 0.103 |
+
+This is negative evidence for deterministic VCD under the current greedy POPE
+protocol. It strengthens the current paper claim that reducing language-prior
+reliance is not enough: without target-discriminative visual evidence, a method
+can still amplify yes answers on related but absent targets.
 
 ## Mitigation CHAIR
 
@@ -185,7 +205,9 @@ ports do not reliably reduce object hallucination under caption-style controls.
 4. Current attention-only mitigation ports do not provide reliable object-level
    mitigation under POPE/CHAIR diagnostics; a new 100-row runtime pilot also
    shows no robust attention-only improvement.
-5. Claims must remain scoped: these are controlled ports/adapted baselines, not
+5. Controlled VCD-greedy also fails the target-verification test on full POPE:
+   it raises FPR more than TPR and worsens related-present negative FPR.
+6. Claims must remain scoped: these are controlled ports/adapted baselines, not
    proof that every attention-based method or every official method fails.
 
 ## Missing Evidence Before ICML Submission
@@ -196,7 +218,7 @@ ports do not reliably reduce object hallucination under caption-style controls.
 - Full regeneration of POPE/CHAIR mitigation results with the now-tracked
   runtime stack, or a documented hash-level equivalence check against the
   existing full run.
-- Full-split VCD-greedy evaluation and, if paper claims compare to official
-  VCD, a stochastic decoding parity check on a small subset.
+- If paper claims compare directly to official VCD, a stochastic decoding parity
+  check on a small subset; the controlled greedy VCD full split is complete.
 - Head-selection or head-specific mitigation baselines as positive
   counterexamples to unselective attention amplification.

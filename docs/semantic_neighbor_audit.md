@@ -89,3 +89,32 @@ The gap is consistent across all methods and grows on harder POPE splits. This
 supports the current paper claim that attention-only interventions do not solve
 target-discriminative verification: related visible objects remain the main
 source of false-positive yes answers.
+
+## VCD-Greedy Check
+
+Run:
+
+```bash
+python mitigation/scripts/evaluate_semantic_neighbor_subsets.py \
+  --result_root mitigation/results/pope_full_vcd_greedy_audit \
+  --audit_csv mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv \
+  --output_dir mitigation/results/semantic_neighbor_audit/vcd_greedy_subset_eval \
+  --methods vanilla,vcd
+```
+
+Current FPR by negative subset:
+
+| Split | Method | All negatives | Related-present | Plain absent | Gap |
+|---|---|---:|---:|---:|---:|
+| random | vanilla | 3.7% | 5.5% | 1.4% | +4.1% |
+| random | VCD-greedy | 4.5% | 6.1% | 2.4% | +3.6% |
+| popular | vanilla | 7.7% | 9.9% | 3.5% | +6.4% |
+| popular | VCD-greedy | 9.2% | 11.8% | 4.2% | +7.6% |
+| adversarial | vanilla | 14.5% | 16.2% | 5.3% | +10.9% |
+| adversarial | VCD-greedy | 16.2% | 17.8% | 7.5% | +10.3% |
+
+VCD-greedy therefore does not resolve the related-object false-positive mode.
+It increases related-present FPR on every split, while the related-minus-plain
+gap remains large. This supports the paper direction: contrastive decoding can
+reduce some language-prior reliance, but it is not target-discriminative visual
+verification.

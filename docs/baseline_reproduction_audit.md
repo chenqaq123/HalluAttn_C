@@ -34,7 +34,7 @@ submission.
 
 | Baseline | Source | Why it matters | Integration status |
 |---|---|---|---|
-| VCD | arXiv:2311.16922 | canonical visual contrastive decoding baseline against language-prior reliance | controlled greedy port implemented; 100-row POPE-random pilot complete; full splits and official sampling parity pending |
+| VCD | arXiv:2311.16922 | canonical visual contrastive decoding baseline against language-prior reliance | controlled greedy port implemented; full POPE splits complete; official sampling parity only needed for direct paper-to-paper comparison |
 | OPERA | arXiv:2311.17911 | strong decoding baseline using over-trust penalty and rollback | not implemented locally; needs beam/search-time hook |
 | DAMRO | arXiv:2410.04514 | attention outlier/background-token suppression, close to our attention-shape audit | not implemented locally; likely can reuse attention hook stack |
 | LURE | arXiv:2310.00754 | uses co-occurrence, uncertainty, and position factors aligned with our mechanism | not implemented locally; best used as post-hoc/revision or analysis baseline |
@@ -55,15 +55,13 @@ select heads or regions more carefully than mean attention.
 
 ## Recommended Next Reproduction Order
 
-1. Full VCD-greedy on all POPE splits, followed by a small official-style
-   sampling parity check if stochastic decoding is needed for paper comparison.
-2. OPERA on the same subset if the official search-time logic ports cleanly to
+1. OPERA on the same subset if the official search-time logic ports cleanly to
    HuggingFace LLaVA-1.5.
-3. SPIN or DAMRO as the first head/attention positive control, because existing
+2. SPIN or DAMRO as the first head/attention positive control, because existing
    local code already patches LLaMA attention modules.
-4. LURE-style factors as an analysis baseline: co-occurrence, uncertainty, and
+3. LURE-style factors as an analysis baseline: co-occurrence, uncertainty, and
    generation position are already available or cheap to compute in this repo.
-5. Woodpecker/Volcano only if the paper needs a high-latency post-hoc correction
+4. Woodpecker/Volcano only if the paper needs a high-latency post-hoc correction
    comparison; they are less central to the allocation-vs-verification claim.
 
 ## Required Metrics for Any Added Baseline
@@ -94,8 +92,9 @@ precedence over stale `.env` defaults.
 
 A 100-row POPE-random pilot using the local LLaVA checkpoint and COCO/POPE
 paths completed for vanilla, PAI, ClearSight, and VisAttnSink with strict
-yes/no parsing and matched sample IDs. A second 100-row pilot completed for
-vanilla and the new VCD-greedy port; VCD produced `invalid=0` but reduced TPR
-without reducing FPR on that subset. OPERA/SPIN-style baselines can therefore
-build on the tracked mitigation runtime instead of depending on uncommitted
-infrastructure.
+yes/no parsing and matched sample IDs. The VCD-greedy port has now completed
+all three POPE splits with `invalid=0` and matched sample IDs. It does not
+improve the current conclusion: macro MCC drops from 0.732 to 0.720 and
+related-present negative FPR rises on every split. OPERA/SPIN-style baselines
+can therefore build on the tracked mitigation runtime instead of depending on
+uncommitted infrastructure.

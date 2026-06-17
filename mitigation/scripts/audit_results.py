@@ -85,11 +85,17 @@ def _pope_split_rows(result_root: Path, methods: list[str]) -> list[dict]:
                 metrics = payload["metrics"]
                 delta = payload["delta_vs_vanilla"]
                 text_stats = _text_stats(split_dir / method / "predictions.jsonl", "text")
+                scope = {
+                    "pai": "attention_component",
+                    "clearsight": "ported_attention_intervention",
+                    "visattnsink": "ported_attention_intervention",
+                    "vcd": "ported_decoding_intervention",
+                }.get(method, "ported_mitigation")
                 row = {
                     "task": "pope",
                     "split": split_dir.name,
                     "method": method,
-                    "scope": "attention_component" if method == "pai" else "ported_attention_intervention",
+                    "scope": scope,
                 }
                 for key in POPE_FIELDS:
                     row[key] = metrics.get(key, "")
