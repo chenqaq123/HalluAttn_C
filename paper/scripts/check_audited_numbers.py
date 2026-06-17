@@ -17,7 +17,7 @@ def _numbers_from_row(table_text: str, row_label: str) -> list[float]:
     match = pattern.search(table_text)
     if not match:
         raise AssertionError(f"Missing table row: {row_label}")
-    return [float(value) for value in re.findall(r"[+-]?\d+\.\d+", match.group(1))]
+    return [float(value) for value in re.findall(r"[+-]?(?:\d+\.\d+|\.\d+)", match.group(1))]
 
 
 def _assert_rounded(actual: list[float], expected: list[float], digits: int, label: str) -> None:
@@ -120,6 +120,33 @@ def check_mitigation_behavior() -> None:
             raise AssertionError(f"mitigation:{row_label}: table={actual} expected={rounded}")
 
 
+def check_attention_audit() -> None:
+    rows = {
+        row["method"]: row
+        for row in csv.DictReader(
+            (PROJECT_ROOT / "mitigation/results/coco_llava_7b_attention_audit/pope/adversarial/attention_audit_summary.csv").open()
+        )
+    }
+    vanilla = rows["vanilla"]
+    table = (PAPER_ROOT / "tables/table_attention_audit.tex").read_text()
+    mapping = {
+        "PAI": "pai",
+        "ClearSight": "clearsight",
+        "VisSink": "visattnsink",
+    }
+    for row_label, method in mapping.items():
+        row = rows[method]
+        expected = [
+            float(row["matched_delta_active_visual_vs_vanilla"]),
+            float(row["recall_tpr"]) - float(vanilla["recall_tpr"]),
+            float(row["fpr"]) - float(vanilla["fpr"]),
+            float(row["tp_mean_post_visual_mass"]),
+            float(row["fp_mean_post_visual_mass"]),
+        ]
+        actual = _numbers_from_row(table, row_label)
+        _assert_rounded(actual, expected, 3, f"attention-audit:{row_label}")
+
+
 def check_semantic_neighbor_fpr() -> None:
     rows = list(
         csv.DictReader(
@@ -213,6 +240,7 @@ def main() -> None:
     check_detection_main()
     check_strong_controls()
     check_mitigation_behavior()
+    check_attention_audit()
     check_semantic_neighbor_fpr()
     check_region_verifier_detection()
     check_region_verifier_pope()
