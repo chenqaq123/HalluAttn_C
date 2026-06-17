@@ -269,3 +269,52 @@ Interpretation:
 
 The constructive method should combine the useful part of OWLv2-style target localization with a less recall-destructive discriminative check, possibly via proposal-level target/neighbor calibration, abstention, or LVLM-conditioned object queries.
 
+## Calibrated Region Verifier Variants
+
+Two additional calibrated verifier variants test whether OWLv2 region evidence can be converted into a more useful method.
+
+`mitigation/scripts/evaluate_neighbor_penalty_score.py` searches:
+
+```text
+score = target_score - alpha * best_neighbor_score
+```
+
+with `alpha` in `[0, 1.5]`. Random-split MCC calibration selects `alpha=0.0` for both direct prediction and vanilla gating, meaning the best linear penalty is just the raw target detector score. This is a negative result for simple linear target-minus-neighbor scoring.
+
+`mitigation/scripts/evaluate_two_stage_region_rule.py` evaluates a semantic-aware two-stage rule:
+
+```text
+yes if target_score > high_threshold
+   or target_score > low_threshold and tdev_margin > margin_threshold
+```
+
+The rule keeps high-confidence target detections while requiring a neighbor check for medium-confidence detections. With random-split calibration using objective `MCC - 2 * related_FPR` and `TPR >= 0.85`, the selected direct thresholds are:
+
+```text
+low_threshold=0.10, high_threshold=0.16, margin_threshold=-0.15
+```
+
+For vanilla gating, the selected thresholds are:
+
+```text
+low_threshold=0.04, high_threshold=0.12, margin_threshold=-0.20
+```
+
+Full POPE results:
+
+| Method | Macro MCC | TPR | FPR | Related FPR | Plain FPR | Adv. MCC | Adv. related FPR |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| OWLv2 `target_score` direct | 0.777 | 0.911 | 0.134 | 0.184 | 0.025 | 0.673 | 0.281 |
+| OWLv2 `tdev_margin` direct | 0.445 | 0.359 | 0.013 | 0.010 | 0.019 | 0.441 | 0.010 |
+| Two-stage direct | 0.769 | 0.850 | 0.083 | 0.111 | 0.021 | 0.701 | 0.167 |
+| OWLv2 `target_score` gate | 0.738 | 0.812 | 0.078 | 0.105 | 0.017 | 0.673 | 0.156 |
+| Two-stage gate | 0.751 | 0.793 | 0.051 | 0.069 | 0.012 | 0.705 | 0.104 |
+
+Interpretation:
+
+- A linear neighbor penalty is insufficient; MCC calibration chooses no neighbor penalty.
+- The two-stage semantic-aware rule improves the tradeoff. Direct prediction reduces adversarial related-present FPR from 28.1% to 16.7% while improving adversarial MCC from 0.673 to 0.701, at the cost of TPR dropping from 0.911 to 0.850.
+- As a gate, the two-stage rule improves macro MCC from 0.738 to 0.751 and reduces macro related-present FPR from 10.5% to 6.9%, but TPR drops from 0.812 to 0.793.
+
+This is the first positive method-shaped result. It is not yet sufficient as the final ICML method because recall still drops, but it supports a concrete direction: semantic-neighbor-aware calibration over region evidence rather than raw detector score or hard target-vs-neighbor margin.
+

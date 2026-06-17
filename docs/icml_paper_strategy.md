@@ -198,11 +198,19 @@ raw target object detection score on the random split gives macro MCC 0.777,
 TPR 0.911, and FPR 0.134, which beats vanilla on aggregate but has high
 adversarial related-present FPR (0.281). The target-vs-neighbor OWLv2 margin
 nearly removes related-present false positives (macro related FPR 0.010) but
-collapses recall to 0.359. As a gate over vanilla, OWLv2 target score gives only
-a small improvement (macro MCC 0.738, FPR 0.078, related FPR 0.105) over vanilla
-and CLIP gates. This suggests the final method should use proposal-constrained
-region evidence, but must avoid both detector-only semantic confusion and
-margin-only recall collapse.
+collapses recall to 0.359. A linear `target_score - alpha * neighbor_score`
+search selects `alpha=0`, so simple soft margin scoring is insufficient.
+
+The first positive method-shaped result is a semantic-aware two-stage verifier:
+accept high-confidence target detections directly, but require a target-vs-
+neighbor margin for medium-confidence detections. Direct two-stage verification
+keeps macro MCC at 0.769 while reducing adversarial related-present FPR from
+0.281 to 0.167 and improving adversarial MCC from 0.673 to 0.701. As a gate over
+vanilla, the same idea improves macro MCC from 0.738 to 0.751 and lowers macro
+related-present FPR from 0.105 to 0.069, but recall drops from 0.812 to 0.793.
+This is not yet the final ICML method, but it gives a concrete constructive
+route: proposal-constrained region evidence plus semantic-neighbor-aware
+calibration, with the remaining challenge being recall-preserving calibration.
 
 ### E3. TDEV Detection
 
