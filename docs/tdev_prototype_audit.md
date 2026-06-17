@@ -111,3 +111,58 @@ The ICML method should therefore move from global CLIP TDEV to
 3. calibrate a gate on held-out data with an explicit objective such as MCC or
    fixed-TPR FPR reduction;
 4. report semantic-neighbor FPR as the primary stress metric.
+
+
+## Patch-Level Evidence Modes
+
+The same script also supports patch-level CLIP evidence:
+
+```bash
+python mitigation/scripts/evaluate_clip_tdev_pope.py \
+  --pope_dir /home/chenguanxu/common_dataset/pope \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --audit_csv mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv \
+  --neighbors_json mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json \
+  --output_dir mitigation/results/semantic_neighbor_audit/clip_tdev_patch_margin_max \
+  --device cuda:0 \
+  --batch_size 128 \
+  --evidence_mode patch_margin_max
+```
+
+Two patch variants were checked:
+
+- `patch_max`: `max_patch target_score - max_patch max_neighbor_score`;
+- `patch_margin_max`: `max_patch(target_score - max_neighbor_score)` on the
+  same patch.
+
+Full-data direct results:
+
+| Mode | Macro MCC | TPR | FPR | Related FPR | Plain FPR |
+|---|---:|---:|---:|---:|---:|
+| global | 0.342 | 0.329 | 0.059 | 0.055 | 0.068 |
+| patch_max | 0.149 | 0.212 | 0.104 | 0.092 | 0.129 |
+| patch_margin_max | 0.133 | 0.881 | 0.781 | 0.770 | 0.807 |
+
+Calibrated vanilla-gate results, using random split MCC for threshold selection:
+
+| Mode | Macro MCC | TPR | FPR | Related FPR | Plain FPR |
+|---|---:|---:|---:|---:|---:|
+| global gate | 0.730 | 0.811 | 0.084 | 0.111 | 0.027 |
+| patch_max gate | 0.730 | 0.813 | 0.087 | 0.114 | 0.028 |
+| patch_margin_max gate | 0.731 | 0.813 | 0.086 | 0.113 | 0.028 |
+
+The patch-level CLIP variants do not materially improve the vanilla gate.
+`patch_margin_max` confirms that unconstrained patch evidence is too permissive:
+it finds some patch where the target barely beats neighbors for many absent
+queries, producing very high FPR. This rules out naive CLIP patch similarity as
+the final method.
+
+The next useful prototype should add LVLM-specific selectivity rather than only
+changing CLIP pooling:
+
+1. use LLaVA late object-query heads to weight patches before computing the
+   target-vs-neighbor margin;
+2. restrict candidate regions with object proposals/boxes or high-evidence
+   connected patches;
+3. evaluate at fixed TPR or with an abstention budget, because direct yes/no
+   replacement is too brittle.

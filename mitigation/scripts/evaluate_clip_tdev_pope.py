@@ -42,6 +42,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--device", default="cuda:0")
     p.add_argument("--margin_threshold", type=float, default=0.0)
+    p.add_argument("--evidence_mode", choices=["global", "patch_max", "patch_margin_max"], default="global")
     return p.parse_args()
 
 
@@ -77,10 +78,67 @@ def encode_texts(model: CLIPModel, processor: CLIPProcessor, objects: list[str],
     return embeddings
 
 
-def encode_images(model: CLIPModel, processor: CLIPProcessor, images: list[Image.Image], device: torch.device) -> torch.Tensor:
+def encode_images_global(model: CLIPModel, processor: CLIPProcessor, images: list[Image.Image], device: torch.device) -> torch.Tensor:
     inputs = processor(images=images, return_tensors="pt").to(device)
     with torch.inference_mode():
         return l2_normalize(model.get_image_features(**inputs)).detach().cpu()
+
+
+def encode_images_patch_max(model: CLIPModel, processor: CLIPProcessor, images: list[Image.Image], device: torch.device) -> list[torch.Tensor]:
+    inputs = processor(images=images, return_tensors="pt").to(device)
+    with torch.inference_mode():
+        vision_outputs = model.vision_model(pixel_values=inputs["pixel_values"])
+        patch_tokens = vision_outputs.last_hidden_state[:, 1:, :]
+        if hasattr(model.vision_model, "post_layernorm"):
+            patch_tokens = model.vision_model.post_layernorm(patch_tokens)
+        patch_features = model.visual_projection(patch_tokens)
+        patch_features = l2_normalize(patch_features).detach().cpu()
+    return [patch_features[idx] for idx in range(patch_features.shape[0])]
+
+
+def score_evidence(image_feat: torch.Tensor, text_feat: torch.Tensor) -> tuple[float, int]:
+    if image_feat.ndim == 1:
+        return float(torch.dot(image_feat, text_feat)), -1
+    patch_scores = image_feat @ text_feat
+    value, index = torch.max(patch_scores, dim=0)
+    return float(value), int(index)
+
+
+def score_tdev_margin(
+    image_feat: torch.Tensor,
+    target_feat: torch.Tensor,
+    neighbor_feats: list[tuple[str, torch.Tensor]],
+    evidence_mode: str,
+) -> tuple[float, int, str, float, int, float]:
+    if not neighbor_feats:
+        target_score, target_patch = score_evidence(image_feat, target_feat)
+        return target_score, target_patch, "", float("-inf"), -1, float("inf")
+
+    if evidence_mode != "patch_margin_max" or image_feat.ndim == 1:
+        target_score, target_patch = score_evidence(image_feat, target_feat)
+        neighbor_scores = [
+            (neighbor, *score_evidence(image_feat, neighbor_feat))
+            for neighbor, neighbor_feat in neighbor_feats
+        ]
+        best_neighbor, best_neighbor_score, best_neighbor_patch = max(neighbor_scores, key=lambda item: item[1])
+        return target_score, target_patch, best_neighbor, best_neighbor_score, best_neighbor_patch, target_score - best_neighbor_score
+
+    target_patch_scores = image_feat @ target_feat
+    neighbor_matrix = torch.stack([image_feat @ feat for _, feat in neighbor_feats], dim=1)
+    best_neighbor_scores, best_neighbor_indices = torch.max(neighbor_matrix, dim=1)
+    patch_margins = target_patch_scores - best_neighbor_scores
+    margin_value, patch_index = torch.max(patch_margins, dim=0)
+    patch_idx = int(patch_index)
+    neighbor_idx = int(best_neighbor_indices[patch_idx])
+    best_neighbor, _ = neighbor_feats[neighbor_idx]
+    return (
+        float(target_patch_scores[patch_idx]),
+        patch_idx,
+        best_neighbor,
+        float(best_neighbor_scores[patch_idx]),
+        patch_idx,
+        float(margin_value),
+    )
 
 
 def metrics(rows: list[dict]) -> dict:
@@ -170,7 +228,10 @@ def main() -> None:
     for start in range(0, len(image_keys), args.batch_size):
         batch_keys = image_keys[start:start + args.batch_size]
         images = [load_image(Path(args.coco_path), key) for key in batch_keys]
-        feats = encode_images(model, processor, images, device)
+        if args.evidence_mode == "global":
+            feats = list(encode_images_global(model, processor, images, device))
+        else:
+            feats = encode_images_patch_max(model, processor, images, device)
         for image in images:
             image.close()
         for key, feat in zip(batch_keys, feats):
@@ -179,21 +240,27 @@ def main() -> None:
     scored = []
     for row in rows:
         image_feat = image_cache[row["image"]]
-        target_score = float(torch.dot(image_feat, text_embeddings[row["target"]]))
-        neighbor_scores = [
-            (neighbor, float(torch.dot(image_feat, text_embeddings[neighbor])))
+        neighbor_feats = [
+            (neighbor, text_embeddings[neighbor])
             for neighbor in row["neighbors"]
             if neighbor in text_embeddings
         ]
-        best_neighbor, best_neighbor_score = max(neighbor_scores, key=lambda item: item[1]) if neighbor_scores else ("", float("-inf"))
-        margin = target_score - best_neighbor_score
+        target_score, target_patch, best_neighbor, best_neighbor_score, best_neighbor_patch, margin = score_tdev_margin(
+            image_feat,
+            text_embeddings[row["target"]],
+            neighbor_feats,
+            args.evidence_mode,
+        )
         prediction = "yes" if margin > args.margin_threshold else "no"
         scored.append({
             **row,
             "prediction": prediction,
+            "evidence_mode": args.evidence_mode,
             "target_score": target_score,
+            "target_patch": target_patch,
             "best_neighbor": best_neighbor,
             "best_neighbor_score": best_neighbor_score,
+            "best_neighbor_patch": best_neighbor_patch,
             "tdev_margin": margin,
             "neighbors": "|".join(row["neighbors"]),
         })
@@ -206,7 +273,12 @@ def main() -> None:
 
     subsets = ["all", "positive", "negative", "negative_related_present", "negative_absent_plain"]
     metric_rows = []
-    summary = {"clip_model_path": args.clip_model_path, "margin_threshold": args.margin_threshold, "subsets": {}}
+    summary = {
+        "clip_model_path": args.clip_model_path,
+        "evidence_mode": args.evidence_mode,
+        "margin_threshold": args.margin_threshold,
+        "subsets": {},
+    }
     for split in splits + ["macro"]:
         split_rows = scored if split == "macro" else [row for row in scored if row["split"] == split]
         for subset in subsets:

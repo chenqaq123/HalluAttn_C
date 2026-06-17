@@ -181,7 +181,13 @@ margin is now implemented. Direct `margin > 0` scoring lowers macro FPR to
 5.9% but has only 32.9% TPR; as a calibrated gate over vanilla it ties vanilla
 macro MCC (0.730 vs. 0.731) and barely reduces adversarial related-present FPR
 (16.4% to 16.0%). This rules out whole-image CLIP margin as the final method
-and points to region/head-conditioned TDEV as the next necessary step.
+and points to region/head-conditioned TDEV as the next necessary step. A follow-up
+CLIP patch test further rules out naive patch pooling: `patch_max` has lower
+macro MCC (0.149), while `patch_margin_max` has high TPR but unusably high FPR
+(78.1%). As a calibrated vanilla gate, all CLIP-only variants tie vanilla rather
+than fixing related-present false positives. The next method should therefore
+use LVLM object-query heads or proposal-constrained regions, not CLIP pooling
+alone.
 
 ### E3. TDEV Detection
 
