@@ -25,8 +25,9 @@ Mitigation/gating baselines currently audited in paper tables:
 
 Tracked mitigation baselines not yet in paper tables:
 
-- SPIN controlled head-suppression port: POPE-random smoke and POPE-adversarial
-  120-row subset audit complete; full POPE/CHAIR audit pending.
+- SPIN controlled head-suppression port: POPE-random smoke plus default and
+  mild POPE-adversarial 120-row subset audits complete; full POPE/CHAIR audit
+  pending.
 
 Current evidence supports the paper's scoped claim: aggregate attention mass,
 unselective attention intervention, and controlled VCD-greedy decoding do not
@@ -55,7 +56,7 @@ select heads or regions more carefully than mean attention.
 
 | Baseline | Source | Why it matters | Integration status |
 |---|---|---|---|
-| SPIN | arXiv:2505.16411 | image-guided dynamic head suppression; direct counterpoint to mean-head attention failure | controlled HF port implemented; 8-row POPE-random smoke passes; adversarial 120-row subset is negative with yes-rate 0.992, FPR 0.983, and related-present FPR 1.000; full POPE/CHAIR audit pending |
+| SPIN | arXiv:2505.16411 | image-guided dynamic head suppression; direct counterpoint to mean-head attention failure | controlled HF port implemented; default adversarial 120-row subset collapses to yes-rate 0.992/FPR 0.983; mild setting avoids collapse but gives Delta TPR - Delta FPR ~= 0 and related-present FPR 0.241; full POPE/CHAIR audit pending |
 | CAI | arXiv:2506.23590 | caption-sensitive attention intervention; tests prompt-paired head selection | not implemented locally; code availability/compatibility to check |
 | CAST | arXiv:2605.04641 | caption-guided visual attention steering; newer CAI-style method | not implemented locally; current as of 2026-06 |
 | Region-Aware Attention Recalibration | arXiv:2605.24957 | region-aware inter-head recalibration; close to TDEV's region/neighbor motivation | not implemented locally; current as of 2026-06 |
@@ -64,9 +65,9 @@ select heads or regions more carefully than mean attention.
 
 1. OPERA on the same subset if the official search-time logic ports cleanly to
    HuggingFace LLaVA-1.5.
-2. Decide whether to run full SPIN despite the adversarial 120-row negative
-   signal; if kept, run full POPE plus semantic-neighbor audits before adding it
-   to paper tables.
+2. Deprioritize full SPIN unless a stronger official-parity setting is needed;
+   both default and mild adversarial 120-row checks fail to show target-
+   discriminative gains.
 3. DAMRO as the next attention-shape counterpoint, because existing local code
    already patches LLaMA attention modules.
 4. LURE-style factors as an analysis baseline: co-occurrence, uncertainty, and
@@ -113,6 +114,11 @@ POPE-adversarial 120-row subset under
 SPIN raises recall from 0.850 to 1.000, but raises FPR from 0.183 to 0.983,
 yes-rate from 0.517 to 0.992, and drops MCC from 0.667 to 0.092. On the matched
 semantic-neighbor subset, related-present negative FPR rises from 0.204 to
-1.000 and plain-absent negative FPR from 0.000 to 0.833. This subset is too
-small for a paper table, but it is strong enough to prioritize DAMRO/OPERA or a
-SPIN hyperparameter check before spending compute on full SPIN.
+1.000 and plain-absent negative FPR from 0.000 to 0.833. A milder check with
+`SPIN_ROUTED_HEADS=0.95` and `SPIN_SMALL_NUM_MASK=0.5` under
+`mitigation/results/pope_spin_adversarial_120_mild/` avoids the collapse but
+still gives no target-discriminative gain: TPR rises from 0.850 to 0.883 while
+FPR rises from 0.183 to 0.217, so `Delta TPR - Delta FPR` is effectively zero;
+related-present negative FPR rises from 0.204 to 0.241. These subset checks are
+too small for paper tables, but they make full SPIN lower priority than DAMRO,
+OPERA, or a documented official-parity check.

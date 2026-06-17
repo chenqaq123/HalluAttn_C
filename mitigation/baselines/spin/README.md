@@ -49,6 +49,10 @@ counting SPIN as evidence in the paper tables.
 A POPE-adversarial 120-row subset run is available under
 `mitigation/results/pope_spin_adversarial_120/`, with semantic-neighbor metrics
 under `mitigation/results/semantic_neighbor_audit/spin_adversarial_120_subset_eval/`.
-It is an early negative signal rather than a full baseline result: SPIN raises
-TPR from 0.850 to 1.000, but FPR rises from 0.183 to 0.983, yes-rate rises from
-0.517 to 0.992, and related-present negative FPR rises from 0.204 to 1.000.
+The default setting is an early negative signal rather than a full baseline
+result: SPIN raises TPR from 0.850 to 1.000, but FPR rises from 0.183 to 0.983,
+yes-rate rises from 0.517 to 0.992, and related-present negative FPR rises from
+0.204 to 1.000. A milder check under
+`mitigation/results/pope_spin_adversarial_120_mild/` with `routed_heads=0.95`
+and `small_num_mask=0.5` avoids the collapse, but TPR and FPR both rise by 3.3
+points and related-present FPR still rises from 0.204 to 0.241.

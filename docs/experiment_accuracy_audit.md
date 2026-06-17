@@ -201,24 +201,29 @@ mitigation/results/pope_spin_adversarial_120/
 mitigation/results/semantic_neighbor_audit/spin_adversarial_120_subset_eval/
 ```
 
-On the adversarial 120-row subset, SPIN behaves like a strong yes-prior shift:
+On the adversarial 120-row subset, the default SPIN setting behaves like a
+strong yes-prior shift. A milder hyperparameter check keeps 95% of heads and
+uses a 0.5 suppression factor for non-routed heads; it avoids the collapse but
+still does not improve target discrimination.
 
-| Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
-|---|---:|---:|---:|---:|---:|---:|
-| vanilla | 0.833 | 0.667 | 0.850 | 0.183 | 0.517 | anchor |
-| SPIN | 0.508 | 0.092 | 1.000 | 0.983 | 0.992 | -0.650 |
+| Method | Setting | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
+|---|---|---:|---:|---:|---:|---:|---:|
+| vanilla | anchor | 0.833 | 0.667 | 0.850 | 0.183 | 0.517 | anchor |
+| SPIN | default 0.8/0.1 | 0.508 | 0.092 | 1.000 | 0.983 | 0.992 | -0.650 |
+| SPIN | mild 0.95/0.5 | 0.833 | 0.670 | 0.883 | 0.217 | 0.550 | 0.000 |
 
 The semantic-neighbor subset makes the failure mode explicit:
 
-| Method | Related-present FPR | Plain-absent FPR | Related-minus-plain gap |
-|---|---:|---:|---:|
-| vanilla | 0.204 | 0.000 | +0.204 |
-| SPIN | 1.000 | 0.833 | +0.167 |
+| Method | Setting | Related-present FPR | Plain-absent FPR | Related-minus-plain gap |
+|---|---|---:|---:|---:|
+| vanilla | anchor | 0.204 | 0.000 | +0.204 |
+| SPIN | default 0.8/0.1 | 1.000 | 0.833 | +0.167 |
+| SPIN | mild 0.95/0.5 | 0.241 | 0.000 | +0.241 |
 
 This does not prove official SPIN fails under all settings: it is a controlled
-HF port, a single split, and only 120 rows. It does show that this port does not
-rescue the current mechanism claim; its recall gain comes from answering yes to
-nearly every adversarial query.
+HF port, a single split, and only 120 rows. It does show that the local port does
+not rescue the current mechanism claim. The default setting collapses into a yes
+prior, while the mild setting merely raises TPR and FPR together.
 
 ## Mitigation CHAIR
 
@@ -244,8 +249,9 @@ ports do not reliably reduce object hallucination under caption-style controls.
    shows no robust attention-only improvement.
 5. Controlled VCD-greedy also fails the target-verification test on full POPE:
    it raises FPR more than TPR and worsens related-present negative FPR.
-6. The controlled SPIN port has an early negative adversarial-subset signal: it
-   raises TPR to 1.000 by raising FPR to 0.983 and related-present FPR to 1.000.
+6. The controlled SPIN port has negative adversarial-subset signals: the default
+   setting collapses to FPR 0.983, while a mild setting keeps MCC near vanilla
+   but raises TPR and FPR equally and worsens related-present FPR.
 7. Claims must remain scoped: these are controlled ports/adapted baselines, not
    proof that every attention-based method or every official method fails.
 
