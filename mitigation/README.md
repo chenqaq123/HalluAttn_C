@@ -31,6 +31,7 @@ mitigation/
 │   ├── run_task.py             # one task, method, and GPU shard
 │   ├── merge_evaluate.py       # merge shards and calculate metrics
 │   ├── compare_methods.py      # deltas against vanilla
+│   ├── audit_two_stage_calibration.py # OWLv2 TDEV calibration sensitivity
 │   └── run_parallel_mitigation.sh
 └── src/
     ├── data.py                 # POPE/CHAIR input handling

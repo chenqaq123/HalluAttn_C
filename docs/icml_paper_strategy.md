@@ -223,6 +223,18 @@ OWLv2 image-object scores can now be cached in a reusable NPZ file and reused by
 both POPE and CHAIR audits, so expensive region scoring is amortized while
 calibration and table generation become cheap deterministic post-processing.
 
+A low-cost calibration sensitivity audit further constrains the claim. Reusing
+the saved OWLv2 predictions, representative sweeps over MCC versus
+semantic-penalty objectives, related-present penalties, and TPR floors show that
+two-stage direct prediction is macro-stable (MCC 0.776-0.777) but still has high
+adversarial related-present FPR (0.226-0.252). The vanilla-gate version is even
+more stable, selecting the same operating point across all tested settings
+(macro MCC 0.751, TPR 0.793, FPR 0.051, adversarial related-present FPR 0.104),
+but it is recall-limited. This means the paper should present the current
+two-stage rule as evidence for the TDEV route, not as the final solved method.
+The missing method component is recall-preserving target-vs-neighbor
+verification.
+
 ### E3. TDEV Detection
 
 Compare:

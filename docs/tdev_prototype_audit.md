@@ -318,6 +318,48 @@ Interpretation:
 
 This is the first positive method-shaped result. It is not yet sufficient as the final ICML method because recall still drops, but it supports a concrete direction: semantic-neighbor-aware calibration over region evidence rather than raw detector score or hard target-vs-neighbor margin.
 
+## Two-Stage Calibration Sensitivity
+
+`mitigation/scripts/audit_two_stage_calibration.py` reuses the saved OWLv2
+prediction CSV and vanilla POPE predictions to sweep representative calibration
+objectives, semantic penalties, and TPR floors without rerunning OWLv2:
+
+```bash
+python mitigation/scripts/audit_two_stage_calibration.py \
+  --predictions_csv mitigation/results/semantic_neighbor_audit/owlv2_tdev_zero/owlv2_tdev_predictions.csv \
+  --result_root mitigation/results/coco_llava_7b_attention_only \
+  --output_dir mitigation/results/semantic_neighbor_audit/owlv2_two_stage_calibration_sweep
+```
+
+Output:
+
+```text
+mitigation/results/semantic_neighbor_audit/owlv2_two_stage_calibration_sweep/
+```
+
+The representative sweep covers direct prediction and vanilla gating under MCC
+and semantic-penalty calibration, related-present penalties in `{1, 2}`, and
+TPR floors from `0.75` to `0.90`.
+
+| Mode | Macro MCC range | TPR range | FPR range | Adv. related FPR range | Adv. plain FPR range |
+|---|---:|---:|---:|---:|---:|
+| direct | 0.777-0.777 | 0.884-0.906 | 0.107-0.130 | 0.226-0.252 | 0.048-0.066 |
+| gate | 0.751-0.751 | 0.793-0.793 | 0.051-0.051 | 0.104-0.104 | 0.026-0.026 |
+
+Interpretation:
+
+- Gate calibration is stable across the tested objectives and floors: every
+  tested setting chooses the same operating point. It is a conservative
+  precision gate, reducing adversarial related-present FPR to 10.4%, but recall
+  is capped by the vanilla answer and stays at 79.3%.
+- Direct two-stage prediction is also stable in macro MCC, but it remains
+  vulnerable to semantic-neighbor negatives: adversarial related-present FPR
+  stays between 22.6% and 25.2%.
+- The result supports the method direction but prevents overclaiming. The
+  current two-stage verifier is not a solved mitigation method; the next step is
+  a recall-preserving target-vs-neighbor check rather than another threshold
+  sweep over the same region scores.
+
 ## OWLv2 Region Evidence on CHAIR Detection
 
 `detection/scripts/evaluate_owlv2_region_detection.py` evaluates the same OWLv2 region evidence on the CHAIR object-mention hallucination detection task. For each generated object mention, it scores the mentioned object and its COCO co-occurrence neighbors with OWLv2 and reports standard detection metrics with the same position controls used for existing baselines.

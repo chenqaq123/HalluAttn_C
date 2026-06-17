@@ -185,6 +185,40 @@ protocol. It strengthens the current paper claim that reducing language-prior
 reliance is not enough: without target-discriminative visual evidence, a method
 can still amplify yes answers on related but absent targets.
 
+### TDEV Two-Stage Calibration Sensitivity
+
+`mitigation/scripts/audit_two_stage_calibration.py` checks whether the positive
+OWLv2 two-stage TDEV result depends on one cherry-picked calibration objective.
+It reuses:
+
+```text
+mitigation/results/semantic_neighbor_audit/owlv2_tdev_zero/owlv2_tdev_predictions.csv
+mitigation/results/coco_llava_7b_attention_only/
+```
+
+and writes:
+
+```text
+mitigation/results/semantic_neighbor_audit/owlv2_two_stage_calibration_sweep/
+```
+
+The tested grid is representative rather than exhaustive: MCC and
+semantic-penalty objectives, related-present penalties `1.0` and `2.0`, TPR
+floors `0.75` to `0.90`, and a compact threshold grid.
+
+Key result:
+
+| Mode | Macro MCC range | Macro TPR range | Macro FPR range | Adv. related FPR range | Adv. related-minus-plain gap |
+|---|---:|---:|---:|---:|---:|
+| direct | 0.7765-0.7774 | 0.884-0.906 | 0.1067-0.1300 | 0.2256-0.2516 | 0.1774-0.1858 |
+| gate | 0.7514 | 0.7931 | 0.0509 | 0.1038 | 0.0775 |
+
+This supports the existing wording that the two-stage rule is a constructive
+TDEV direction, not a final mitigation claim. Direct prediction keeps aggregate
+MCC high but still fails many semantic-neighbor negatives. The gate is robust
+across the tested calibration settings and reduces related-present FPR, but it
+does so by acting as a conservative precision filter over vanilla predictions.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The
