@@ -482,6 +482,38 @@ Interpretation:
 
 This result upgrades the method direction: semantic-neighbor-aware region verification has evidence on both POPE mitigation/gating and CHAIR detection. The remaining ICML method challenge is practical, recall-preserving calibration rather than finding a signal from scratch.
 
+## CHAIR Post-Hoc Region-Score Variants
+
+`detection/scripts/evaluate_owlv2_region_posthoc_scores.py` reuses the saved
+per-mention OWLv2 scores and evaluates additional TDEV-style detection scores
+without rerunning OWLv2:
+
+```bash
+python detection/scripts/evaluate_owlv2_region_posthoc_scores.py \
+  --scores_csv detection/baselines/results/owlv2_region_detection/owlv2_region_detection_scores.csv \
+  --output_dir detection/baselines/results/owlv2_region_posthoc_scores
+```
+
+Full-data result on the same 16,426 object mentions:
+
+| Score | Overall AUROC | Within-bin AUROC | Matched-pair AUROC | Residual AUROC |
+|---|---:|---:|---:|---:|
+| OWLv2 target absence | 0.865 | 0.842 | 0.847 | 0.711 |
+| OWLv2 two-stage absence | 0.872 | 0.849 | 0.851 | 0.707 |
+| Hybrid positive-branch absence | 0.872 | 0.849 | 0.851 | 0.706 |
+| Hybrid MCC positive-branch absence | 0.874 | 0.853 | 0.855 | 0.708 |
+| Target absence + 0.25 neighbor dominance | 0.874 | 0.852 | 0.854 | 0.722 |
+
+The CHAIR mapping clarifies what transfers from POPE: object mentions are
+already positive claims, so the hybrid rescue branch is irrelevant. The
+positive-claim verifier branch transfers cleanly and slightly improves the
+controlled AUROCs when using the MCC-calibrated margin. A continuous neighbor
+dominance penalty, `-target_score + alpha * max(neighbor_score - target_score,
+0)`, gives the strongest residual AUROC at moderate alpha. This is useful for
+the paper because it separates two roles: thresholded asymmetric verification
+for POPE behavior, and continuous target-vs-neighbor evidence for CHAIR
+detection.
+
 ## OWLv2 Image-Score Cache
 
 OWLv2 region scoring is the current practical bottleneck. The full CHAIR detection audit took about 36 minutes because it recomputed image-object scores inside the analysis script. The OWLv2 POPE and CHAIR scripts now support a reusable NPZ cache with canonical COCO image keys, object names, and an `images x objects` score matrix.

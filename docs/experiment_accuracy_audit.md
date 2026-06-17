@@ -269,6 +269,32 @@ higher semantic-neighbor FPR (`0.1195`). This confirms that the improvement is
 not a single-threshold artifact, but the semantic-aware objective is needed to
 preserve the desired failure-mode constraint.
 
+### OWLv2 CHAIR Post-Hoc Score Audit
+
+`detection/scripts/evaluate_owlv2_region_posthoc_scores.py` reuses the saved
+CHAIR OWLv2 per-mention scores and evaluates additional TDEV-style score
+variants. It does not rerun OWLv2.
+
+Result root:
+
+```text
+detection/baselines/results/owlv2_region_posthoc_scores/
+```
+
+Best controlled CHAIR detection results from the post-hoc table:
+
+| Score | Overall AUROC | Within-bin AUROC | Matched-pair AUROC | Residual AUROC |
+|---|---:|---:|---:|---:|
+| OWLv2 target absence | 0.865 | 0.842 | 0.847 | 0.711 |
+| OWLv2 two-stage absence | 0.872 | 0.849 | 0.851 | 0.707 |
+| Hybrid MCC positive branch | 0.874 | 0.853 | 0.855 | 0.708 |
+| Target absence + 0.25 neighbor dominance | 0.874 | 0.852 | 0.854 | 0.722 |
+
+This supports the TDEV mechanism across tasks: target-region absence is the main
+signal, and neighbor dominance can improve position-residualized detection. It
+also prevents overclaiming the POPE hybrid rule: CHAIR object mentions only test
+the positive-claim verification branch, not the no-answer rescue branch.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The

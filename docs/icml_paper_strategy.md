@@ -246,6 +246,12 @@ unsafe positive claims, with a stricter rescue branch for missed positives.
 Hybrid calibration sensitivity supports this direction: representative sweeps
 keep macro MCC in 0.763-0.765, with semantic-penalty calibration preserving the
 lower related-present FPR and plain-MCC calibration trading that for recall.
+On CHAIR detection, the positive-claim branch transfers to object mentions, and
+a continuous neighbor-dominance score improves the residual AUROC from 0.711
+(target absence) to 0.722 while keeping overall and within-bin AUROC around
+0.874 and 0.852. This suggests the final method should have both a behavioral
+verifier for yes/no claims and a continuous hallucination score for generated
+object mentions.
 
 ### E3. TDEV Detection
 
