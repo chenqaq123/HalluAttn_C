@@ -1,43 +1,47 @@
 # Mitigation Baselines
 
-This file tracks mitigation methods that we have discussed and may reproduce.
-They are not implemented yet.
+This directory contains attention-intervention baselines for controlled
+hallucination mitigation analysis on LLaVA-1.5-7B.
 
-## Baseline List
+## Implemented Ports
 
-| Method | Type | Status | What to test |
+| Method key | Paper | Port scope | Default component settings |
 |---|---|---|---|
-| ClearSight: Visual Signal Enhancement for Object Hallucination Mitigation in Multimodal Large Language Models | visual signal enhancement | pending | Whether POPE gains come from true TPR/FPR separation or a yes-rate shift. |
-| PAI: Paying More Attention to Image | training-free image-attention emphasis | pending | Whether increasing image attention makes the model answer "yes" more often. |
-| VCD-style visual contrastive decoding | contrastive decoding intervention | optional | Useful non-head-selection comparison if time allows. |
-| Head-selection / head-enhancement methods | attention-head intervention | pending | Potential positive counterexample; may align with our per-head diagnostic. |
+| `vanilla` | none | greedy generation without intervention | comparison anchor |
+| `pai` | Paying More Attention to Image | attention manipulation only; CFG/logit refinement deliberately excluded | layers `[2, 32)`, `alpha=0.2` |
+| `clearsight` | ClearSight / Visual Amplification Fusion | VAF attention intervention port with dynamic image bounds | layers `[9, 15)`, visual `1.15`, system/prefix `0.95` |
+| `visattnsink` | See What You Are Told / Visual Attention Sink | sink identification, head filtering, visual attention redistribution port | layers `[2, 32)`, `tau=20`, `rho=0.5`, `summ=0.2`, `p=0.6` |
 
-## Required Reporting
+Implementation lives in
+[`mitigation/src/interventions.py`](../src/interventions.py). It ports the
+intervention rules onto the HuggingFace `LlavaForConditionalGeneration` stack
+already used in this project, rather than vendoring three incompatible LLaVA
+forks. These are controlled ports for mechanism testing, not bit-level official
+reproductions.
 
-For each method and dataset split, report:
+## Evaluation Question
 
-| Metric | Meaning |
-|---|---|
-| Accuracy / F1 | legacy comparability |
-| Yes rate | overall tendency to answer yes |
-| TPR / Recall | present-object questions answered yes |
-| FPR | absent-object questions incorrectly answered yes |
-| TNR / Specificity | absent-object questions answered no |
-| Balanced accuracy | `(TPR + TNR) / 2` |
-| MCC | skew-resistant binary metric |
-| `Delta TPR - Delta FPR` | separates grounding gain from yes-bias shift |
+This track is not satisfied with aggregate gains. For POPE, every method is
+reported with:
 
-Interpretation:
+- accuracy, F1, balanced accuracy, and MCC;
+- yes-rate, TPR, FPR, TNR, and invalid yes/no outputs;
+- change from vanilla in yes-rate, TPR, and FPR;
+- `Delta TPR - Delta FPR`, which is positive only when positive-class gains
+  exceed the increased false-positive tendency.
 
-| Pattern | Interpretation |
-|---|---|
-| `Delta TPR > 0`, `Delta FPR <= 0` | credible mitigation |
-| `Delta TPR > Delta FPR > 0` | useful but answer-prior shift exists |
-| `Delta FPR >= Delta TPR > 0` | likely yes-bias / threshold shift |
-| `Delta TPR ~= Delta FPR` | mostly global answer-prior movement |
+For CHAIR caption generation, every method is reported with:
 
-## Notes
+- `CHAIRi` and `CHAIRs`;
+- average caption word count;
+- average object mentions;
+- average hallucinated object mentions.
 
-The head-selection family should be treated carefully. It may become a positive
-case rather than a failure case, because our detection-side per-head diagnostic
-suggests that useful grounding signal can live in specific attention heads.
+This permits checking whether lower CHAIR comes from genuinely better grounding
+or simply shorter, less object-rich captions.
+
+## Method Notes
+
+- [`pai/README.md`](pai/README.md)
+- [`clearsight/README.md`](clearsight/README.md)
+- [`visattnsink/README.md`](visattnsink/README.md)
