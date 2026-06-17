@@ -318,3 +318,43 @@ Interpretation:
 
 This is the first positive method-shaped result. It is not yet sufficient as the final ICML method because recall still drops, but it supports a concrete direction: semantic-neighbor-aware calibration over region evidence rather than raw detector score or hard target-vs-neighbor margin.
 
+## OWLv2 Region Evidence on CHAIR Detection
+
+`detection/scripts/evaluate_owlv2_region_detection.py` evaluates the same OWLv2 region evidence on the CHAIR object-mention hallucination detection task. For each generated object mention, it scores the mentioned object and its COCO co-occurrence neighbors with OWLv2 and reports standard detection metrics with the same position controls used for existing baselines.
+
+Run:
+
+```bash
+CUDA_VISIBLE_DEVICES=1 \
+HF_HOME=/home/chenguanxu/common_model/huggingface \
+TRANSFORMERS_OFFLINE=1 \
+python detection/scripts/evaluate_owlv2_region_detection.py \
+  --object_cache detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl \
+  --neighbors_json mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --output_dir detection/baselines/results/owlv2_region_detection \
+  --device cuda:0 \
+  --batch_size 4
+```
+
+Full-data result on 16,426 object mentions:
+
+| Score | Overall AUROC | Within-bin AUROC | Matched-pair AUROC | Residual AUROC |
+|---|---:|---:|---:|---:|
+| OWLv2 target absence | 0.865 | 0.842 | 0.847 | 0.711 |
+| OWLv2 two-stage absence | 0.872 | 0.849 | 0.851 | 0.707 |
+| OWLv2 margin absence | 0.779 | 0.745 | 0.732 | 0.639 |
+| OWLv2 two-stage binary | 0.763 | 0.745 | 0.747 | 0.635 |
+| OWLv2 neighbor presence | 0.519 | 0.483 | 0.471 | 0.470 |
+
+This is a strong positive cross-task result. The region-evidence detector is far stronger than the previous best controlled detection baselines: IC reaches within-bin AUROC 0.686 and matched-pair AUROC 0.703, while entropy/NLL are around 0.636/0.655. OWLv2 target and two-stage evidence reach about 0.84-0.85 on the same controlled metrics.
+
+Interpretation:
+
+- Region-level target evidence directly addresses the position confound that breaks attention-shape scores.
+- The two-stage score slightly improves overall, within-bin, and matched-pair AUROC over raw target absence, though residual AUROC is similar.
+- Neighbor presence alone is not predictive, which supports the earlier finding that the useful signal is target evidence plus calibrated discrimination, not merely the existence of related objects.
+- Runtime is high: the full detection audit took about 36 minutes without image-score caching. Any practical method should cache OWLv2 image-object scores or use a cheaper proposal module.
+
+This result upgrades the method direction: semantic-neighbor-aware region verification has evidence on both POPE mitigation/gating and CHAIR detection. The remaining ICML method challenge is practical, recall-preserving calibration rather than finding a signal from scratch.
+

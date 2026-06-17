@@ -208,9 +208,17 @@ keeps macro MCC at 0.769 while reducing adversarial related-present FPR from
 0.281 to 0.167 and improving adversarial MCC from 0.673 to 0.701. As a gate over
 vanilla, the same idea improves macro MCC from 0.738 to 0.751 and lowers macro
 related-present FPR from 0.105 to 0.069, but recall drops from 0.812 to 0.793.
+A CHAIR object-mention detection audit strengthens the case for region evidence:
+OWLv2 target absence reaches 0.865 overall AUROC, 0.842 within-bin AUROC, and
+0.847 matched-pair AUROC, while the two-stage region score reaches 0.872,
+0.849, and 0.851 respectively. This is far above the strongest previous
+controlled baseline IC (0.776 overall, 0.686 within-bin, 0.703 matched-pair) and
+confirms that the signal is not POPE-specific.
+
 This is not yet the final ICML method, but it gives a concrete constructive
 route: proposal-constrained region evidence plus semantic-neighbor-aware
-calibration, with the remaining challenge being recall-preserving calibration.
+calibration, with the remaining challenges being recall-preserving calibration
+and practical image-score caching or cheaper proposal extraction.
 
 ### E3. TDEV Detection
 
