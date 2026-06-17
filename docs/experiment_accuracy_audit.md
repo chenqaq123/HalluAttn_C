@@ -185,6 +185,41 @@ protocol. It strengthens the current paper claim that reducing language-prior
 reliance is not enough: without target-discriminative visual evidence, a method
 can still amplify yes answers on related but absent targets.
 
+### SPIN Adversarial Subset Audit
+
+`spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The
+port has passed an 8-row POPE-random smoke test and a larger POPE-adversarial
+120-row subset run, both with strict yes/no parsing and `invalid=0`. The subset
+is not paper-facing full-data evidence, but it is useful for deciding whether
+SPIN should be prioritized as a full baseline.
+
+Result roots:
+
+```text
+mitigation/results/pope_spin_smoke/
+mitigation/results/pope_spin_adversarial_120/
+mitigation/results/semantic_neighbor_audit/spin_adversarial_120_subset_eval/
+```
+
+On the adversarial 120-row subset, SPIN behaves like a strong yes-prior shift:
+
+| Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| vanilla | 0.833 | 0.667 | 0.850 | 0.183 | 0.517 | anchor |
+| SPIN | 0.508 | 0.092 | 1.000 | 0.983 | 0.992 | -0.650 |
+
+The semantic-neighbor subset makes the failure mode explicit:
+
+| Method | Related-present FPR | Plain-absent FPR | Related-minus-plain gap |
+|---|---:|---:|---:|
+| vanilla | 0.204 | 0.000 | +0.204 |
+| SPIN | 1.000 | 0.833 | +0.167 |
+
+This does not prove official SPIN fails under all settings: it is a controlled
+HF port, a single split, and only 120 rows. It does show that this port does not
+rescue the current mechanism claim; its recall gain comes from answering yes to
+nearly every adversarial query.
+
 ## Mitigation CHAIR
 
 CHAIR caption metrics support the same scoped conclusion: current attention
@@ -209,7 +244,9 @@ ports do not reliably reduce object hallucination under caption-style controls.
    shows no robust attention-only improvement.
 5. Controlled VCD-greedy also fails the target-verification test on full POPE:
    it raises FPR more than TPR and worsens related-present negative FPR.
-6. Claims must remain scoped: these are controlled ports/adapted baselines, not
+6. The controlled SPIN port has an early negative adversarial-subset signal: it
+   raises TPR to 1.000 by raising FPR to 0.983 and related-present FPR to 1.000.
+7. Claims must remain scoped: these are controlled ports/adapted baselines, not
    proof that every attention-based method or every official method fails.
 
 ## Missing Evidence Before ICML Submission

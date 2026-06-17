@@ -253,7 +253,7 @@ Compare:
 - Visual Attention Sink;
 - VCD-greedy (completed; negative under full POPE and semantic-neighbor audits);
 - OPERA;
-- SPIN controlled head-suppression port (smoke-tested; full audit pending);
+- SPIN controlled head-suppression port (smoke-tested; adversarial 120-row subset negative; full audit pending);
 - TDEV gate/intervention.
 
 Report POPE and CHAIR with answer-prior and style controls. TDEV should be
@@ -289,7 +289,7 @@ need at least one replication to show the phenomenon is not LLaVA-specific.
 | VCD | classic visual contrastive decoding; attacks language-prior reliance | controlled greedy port complete; official sampling parity optional |
 | OPERA | attention over-trust penalty and rollback | high priority if code works with LLaVA |
 | DAMRO | attention outlier/background-token suppression | useful attention-shape counterpoint |
-| SPIN | image-guided dynamic head suppression; direct positive counterexample | controlled HF port implemented; full audit pending |
+| SPIN | image-guided dynamic head suppression; direct positive counterexample | controlled HF port implemented; adversarial 120-row subset shows yes-prior failure; full audit optional after hyperparameter check |
 | CAI/CAST | caption-guided head/attention steering | strong recent head-specific baseline; code availability uncertain |
 | Woodpecker/Volcano | post-hoc correction/self-feedback | useful but higher latency; include as practical comparison if time allows |
 
@@ -315,8 +315,8 @@ it satisfies three criteria:
 3. Prototype TDEV-zero using existing row-cache visual representations if
    available; otherwise extend row cache to save visual hidden states for key
    layers/patches.
-4. Finish SPIN full POPE/semantic-neighbor audits, then reproduce OPERA or
-   document exact blockers.
+4. Run a SPIN hyperparameter check or move to DAMRO/OPERA; the current SPIN
+   adversarial subset is a strong yes-prior negative result.
 5. Run a small multi-model pilot before expanding all tables.
 
 ## 8. Current Paper Positioning Sentence
