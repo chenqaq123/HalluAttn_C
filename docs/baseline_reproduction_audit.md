@@ -20,12 +20,14 @@ Mitigation/gating baselines currently audited in paper tables:
 - PAI attention-only component, excluding its CFG/contrastive branch.
 - ClearSight VAF component.
 - Visual Attention Sink redistribution component.
+- VCD-greedy controlled decoding baseline on all POPE splits.
 - TDEV direct and vanilla-gate rules on POPE semantic-neighbor splits.
 
-Current evidence supports the paper's scoped claim: aggregate attention mass and
-unselective attention intervention do not verify target-object presence; target-
-discriminative region evidence survives the same controls. It does not yet prove
-that all decoding-time or post-hoc mitigation methods fail.
+Current evidence supports the paper's scoped claim: aggregate attention mass,
+unselective attention intervention, and controlled VCD-greedy decoding do not
+verify target-object presence; target-discriminative region evidence survives
+the same controls. It does not yet prove that all decoding-time or post-hoc
+mitigation methods fail.
 
 ## High-Priority End-to-End Baselines
 

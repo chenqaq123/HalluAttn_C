@@ -151,9 +151,11 @@ mitigation/results/pope_full_vcd_greedy_audit/
 ```
 
 The run covers all 9,000 POPE rows across random, popular, and adversarial
-splits. Vanilla anchors exactly match the existing full-run metrics. VCD-greedy
-has `invalid=0` and matched sample IDs, but does not improve POPE; it slightly
-raises TPR while raising FPR more, so MCC and accuracy drop on every split.
+splits. Vanilla anchors reproduce the same operating point as the existing full
+run, with only one-row-scale differences from regenerated deterministic outputs.
+VCD-greedy has `invalid=0` and matched sample IDs, but does not improve POPE; it
+slightly raises TPR while raising FPR more, so MCC and accuracy drop on every
+split.
 
 | Split | Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
 |---|---|---:|---:|---:|---:|---:|---:|

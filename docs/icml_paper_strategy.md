@@ -251,7 +251,7 @@ Compare:
 - PAI attention-only;
 - ClearSight;
 - Visual Attention Sink;
-- VCD;
+- VCD-greedy (completed; negative under full POPE and semantic-neighbor audits);
 - OPERA;
 - SPIN or another head-selection baseline;
 - TDEV gate/intervention.
@@ -286,7 +286,7 @@ need at least one replication to show the phenomenon is not LLaVA-specific.
 
 | Baseline | Why it matters | Feasibility |
 |---|---|---|
-| VCD | classic visual contrastive decoding; attacks language-prior reliance | high priority |
+| VCD | classic visual contrastive decoding; attacks language-prior reliance | controlled greedy port complete; official sampling parity optional |
 | OPERA | attention over-trust penalty and rollback | high priority if code works with LLaVA |
 | DAMRO | attention outlier/background-token suppression | useful attention-shape counterpoint |
 | SPIN | image-guided dynamic head suppression; direct positive counterexample | high priority |
