@@ -1,0 +1,36 @@
+\section{Target-Discriminative Evidence Verification}
+\label{sec:tdev}
+
+The diagnostics above suggest a constructive requirement: a grounding signal should test the target object itself, not merely whether the model routes computation through the image. We instantiate this requirement with \emph{Target-Discriminative Evidence Verification} (TDEV), a lightweight verifier that separates target evidence from associated evidence.
+
+Let $I$ be an image and $c$ an object category mentioned by the LVLM or queried by POPE. An open-vocabulary region model produces an image-level target evidence score
+\begin{equation}
+E(I,c)=\max_b P(c\mid b,I),
+\end{equation}
+where $b$ ranges over region proposals. In our implementation, $E$ is the maximum sigmoid OWLv2 query score for the prompt ``a photo of a $c$'' \cite{minderer2023scaling}. This max-over-regions reduction is intentionally simple: the question is whether target-specific region evidence passes the controls that attention proxies fail.
+
+TDEV also computes an associated-evidence control. For each category $c$, let $\mathcal{N}(c)$ be the union of its top co-occurring COCO categories and same-supercategory siblings. We define
+\begin{equation}
+A(I,c)=\max_{r\in\mathcal{N}(c)} E(I,r), \qquad M(I,c)=E(I,c)-A(I,c).
+\end{equation}
+Here $A$ asks whether the image contains visually plausible neighbors, while $M$ asks whether target evidence exceeds that associated evidence. This distinction is the core difference from attention routing: a bathroom region can raise $A(I,\text{sink})$, but only a detected sink should raise $E(I,\text{sink})$ and $M(I,\text{sink})$.
+
+\paragraph{Detection score.}
+For CHAIR object-mention detection, larger scores mean more likely hallucinated. We therefore evaluate target absence $-E(I,c)$, neighbor presence $A(I,c)$, margin absence $-M(I,c)$, and a continuous two-stage absence score. The two-stage present score is
+\begin{equation}
+G(I,c)=\max\left(E(I,c)-\tau_h,\; \min(E(I,c)-\tau_l,\; M(I,c)-\tau_m)\right),
+\end{equation}
+and the hallucination score is $-G(I,c)$. This rule accepts high-confidence target evidence directly, but requires a target-vs-neighbor margin for medium-confidence evidence.
+
+\paragraph{POPE decision rule.}
+For yes/no mitigation-style evaluation, TDEV predicts ``yes'' when
+\begin{equation}
+E(I,c)>\tau_h\quad\textrm{or}\quad E(I,c)>\tau_l \;\land\; M(I,c)>\tau_m.
+\end{equation}
+We evaluate both a \emph{direct} rule, which answers from region evidence alone, and a \emph{gate} rule, which only overrides unsupported vanilla ``yes'' answers: if the base LVLM says ``no,'' the gate keeps ``no.'' Thresholds are calibrated on the random POPE split, either for MCC or for the semantic-aware objective
+\begin{equation}
+\mathrm{MCC} - \lambda\,\mathrm{FPR}_{\mathrm{related}},
+\end{equation}
+with a recall floor. The latter objective encodes the failure mode exposed by the semantic-neighbor audit: false positives on related-present negatives are more damaging evidence of non-discriminative grounding than false positives on plainly absent objects.
+
+TDEV is not meant to show that an external detector is the final solution. It is a positive control for the paper's central claim. If target-region verification survives position, category, answer-prior, and semantic-neighbor controls while attention mass does not, then the missing ingredient is not visual information in general; it is target-discriminative verification.
