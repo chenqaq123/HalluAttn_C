@@ -26,7 +26,8 @@ Mitigation/gating baselines currently audited in paper tables:
 Tracked mitigation baselines not yet in paper tables:
 
 - DAMRO controlled outlier-token contrastive decoding port: POPE-random smoke
-  passes with strict yes/no parsing; full POPE/semantic-neighbor audit pending.
+  and POPE-adversarial 120-row subset audit complete; full POPE/CHAIR audit
+  pending.
 - SPIN controlled head-suppression port: POPE-random smoke plus default and
   mild POPE-adversarial 120-row subset audits complete; full POPE/CHAIR audit
   pending.
@@ -46,7 +47,7 @@ submission.
 |---|---|---|---|
 | VCD | arXiv:2311.16922 | canonical visual contrastive decoding baseline against language-prior reliance | controlled greedy port implemented; full POPE splits complete; official sampling parity only needed for direct paper-to-paper comparison |
 | OPERA | arXiv:2311.17911 | strong decoding baseline using over-trust penalty and rollback | not implemented locally; needs beam/search-time hook |
-| DAMRO | arXiv:2410.04514 | CLS-selected ViT outlier-token contrastive decoding, close to our attention-shape audit | controlled greedy port implemented; 4-row POPE-random smoke passes with strict yes/no parsing and recorded outlier indices; full POPE/semantic-neighbor audit pending |
+| DAMRO | arXiv:2410.04514 | CLS-selected ViT outlier-token contrastive decoding, close to our attention-shape audit | controlled greedy port implemented; adversarial 120-row subset is negative: TPR +0.033 but FPR +0.067, MCC 0.667 -> 0.639, related-present FPR 0.204 -> 0.278; full POPE/CHAIR audit pending |
 | LURE | arXiv:2310.00754 | uses co-occurrence, uncertainty, and position factors aligned with our mechanism | not implemented locally; best used as post-hoc/revision or analysis baseline |
 | Woodpecker | arXiv:2310.16045 | post-hoc visual validation/correction pipeline | not implemented locally; higher latency and external-tool dependence |
 | Volcano | arXiv:2311.07362 | self-feedback guided revision baseline | not implemented locally; full model/data setup likely heavier |
@@ -70,9 +71,9 @@ select heads or regions more carefully than mean attention.
 2. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.
-3. Run DAMRO on an adversarial subset next; the controlled port now runs and
-   directly tests whether removing CLS-selected outlier-token influence helps
-   target-object verification.
+3. Deprioritize full DAMRO unless official parity is required; its controlled
+   adversarial subset raises false positives more than recall and worsens
+   related-present FPR.
 4. LURE-style factors as an analysis baseline: co-occurrence, uncertainty, and
    generation position are already available or cheap to compute in this repo.
 5. Woodpecker/Volcano only if the paper needs a high-latency post-hoc correction
@@ -128,4 +129,9 @@ OPERA, or a documented official-parity check. The DAMRO controlled port has
 now passed a 4-row POPE-random smoke run under `mitigation/results/pope_damro_smoke/`
 with `invalid=0`; each prediction records `alpha=2.0`, `beta=0.1`, `topk=10`,
 and the selected outlier token indices. This validates the local negative-branch
-construction but is not yet evidence for or against DAMRO behavior.
+construction. A larger adversarial 120-row subset under
+`mitigation/results/pope_damro_adversarial_120/` is negative: DAMRO raises TPR
+from 0.850 to 0.883 but raises FPR from 0.183 to 0.250, drops MCC from 0.667
+to 0.639, and raises related-present negative FPR from 0.204 to 0.278. The
+subset is too small for a paper table, but it suggests DAMRO does not solve the
+target-verification failure mode in the local controlled greedy port.

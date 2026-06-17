@@ -225,6 +225,42 @@ HF port, a single split, and only 120 rows. It does show that the local port doe
 not rescue the current mechanism claim. The default setting collapses into a yes
 prior, while the mild setting merely raises TPR and FPR together.
 
+### DAMRO Adversarial Subset Audit
+
+`damro` is a controlled HuggingFace port of DAMRO's CLS-selected outlier-token
+contrastive decoding. It first passed a 4-row POPE-random smoke test with
+`invalid=0`, then ran on the same POPE-adversarial 120-row subset used for the
+SPIN audits.
+
+Result roots:
+
+```text
+mitigation/results/pope_damro_smoke/
+mitigation/results/pope_damro_adversarial_120/
+mitigation/results/semantic_neighbor_audit/damro_adversarial_120_subset_eval/
+```
+
+On the adversarial 120-row subset, DAMRO improves recall but increases false
+positives more, so discrimination weakens:
+
+| Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| vanilla | 0.833 | 0.667 | 0.850 | 0.183 | 0.517 | anchor |
+| DAMRO | 0.817 | 0.639 | 0.883 | 0.250 | 0.567 | -0.033 |
+
+Semantic-neighbor FPR shows that the extra false positives are concentrated on
+related-present negatives:
+
+| Method | Related-present FPR | Plain-absent FPR | Related-minus-plain gap |
+|---|---:|---:|---:|
+| vanilla | 0.204 | 0.000 | +0.204 |
+| DAMRO | 0.278 | 0.000 | +0.278 |
+
+This is still subset evidence rather than a full baseline table. It does show
+that the controlled greedy DAMRO port does not fix the semantic-neighbor failure
+mode: suppressing CLS-selected outlier influence is not the same as verifying the
+queried object against associated evidence.
+
 ## Mitigation CHAIR
 
 CHAIR caption metrics support the same scoped conclusion: current attention
@@ -252,7 +288,9 @@ ports do not reliably reduce object hallucination under caption-style controls.
 6. The controlled SPIN port has negative adversarial-subset signals: the default
    setting collapses to FPR 0.983, while a mild setting keeps MCC near vanilla
    but raises TPR and FPR equally and worsens related-present FPR.
-7. Claims must remain scoped: these are controlled ports/adapted baselines, not
+7. The controlled DAMRO port also has a negative adversarial-subset signal: it
+   raises FPR more than TPR and worsens related-present FPR.
+8. Claims must remain scoped: these are controlled ports/adapted baselines, not
    proof that every attention-based method or every official method fails.
 
 ## Missing Evidence Before ICML Submission

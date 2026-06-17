@@ -48,5 +48,11 @@ are audited under matched sample IDs.
 A 4-row POPE-random smoke run is available under
 `mitigation/results/pope_damro_smoke/`. It is only a runtime validation: both
 vanilla and DAMRO have `invalid=0`, and each DAMRO prediction records the
-selected outlier indices. The run is too small for behavioral claims; the next
-required step is an adversarial subset plus semantic-neighbor FPR audit.
+selected outlier indices.
+
+A POPE-adversarial 120-row subset run is available under
+`mitigation/results/pope_damro_adversarial_120/`, with semantic-neighbor metrics
+under `mitigation/results/semantic_neighbor_audit/damro_adversarial_120_subset_eval/`.
+It is an early negative signal rather than a full baseline result: DAMRO raises
+TPR from 0.850 to 0.883, but FPR rises from 0.183 to 0.250 and related-present
+negative FPR rises from 0.204 to 0.278.
