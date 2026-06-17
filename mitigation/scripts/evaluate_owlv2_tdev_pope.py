@@ -28,6 +28,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 from build_semantic_neighbor_audit import extract_image_id, iter_pope_records
+from owlv2_cache_utils import encode_image_object_scores, load_score_cache, save_score_cache
 
 
 def parse_args() -> argparse.Namespace:
@@ -45,6 +46,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--top_neighbors", type=int, default=10)
     p.add_argument("--margin_threshold", type=float, default=0.0)
     p.add_argument("--target_score_threshold", type=float, default=0.0)
+    p.add_argument("--image_score_cache", default="", help="Optional NPZ cache from OWLv2 image-object scoring")
+    p.add_argument("--save_image_score_cache", default="", help="Optional NPZ path to save image-object scores")
     return p.parse_args()
 
 
@@ -60,6 +63,13 @@ def load_image(coco_path: Path, image_name: str) -> Image.Image:
     else:
         candidate = coco_path / "val2014" / f"COCO_val2014_{image_id:012d}.jpg"
     return Image.open(candidate).convert("RGB")
+
+
+def canonical_image_key(image_name: str) -> str:
+    image_id = extract_image_id(image_name)
+    if image_id is None:
+        return str(image_name)
+    return f"COCO_val2014_{image_id:012d}.jpg"
 
 
 def read_neighbors(path: Path, top_k: int) -> dict[str, list[str]]:
@@ -117,25 +127,6 @@ def subset_rows(rows: list[dict], subset: str) -> list[dict]:
     return [row for row in rows if row.get("negative_type") == subset]
 
 
-def encode_image_object_scores(
-    model: Owlv2ForObjectDetection,
-    processor: Owlv2Processor,
-    images: list[Image.Image],
-    prompts: list[str],
-    object_names: list[str],
-    device: torch.device,
-) -> list[dict[str, float]]:
-    text = [prompts for _ in images]
-    inputs = processor(text=text, images=images, return_tensors="pt").to(device)
-    with torch.inference_mode():
-        outputs = model(**inputs)
-        query_scores = outputs.logits.sigmoid().amax(dim=1).detach().cpu()
-    return [
-        {obj: float(score) for obj, score in zip(object_names, image_scores)}
-        for image_scores in query_scores
-    ]
-
-
 def main() -> None:
     args = parse_args()
     output_dir = Path(args.output_dir)
@@ -159,7 +150,7 @@ def main() -> None:
             rows.append({
                 "split": split,
                 "question_id": str(record["question_id"]),
-                "image": record["image"],
+                "image": canonical_image_key(record["image"]),
                 "label": record["label"],
                 "target": target,
                 "negative_type": audit_row["negative_type"],
@@ -168,21 +159,26 @@ def main() -> None:
 
     object_list = sorted(object_names)
     prompts = [f"a photo of a {obj}" for obj in object_list]
-    processor = Owlv2Processor.from_pretrained(args.owlv2_model_path, local_files_only=True)
-    model = Owlv2ForObjectDetection.from_pretrained(args.owlv2_model_path, local_files_only=True).to(device)
-    model.eval()
-
-    image_scores: dict[str, dict[str, float]] = {}
     image_keys = sorted({row["image"] for row in rows})
-    coco_path = Path(args.coco_path)
-    for start in range(0, len(image_keys), args.batch_size):
-        batch_keys = image_keys[start:start + args.batch_size]
-        images = [load_image(coco_path, key) for key in batch_keys]
-        score_batch = encode_image_object_scores(model, processor, images, prompts, object_list, device)
-        for image in images:
-            image.close()
-        for key, scores in zip(batch_keys, score_batch):
-            image_scores[key] = scores
+    if args.image_score_cache:
+        image_scores = load_score_cache(args.image_score_cache, image_keys, object_list)
+    else:
+        processor = Owlv2Processor.from_pretrained(args.owlv2_model_path, local_files_only=True)
+        model = Owlv2ForObjectDetection.from_pretrained(args.owlv2_model_path, local_files_only=True).to(device)
+        model.eval()
+
+        image_scores: dict[str, dict[str, float]] = {}
+        coco_path = Path(args.coco_path)
+        for start in range(0, len(image_keys), args.batch_size):
+            batch_keys = image_keys[start:start + args.batch_size]
+            images = [load_image(coco_path, key) for key in batch_keys]
+            score_batch = encode_image_object_scores(model, processor, images, prompts, object_list, device)
+            for image in images:
+                image.close()
+            for key, scores in zip(batch_keys, score_batch):
+                image_scores[key] = scores
+        if args.save_image_score_cache:
+            save_score_cache(args.save_image_score_cache, image_scores, object_list)
 
     scored = []
     for row in rows:
@@ -220,6 +216,8 @@ def main() -> None:
         "owlv2_model_path": args.owlv2_model_path,
         "margin_threshold": args.margin_threshold,
         "target_score_threshold": args.target_score_threshold,
+        "image_score_cache": args.image_score_cache,
+        "save_image_score_cache": args.save_image_score_cache,
         "top_neighbors": args.top_neighbors,
         "object_count": len(object_list),
         "subsets": {},

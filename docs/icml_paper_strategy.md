@@ -218,7 +218,10 @@ confirms that the signal is not POPE-specific.
 This is not yet the final ICML method, but it gives a concrete constructive
 route: proposal-constrained region evidence plus semantic-neighbor-aware
 calibration, with the remaining challenges being recall-preserving calibration
-and practical image-score caching or cheaper proposal extraction.
+and cheaper proposal extraction. The first practicality issue is partly handled:
+OWLv2 image-object scores can now be cached in a reusable NPZ file and reused by
+both POPE and CHAIR audits, so expensive region scoring is amortized while
+calibration and table generation become cheap deterministic post-processing.
 
 ### E3. TDEV Detection
 

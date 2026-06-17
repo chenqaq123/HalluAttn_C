@@ -358,3 +358,36 @@ Interpretation:
 
 This result upgrades the method direction: semantic-neighbor-aware region verification has evidence on both POPE mitigation/gating and CHAIR detection. The remaining ICML method challenge is practical, recall-preserving calibration rather than finding a signal from scratch.
 
+## OWLv2 Image-Score Cache
+
+OWLv2 region scoring is the current practical bottleneck. The full CHAIR detection audit took about 36 minutes because it recomputed image-object scores inside the analysis script. The OWLv2 POPE and CHAIR scripts now support a reusable NPZ cache with canonical COCO image keys, object names, and an `images x objects` score matrix.
+
+Cache options:
+
+```bash
+# Save scores while running CHAIR detection.
+python detection/scripts/evaluate_owlv2_region_detection.py \
+  --object_cache detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl \
+  --neighbors_json mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --output_dir detection/baselines/results/owlv2_region_detection \
+  --save_image_score_cache detection/baselines/results/owlv2_region_detection/owlv2_image_scores.npz
+
+# Reuse the same scores without loading OWLv2.
+python detection/scripts/evaluate_owlv2_region_detection.py \
+  --object_cache detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl \
+  --neighbors_json mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --output_dir detection/baselines/results/owlv2_region_detection_cached \
+  --image_score_cache detection/baselines/results/owlv2_region_detection/owlv2_image_scores.npz
+```
+
+The same `--image_score_cache` and `--save_image_score_cache` options are available in `mitigation/scripts/evaluate_owlv2_tdev_pope.py`.
+
+Verification:
+
+- CHAIR detection smoke test with saved cache and cache reload produced identical metrics.
+- POPE smoke test with saved cache and cache reload produced identical subset metrics.
+
+This makes the region-evidence method more practical: expensive image scoring can be amortized once, while calibration, gating, semantic-neighbor slicing, and table generation become cheap deterministic post-processing.
+
