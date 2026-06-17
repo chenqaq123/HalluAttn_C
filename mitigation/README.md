@@ -32,6 +32,7 @@ mitigation/
 │   ├── merge_evaluate.py       # merge shards and calculate metrics
 │   ├── compare_methods.py      # deltas against vanilla
 │   ├── audit_two_stage_calibration.py # OWLv2 TDEV calibration sensitivity
+│   ├── evaluate_hybrid_region_rule.py # asymmetric OWLv2 TDEV gate/rescue rule
 │   └── run_parallel_mitigation.sh
 └── src/
     ├── data.py                 # POPE/CHAIR input handling

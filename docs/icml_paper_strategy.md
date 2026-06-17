@@ -235,6 +235,15 @@ two-stage rule as evidence for the TDEV route, not as the final solved method.
 The missing method component is recall-preserving target-vs-neighbor
 verification.
 
+The next constructive step is now supported by a hybrid gate-plus-rescue rule.
+It keeps the two-stage precision gate for vanilla "yes" answers but permits a
+vanilla "no" answer to flip only under very high OWLv2 target evidence. This
+improves over the two-stage gate from macro MCC 0.751 to 0.763 and adversarial
+MCC from 0.705 to 0.717 while keeping macro FPR essentially unchanged (0.051)
+and adversarial related-present FPR at 0.105. This suggests the ICML method
+should be asymmetric: use TDEV mainly as a semantic-neighbor-aware verifier for
+unsafe positive claims, with a stricter rescue branch for missed positives.
+
 ### E3. TDEV Detection
 
 Compare:

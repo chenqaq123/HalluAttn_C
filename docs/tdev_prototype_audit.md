@@ -360,6 +360,59 @@ Interpretation:
   a recall-preserving target-vs-neighbor check rather than another threshold
   sweep over the same region scores.
 
+## Hybrid Gate-Plus-Rescue Rule
+
+`mitigation/scripts/evaluate_hybrid_region_rule.py` tests a recall-preserving
+variant of the two-stage gate. Instead of choosing between direct prediction and
+pure gating, it uses an asymmetric rule:
+
+```text
+if vanilla says yes:
+    yes if target_score > high_threshold
+       or target_score > low_threshold and tdev_margin > margin_threshold
+else:
+    yes if target_score > rescue_high_threshold
+       and tdev_margin > rescue_margin_threshold
+```
+
+The first branch preserves the semantic-neighbor precision filter. The second
+branch only rescues vanilla false negatives when OWLv2 target evidence is very
+strong.
+
+Run:
+
+```bash
+python mitigation/scripts/evaluate_hybrid_region_rule.py \
+  --predictions_csv mitigation/results/semantic_neighbor_audit/owlv2_tdev_zero/owlv2_tdev_predictions.csv \
+  --result_root mitigation/results/coco_llava_7b_attention_only \
+  --output_dir mitigation/results/semantic_neighbor_audit/owlv2_hybrid_region_rule
+```
+
+Random-split semantic-penalty calibration selects:
+
+```text
+low_threshold=0.04, high_threshold=0.12, margin_threshold=-0.20
+rescue_high_threshold=0.50, rescue_margin_threshold=-0.10
+```
+
+Comparison against the strongest OWLv2 region rules:
+
+| Method | Macro MCC | TPR | FPR | Adv. MCC | Adv. related FPR | Adv. plain FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| OWLv2 `target_score` direct | 0.777 | 0.911 | 0.134 | 0.673 | 0.281 | 0.053 |
+| Two-stage direct | 0.769 | 0.850 | 0.083 | 0.701 | 0.167 | 0.044 |
+| Two-stage gate | 0.751 | 0.793 | 0.051 | 0.705 | 0.104 | 0.026 |
+| Hybrid gate+rescue | 0.763 | 0.806 | 0.051 | 0.717 | 0.105 | 0.026 |
+
+This is the best current method-shaped POPE result under the region-evidence
+track: it keeps the two-stage gate's low FPR and semantic-neighbor FPR while
+recovering some recall. The gain is still modest, and the method is not yet a
+complete ICML contribution by itself because it depends on an external OWLv2
+proposal model and is currently validated as post-hoc POPE verification. It
+does, however, sharpen the constructive direction: TDEV should be asymmetric,
+using target-discriminative evidence mostly to reject unsafe yes answers while
+allowing only very high-confidence target evidence to override no answers.
+
 ## OWLv2 Region Evidence on CHAIR Detection
 
 `detection/scripts/evaluate_owlv2_region_detection.py` evaluates the same OWLv2 region evidence on the CHAIR object-mention hallucination detection task. For each generated object mention, it scores the mentioned object and its COCO co-occurrence neighbors with OWLv2 and reports standard detection metrics with the same position controls used for existing baselines.

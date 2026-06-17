@@ -219,6 +219,38 @@ MCC high but still fails many semantic-neighbor negatives. The gate is robust
 across the tested calibration settings and reduces related-present FPR, but it
 does so by acting as a conservative precision filter over vanilla predictions.
 
+### TDEV Hybrid Gate-Plus-Rescue Audit
+
+`mitigation/scripts/evaluate_hybrid_region_rule.py` tests whether the
+precision-oriented two-stage gate can recover recall by adding a strict rescue
+branch for vanilla `no` answers. It reuses the same OWLv2 prediction CSV and
+vanilla POPE outputs as the calibration sensitivity audit.
+
+Result root:
+
+```text
+mitigation/results/semantic_neighbor_audit/owlv2_hybrid_region_rule/
+```
+
+Random-split semantic-penalty calibration selects:
+
+```text
+low=0.04, high=0.12, margin=-0.20, rescue_high=0.50, rescue_margin=-0.10
+```
+
+Compared with the two-stage gate, the hybrid rule improves recall and MCC while
+leaving FPR effectively unchanged:
+
+| Method | Macro MCC | Macro TPR | Macro FPR | Adv. MCC | Adv. related FPR | Adv. plain FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| Two-stage gate | 0.751 | 0.793 | 0.051 | 0.705 | 0.104 | 0.026 |
+| Hybrid gate+rescue | 0.763 | 0.806 | 0.051 | 0.717 | 0.105 | 0.026 |
+
+This is positive evidence for an asymmetric TDEV design, but not final evidence
+for a deployable mitigation method. The current implementation is a post-hoc
+POPE verifier using an external OWLv2 detector; it still needs validation on
+CHAIR-style generated captions and a practical integration path.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The
