@@ -413,6 +413,35 @@ does, however, sharpen the constructive direction: TDEV should be asymmetric,
 using target-discriminative evidence mostly to reject unsafe yes answers while
 allowing only very high-confidence target evidence to override no answers.
 
+## Hybrid Calibration Sensitivity
+
+`mitigation/scripts/audit_hybrid_calibration.py` checks whether the hybrid gain
+is tied to one threshold choice. It reuses the same OWLv2 prediction CSV and
+vanilla POPE outputs:
+
+```bash
+python mitigation/scripts/audit_hybrid_calibration.py \
+  --predictions_csv mitigation/results/semantic_neighbor_audit/owlv2_tdev_zero/owlv2_tdev_predictions.csv \
+  --result_root mitigation/results/coco_llava_7b_attention_only \
+  --output_dir mitigation/results/semantic_neighbor_audit/owlv2_hybrid_calibration_sweep
+```
+
+The representative sweep covers MCC and semantic-penalty objectives, TPR floors
+from `0.75` to `0.90`, and a compact grid around the gate/rescue operating
+region.
+
+| Calibration | Macro MCC | TPR | FPR | Adv. MCC | Adv. related FPR |
+|---|---:|---:|---:|---:|---:|
+| MCC objective | 0.765 | 0.818 | 0.059 | 0.713 | 0.119 |
+| Semantic-penalty objective | 0.763 | 0.806 | 0.051 | 0.717 | 0.105 |
+
+Across all 12 tested calibration settings, macro MCC stays in
+`0.763-0.765`. The semantic-penalty settings all select the same lower-FPR
+operating point, while the plain-MCC settings select a slightly higher-recall,
+higher-FPR operating point. This supports the robustness of the asymmetric
+design, but also shows the expected tradeoff: optimizing only MCC relaxes the
+semantic-neighbor constraint.
+
 ## OWLv2 Region Evidence on CHAIR Detection
 
 `detection/scripts/evaluate_owlv2_region_detection.py` evaluates the same OWLv2 region evidence on the CHAIR object-mention hallucination detection task. For each generated object mention, it scores the mentioned object and its COCO co-occurrence neighbors with OWLv2 and reports standard detection metrics with the same position controls used for existing baselines.

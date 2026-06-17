@@ -251,6 +251,24 @@ for a deployable mitigation method. The current implementation is a post-hoc
 POPE verifier using an external OWLv2 detector; it still needs validation on
 CHAIR-style generated captions and a practical integration path.
 
+`mitigation/scripts/audit_hybrid_calibration.py` then checks representative
+calibration sensitivity over MCC versus semantic-penalty objectives and TPR
+floors `0.75` to `0.90`.
+
+Result root:
+
+```text
+mitigation/results/semantic_neighbor_audit/owlv2_hybrid_calibration_sweep/
+```
+
+The hybrid result is stable in aggregate: macro MCC stays within
+`0.7629-0.7649`. Semantic-penalty calibration consistently selects the lower-FPR
+operating point (`macro FPR=0.0513`, adversarial related FPR `0.1046`), while
+plain-MCC calibration selects a slightly higher-recall point (`TPR=0.8182`) with
+higher semantic-neighbor FPR (`0.1195`). This confirms that the improvement is
+not a single-threshold artifact, but the semantic-aware objective is needed to
+preserve the desired failure-mode constraint.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The

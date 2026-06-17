@@ -243,6 +243,9 @@ MCC from 0.705 to 0.717 while keeping macro FPR essentially unchanged (0.051)
 and adversarial related-present FPR at 0.105. This suggests the ICML method
 should be asymmetric: use TDEV mainly as a semantic-neighbor-aware verifier for
 unsafe positive claims, with a stricter rescue branch for missed positives.
+Hybrid calibration sensitivity supports this direction: representative sweeps
+keep macro MCC in 0.763-0.765, with semantic-penalty calibration preserving the
+lower related-present FPR and plain-MCC calibration trading that for recall.
 
 ### E3. TDEV Detection
 
