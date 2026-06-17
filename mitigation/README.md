@@ -1,19 +1,23 @@
 # Mitigation Track
 
-This directory evaluates attention-based hallucination mitigation methods under
-controlled behavioral diagnostics.
+This directory evaluates attention- and decoding-based hallucination mitigation
+methods under controlled behavioral diagnostics.
 
 ## Implemented Scope
 
-Three attention interventions are implemented for LLaVA-1.5-7B:
+The current runnable scope for LLaVA-1.5-7B includes three attention
+interventions and one decoding-time baseline:
 
 | Key | Method | Scope |
 |---|---|---|
 | `pai` | Paying More Attention to Image | attention manipulation only, excluding CFG/logit refinement |
 | `clearsight` | Visual Amplification Fusion | official visual/system attention scaling |
 | `visattnsink` | Visual Attention Sink | official sink-based attention redistribution |
+| `vcd` | Visual Contrastive Decoding | greedy original/noisy-image logit contrast |
 
-`vanilla` is always run as the comparison anchor.
+`vanilla` is always run as the comparison anchor. VCD is available by setting
+`METHODS=vanilla,vcd` or adding `vcd` to a longer method list; it is not an
+attention intervention and is therefore excluded from the attention-shift audit.
 
 ## Layout
 
@@ -28,6 +32,7 @@ mitigation/
 │   └── run_parallel_mitigation.sh
 └── src/
     ├── data.py                 # POPE/CHAIR input handling
+    ├── decoding.py             # VCD-style decoding utilities
     ├── evaluation.py           # yes-shift and caption analyses
     └── interventions.py        # attention-only method ports
 ```

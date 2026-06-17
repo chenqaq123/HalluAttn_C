@@ -21,13 +21,14 @@ from tqdm import tqdm
 from sinkdetect.sink_utils import find_vis_bounds
 from sinkdetect.utils import build_caption_prompt, load_model_and_processor
 from src.data import iter_pope_records, load_chair_manifest, load_pope_image
+from src.decoding import generate_vcd_greedy
 from src.interventions import install_intervention, set_visual_bounds
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Generate POPE answers or CHAIR captions with mitigation interventions")
     p.add_argument("--task", choices=["pope", "chair"], required=True)
-    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink"], required=True)
+    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink", "vcd"], required=True)
     p.add_argument("--model_path", default="llava-hf/llava-1.5-7b-hf")
     p.add_argument("--cache_dir", default="")
     p.add_argument("--coco_path", required=True)
@@ -50,6 +51,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--vas_rho", type=float, default=0.5)
     p.add_argument("--vas_visual_mass", type=float, default=0.2)
     p.add_argument("--vas_keep", type=float, default=0.6)
+    p.add_argument("--vcd_alpha", type=float, default=0.5)
+    p.add_argument("--vcd_beta", type=float, default=0.1)
+    p.add_argument("--vcd_noise_step", type=int, default=500)
     return p.parse_args()
 
 
@@ -142,7 +146,23 @@ def main() -> None:
                 prompt = build_caption_prompt()
             inputs, vis_start, vis_end = _prepare(model, processor, image, prompt, device)
             image.close()
-            text = _generate(model, processor, inputs, args.max_new_tokens)
+            if args.method == "vcd":
+                try:
+                    stable_id = int(record[id_key])
+                except (TypeError, ValueError):
+                    stable_id = args.shard_idx * 1_000_000 + step
+                torch.manual_seed(args.seed + stable_id)
+                text = generate_vcd_greedy(
+                    model,
+                    processor,
+                    inputs,
+                    args.max_new_tokens,
+                    alpha=args.vcd_alpha,
+                    beta=args.vcd_beta,
+                    noise_step=args.vcd_noise_step,
+                )
+            else:
+                text = _generate(model, processor, inputs, args.max_new_tokens)
             payload = {
                 id_key: record[id_key],
                 "method": args.method,
@@ -150,6 +170,13 @@ def main() -> None:
                 "visual_span": [vis_start, vis_end],
                 "intervention": asdict(intervention),
             }
+            if args.method == "vcd":
+                payload["vcd"] = {
+                    "alpha": args.vcd_alpha,
+                    "beta": args.vcd_beta,
+                    "noise_step": args.vcd_noise_step,
+                    "decode": "greedy",
+                }
             if args.task == "pope":
                 payload.update({"question": record["question"], "label": record["label"], "image": record["image"]})
             out.write(json.dumps(payload) + "\n")

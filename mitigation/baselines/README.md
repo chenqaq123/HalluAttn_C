@@ -11,13 +11,14 @@ hallucination mitigation analysis on LLaVA-1.5-7B.
 | `pai` | Paying More Attention to Image | attention manipulation only; CFG/logit refinement deliberately excluded | layers `[2, 32)`, `alpha=0.2` |
 | `clearsight` | ClearSight / Visual Amplification Fusion | VAF attention intervention port with dynamic image bounds | layers `[9, 15)`, visual `1.15`, system/prefix `0.95` |
 | `visattnsink` | See What You Are Told / Visual Attention Sink | sink identification, head filtering, visual attention redistribution port | layers `[2, 32)`, `tau=20`, `rho=0.5`, `summ=0.2`, `p=0.6` |
+| `vcd` | Visual Contrastive Decoding | deterministic greedy port using original/noisy image logits | `alpha=0.5`, `beta=0.1`, `noise_step=500` |
 
-Implementation lives in
-[`mitigation/src/interventions.py`](../src/interventions.py). It ports the
-intervention rules onto the HuggingFace `LlavaForConditionalGeneration` stack
-already used in this project, rather than vendoring three incompatible LLaVA
-forks. These are controlled ports for mechanism testing, not bit-level official
-reproductions.
+Attention-intervention implementation lives in
+[`mitigation/src/interventions.py`](../src/interventions.py). Decoding-time VCD
+logic lives in [`mitigation/src/decoding.py`](../src/decoding.py). The ports use
+the HuggingFace `LlavaForConditionalGeneration` stack already used in this
+project, rather than vendoring incompatible LLaVA forks. These are controlled
+ports for mechanism testing, not bit-level official reproductions.
 
 ## Evaluation Question
 
@@ -45,3 +46,4 @@ or simply shorter, less object-rich captions.
 - [`pai/README.md`](pai/README.md)
 - [`clearsight/README.md`](clearsight/README.md)
 - [`visattnsink/README.md`](visattnsink/README.md)
+- [`vcd/README.md`](vcd/README.md)

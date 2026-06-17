@@ -137,6 +137,32 @@ not reliable mitigation: PAI is unchanged, ClearSight increases FPR more than
 TPR, and the small VisAttnSink gain needs full-split and semantic-neighbor
 confirmation before it can be treated as a real effect.
 
+### VCD-Greedy Pilot
+
+A second 100-row POPE-random pilot was run after adding the controlled
+VCD-greedy port. It uses the official VCD contrastive logit form and diffusion
+noise schedule, but keeps greedy decoding to match the rest of this repository's
+POPE/CHAIR generation setup.
+
+Result root:
+
+```text
+mitigation/results/pope_random_limit100_vcd_seeded_audit/
+```
+
+The vanilla anchor exactly repeats the previous 100-row pilot. VCD-greedy has
+`invalid=0` and matched sample IDs, but does not improve this subset:
+
+| Method | Accuracy | MCC | TPR | FPR | Yes rate | Delta TPR - Delta FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| vanilla | 0.870 | 0.744 | 0.820 | 0.080 | 0.450 | anchor |
+| VCD-greedy | 0.860 | 0.725 | 0.800 | 0.080 | 0.440 | -0.020 |
+
+This is early negative evidence for deterministic VCD under the current greedy
+POPE protocol, not a final statement about the official stochastic VCD setup.
+The next check is full-split VCD-greedy plus, if needed, a small official-style
+sampling parity check.
+
 ## Mitigation CHAIR
 
 CHAIR caption metrics support the same scoped conclusion: current attention
@@ -170,5 +196,7 @@ ports do not reliably reduce object hallucination under caption-style controls.
 - Full regeneration of POPE/CHAIR mitigation results with the now-tracked
   runtime stack, or a documented hash-level equivalence check against the
   existing full run.
+- Full-split VCD-greedy evaluation and, if paper claims compare to official
+  VCD, a stochastic decoding parity check on a small subset.
 - Head-selection or head-specific mitigation baselines as positive
   counterexamples to unselective attention amplification.

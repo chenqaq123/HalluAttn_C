@@ -12,7 +12,8 @@ ENV_OVERRIDE_KEYS=(
     MITIGATION_EXP_NAME MODEL_PATH CACHE_DIR HF_HUB_CACHE HF_HOME COCO_PATH
     CHAIR_PKL INVALID_POLICY CHAIR_MANIFEST POPE_DIR POPE_PATH LIMIT SEED
     POPE_MAX_NEW_TOKENS CHAIR_MAX_NEW_TOKENS PAI_ALPHA VAF_ENHANCE
-    VAF_SUPPRESS VAS_TAU VAS_RHO VAS_VISUAL_MASS VAS_KEEP
+    VAF_SUPPRESS VAS_TAU VAS_RHO VAS_VISUAL_MASS VAS_KEEP VCD_ALPHA
+    VCD_BETA VCD_NOISE_STEP
 )
 declare -A CALLER_ENV=()
 for key in "${ENV_OVERRIDE_KEYS[@]}"; do
@@ -60,6 +61,9 @@ VAS_TAU="${VAS_TAU:-20}"
 VAS_RHO="${VAS_RHO:-0.5}"
 VAS_VISUAL_MASS="${VAS_VISUAL_MASS:-0.2}"
 VAS_KEEP="${VAS_KEEP:-0.6}"
+VCD_ALPHA="${VCD_ALPHA:-0.5}"
+VCD_BETA="${VCD_BETA:-0.1}"
+VCD_NOISE_STEP="${VCD_NOISE_STEP:-500}"
 
 if [[ "$CHAIR_PKL" != /* ]]; then
     CHAIR_PKL="$PROJECT_ROOT/$CHAIR_PKL"
@@ -131,6 +135,9 @@ run_method_task() {
                 --vas_rho "$VAS_RHO" \
                 --vas_visual_mass "$VAS_VISUAL_MASS" \
                 --vas_keep "$VAS_KEEP" \
+                --vcd_alpha "$VCD_ALPHA" \
+                --vcd_beta "$VCD_BETA" \
+                --vcd_noise_step "$VCD_NOISE_STEP" \
                 "${extra_args[@]}"
         ) > "$log_dir/shard${i}.log" 2>&1 &
         pids+=($!)
