@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.1pt}
+\begin{tabular}{lrrrr}
+\toprule
+Method & $\Delta V$ & $\Delta$TPR & $\Delta$FPR & TP/FP $V$ \\
+\midrule
+PAI & +0.038 & +0.000 & +0.000 & .103/.105 \\
+ClearSight & -0.017 & +0.017 & +0.033 & .063/.063 \\
+VisSink & +0.002 & +0.017 & +0.017 & .067/.071 \\
+\bottomrule
+\end{tabular}
+\caption{Adversarial POPE attention-shift audit ($120$ samples). $\Delta V$ is matched active-layer visual-mass change vs.\ vanilla; TP/FP $V$ reports post-intervention visual mass for true and false positives. Visual mass is not selective for correct object presence.}
+\label{tab:attention-audit}
+\end{table}

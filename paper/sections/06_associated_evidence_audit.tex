@@ -1,0 +1,16 @@
+\section{Associated Evidence Audit}
+\label{sec:associated-audit}
+
+\noindent The detection and mitigation results point to the same missing criterion: target-discriminative evidence. A method can attend to the image, or even to a semantically meaningful region, without verifying the queried object. We therefore add an associated-evidence audit on POPE negatives: the target object is absent, but we separate negatives according to whether the image contains objects that make the target plausible.
+
+\paragraph{Audit construction.}
+We use the COCO val2014 instance annotations for the images underlying POPE. For each COCO category, we build a top-$10$ neighbor set by image-level Jaccard co-occurrence and also treat same-supercategory categories as related. Each POPE question is parsed into a target object and image id; rows with label ``no'' are marked as \emph{related-present} if any co-occurrence neighbor or supercategory sibling is annotated in the image, and \emph{plain absent} otherwise. The parser covers all $9{,}000$ POPE rows, including the fixed ``imange'' typo in part of the adversarial split, with zero unknown targets and zero missing image ids.
+
+The resulting split confirms that POPE difficulty is associated with related visual evidence. Related-present negatives account for $56.0\%$ of random negatives, $65.3\%$ of popular negatives, and $84.8\%$ of adversarial negatives. Thus the adversarial split is not merely a harder prior distribution: most of its negative questions contain visually plausible associated evidence.
+
+\input{tables/table_semantic_neighbor_fpr}
+
+\paragraph{Result.}
+Table~\ref{tab:semantic-neighbor-fpr} joins this audit with the saved POPE predictions from the attention-only mitigation run. For every method and every split, FPR is higher on related-present negatives than on plain absent negatives. The gap grows with split difficulty: vanilla rises from a $+4.1$ point gap on random to $+11.1$ points on adversarial. PAI-attention-only is nearly identical to vanilla. ClearSight, the method that raises macro recall most, also has the largest related-present FPRs: $8.3\%$, $14.4\%$, and $22.3\%$ across random, popular, and adversarial. VisAttnSink also preserves the same gap.
+
+This audit explains why attention-only mitigation fails under the earlier POPE and CHAIR controls. These methods can increase visual routing or affirmative answers, but they do not ask whether the visual evidence distinguishes the target from associated objects. Related visible objects remain the main source of false-positive yes answers. The failure mode is therefore not lack of image attention alone; it is lack of target-discriminative verification.

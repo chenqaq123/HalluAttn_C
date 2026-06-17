@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.0pt}
+\begin{tabular}{p{0.23\columnwidth}p{0.32\columnwidth}p{0.32\columnwidth}}
+\toprule
+Use & Proxy & Failure mode tested \\
+\midrule
+Detection & attention mass or shape is a grounding score & score tracks generation position or object frequency \\
+Mitigation & more visual routing reduces hallucination & output prior or caption style shifts without verification \\
+Stress test & purified shape removes mass bias & normalized shape still tracks decoding dynamics \\
+\bottomrule
+\end{tabular}
+\caption{The shared proxy behind the methods we test. The paper evaluates whether the proxy survives controls that target its most likely failure mode.}
+\label{tab:proxy}
+\end{table}

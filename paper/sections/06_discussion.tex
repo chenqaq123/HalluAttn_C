@@ -1,0 +1,8 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\noindent Our results should not be read as evidence that attention is irrelevant to grounding. IC, uncertainty baselines, and preliminary per-head probes all suggest that LVLMs contain object-relevant information, and some of that information may be attention-derived. The negative result is narrower and more actionable: raw attention mass, mean-over-head attention shape, and unselective attention amplification are not reliable certificates of grounding.
+
+\noindent The practical implication is that attention-based claims need selectivity controls. A detector should show that its score separates present from absent objects at comparable generation positions and object categories. A mitigation method should show that its routing change improves true positives more than false positives, rather than merely increasing yes rate or caption object richness. Semantic-neighbor negatives make this requirement concrete by testing the cases where associated evidence is present but target evidence is absent.
+
+\noindent This framing leaves room for better attention methods. Head selection, learned verification heads, detector-assisted grounding, and counterfactual region tests may pass the proposed controls. The contribution of this paper is to make those controls necessary before attention-based gains are interpreted as hallucination detection or mitigation.

@@ -1,0 +1,16 @@
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4.2pt}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Method & $\Delta$Acc & $\Delta$MCC & $\Delta$Yes & $\Delta$TPR & $\Delta$FPR & $\Delta C_i$ & $\Delta$Obj & $\Delta$Hall \\
+\midrule
+PAI-attn-only & -0.001 & -0.002 & -0.004 & -0.005 & -0.003 & +0.000 & +0.14 & +0.02 \\
+ClearSight    & -0.001 & -0.006 & +0.036 & +0.035 & +0.038 & +0.001 & -0.11 & -0.01 \\
+VisAttnSink   & -0.004 & -0.008 & +0.006 & +0.002 & +0.009 & +0.009 & +0.24 & +0.10 \\
+\bottomrule
+\end{tabular}
+\caption{Mitigation behavior relative to vanilla. POPE deltas are macro-averaged over random/popular/adversarial splits; CHAIR deltas are over $5{,}000$ captions. ClearSight's recall gain is matched by FPR growth, while VisAttnSink increases hallucinated object mentions.}
+\label{tab:pope-mitigation}
+\end{table*}

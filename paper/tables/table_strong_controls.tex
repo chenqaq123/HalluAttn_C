@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.0pt}
+\begin{tabular}{lccc}
+\toprule
+Method & Same-word match & Cubic residual & Retained \\
+\midrule
+NLL & 0.698 & 0.630 & 0.93 \\
+Entropy & 0.712 & 0.634 & 0.96 \\
+IC & \textbf{0.716} & 0.633 & 0.78 \\
+PAS & 0.569 & 0.558 & 0.21 \\
+SVAR & 0.565 & 0.546 & 0.20 \\
+GLSim-local & 0.615 & 0.600 & 0.42 \\
+SinkDetect-global & 0.477 & 0.484 & -0.08 \\
+SinkDetect-CLC & 0.592 & 0.550 & 0.64 \\
+\bottomrule
+\end{tabular}
+\caption{Additional controls on saved per-object scores. Same-word match pairs hallucinated and grounded mentions of the same object word within $\pm5$ generated tokens. Retained is $(\mathrm{same\mbox{-}word}-0.5)/(\mathrm{overall}-0.5)$. Attention mass scores remain weak under object-category control.}
+\label{tab:strong-controls}
+\end{table}
