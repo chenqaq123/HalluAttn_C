@@ -6,7 +6,7 @@ methods under controlled behavioral diagnostics.
 ## Implemented Scope
 
 The current runnable scope for LLaVA-1.5-7B includes four attention/head
-interventions and one decoding-time baseline:
+interventions and two decoding-time baselines:
 
 | Key | Method | Scope |
 |---|---|---|
@@ -14,11 +14,12 @@ interventions and one decoding-time baseline:
 | `clearsight` | Visual Amplification Fusion | official visual/system attention scaling |
 | `visattnsink` | Visual Attention Sink | official sink-based attention redistribution |
 | `vcd` | Visual Contrastive Decoding | greedy original/noisy-image logit contrast |
+| `damro` | DAMRO | greedy original/outlier-token image-feature logit contrast |
 | `spin` | Image-Guided Head Suppression | visual-attention top-head routing with non-routed head suppression |
 
-`vanilla` is always run as the comparison anchor. VCD is available by setting
-`METHODS=vanilla,vcd` or adding `vcd` to a longer method list; it is not an
-attention intervention and is therefore excluded from the attention-shift audit.
+`vanilla` is always run as the comparison anchor. VCD and DAMRO are available by setting `METHODS=vanilla,vcd` or
+`METHODS=vanilla,damro`; they are decoding-time baselines and are therefore
+excluded from the attention-shift audit.
 
 ## Layout
 
@@ -33,7 +34,7 @@ mitigation/
 │   └── run_parallel_mitigation.sh
 └── src/
     ├── data.py                 # POPE/CHAIR input handling
-    ├── decoding.py             # VCD-style decoding utilities
+    ├── decoding.py             # VCD/DAMRO-style decoding utilities
     ├── evaluation.py           # yes-shift and caption analyses
     └── interventions.py        # attention/head method ports
 ```

@@ -288,7 +288,7 @@ need at least one replication to show the phenomenon is not LLaVA-specific.
 |---|---|---|
 | VCD | classic visual contrastive decoding; attacks language-prior reliance | controlled greedy port complete; official sampling parity optional |
 | OPERA | attention over-trust penalty and rollback | high priority if code works with LLaVA |
-| DAMRO | attention outlier/background-token suppression | useful attention-shape counterpoint |
+| DAMRO | CLS-selected outlier-token contrastive decoding | controlled greedy port smoke-tested; run adversarial subset next |
 | SPIN | image-guided dynamic head suppression; direct positive counterexample | controlled HF port implemented; default subset collapses to yes prior and mild subset ties vanilla without target-selective gains |
 | CAI/CAST | caption-guided head/attention steering | strong recent head-specific baseline; code availability uncertain |
 | Woodpecker/Volcano | post-hoc correction/self-feedback | useful but higher latency; include as practical comparison if time allows |
@@ -315,8 +315,8 @@ it satisfies three criteria:
 3. Prototype TDEV-zero using existing row-cache visual representations if
    available; otherwise extend row cache to save visual hidden states for key
    layers/patches.
-4. Move to DAMRO/OPERA or official SPIN parity only if required; local SPIN
-   default and mild subset checks do not show target-discriminative gains.
+4. Run DAMRO adversarial subset and semantic-neighbor audits, then move to
+   OPERA or official SPIN parity only if needed.
 5. Run a small multi-model pilot before expanding all tables.
 
 ## 8. Current Paper Positioning Sentence
