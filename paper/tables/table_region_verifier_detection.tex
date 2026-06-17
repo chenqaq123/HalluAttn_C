@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llcccc}
+\toprule
+Method & Evidence source & Overall & Within-bin & Matched-pair & Residual \\
+\midrule
+IC & Internal representation & 0.776 & 0.686 & 0.703 & 0.633 \\
+\midrule
+OWLv2 target absence & Region verifier & 0.865 & 0.842 & 0.847 & \textbf{0.711} \\
+OWLv2 two-stage absence & Region verifier & \textbf{0.872} & \textbf{0.849} & \textbf{0.851} & 0.707 \\
+OWLv2 margin absence & Region verifier & 0.779 & 0.745 & 0.732 & 0.639 \\
+OWLv2 neighbor presence & Related-object control & 0.519 & 0.483 & 0.471 & 0.470 \\
+\bottomrule
+\end{tabular}
+\caption{Region-verifier detection on LLaVA-1.5-7B / MSCOCO. Scores are AUROC for object-mention hallucination, using OWLv2 image-level target and neighbor evidence computed independently from the decoder attention stream. Unlike attention mass, target absence remains strong under position and same-object controls; the neighbor-presence control is near chance.}
+\label{tab:region-verifier-detection}
+\end{table*}

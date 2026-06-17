@@ -153,11 +153,69 @@ def check_semantic_neighbor_fpr() -> None:
         _assert_rounded(actual, expected, 1, f"semantic:{row_label}")
 
 
+def check_region_verifier_detection() -> None:
+    baseline = json.loads((PROJECT_ROOT / "detection/baselines/results/coco_llava_7b_baselines/metrics.json").read_text())
+    region = json.loads(
+        (PROJECT_ROOT / "detection/baselines/results/owlv2_region_detection/owlv2_region_detection_metrics.json").read_text()
+    )
+    table = (PAPER_ROOT / "tables/table_region_verifier_detection.tex").read_text()
+    mapping = {
+        "IC": baseline["scores"]["ic_hallu_score"],
+        "OWLv2 target absence": region["metrics"]["owlv2_target_absence"],
+        "OWLv2 two-stage absence": region["metrics"]["owlv2_two_stage_absence"],
+        "OWLv2 margin absence": region["metrics"]["owlv2_margin_absence"],
+        "OWLv2 neighbor presence": region["metrics"]["owlv2_neighbor_presence"],
+    }
+    for row_label, score in mapping.items():
+        expected = [
+            score["overall_auroc"],
+            score["within_bin_auroc"],
+            score["matched_pair_auroc"],
+            score["residual_auroc"],
+        ]
+        actual = _numbers_from_row(table, row_label)[-4:]
+        _assert_rounded(actual, expected, 3, f"region-detection:{row_label}")
+
+
+def _pope_metric_values(metrics_path: str) -> list[float]:
+    rows = {
+        (row["split"], row["subset"]): row
+        for row in csv.DictReader((PROJECT_ROOT / metrics_path).open())
+    }
+    macro = rows[("macro", "all")]
+    macro_related = rows[("macro", "negative_related_present")]
+    adversarial_related = rows[("adversarial", "negative_related_present")]
+    return [
+        float(macro["mcc"]),
+        float(macro["recall_tpr"]),
+        float(macro["fpr"]),
+        float(macro_related["fpr"]),
+        float(adversarial_related["fpr"]),
+    ]
+
+
+def check_region_verifier_pope() -> None:
+    table = (PAPER_ROOT / "tables/table_region_verifier_pope.tex").read_text()
+    mapping = {
+        "direct & target score": "mitigation/results/semantic_neighbor_audit/owlv2_target_score_direct/direct_score_metrics.csv",
+        "direct & margin score": "mitigation/results/semantic_neighbor_audit/owlv2_margin_direct_cal/direct_score_metrics.csv",
+        "direct & two-stage": "mitigation/results/semantic_neighbor_audit/owlv2_two_stage_direct/two_stage_metrics.csv",
+        "gate & target score": "mitigation/results/semantic_neighbor_audit/owlv2_target_score_gate/tdev_gate_metrics.csv",
+        "gate & two-stage": "mitigation/results/semantic_neighbor_audit/owlv2_two_stage_gate/two_stage_metrics.csv",
+    }
+    for row_label, metrics_path in mapping.items():
+        expected = _pope_metric_values(metrics_path)
+        actual = _numbers_from_row(table, row_label)
+        _assert_rounded(actual, expected, 3, f"region-pope:{row_label}")
+
+
 def main() -> None:
     check_detection_main()
     check_strong_controls()
     check_mitigation_behavior()
     check_semantic_neighbor_fpr()
+    check_region_verifier_detection()
+    check_region_verifier_pope()
     print("All audited paper numbers match current result artifacts.")
 
 
