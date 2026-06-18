@@ -142,10 +142,39 @@ and more defensible ICML framing is:
 > neighbor verification criterion and shows that it improves both yes/no
 > mitigation and object-mention detection under semantic-neighbor controls.
 
+## Novelty Decision After Latest Check
+
+A June 18, 2026 literature refresh changes the positioning but not the current
+experimental direction. Recent methods such as Region-Aware Attention
+Recalibration/SADI, Conscious Gaze, and Energy-Guided Decoding occupy the
+training-free internal-intervention space: they recalibrate attention, select
+hidden states, or trigger visual-focus interventions without external detectors.
+Therefore, the paper should not frame LH-Shape as the main novelty or as a
+standalone attention-calibration competitor.
+
+The defensible contribution is narrower and cleaner:
+
+1. The semantic-neighbor stress protocol exposes failures that aggregate
+   attention, yes-rate correction, and generic grounding can miss.
+2. TDEV is a target-vs-neighbor verification criterion: evidence must uniquely
+   support the queried object, not merely any semantically related object.
+3. OWLv2 is one backend for this criterion; LH-Shape is a calibrated internal
+   triage signal that reduces backend calls and provides practicality evidence.
+4. Any paper table involving LH-Shape should report it as supervised internal
+   triage/TDEV-lite, not as training-free mitigation.
+
+Next concrete experiment choice: do not spend the next slot building another
+external detector pipeline. The higher-value addition is an internal-vs-external
+ablation table that shows what each component contributes under semantic-neighbor
+controls: vanilla, prompt-only, LH-Shape alone, TDEV-region, LH->TDEV triage,
+and position/PAS triage controls at matched detector-call budgets.
+
 ## Sources Checked
 
 - CAI, arXiv:2506.23590, https://arxiv.org/abs/2506.23590
 - CAST, arXiv:2605.04641, https://arxiv.org/abs/2605.04641
-- Region-Aware Attention Recalibration, arXiv:2605.24957,
+- Region-Aware Attention Recalibration / SADI, arXiv:2605.24957,
   https://arxiv.org/abs/2605.24957
+- Conscious Gaze, arXiv:2512.05546, https://arxiv.org/abs/2512.05546
+- Energy-Guided Decoding, arXiv:2507.07731, https://arxiv.org/abs/2507.07731
 - HALP, arXiv:2603.05465, https://arxiv.org/abs/2603.05465
