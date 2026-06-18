@@ -378,6 +378,14 @@ The second-model POPE replication now covers Qwen2.5-VL-7B-Instruct on all
 three full POPE splits. The generation artifacts passed the following
 consistency checks:
 
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/audit_qwen25vl_replication.py \
+  --output_json mitigation/results/semantic_neighbor_audit/qwen25vl_replication_audit.json
+```
+
 | Split | Rows | Unique IDs | Yes labels | No labels | Invalid outputs | Semantic audit missing | Fixed-TDEV missing base |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | random | 3000 | 3000 | 1500 | 1500 | 0 | 0 | 0 |
