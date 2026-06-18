@@ -384,6 +384,96 @@ recover the full hybrid TPR because it does not invoke the rescue branch for
 vanilla-no rows. This supports the paper's practicality story while preserving
 TDEV-region as the primary verifier.
 
+The full 9,000-row POPE per-head cache has now been generated with 8-bit LLaVA
+and the same layers 22 and 31. This full run supersedes the 120-row pilot for
+all POPE transfer claims. Cache quality checks pass: `rows_cached=9000`,
+`missing_targets=0`, `present_rows=4500`, `absent_rows=4500`, each POPE split
+has 3,000 rows, and feature shape is `(9000, 2, 32, 4)`.
+
+Full cache metrics:
+
+```text
+experiments/pope_llava_7b_per_head_full/pope_per_head_row_cache_metrics.json
+```
+
+Full image-grouped OOF transfer command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/evaluate_pope_lh_shape_transfer.py \
+  --cache experiments/pope_llava_7b_per_head_full/pope_per_head_row_cache.npz \
+  --output_dir mitigation/results/pope_lh_shape_transfer_full_imagecv \
+  --layer_sets '31;22,31' \
+  --eval_splits random,popular,adversarial \
+  --epochs 120 \
+  --image_cv_folds 5 \
+  --seed 0 \
+  --include_prompt_baselines
+```
+
+Full transfer result files:
+
+```text
+mitigation/results/pope_lh_shape_transfer_full_imagecv/pope_lh_shape_transfer_metrics.json
+mitigation/results/pope_lh_shape_transfer_full_imagecv/pope_lh_shape_transfer_metrics.csv
+mitigation/results/pope_lh_shape_transfer_full_imagecv/pope_lh_shape_transfer_predictions.csv
+```
+
+Full image-CV transfer summary:
+
+| Score | Macro MCC | Absent TPR | Present FPR | AUROC |
+|---|---:|---:|---:|---:|
+| LH-Shape POPE, layers 22+31 | 0.559 | 0.764 | 0.205 | 0.853 |
+| LH-Shape POPE, layer 31 | 0.488 | 0.792 | 0.306 | 0.812 |
+| prompt token position | 0.128 | 0.242 | 0.141 | 0.518 |
+| target token span length | 0.128 | 0.242 | 0.141 | 0.518 |
+| target character length | 0.183 | 0.270 | 0.124 | 0.540 |
+
+For layers 22+31, split-level MCC is 0.605 on random, 0.587 on popular, and
+0.486 on adversarial. Related-present absent TPR is 0.782 on random, 0.770 on
+popular, and 0.679 on adversarial. Interpretation: the full run confirms that
+internal LH-Shape transfers well beyond prompt-only controls, but its operating
+point is still too false-positive-prone to replace TDEV-region as the primary
+POPE verifier.
+
+Full LH-Shape to TDEV cascade command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/evaluate_pope_lh_tdev_cascade.py \
+  --lh_predictions_csv mitigation/results/pope_lh_shape_transfer_full_imagecv/pope_lh_shape_transfer_predictions.csv \
+  --tdev_predictions_csv mitigation/results/semantic_neighbor_audit/owlv2_hybrid_region_rule/hybrid_predictions.csv \
+  --output_dir mitigation/results/pope_lh_tdev_cascade_full \
+  --score_names lh_shape_pope_layers_22_31,lh_shape_pope_layers_31,prompt_token_pos,target_char_len \
+  --call_rates 0.10,0.25,0.50,0.75,1.00
+```
+
+Full cascade result files:
+
+```text
+mitigation/results/pope_lh_tdev_cascade_full/pope_lh_tdev_cascade_metrics.json
+mitigation/results/pope_lh_tdev_cascade_full/pope_lh_tdev_cascade_metrics.csv
+```
+
+Full cascade summary on all 9,000 POPE rows:
+
+| Method | TDEV calls | Call savings | MCC | TPR | FPR | Related FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| vanilla base | 0 | 100% | 0.730 | 0.813 | 0.087 | 0.114 |
+| full TDEV hybrid | 9,000 | 0% | 0.763 | 0.806 | 0.051 | 0.069 |
+| LH 22+31 all-selected 50% | 4,500 | 50% | 0.746 | 0.812 | 0.071 | 0.096 |
+| LH 22+31 all-selected 75% | 6,750 | 25% | 0.764 | 0.813 | 0.056 | 0.075 |
+| LH 22+31 base-yes-selected 25% | 1,013 | 89% | 0.747 | 0.808 | 0.068 | 0.091 |
+| LH 22+31 base-yes-selected 50% | 2,025 | 78% | 0.754 | 0.801 | 0.056 | 0.075 |
+| LH 22+31 base-yes-selected 75% | 3,037 | 66% | 0.753 | 0.796 | 0.051 | 0.069 |
+
+Interpretation: the full cascade supports LH-Shape as a cheap suppress-only
+triage layer before TDEV-region. With 2,025/9,000 detector calls,
+`base_yes_selected` reduces FPR from 0.087 to 0.056 and related-present FPR from
+0.114 to 0.075, close to full TDEV's 0.051/0.069. It does not recover the full
+hybrid rescue behavior, so the paper should not report it as a standalone POPE
+mitigator.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

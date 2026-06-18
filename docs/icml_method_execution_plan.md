@@ -61,7 +61,7 @@ The ICML version should show two tiers:
 | Tier | Role | Current status | Why it matters |
 |---|---|---|---|
 | TDEV-region | strongest verifier using cached OWLv2 image-object scores | positive POPE and CHAIR evidence exists | establishes the target-discrimination criterion |
-| TDEV-lite | cheaper internal/proposal backend | calibrated late-head linear readout positive on CHAIR detection; POPE transfer pending | answers the practicality concern that OWLv2 is an external detector |
+| TDEV-lite | cheaper internal/proposal backend | calibrated late-head linear readout positive on CHAIR detection; full POPE image-CV transfer is positive as a triage signal | answers the practicality concern that OWLv2 is an external detector |
 
 TDEV-lite should not be a weaker restatement of CLIP margin; those variants are
 already negative. The current internal-probe audit shows that late-layer
@@ -84,14 +84,15 @@ the same metric implementation. This gives the paper a practical internal
 variant, but it is supervised calibration and must be separated from the
 training-free baseline table.
 
-Next implementation target:
+Current implementation target:
 
-1. Scale the new POPE question-token per-head cache entry point beyond the
-   120-row-per-split pilot. The pilot shows real image-CV signal (layers 22+31:
-   MCC 0.408, AUROC 0.739) above prompt-only baselines, but present-object FPR
-   is 0.400, so it is not a deployable POPE gate. As a suppress-only triage
-   layer before TDEV-region, however, it reaches full-TDEV FPR with 130/360
-   calls in the pilot.
+1. The full POPE question-token per-head cache is complete on all 9,000 rows.
+   Full image-CV transfer shows real signal above prompt-only baselines
+   (layers 22+31: MCC 0.559, AUROC 0.853), but present-object FPR is still
+   0.205, so it is not a deployable standalone POPE gate. As a suppress-only
+   triage layer before TDEV-region, it is useful: `base_yes_selected` reaches
+   FPR 0.056 and related-present FPR 0.075 with 2,025/9,000 detector calls,
+   close to full TDEV's 0.051 and 0.069.
 2. Treat LH-Shape prefiltering as a CHAIR-side practicality result: it can save
    25% of OWLv2 calls while retaining 99.6% of full TDEV top-5 hallucination
    deletions at 75% call rate, but position-only/PAS are competitive at higher
@@ -121,10 +122,9 @@ Next implementation target:
    a fluent rewrite or decoding integration rather than raw phrase deletion.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
-   calls, but the gain is partly shared by position/PAS prefilters. The POPE
-   120-row image-CV pilot shows transfer above prompt-only controls but with
-   high present-object FPR; the more defensible use is suppress-only TDEV
-   triage, not replacing the verifier.
+   calls, but the gain is partly shared by position/PAS prefilters. The full
+   POPE image-CV run confirms transfer above prompt-only controls, but the more
+   defensible use remains suppress-only TDEV triage, not replacing the verifier.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
 4. **Baseline availability check.** Re-check CAI/CAST/region-aware code before
