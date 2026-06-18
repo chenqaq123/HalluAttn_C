@@ -277,6 +277,29 @@ def fixed_threshold_scores(values: np.ndarray, labels: np.ndarray, train_mask: n
     }
 
 
+def append_prediction_rows(
+    prediction_rows: list[dict],
+    name: str,
+    data: dict,
+    labels: np.ndarray,
+    negative_types: np.ndarray,
+    scores: np.ndarray,
+    pred_absent: np.ndarray,
+) -> None:
+    for idx in range(labels.shape[0]):
+        prediction_rows.append({
+            "score": name,
+            "split": str(data["splits"][idx]),
+            "question_id": str(data["question_ids"][idx]),
+            "image_id": int(data["image_ids"][idx]),
+            "target": str(data["targets"][idx]),
+            "label_absent": int(labels[idx]),
+            "negative_type": str(negative_types[idx]),
+            "absent_score": float(scores[idx]),
+            "pred_absent": int(bool(pred_absent[idx])),
+        })
+
+
 def prompt_baseline_values(data: dict) -> dict[str, np.ndarray]:
     return {
         "prompt_token_pos": data["token_pos"].astype(np.float64),
@@ -312,6 +335,7 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     metric_rows = []
+    prediction_rows = []
     model_payload = {}
     subsets = ["all", "present", "absent", "negative_related_present", "negative_absent_plain", "negative_target_present_coco_label"]
 
@@ -354,6 +378,7 @@ def main() -> None:
                 "weight_l2_norm": float(np.linalg.norm(w)),
                 "bias": float(b),
             }
+        append_prediction_rows(prediction_rows, name, data, labels, negative_types, scores, pred_absent)
         for split in eval_splits + ["macro"]:
             split_mask = np.ones(labels.shape[0], dtype=bool) if split == "macro" else splits == split
             for subset in subsets:
@@ -381,6 +406,7 @@ def main() -> None:
             else:
                 scores, pred_absent, details = fixed_threshold_scores(values, labels, train_mask)
                 model_payload[name] = {"mode": "prompt_only_fixed_train_splits", **details}
+            append_prediction_rows(prediction_rows, name, data, labels, negative_types, scores, pred_absent)
             for split in eval_splits + ["macro"]:
                 split_mask = np.ones(labels.shape[0], dtype=bool) if split == "macro" else splits == split
                 for subset in subsets:
@@ -398,6 +424,10 @@ def main() -> None:
         writer = csv.DictWriter(f, fieldnames=list(metric_rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(metric_rows)
+    with (output_dir / "pope_lh_shape_transfer_predictions.csv").open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(prediction_rows[0].keys()), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(prediction_rows)
     payload = {
         "cache": data["files"],
         "num_rows": int(labels.size),
@@ -412,6 +442,7 @@ def main() -> None:
         "include_prompt_baselines": bool(args.include_prompt_baselines),
         "models": model_payload,
         "metrics": metric_rows,
+        "predictions_csv": str(output_dir / "pope_lh_shape_transfer_predictions.csv"),
         "caveat": "This evaluates target-absence detection from cached POPE question-token features; it does not by itself apply a yes/no gate to generated model outputs.",
     }
     with (output_dir / "pope_lh_shape_transfer_metrics.json").open("w", encoding="utf-8") as f:

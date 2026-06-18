@@ -2188,6 +2188,7 @@
     }
   },
   "num_rows": 360,
+  "predictions_csv": "mitigation/results/pope_lh_shape_transfer_120_imagecv/pope_lh_shape_transfer_predictions.csv",
   "seed": 0,
   "train_splits": [
     "random"

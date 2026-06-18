@@ -1,0 +1,1801 @@
+score,split,question_id,image_id,target,label_absent,negative_type,absent_score,pred_absent
+lh_shape_pope_layers_31,random,1,310196,snowboard,0,positive_present,1.2788655029248062,1
+lh_shape_pope_layers_31,random,2,310196,car,1,negative_related_present,11.040195248195039,1
+lh_shape_pope_layers_31,random,3,310196,person,0,positive_present,2.808780442526218,1
+lh_shape_pope_layers_31,random,4,310196,sandwich,1,negative_absent_plain,7.609076687933265,1
+lh_shape_pope_layers_31,random,5,310196,skis,0,positive_missing_coco_label,7.269778157029951,1
+lh_shape_pope_layers_31,random,6,310196,couch,1,negative_absent_plain,8.979960649223317,1
+lh_shape_pope_layers_31,random,7,210789,truck,0,positive_present,-4.232779846662845,0
+lh_shape_pope_layers_31,random,8,210789,pizza,1,negative_absent_plain,-3.505453866467343,0
+lh_shape_pope_layers_31,random,9,210789,person,0,positive_present,-9.805810374673138,0
+lh_shape_pope_layers_31,random,10,210789,sink,1,negative_absent_plain,-0.32164818610239043,0
+lh_shape_pope_layers_31,random,11,210789,umbrella,0,positive_present,-5.9084163293449485,0
+lh_shape_pope_layers_31,random,12,210789,cell phone,1,negative_related_present,-1.685788108652791,0
+lh_shape_pope_layers_31,random,13,429109,person,0,positive_present,-11.223781034417291,0
+lh_shape_pope_layers_31,random,14,429109,sheep,1,negative_related_present,-2.833468592387835,0
+lh_shape_pope_layers_31,random,15,429109,bicycle,0,positive_present,-4.294279775571566,0
+lh_shape_pope_layers_31,random,16,429109,broccoli,1,negative_absent_plain,-1.5065080958090677,0
+lh_shape_pope_layers_31,random,17,429109,car,0,positive_present,-4.665991335358806,0
+lh_shape_pope_layers_31,random,18,429109,tennis racket,1,negative_related_present,-4.89063999024766,0
+lh_shape_pope_layers_31,random,19,211674,person,0,positive_present,-5.208703640895454,0
+lh_shape_pope_layers_31,random,20,211674,teddy bear,1,negative_related_present,-1.0954952922929442,0
+lh_shape_pope_layers_31,random,21,211674,potted plant,0,positive_present,0.07192266363171529,0
+lh_shape_pope_layers_31,random,22,211674,broccoli,1,negative_absent_plain,4.137596648646369,1
+lh_shape_pope_layers_31,random,23,211674,car,0,positive_present,3.0599828577658053,1
+lh_shape_pope_layers_31,random,24,211674,orange,1,negative_absent_plain,-1.5194864653085078,0
+lh_shape_pope_layers_31,random,25,458338,traffic light,0,positive_present,3.642253561186886,1
+lh_shape_pope_layers_31,random,26,458338,train,1,negative_related_present,4.170930997122903,1
+lh_shape_pope_layers_31,random,27,458338,person,0,positive_present,-3.663080019026717,0
+lh_shape_pope_layers_31,random,28,458338,surfboard,1,negative_related_present,4.904951641076479,1
+lh_shape_pope_layers_31,random,29,458338,car,0,positive_present,0.11088527225838851,1
+lh_shape_pope_layers_31,random,30,458338,kite,1,negative_related_present,2.270094255399992,1
+lh_shape_pope_layers_31,random,31,283412,dog,0,positive_present,-3.6145186698562592,0
+lh_shape_pope_layers_31,random,32,283412,toaster,1,negative_absent_plain,-1.1899229783208827,0
+lh_shape_pope_layers_31,random,33,283412,dining table,0,positive_missing_coco_label,0.3718654885422998,1
+lh_shape_pope_layers_31,random,34,283412,sports ball,1,negative_related_present,-0.6303521147763005,0
+lh_shape_pope_layers_31,random,35,283412,bed,0,positive_present,0.028626608659798075,1
+lh_shape_pope_layers_31,random,36,283412,book,1,negative_related_present,0.6260763421477697,1
+lh_shape_pope_layers_31,random,37,265719,person,0,positive_present,1.2489158881596314,1
+lh_shape_pope_layers_31,random,38,265719,traffic light,1,negative_related_present,4.580985713324265,1
+lh_shape_pope_layers_31,random,39,265719,spoon,0,positive_present,4.444223166062288,1
+lh_shape_pope_layers_31,random,40,265719,bird,1,negative_related_present,1.4463191632594214,1
+lh_shape_pope_layers_31,random,41,265719,fork,0,positive_present,1.212509417670542,1
+lh_shape_pope_layers_31,random,42,265719,truck,1,negative_related_present,6.269690187716202,1
+lh_shape_pope_layers_31,random,43,461331,tv,0,positive_present,-0.04196161888591296,1
+lh_shape_pope_layers_31,random,44,461331,bowl,1,negative_related_present,-1.6045409497231875,0
+lh_shape_pope_layers_31,random,45,461331,toaster,0,positive_missing_coco_label,-6.256251967213229,0
+lh_shape_pope_layers_31,random,46,461331,cow,1,negative_absent_plain,2.7507043783757736,1
+lh_shape_pope_layers_31,random,47,461331,microwave,0,positive_present,-3.8141096452334686,0
+lh_shape_pope_layers_31,random,48,461331,laptop,1,negative_related_present,-1.0150611186668104,0
+lh_shape_pope_layers_31,random,49,544456,backpack,0,positive_present,-4.709861918470786,0
+lh_shape_pope_layers_31,random,50,544456,cell phone,1,negative_related_present,-3.7253334883210103,0
+lh_shape_pope_layers_31,random,51,544456,person,0,positive_present,-8.623125993492833,0
+lh_shape_pope_layers_31,random,52,544456,couch,1,negative_absent_plain,-2.140575472834882,0
+lh_shape_pope_layers_31,random,53,544456,skis,0,positive_present,0.2672003664680491,1
+lh_shape_pope_layers_31,random,54,544456,tennis racket,1,negative_related_present,-3.5286071093409235,0
+lh_shape_pope_layers_31,random,55,17708,bird,0,positive_present,-3.4920449197916232,0
+lh_shape_pope_layers_31,random,56,17708,fire hydrant,1,negative_related_present,-1.8890575816495605,0
+lh_shape_pope_layers_31,random,57,17708,person,0,positive_present,-5.744825998158995,0
+lh_shape_pope_layers_31,random,58,17708,bed,1,negative_absent_plain,-1.9477034863331968,0
+lh_shape_pope_layers_31,random,59,17708,boat,0,positive_present,-4.537529339813998,0
+lh_shape_pope_layers_31,random,60,17708,bench,1,negative_related_present,-1.8866541681705178,0
+lh_shape_pope_layers_31,random,61,574692,person,0,positive_present,-3.560292467982403,0
+lh_shape_pope_layers_31,random,62,574692,bear,1,negative_related_present,3.8395054795284054,1
+lh_shape_pope_layers_31,random,63,574692,orange,0,positive_present,0.3341976958424377,1
+lh_shape_pope_layers_31,random,64,574692,cow,1,negative_related_present,4.597673508905112,1
+lh_shape_pope_layers_31,random,65,574692,bottle,0,positive_present,-1.509801561268575,0
+lh_shape_pope_layers_31,random,66,574692,bed,1,negative_absent_plain,4.607743120424821,1
+lh_shape_pope_layers_31,random,67,353180,backpack,0,positive_present,1.941369467405229,1
+lh_shape_pope_layers_31,random,68,353180,potted plant,1,negative_absent_plain,0.18595850223161137,1
+lh_shape_pope_layers_31,random,69,353180,person,0,positive_present,1.8519063884850189,1
+lh_shape_pope_layers_31,random,70,353180,wine glass,1,negative_absent_plain,4.1987200590837315,1
+lh_shape_pope_layers_31,random,71,353180,bus,0,positive_present,0.8423165903708624,1
+lh_shape_pope_layers_31,random,72,353180,suitcase,1,negative_related_present,4.06300404141066,1
+lh_shape_pope_layers_31,random,73,239444,person,0,positive_present,-7.66053597006554,0
+lh_shape_pope_layers_31,random,74,239444,airplane,1,negative_related_present,3.0124313706347987,1
+lh_shape_pope_layers_31,random,75,239444,dining table,0,positive_present,-2.4583029853393867,0
+lh_shape_pope_layers_31,random,76,239444,clock,1,negative_related_present,-3.4954781710931484,0
+lh_shape_pope_layers_31,random,77,239444,chair,0,positive_present,-3.434541148540957,0
+lh_shape_pope_layers_31,random,78,239444,horse,1,negative_related_present,-0.3922195455178177,0
+lh_shape_pope_layers_31,random,79,569839,person,0,positive_present,0.6115605643838271,1
+lh_shape_pope_layers_31,random,80,569839,zebra,1,negative_related_present,5.52843401315633,1
+lh_shape_pope_layers_31,random,81,569839,sandwich,0,positive_present,3.4424558128954237,1
+lh_shape_pope_layers_31,random,82,569839,tie,1,negative_related_present,9.102449354535212,1
+lh_shape_pope_layers_31,random,83,569839,hot dog,0,positive_present,3.5997878694703145,1
+lh_shape_pope_layers_31,random,84,569839,car,1,negative_related_present,7.4927266156839725,1
+lh_shape_pope_layers_31,random,85,219622,person,0,positive_present,-3.4484369473033833,0
+lh_shape_pope_layers_31,random,86,219622,carrot,1,negative_absent_plain,5.060553207102942,1
+lh_shape_pope_layers_31,random,87,219622,car,0,positive_present,4.053063965958078,1
+lh_shape_pope_layers_31,random,88,219622,potted plant,1,negative_absent_plain,1.945426190478543,1
+lh_shape_pope_layers_31,random,89,219622,frisbee,0,positive_present,-0.17608509948844808,0
+lh_shape_pope_layers_31,random,90,219622,chair,1,negative_related_present,3.713032661204066,1
+lh_shape_pope_layers_31,random,91,300368,knife,0,positive_present,5.312389049700331,1
+lh_shape_pope_layers_31,random,92,300368,teddy bear,1,negative_related_present,0.8254600712998824,1
+lh_shape_pope_layers_31,random,93,300368,person,0,positive_present,1.9151182287178479,1
+lh_shape_pope_layers_31,random,94,300368,hot dog,1,negative_related_present,4.11464706002499,1
+lh_shape_pope_layers_31,random,95,300368,cake,0,positive_present,-1.9621791808065048,0
+lh_shape_pope_layers_31,random,96,300368,tie,1,negative_related_present,3.943264887252062,1
+lh_shape_pope_layers_31,random,97,482476,person,0,positive_present,1.5716587404236746,1
+lh_shape_pope_layers_31,random,98,482476,keyboard,1,negative_related_present,2.802664336664383,1
+lh_shape_pope_layers_31,random,99,482476,remote,0,positive_missing_coco_label,1.7691995183984308,1
+lh_shape_pope_layers_31,random,100,482476,frisbee,1,negative_related_present,4.0330871474521235,1
+lh_shape_pope_layers_31,random,101,482476,handbag,0,positive_present,-0.33949735438990325,1
+lh_shape_pope_layers_31,random,102,482476,elephant,1,negative_related_present,5.599217799517973,1
+lh_shape_pope_layers_31,random,103,131115,baseball glove,0,positive_present,-3.648802246911458,0
+lh_shape_pope_layers_31,random,104,131115,suitcase,1,negative_related_present,0.4012083786169524,1
+lh_shape_pope_layers_31,random,105,131115,person,0,positive_present,-3.8231136636196696,0
+lh_shape_pope_layers_31,random,106,131115,sheep,1,negative_related_present,0.9723701024050053,1
+lh_shape_pope_layers_31,random,107,131115,baseball bat,0,positive_present,-2.044809864715816,0
+lh_shape_pope_layers_31,random,108,131115,dining table,1,negative_absent_plain,1.2207090579404902,1
+lh_shape_pope_layers_31,random,109,157084,sink,0,positive_present,-4.112722651747754,0
+lh_shape_pope_layers_31,random,110,157084,cow,1,negative_absent_plain,2.5617885159482365,1
+lh_shape_pope_layers_31,random,111,157084,bench,0,positive_present,-2.489155294237468,0
+lh_shape_pope_layers_31,random,112,157084,scissors,1,negative_related_present,3.663397582781364,1
+lh_shape_pope_layers_31,random,113,157084,toilet,0,positive_present,-2.6638939910667427,0
+lh_shape_pope_layers_31,random,114,157084,bear,1,negative_related_present,2.3121916984851096,1
+lh_shape_pope_layers_31,random,115,381895,person,0,positive_present,2.066154043551701,1
+lh_shape_pope_layers_31,random,116,381895,carrot,1,negative_absent_plain,2.441319775009894,1
+lh_shape_pope_layers_31,random,117,381895,teddy bear,0,positive_present,-1.9412026950041341,0
+lh_shape_pope_layers_31,random,118,381895,bird,1,negative_related_present,1.279380208116364,1
+lh_shape_pope_layers_31,random,119,381895,bear,0,positive_missing_coco_label,-0.07208941322260506,1
+lh_shape_pope_layers_31,random,120,381895,mouse,1,negative_absent_plain,3.660152255240688,1
+lh_shape_pope_layers_31,popular,1,310196,snowboard,0,positive_present,1.2788655029248062,1
+lh_shape_pope_layers_31,popular,2,310196,dining table,1,negative_absent_plain,10.845775500692381,1
+lh_shape_pope_layers_31,popular,3,310196,person,0,positive_present,2.808780442526218,1
+lh_shape_pope_layers_31,popular,4,310196,car,1,negative_related_present,11.040195248195039,1
+lh_shape_pope_layers_31,popular,5,310196,skis,0,positive_missing_coco_label,7.269778157029951,1
+lh_shape_pope_layers_31,popular,6,310196,chair,1,negative_related_present,6.4518973792764385,1
+lh_shape_pope_layers_31,popular,7,210789,truck,0,positive_present,-4.232779846662845,0
+lh_shape_pope_layers_31,popular,8,210789,dining table,1,negative_absent_plain,0.6870399846130314,1
+lh_shape_pope_layers_31,popular,9,210789,person,0,positive_present,-9.805810374673138,0
+lh_shape_pope_layers_31,popular,10,210789,car,1,negative_related_present,-6.9050177785480855,0
+lh_shape_pope_layers_31,popular,11,210789,umbrella,0,positive_present,-5.9084163293449485,0
+lh_shape_pope_layers_31,popular,12,210789,chair,1,negative_related_present,-1.071578708576945,0
+lh_shape_pope_layers_31,popular,13,429109,person,0,positive_present,-11.223781034417291,0
+lh_shape_pope_layers_31,popular,14,429109,dining table,1,negative_absent_plain,-4.669020901712826,0
+lh_shape_pope_layers_31,popular,15,429109,bicycle,0,positive_present,-4.294279775571566,0
+lh_shape_pope_layers_31,popular,16,429109,chair,1,negative_related_present,-1.394571065750875,0
+lh_shape_pope_layers_31,popular,17,429109,car,0,positive_present,-4.665991335358806,0
+lh_shape_pope_layers_31,popular,18,429109,cup,1,negative_absent_plain,-2.046864882133665,0
+lh_shape_pope_layers_31,popular,19,211674,person,0,positive_present,-5.208703640895454,0
+lh_shape_pope_layers_31,popular,20,211674,dining table,1,negative_related_present,1.4862599187831167,1
+lh_shape_pope_layers_31,popular,21,211674,potted plant,0,positive_present,0.07192266363171529,0
+lh_shape_pope_layers_31,popular,22,211674,chair,1,negative_related_present,2.153028196771746,1
+lh_shape_pope_layers_31,popular,23,211674,car,0,positive_present,3.0599828577658053,1
+lh_shape_pope_layers_31,popular,24,211674,cup,1,negative_absent_plain,0.846821788079848,1
+lh_shape_pope_layers_31,popular,25,458338,traffic light,0,positive_present,3.642253561186886,1
+lh_shape_pope_layers_31,popular,26,458338,dining table,1,negative_absent_plain,4.45253007894836,1
+lh_shape_pope_layers_31,popular,27,458338,person,0,positive_present,-3.663080019026717,0
+lh_shape_pope_layers_31,popular,28,458338,chair,1,negative_related_present,5.248773561909795,1
+lh_shape_pope_layers_31,popular,29,458338,car,0,positive_present,0.11088527225838851,1
+lh_shape_pope_layers_31,popular,30,458338,cup,1,negative_absent_plain,0.4339473803505626,1
+lh_shape_pope_layers_31,popular,31,283412,dog,0,positive_present,-3.6145186698562592,0
+lh_shape_pope_layers_31,popular,32,283412,person,1,negative_related_present,-2.2519069008250185,0
+lh_shape_pope_layers_31,popular,33,283412,dining table,0,positive_missing_coco_label,0.3718654885422998,1
+lh_shape_pope_layers_31,popular,34,283412,car,1,negative_absent_plain,-0.8427123281933946,0
+lh_shape_pope_layers_31,popular,35,283412,bed,0,positive_present,0.028626608659798075,1
+lh_shape_pope_layers_31,popular,36,283412,chair,1,negative_related_present,0.992557643848371,1
+lh_shape_pope_layers_31,popular,37,265719,person,0,positive_present,1.2489158881596314,1
+lh_shape_pope_layers_31,popular,38,265719,dining table,1,negative_related_present,-0.9075559457491232,0
+lh_shape_pope_layers_31,popular,39,265719,spoon,0,positive_present,4.444223166062288,1
+lh_shape_pope_layers_31,popular,40,265719,car,1,negative_related_present,3.394822549402645,1
+lh_shape_pope_layers_31,popular,41,265719,fork,0,positive_present,1.212509417670542,1
+lh_shape_pope_layers_31,popular,42,265719,chair,1,negative_related_present,1.935185690377271,1
+lh_shape_pope_layers_31,popular,43,461331,tv,0,positive_present,-0.04196161888591296,1
+lh_shape_pope_layers_31,popular,44,461331,person,1,negative_absent_plain,-1.8594853047050652,0
+lh_shape_pope_layers_31,popular,45,461331,toaster,0,positive_missing_coco_label,-6.256251967213229,0
+lh_shape_pope_layers_31,popular,46,461331,dining table,1,negative_absent_plain,-1.184943356962308,0
+lh_shape_pope_layers_31,popular,47,461331,microwave,0,positive_present,-3.8141096452334686,0
+lh_shape_pope_layers_31,popular,48,461331,car,1,negative_absent_plain,2.3877223999093933,1
+lh_shape_pope_layers_31,popular,49,544456,backpack,0,positive_present,-4.709861918470786,0
+lh_shape_pope_layers_31,popular,50,544456,dining table,1,negative_absent_plain,-0.5066981787223978,0
+lh_shape_pope_layers_31,popular,51,544456,person,0,positive_present,-8.623125993492833,0
+lh_shape_pope_layers_31,popular,52,544456,car,1,negative_related_present,0.24134776136763514,1
+lh_shape_pope_layers_31,popular,53,544456,skis,0,positive_present,0.2672003664680491,1
+lh_shape_pope_layers_31,popular,54,544456,chair,1,negative_related_present,-3.4331810086682686,0
+lh_shape_pope_layers_31,popular,55,17708,bird,0,positive_present,-3.4920449197916232,0
+lh_shape_pope_layers_31,popular,56,17708,dining table,1,negative_absent_plain,-4.381210863764195,0
+lh_shape_pope_layers_31,popular,57,17708,person,0,positive_present,-5.744825998158995,0
+lh_shape_pope_layers_31,popular,58,17708,car,1,negative_related_present,-1.923588652245637,0
+lh_shape_pope_layers_31,popular,59,17708,boat,0,positive_present,-4.537529339813998,0
+lh_shape_pope_layers_31,popular,60,17708,chair,1,negative_related_present,-1.218271900218243,0
+lh_shape_pope_layers_31,popular,61,574692,person,0,positive_present,-3.560292467982403,0
+lh_shape_pope_layers_31,popular,62,574692,dining table,1,negative_related_present,3.5236049924768063,1
+lh_shape_pope_layers_31,popular,63,574692,orange,0,positive_present,0.3341976958424377,1
+lh_shape_pope_layers_31,popular,64,574692,car,1,negative_related_present,5.564244243624911,1
+lh_shape_pope_layers_31,popular,65,574692,bottle,0,positive_present,-1.509801561268575,0
+lh_shape_pope_layers_31,popular,66,574692,chair,1,negative_related_present,1.820540785445819,1
+lh_shape_pope_layers_31,popular,67,353180,backpack,0,positive_present,1.941369467405229,1
+lh_shape_pope_layers_31,popular,68,353180,dining table,1,negative_absent_plain,2.832026925856693,1
+lh_shape_pope_layers_31,popular,69,353180,person,0,positive_present,1.8519063884850189,1
+lh_shape_pope_layers_31,popular,70,353180,car,1,negative_related_present,0.9006507526162567,1
+lh_shape_pope_layers_31,popular,71,353180,bus,0,positive_present,0.8423165903708624,1
+lh_shape_pope_layers_31,popular,72,353180,chair,1,negative_related_present,4.263355748121088,1
+lh_shape_pope_layers_31,popular,73,239444,person,0,positive_present,-7.66053597006554,0
+lh_shape_pope_layers_31,popular,74,239444,car,1,negative_related_present,3.706136774033889,1
+lh_shape_pope_layers_31,popular,75,239444,dining table,0,positive_present,-2.4583029853393867,0
+lh_shape_pope_layers_31,popular,76,239444,cup,1,negative_related_present,-0.04282869822956627,1
+lh_shape_pope_layers_31,popular,77,239444,chair,0,positive_present,-3.434541148540957,0
+lh_shape_pope_layers_31,popular,78,239444,bottle,1,negative_related_present,0.7623707188810734,1
+lh_shape_pope_layers_31,popular,79,569839,person,0,positive_present,0.6115605643838271,1
+lh_shape_pope_layers_31,popular,80,569839,car,1,negative_related_present,7.4927266156839725,1
+lh_shape_pope_layers_31,popular,81,569839,sandwich,0,positive_present,3.4424558128954237,1
+lh_shape_pope_layers_31,popular,82,569839,bottle,1,negative_related_present,5.95325153677034,1
+lh_shape_pope_layers_31,popular,83,569839,hot dog,0,positive_present,3.5997878694703145,1
+lh_shape_pope_layers_31,popular,84,569839,backpack,1,negative_related_present,1.140984870471246,1
+lh_shape_pope_layers_31,popular,85,219622,person,0,positive_present,-3.4484369473033833,0
+lh_shape_pope_layers_31,popular,86,219622,dining table,1,negative_absent_plain,4.872905619302315,1
+lh_shape_pope_layers_31,popular,87,219622,car,0,positive_present,4.053063965958078,1
+lh_shape_pope_layers_31,popular,88,219622,chair,1,negative_related_present,3.713032661204066,1
+lh_shape_pope_layers_31,popular,89,219622,frisbee,0,positive_present,-0.17608509948844808,0
+lh_shape_pope_layers_31,popular,90,219622,cup,1,negative_absent_plain,1.9196290298572003,1
+lh_shape_pope_layers_31,popular,91,300368,knife,0,positive_present,5.312389049700331,1
+lh_shape_pope_layers_31,popular,92,300368,car,1,negative_related_present,0.4759202419266485,1
+lh_shape_pope_layers_31,popular,93,300368,person,0,positive_present,1.9151182287178479,1
+lh_shape_pope_layers_31,popular,94,300368,chair,1,negative_related_present,5.911328301164839,1
+lh_shape_pope_layers_31,popular,95,300368,cake,0,positive_present,-1.9621791808065048,0
+lh_shape_pope_layers_31,popular,96,300368,cup,1,negative_related_present,0.9964157999255611,1
+lh_shape_pope_layers_31,popular,97,482476,person,0,positive_present,1.5716587404236746,1
+lh_shape_pope_layers_31,popular,98,482476,dining table,1,negative_absent_plain,2.825952437415669,1
+lh_shape_pope_layers_31,popular,99,482476,remote,0,positive_missing_coco_label,1.7691995183984308,1
+lh_shape_pope_layers_31,popular,100,482476,car,1,negative_related_present,1.2151641835000082,1
+lh_shape_pope_layers_31,popular,101,482476,handbag,0,positive_present,-0.33949735438990325,1
+lh_shape_pope_layers_31,popular,102,482476,chair,1,negative_related_present,8.25955806128078,1
+lh_shape_pope_layers_31,popular,103,131115,baseball glove,0,positive_present,-3.648802246911458,0
+lh_shape_pope_layers_31,popular,104,131115,dining table,1,negative_absent_plain,1.2207090579404902,1
+lh_shape_pope_layers_31,popular,105,131115,person,0,positive_present,-3.8231136636196696,0
+lh_shape_pope_layers_31,popular,106,131115,car,1,negative_related_present,1.441314913968472,1
+lh_shape_pope_layers_31,popular,107,131115,baseball bat,0,positive_present,-2.044809864715816,0
+lh_shape_pope_layers_31,popular,108,131115,chair,1,negative_related_present,-0.6682863622829265,0
+lh_shape_pope_layers_31,popular,109,157084,sink,0,positive_present,-4.112722651747754,0
+lh_shape_pope_layers_31,popular,110,157084,person,1,negative_related_present,-1.2937004283965927,0
+lh_shape_pope_layers_31,popular,111,157084,bench,0,positive_present,-2.489155294237468,0
+lh_shape_pope_layers_31,popular,112,157084,dining table,1,negative_related_present,0.7929245590564347,1
+lh_shape_pope_layers_31,popular,113,157084,toilet,0,positive_present,-2.6638939910667427,0
+lh_shape_pope_layers_31,popular,114,157084,car,1,negative_absent_plain,4.679201059689585,1
+lh_shape_pope_layers_31,popular,115,381895,person,0,positive_present,2.066154043551701,1
+lh_shape_pope_layers_31,popular,116,381895,dining table,1,negative_absent_plain,4.163521649433386,1
+lh_shape_pope_layers_31,popular,117,381895,teddy bear,0,positive_present,-1.9412026950041341,0
+lh_shape_pope_layers_31,popular,118,381895,car,1,negative_related_present,1.7374482496405486,1
+lh_shape_pope_layers_31,popular,119,381895,bear,0,positive_missing_coco_label,-0.07208941322260506,1
+lh_shape_pope_layers_31,popular,120,381895,chair,1,negative_related_present,4.360763792507265,1
+lh_shape_pope_layers_31,adversarial,1,310196,snowboard,0,positive_present,1.2788655029248062,1
+lh_shape_pope_layers_31,adversarial,2,310196,backpack,1,negative_related_present,4.384550437561821,1
+lh_shape_pope_layers_31,adversarial,3,310196,person,0,positive_present,2.808780442526218,1
+lh_shape_pope_layers_31,adversarial,4,310196,car,1,negative_related_present,11.040195248195039,1
+lh_shape_pope_layers_31,adversarial,5,310196,skis,0,positive_missing_coco_label,7.269778157029951,1
+lh_shape_pope_layers_31,adversarial,6,310196,dog,1,negative_related_present,5.312408172680627,1
+lh_shape_pope_layers_31,adversarial,7,210789,truck,0,positive_present,-4.232779846662845,0
+lh_shape_pope_layers_31,adversarial,8,210789,car,1,negative_related_present,-6.9050177785480855,0
+lh_shape_pope_layers_31,adversarial,9,210789,person,0,positive_present,-9.805810374673138,0
+lh_shape_pope_layers_31,adversarial,10,210789,dining table,1,negative_absent_plain,0.6870399846130314,1
+lh_shape_pope_layers_31,adversarial,11,210789,umbrella,0,positive_present,-5.624159624189429,0
+lh_shape_pope_layers_31,adversarial,12,210789,handbag,1,negative_related_present,-3.4202344354364222,0
+lh_shape_pope_layers_31,adversarial,13,429109,person,0,positive_present,-11.223781034417291,0
+lh_shape_pope_layers_31,adversarial,14,429109,dining table,1,negative_absent_plain,-4.669020901712826,0
+lh_shape_pope_layers_31,adversarial,15,429109,bicycle,0,positive_present,-4.294279775571566,0
+lh_shape_pope_layers_31,adversarial,16,429109,motorcycle,1,negative_related_present,-6.41396219187117,0
+lh_shape_pope_layers_31,adversarial,17,429109,car,0,positive_present,-4.665991335358806,0
+lh_shape_pope_layers_31,adversarial,18,429109,truck,1,negative_related_present,-3.768057593664326,0
+lh_shape_pope_layers_31,adversarial,19,211674,person,0,positive_present,-5.208703640895454,0
+lh_shape_pope_layers_31,adversarial,20,211674,dining table,1,negative_related_present,1.4862599187831167,1
+lh_shape_pope_layers_31,adversarial,21,211674,potted plant,0,positive_present,0.07192266363171529,0
+lh_shape_pope_layers_31,adversarial,22,211674,vase,1,negative_related_present,-0.52945721927651,0
+lh_shape_pope_layers_31,adversarial,23,211674,car,0,positive_present,3.0599828577658053,1
+lh_shape_pope_layers_31,adversarial,24,211674,truck,1,negative_related_present,2.4576338320800826,1
+lh_shape_pope_layers_31,adversarial,25,458338,traffic light,0,positive_present,3.642253561186886,1
+lh_shape_pope_layers_31,adversarial,26,458338,bus,1,negative_related_present,1.06625669310908,1
+lh_shape_pope_layers_31,adversarial,27,458338,person,0,positive_present,-3.663080019026717,0
+lh_shape_pope_layers_31,adversarial,28,458338,dining table,1,negative_absent_plain,4.45253007894836,1
+lh_shape_pope_layers_31,adversarial,29,458338,car,0,positive_present,0.11088527225838851,1
+lh_shape_pope_layers_31,adversarial,30,458338,truck,1,negative_related_present,3.4804417460305515,1
+lh_shape_pope_layers_31,adversarial,31,283412,dog,0,positive_present,-3.6145186698562592,0
+lh_shape_pope_layers_31,adversarial,32,283412,person,1,negative_related_present,-2.2519069008250185,0
+lh_shape_pope_layers_31,adversarial,33,283412,dining table,0,positive_missing_coco_label,0.3718654885422998,1
+lh_shape_pope_layers_31,adversarial,34,283412,chair,1,negative_related_present,0.992557643848371,1
+lh_shape_pope_layers_31,adversarial,35,283412,bed,0,positive_present,0.028626608659798075,1
+lh_shape_pope_layers_31,adversarial,36,283412,book,1,negative_related_present,0.6260763421477697,1
+lh_shape_pope_layers_31,adversarial,37,265719,person,0,positive_present,1.2489158881596314,1
+lh_shape_pope_layers_31,adversarial,38,265719,car,1,negative_related_present,3.394822549402645,1
+lh_shape_pope_layers_31,adversarial,39,265719,spoon,0,positive_present,4.444223166062288,1
+lh_shape_pope_layers_31,adversarial,40,265719,cup,1,negative_related_present,4.612768190678447,1
+lh_shape_pope_layers_31,adversarial,41,265719,fork,0,positive_present,1.212509417670542,1
+lh_shape_pope_layers_31,adversarial,42,265719,dining table,1,negative_related_present,-0.9075559457491232,0
+lh_shape_pope_layers_31,adversarial,43,461331,tv,0,positive_present,-0.04196161888591296,1
+lh_shape_pope_layers_31,adversarial,44,461331,person,1,negative_absent_plain,-1.8594853047050652,0
+lh_shape_pope_layers_31,adversarial,45,461331,toaster,0,positive_missing_coco_label,-6.256251967213229,0
+lh_shape_pope_layers_31,adversarial,46,461331,book,1,negative_related_present,1.8903120682305683,1
+lh_shape_pope_layers_31,adversarial,47,461331,microwave,0,positive_present,-3.8141096452334686,0
+lh_shape_pope_layers_31,adversarial,48,461331,bottle,1,negative_related_present,-1.6815407876669919,0
+lh_shape_pope_layers_31,adversarial,49,544456,backpack,0,positive_present,-4.709861918470786,0
+lh_shape_pope_layers_31,adversarial,50,544456,handbag,1,negative_related_present,-3.4481355394788222,0
+lh_shape_pope_layers_31,adversarial,51,544456,person,0,positive_present,-8.623125993492833,0
+lh_shape_pope_layers_31,adversarial,52,544456,car,1,negative_related_present,0.24134776136763514,1
+lh_shape_pope_layers_31,adversarial,53,544456,skis,0,positive_present,0.2672003664680491,1
+lh_shape_pope_layers_31,adversarial,54,544456,snowboard,1,negative_related_present,-3.292685978531959,0
+lh_shape_pope_layers_31,adversarial,55,17708,bird,0,positive_present,-3.4920449197916232,0
+lh_shape_pope_layers_31,adversarial,56,17708,handbag,1,negative_related_present,-4.014095921366634,0
+lh_shape_pope_layers_31,adversarial,57,17708,person,0,positive_present,-5.744825998158995,0
+lh_shape_pope_layers_31,adversarial,58,17708,car,1,negative_related_present,-1.923588652245637,0
+lh_shape_pope_layers_31,adversarial,59,17708,boat,0,positive_present,-4.537529339813998,0
+lh_shape_pope_layers_31,adversarial,60,17708,chair,1,negative_related_present,-1.218271900218243,0
+lh_shape_pope_layers_31,adversarial,61,574692,person,0,positive_present,-3.560292467982403,0
+lh_shape_pope_layers_31,adversarial,62,574692,car,1,negative_related_present,5.564244243624911,1
+lh_shape_pope_layers_31,adversarial,63,574692,orange,0,positive_present,0.5200953334608498,1
+lh_shape_pope_layers_31,adversarial,64,574692,dining table,1,negative_related_present,3.5236049924768063,1
+lh_shape_pope_layers_31,adversarial,65,574692,bottle,0,positive_present,-1.509801561268575,0
+lh_shape_pope_layers_31,adversarial,66,574692,cup,1,negative_related_present,4.286059013538058,1
+lh_shape_pope_layers_31,adversarial,67,353180,backpack,0,positive_present,1.941369467405229,1
+lh_shape_pope_layers_31,adversarial,68,353180,handbag,1,negative_related_present,4.4874924810871475,1
+lh_shape_pope_layers_31,adversarial,69,353180,person,0,positive_present,1.8519063884850189,1
+lh_shape_pope_layers_31,adversarial,70,353180,car,1,negative_related_present,0.9006507526162567,1
+lh_shape_pope_layers_31,adversarial,71,353180,bus,0,positive_present,0.8423165903708624,1
+lh_shape_pope_layers_31,adversarial,72,353180,traffic light,1,negative_related_present,1.808359015749068,1
+lh_shape_pope_layers_31,adversarial,73,239444,person,0,positive_present,-7.66053597006554,0
+lh_shape_pope_layers_31,adversarial,74,239444,car,1,negative_related_present,3.706136774033889,1
+lh_shape_pope_layers_31,adversarial,75,239444,dining table,0,positive_present,-2.4583029853393867,0
+lh_shape_pope_layers_31,adversarial,76,239444,cup,1,negative_related_present,-0.04282869822956627,1
+lh_shape_pope_layers_31,adversarial,77,239444,chair,0,positive_present,-3.434541148540957,0
+lh_shape_pope_layers_31,adversarial,78,239444,couch,1,negative_related_present,-3.033188655347002,0
+lh_shape_pope_layers_31,adversarial,79,569839,person,0,positive_present,0.6115605643838271,1
+lh_shape_pope_layers_31,adversarial,80,569839,car,1,negative_related_present,7.4927266156839725,1
+lh_shape_pope_layers_31,adversarial,81,569839,sandwich,0,positive_present,3.4424558128954237,1
+lh_shape_pope_layers_31,adversarial,82,569839,bowl,1,negative_related_present,6.9169551652607755,1
+lh_shape_pope_layers_31,adversarial,83,569839,hot dog,0,positive_present,3.5997878694703145,1
+lh_shape_pope_layers_31,adversarial,84,569839,handbag,1,negative_related_present,4.2475526770498595,1
+lh_shape_pope_layers_31,adversarial,85,219622,person,0,positive_present,-3.4484369473033833,0
+lh_shape_pope_layers_31,adversarial,86,219622,dining table,1,negative_absent_plain,4.872905619302315,1
+lh_shape_pope_layers_31,adversarial,87,219622,car,0,positive_present,4.053063965958078,1
+lh_shape_pope_layers_31,adversarial,88,219622,truck,1,negative_related_present,4.372478325001491,1
+lh_shape_pope_layers_31,adversarial,89,219622,frisbee,0,positive_present,-0.17608509948844808,0
+lh_shape_pope_layers_31,adversarial,90,219622,dog,1,negative_related_present,0.4557010946697392,1
+lh_shape_pope_layers_31,adversarial,91,300368,knife,0,positive_present,5.312389049700331,1
+lh_shape_pope_layers_31,adversarial,92,300368,cup,1,negative_related_present,0.9964157999255611,1
+lh_shape_pope_layers_31,adversarial,93,300368,person,0,positive_present,1.9151182287178479,1
+lh_shape_pope_layers_31,adversarial,94,300368,car,1,negative_related_present,0.4759202419266485,1
+lh_shape_pope_layers_31,adversarial,95,300368,cake,0,positive_present,-1.9621791808065048,0
+lh_shape_pope_layers_31,adversarial,96,300368,bottle,1,negative_related_present,7.466415699951917,1
+lh_shape_pope_layers_31,adversarial,97,482476,person,0,positive_present,1.5716587404236746,1
+lh_shape_pope_layers_31,adversarial,98,482476,car,1,negative_related_present,1.2151641835000082,1
+lh_shape_pope_layers_31,adversarial,99,482476,remote,0,positive_missing_coco_label,1.7691995183984308,1
+lh_shape_pope_layers_31,adversarial,100,482476,tv,1,negative_related_present,3.918520906360426,1
+lh_shape_pope_layers_31,adversarial,101,482476,handbag,0,positive_present,-0.33949735438990325,1
+lh_shape_pope_layers_31,adversarial,102,482476,backpack,1,negative_related_present,0.07866967502283917,1
+lh_shape_pope_layers_31,adversarial,103,131115,baseball glove,0,positive_present,-3.648802246911458,0
+lh_shape_pope_layers_31,adversarial,104,131115,sports ball,1,negative_related_present,-1.210233051012491,0
+lh_shape_pope_layers_31,adversarial,105,131115,person,0,positive_present,-3.8231136636196696,0
+lh_shape_pope_layers_31,adversarial,106,131115,car,1,negative_related_present,1.441314913968472,1
+lh_shape_pope_layers_31,adversarial,107,131115,baseball bat,0,positive_present,-2.044809864715816,0
+lh_shape_pope_layers_31,adversarial,108,131115,bench,1,negative_related_present,-5.045579302576638,0
+lh_shape_pope_layers_31,adversarial,109,157084,sink,0,positive_present,-4.112722651747754,0
+lh_shape_pope_layers_31,adversarial,110,157084,bottle,1,negative_related_present,-0.8438221480220677,0
+lh_shape_pope_layers_31,adversarial,111,157084,bench,0,positive_present,-2.489155294237468,0
+lh_shape_pope_layers_31,adversarial,112,157084,person,1,negative_related_present,-1.2937004283965927,0
+lh_shape_pope_layers_31,adversarial,113,157084,toilet,0,positive_present,-2.6638939910667427,0
+lh_shape_pope_layers_31,adversarial,114,157084,vase,1,negative_related_present,1.7568560459772589,1
+lh_shape_pope_layers_31,adversarial,115,381895,person,0,positive_present,2.066154043551701,1
+lh_shape_pope_layers_31,adversarial,116,381895,car,1,negative_related_present,1.7374482496405486,1
+lh_shape_pope_layers_31,adversarial,117,381895,teddy bear,0,positive_present,-1.9412026950041341,0
+lh_shape_pope_layers_31,adversarial,118,381895,bed,1,negative_related_present,2.3262628609887153,1
+lh_shape_pope_layers_31,adversarial,119,381895,bear,0,positive_missing_coco_label,-0.07208941322260506,1
+lh_shape_pope_layers_31,adversarial,120,381895,couch,1,negative_absent_plain,4.540517566722641,1
+lh_shape_pope_layers_22_31,random,1,310196,snowboard,0,positive_present,-1.8231197356657423,0
+lh_shape_pope_layers_22_31,random,2,310196,car,1,negative_related_present,16.664851283543555,1
+lh_shape_pope_layers_22_31,random,3,310196,person,0,positive_present,4.265680472839667,1
+lh_shape_pope_layers_22_31,random,4,310196,sandwich,1,negative_absent_plain,11.243850877083924,1
+lh_shape_pope_layers_22_31,random,5,310196,skis,0,positive_missing_coco_label,8.012849086389403,1
+lh_shape_pope_layers_22_31,random,6,310196,couch,1,negative_absent_plain,16.394021914109,1
+lh_shape_pope_layers_22_31,random,7,210789,truck,0,positive_present,-14.51030567317506,0
+lh_shape_pope_layers_22_31,random,8,210789,pizza,1,negative_absent_plain,-5.995071919873954,0
+lh_shape_pope_layers_22_31,random,9,210789,person,0,positive_present,-17.86288372092807,0
+lh_shape_pope_layers_22_31,random,10,210789,sink,1,negative_absent_plain,1.7987275089601038,1
+lh_shape_pope_layers_22_31,random,11,210789,umbrella,0,positive_present,-11.857544031671546,0
+lh_shape_pope_layers_22_31,random,12,210789,cell phone,1,negative_related_present,-6.305291641795819,0
+lh_shape_pope_layers_22_31,random,13,429109,person,0,positive_present,-3.4969100210392567,0
+lh_shape_pope_layers_22_31,random,14,429109,sheep,1,negative_related_present,10.155426940302295,1
+lh_shape_pope_layers_22_31,random,15,429109,bicycle,0,positive_present,-1.2402423166978827,0
+lh_shape_pope_layers_22_31,random,16,429109,broccoli,1,negative_absent_plain,11.75220682865606,1
+lh_shape_pope_layers_22_31,random,17,429109,car,0,positive_present,1.4603865805121121,1
+lh_shape_pope_layers_22_31,random,18,429109,tennis racket,1,negative_related_present,9.629364538239912,1
+lh_shape_pope_layers_22_31,random,19,211674,person,0,positive_present,2.19905670980028,1
+lh_shape_pope_layers_22_31,random,20,211674,teddy bear,1,negative_related_present,5.775905414526528,1
+lh_shape_pope_layers_22_31,random,21,211674,potted plant,0,positive_present,12.241697404811228,1
+lh_shape_pope_layers_22_31,random,22,211674,broccoli,1,negative_absent_plain,3.195130413825107,1
+lh_shape_pope_layers_22_31,random,23,211674,car,0,positive_present,7.132981799712435,1
+lh_shape_pope_layers_22_31,random,24,211674,orange,1,negative_absent_plain,7.734640927360803,1
+lh_shape_pope_layers_22_31,random,25,458338,traffic light,0,positive_present,10.202499520662384,1
+lh_shape_pope_layers_22_31,random,26,458338,train,1,negative_related_present,11.665923052731808,1
+lh_shape_pope_layers_22_31,random,27,458338,person,0,positive_present,-4.457093664951201,0
+lh_shape_pope_layers_22_31,random,28,458338,surfboard,1,negative_related_present,4.1932220047366,1
+lh_shape_pope_layers_22_31,random,29,458338,car,0,positive_present,5.494326753673123,1
+lh_shape_pope_layers_22_31,random,30,458338,kite,1,negative_related_present,-3.4018889785141107,0
+lh_shape_pope_layers_22_31,random,31,283412,dog,0,positive_present,-2.63350867178342,0
+lh_shape_pope_layers_22_31,random,32,283412,toaster,1,negative_absent_plain,1.7084149170308713,1
+lh_shape_pope_layers_22_31,random,33,283412,dining table,0,positive_missing_coco_label,6.067096734256429,1
+lh_shape_pope_layers_22_31,random,34,283412,sports ball,1,negative_related_present,2.7278025626429176,1
+lh_shape_pope_layers_22_31,random,35,283412,bed,0,positive_present,11.926643539548937,1
+lh_shape_pope_layers_22_31,random,36,283412,book,1,negative_related_present,3.2890608234364747,1
+lh_shape_pope_layers_22_31,random,37,265719,person,0,positive_present,-3.738183221962498,0
+lh_shape_pope_layers_22_31,random,38,265719,traffic light,1,negative_related_present,6.718325049575703,1
+lh_shape_pope_layers_22_31,random,39,265719,spoon,0,positive_present,2.2269890560654493,1
+lh_shape_pope_layers_22_31,random,40,265719,bird,1,negative_related_present,2.2712172228387986,1
+lh_shape_pope_layers_22_31,random,41,265719,fork,0,positive_present,3.0996355991569766,1
+lh_shape_pope_layers_22_31,random,42,265719,truck,1,negative_related_present,9.01590336568429,1
+lh_shape_pope_layers_22_31,random,43,461331,tv,0,positive_present,-5.684749590800723,0
+lh_shape_pope_layers_22_31,random,44,461331,bowl,1,negative_related_present,-4.8670909865418865,0
+lh_shape_pope_layers_22_31,random,45,461331,toaster,0,positive_missing_coco_label,-15.803349041959256,0
+lh_shape_pope_layers_22_31,random,46,461331,cow,1,negative_absent_plain,-1.215240084756574,0
+lh_shape_pope_layers_22_31,random,47,461331,microwave,0,positive_present,-8.640303555560385,0
+lh_shape_pope_layers_22_31,random,48,461331,laptop,1,negative_related_present,-8.389570543707556,0
+lh_shape_pope_layers_22_31,random,49,544456,backpack,0,positive_present,-7.260847569632996,0
+lh_shape_pope_layers_22_31,random,50,544456,cell phone,1,negative_related_present,-5.30008360066841,0
+lh_shape_pope_layers_22_31,random,51,544456,person,0,positive_present,-14.074153822975934,0
+lh_shape_pope_layers_22_31,random,52,544456,couch,1,negative_absent_plain,0.6170706529562915,1
+lh_shape_pope_layers_22_31,random,53,544456,skis,0,positive_present,0.5494339526396039,1
+lh_shape_pope_layers_22_31,random,54,544456,tennis racket,1,negative_related_present,-0.7774214688345353,1
+lh_shape_pope_layers_22_31,random,55,17708,bird,0,positive_present,-0.7148031278207654,0
+lh_shape_pope_layers_22_31,random,56,17708,fire hydrant,1,negative_related_present,4.372826383453868,1
+lh_shape_pope_layers_22_31,random,57,17708,person,0,positive_present,-3.959049227199771,0
+lh_shape_pope_layers_22_31,random,58,17708,bed,1,negative_absent_plain,3.8289163351073294,1
+lh_shape_pope_layers_22_31,random,59,17708,boat,0,positive_present,-7.811126572260038,0
+lh_shape_pope_layers_22_31,random,60,17708,bench,1,negative_related_present,3.103363302446058,1
+lh_shape_pope_layers_22_31,random,61,574692,person,0,positive_present,-10.417042993865525,0
+lh_shape_pope_layers_22_31,random,62,574692,bear,1,negative_related_present,7.763316996056722,1
+lh_shape_pope_layers_22_31,random,63,574692,orange,0,positive_present,3.868318431630867,1
+lh_shape_pope_layers_22_31,random,64,574692,cow,1,negative_related_present,1.8353680135782136,1
+lh_shape_pope_layers_22_31,random,65,574692,bottle,0,positive_present,0.04127136470981757,1
+lh_shape_pope_layers_22_31,random,66,574692,bed,1,negative_absent_plain,14.011965532958163,1
+lh_shape_pope_layers_22_31,random,67,353180,backpack,0,positive_present,8.485930162839825,1
+lh_shape_pope_layers_22_31,random,68,353180,potted plant,1,negative_absent_plain,5.565930493155987,1
+lh_shape_pope_layers_22_31,random,69,353180,person,0,positive_present,0.3694956358165286,1
+lh_shape_pope_layers_22_31,random,70,353180,wine glass,1,negative_absent_plain,11.637759309518465,1
+lh_shape_pope_layers_22_31,random,71,353180,bus,0,positive_present,-0.4619527740092627,0
+lh_shape_pope_layers_22_31,random,72,353180,suitcase,1,negative_related_present,8.602214260182889,1
+lh_shape_pope_layers_22_31,random,73,239444,person,0,positive_present,-12.202902552154722,0
+lh_shape_pope_layers_22_31,random,74,239444,airplane,1,negative_related_present,-2.9436314372267054,0
+lh_shape_pope_layers_22_31,random,75,239444,dining table,0,positive_present,-4.931286619332854,0
+lh_shape_pope_layers_22_31,random,76,239444,clock,1,negative_related_present,-9.744037504674692,0
+lh_shape_pope_layers_22_31,random,77,239444,chair,0,positive_present,-7.56862413008467,0
+lh_shape_pope_layers_22_31,random,78,239444,horse,1,negative_related_present,1.3893573810605548,1
+lh_shape_pope_layers_22_31,random,79,569839,person,0,positive_present,-14.535792210827534,0
+lh_shape_pope_layers_22_31,random,80,569839,zebra,1,negative_related_present,-4.5905869199645934,0
+lh_shape_pope_layers_22_31,random,81,569839,sandwich,0,positive_present,-0.16814290982017827,1
+lh_shape_pope_layers_22_31,random,82,569839,tie,1,negative_related_present,10.027439117024423,1
+lh_shape_pope_layers_22_31,random,83,569839,hot dog,0,positive_present,-1.5613934548417787,0
+lh_shape_pope_layers_22_31,random,84,569839,car,1,negative_related_present,-0.43267253952068735,1
+lh_shape_pope_layers_22_31,random,85,219622,person,0,positive_present,1.5231124422237439,1
+lh_shape_pope_layers_22_31,random,86,219622,carrot,1,negative_absent_plain,6.580617283527741,1
+lh_shape_pope_layers_22_31,random,87,219622,car,0,positive_present,5.06473632238272,1
+lh_shape_pope_layers_22_31,random,88,219622,potted plant,1,negative_absent_plain,8.129261802046774,1
+lh_shape_pope_layers_22_31,random,89,219622,frisbee,0,positive_present,1.8629210995375822,1
+lh_shape_pope_layers_22_31,random,90,219622,chair,1,negative_related_present,9.67194361982004,1
+lh_shape_pope_layers_22_31,random,91,300368,knife,0,positive_present,4.157218662839668,1
+lh_shape_pope_layers_22_31,random,92,300368,teddy bear,1,negative_related_present,-2.0472577871715245,0
+lh_shape_pope_layers_22_31,random,93,300368,person,0,positive_present,-4.757863089142687,0
+lh_shape_pope_layers_22_31,random,94,300368,hot dog,1,negative_related_present,6.83357044788431,1
+lh_shape_pope_layers_22_31,random,95,300368,cake,0,positive_present,-0.39105199494425147,0
+lh_shape_pope_layers_22_31,random,96,300368,tie,1,negative_related_present,11.411709673382488,1
+lh_shape_pope_layers_22_31,random,97,482476,person,0,positive_present,-1.0601059064186806,0
+lh_shape_pope_layers_22_31,random,98,482476,keyboard,1,negative_related_present,7.250528804989783,1
+lh_shape_pope_layers_22_31,random,99,482476,remote,0,positive_missing_coco_label,3.7364186586454604,1
+lh_shape_pope_layers_22_31,random,100,482476,frisbee,1,negative_related_present,9.114948363519515,1
+lh_shape_pope_layers_22_31,random,101,482476,handbag,0,positive_present,3.741830251467338,1
+lh_shape_pope_layers_22_31,random,102,482476,elephant,1,negative_related_present,6.965640674152668,1
+lh_shape_pope_layers_22_31,random,103,131115,baseball glove,0,positive_present,-10.512569121474439,0
+lh_shape_pope_layers_22_31,random,104,131115,suitcase,1,negative_related_present,3.335977500038679,1
+lh_shape_pope_layers_22_31,random,105,131115,person,0,positive_present,-9.43102079781868,0
+lh_shape_pope_layers_22_31,random,106,131115,sheep,1,negative_related_present,5.90776507370225,1
+lh_shape_pope_layers_22_31,random,107,131115,baseball bat,0,positive_present,-8.588311976133705,0
+lh_shape_pope_layers_22_31,random,108,131115,dining table,1,negative_absent_plain,5.483404205270755,1
+lh_shape_pope_layers_22_31,random,109,157084,sink,0,positive_present,-3.3559923835414405,0
+lh_shape_pope_layers_22_31,random,110,157084,cow,1,negative_absent_plain,7.589897549500521,1
+lh_shape_pope_layers_22_31,random,111,157084,bench,0,positive_present,-4.517537284395657,0
+lh_shape_pope_layers_22_31,random,112,157084,scissors,1,negative_related_present,3.518013365621081,1
+lh_shape_pope_layers_22_31,random,113,157084,toilet,0,positive_present,-0.9827849187458421,0
+lh_shape_pope_layers_22_31,random,114,157084,bear,1,negative_related_present,7.152807664184945,1
+lh_shape_pope_layers_22_31,random,115,381895,person,0,positive_present,-3.6913315317039146,0
+lh_shape_pope_layers_22_31,random,116,381895,carrot,1,negative_absent_plain,8.170326158574136,1
+lh_shape_pope_layers_22_31,random,117,381895,teddy bear,0,positive_present,-4.153668418452823,0
+lh_shape_pope_layers_22_31,random,118,381895,bird,1,negative_related_present,4.2345923348695385,1
+lh_shape_pope_layers_22_31,random,119,381895,bear,0,positive_missing_coco_label,-4.946014706039196,0
+lh_shape_pope_layers_22_31,random,120,381895,mouse,1,negative_absent_plain,8.471694141698721,1
+lh_shape_pope_layers_22_31,popular,1,310196,snowboard,0,positive_present,-1.8231197356657423,0
+lh_shape_pope_layers_22_31,popular,2,310196,dining table,1,negative_absent_plain,14.767170750914289,1
+lh_shape_pope_layers_22_31,popular,3,310196,person,0,positive_present,4.265680472839667,1
+lh_shape_pope_layers_22_31,popular,4,310196,car,1,negative_related_present,16.664851283543555,1
+lh_shape_pope_layers_22_31,popular,5,310196,skis,0,positive_missing_coco_label,8.012849086389403,1
+lh_shape_pope_layers_22_31,popular,6,310196,chair,1,negative_related_present,17.264431291066508,1
+lh_shape_pope_layers_22_31,popular,7,210789,truck,0,positive_present,-14.51030567317506,0
+lh_shape_pope_layers_22_31,popular,8,210789,dining table,1,negative_absent_plain,-5.015566643562017,0
+lh_shape_pope_layers_22_31,popular,9,210789,person,0,positive_present,-17.86288372092807,0
+lh_shape_pope_layers_22_31,popular,10,210789,car,1,negative_related_present,-12.54665440676911,0
+lh_shape_pope_layers_22_31,popular,11,210789,umbrella,0,positive_present,-11.857544031671546,0
+lh_shape_pope_layers_22_31,popular,12,210789,chair,1,negative_related_present,-3.483363175047835,0
+lh_shape_pope_layers_22_31,popular,13,429109,person,0,positive_present,-3.4969100210392567,0
+lh_shape_pope_layers_22_31,popular,14,429109,dining table,1,negative_absent_plain,3.3025007220084066,1
+lh_shape_pope_layers_22_31,popular,15,429109,bicycle,0,positive_present,-1.2402423166978827,0
+lh_shape_pope_layers_22_31,popular,16,429109,chair,1,negative_related_present,11.359716445953293,1
+lh_shape_pope_layers_22_31,popular,17,429109,car,0,positive_present,1.4603865805121121,1
+lh_shape_pope_layers_22_31,popular,18,429109,cup,1,negative_absent_plain,7.358991751803143,1
+lh_shape_pope_layers_22_31,popular,19,211674,person,0,positive_present,2.19905670980028,1
+lh_shape_pope_layers_22_31,popular,20,211674,dining table,1,negative_related_present,8.505491757138584,1
+lh_shape_pope_layers_22_31,popular,21,211674,potted plant,0,positive_present,12.241697404811228,1
+lh_shape_pope_layers_22_31,popular,22,211674,chair,1,negative_related_present,8.536108537393437,1
+lh_shape_pope_layers_22_31,popular,23,211674,car,0,positive_present,7.132981799712435,1
+lh_shape_pope_layers_22_31,popular,24,211674,cup,1,negative_absent_plain,11.806645680609048,1
+lh_shape_pope_layers_22_31,popular,25,458338,traffic light,0,positive_present,10.202499520662384,1
+lh_shape_pope_layers_22_31,popular,26,458338,dining table,1,negative_absent_plain,2.6628389263613266,1
+lh_shape_pope_layers_22_31,popular,27,458338,person,0,positive_present,-4.457093664951201,0
+lh_shape_pope_layers_22_31,popular,28,458338,chair,1,negative_related_present,9.549838344491517,1
+lh_shape_pope_layers_22_31,popular,29,458338,car,0,positive_present,5.494326753673123,1
+lh_shape_pope_layers_22_31,popular,30,458338,cup,1,negative_absent_plain,9.96320556958995,1
+lh_shape_pope_layers_22_31,popular,31,283412,dog,0,positive_present,-2.63350867178342,0
+lh_shape_pope_layers_22_31,popular,32,283412,person,1,negative_related_present,-2.213663724606247,0
+lh_shape_pope_layers_22_31,popular,33,283412,dining table,0,positive_missing_coco_label,6.067096734256429,1
+lh_shape_pope_layers_22_31,popular,34,283412,car,1,negative_absent_plain,6.5204058000738545,1
+lh_shape_pope_layers_22_31,popular,35,283412,bed,0,positive_present,11.926643539548937,1
+lh_shape_pope_layers_22_31,popular,36,283412,chair,1,negative_related_present,11.790463734322362,1
+lh_shape_pope_layers_22_31,popular,37,265719,person,0,positive_present,-3.738183221962498,0
+lh_shape_pope_layers_22_31,popular,38,265719,dining table,1,negative_related_present,0.26829025362622394,1
+lh_shape_pope_layers_22_31,popular,39,265719,spoon,0,positive_present,2.2269890560654493,1
+lh_shape_pope_layers_22_31,popular,40,265719,car,1,negative_related_present,4.013138068267844,1
+lh_shape_pope_layers_22_31,popular,41,265719,fork,0,positive_present,3.0996355991569766,1
+lh_shape_pope_layers_22_31,popular,42,265719,chair,1,negative_related_present,3.0505779720091706,1
+lh_shape_pope_layers_22_31,popular,43,461331,tv,0,positive_present,-5.684749590800723,0
+lh_shape_pope_layers_22_31,popular,44,461331,person,1,negative_absent_plain,-9.378940941438293,0
+lh_shape_pope_layers_22_31,popular,45,461331,toaster,0,positive_missing_coco_label,-15.803349041959256,0
+lh_shape_pope_layers_22_31,popular,46,461331,dining table,1,negative_absent_plain,-7.147026357638954,0
+lh_shape_pope_layers_22_31,popular,47,461331,microwave,0,positive_present,-8.640303555560385,0
+lh_shape_pope_layers_22_31,popular,48,461331,car,1,negative_absent_plain,-0.8515084621627396,0
+lh_shape_pope_layers_22_31,popular,49,544456,backpack,0,positive_present,-7.260847569632996,0
+lh_shape_pope_layers_22_31,popular,50,544456,dining table,1,negative_absent_plain,-5.2459383098609,0
+lh_shape_pope_layers_22_31,popular,51,544456,person,0,positive_present,-14.074153822975934,0
+lh_shape_pope_layers_22_31,popular,52,544456,car,1,negative_related_present,2.2632249057979563,1
+lh_shape_pope_layers_22_31,popular,53,544456,skis,0,positive_present,0.5494339526396039,1
+lh_shape_pope_layers_22_31,popular,54,544456,chair,1,negative_related_present,-4.559586525176441,0
+lh_shape_pope_layers_22_31,popular,55,17708,bird,0,positive_present,-0.7148031278207654,0
+lh_shape_pope_layers_22_31,popular,56,17708,dining table,1,negative_absent_plain,-3.9097338904703496,0
+lh_shape_pope_layers_22_31,popular,57,17708,person,0,positive_present,-3.959049227199771,0
+lh_shape_pope_layers_22_31,popular,58,17708,car,1,negative_related_present,0.4827359663010327,1
+lh_shape_pope_layers_22_31,popular,59,17708,boat,0,positive_present,-7.811126572260038,0
+lh_shape_pope_layers_22_31,popular,60,17708,chair,1,negative_related_present,4.50743711548926,1
+lh_shape_pope_layers_22_31,popular,61,574692,person,0,positive_present,-10.417042993865525,0
+lh_shape_pope_layers_22_31,popular,62,574692,dining table,1,negative_related_present,8.014061701341346,1
+lh_shape_pope_layers_22_31,popular,63,574692,orange,0,positive_present,3.868318431630867,1
+lh_shape_pope_layers_22_31,popular,64,574692,car,1,negative_related_present,3.8314339432503903,1
+lh_shape_pope_layers_22_31,popular,65,574692,bottle,0,positive_present,0.04127136470981757,1
+lh_shape_pope_layers_22_31,popular,66,574692,chair,1,negative_related_present,5.431592172698516,1
+lh_shape_pope_layers_22_31,popular,67,353180,backpack,0,positive_present,8.485930162839825,1
+lh_shape_pope_layers_22_31,popular,68,353180,dining table,1,negative_absent_plain,6.449310942374565,1
+lh_shape_pope_layers_22_31,popular,69,353180,person,0,positive_present,0.3694956358165286,1
+lh_shape_pope_layers_22_31,popular,70,353180,car,1,negative_related_present,2.800869264385759,1
+lh_shape_pope_layers_22_31,popular,71,353180,bus,0,positive_present,-0.4619527740092627,0
+lh_shape_pope_layers_22_31,popular,72,353180,chair,1,negative_related_present,5.905239533778817,1
+lh_shape_pope_layers_22_31,popular,73,239444,person,0,positive_present,-12.202902552154722,0
+lh_shape_pope_layers_22_31,popular,74,239444,car,1,negative_related_present,2.2656414907366313,1
+lh_shape_pope_layers_22_31,popular,75,239444,dining table,0,positive_present,-4.931286619332854,0
+lh_shape_pope_layers_22_31,popular,76,239444,cup,1,negative_related_present,0.712360489615367,1
+lh_shape_pope_layers_22_31,popular,77,239444,chair,0,positive_present,-7.56862413008467,0
+lh_shape_pope_layers_22_31,popular,78,239444,bottle,1,negative_related_present,0.6258468765427536,1
+lh_shape_pope_layers_22_31,popular,79,569839,person,0,positive_present,-14.535792210827534,0
+lh_shape_pope_layers_22_31,popular,80,569839,car,1,negative_related_present,-0.43267253952068735,1
+lh_shape_pope_layers_22_31,popular,81,569839,sandwich,0,positive_present,-0.16814290982017827,1
+lh_shape_pope_layers_22_31,popular,82,569839,bottle,1,negative_related_present,0.7542901095784957,1
+lh_shape_pope_layers_22_31,popular,83,569839,hot dog,0,positive_present,-1.5613934548417787,0
+lh_shape_pope_layers_22_31,popular,84,569839,backpack,1,negative_related_present,-7.965113972709231,0
+lh_shape_pope_layers_22_31,popular,85,219622,person,0,positive_present,1.5231124422237439,1
+lh_shape_pope_layers_22_31,popular,86,219622,dining table,1,negative_absent_plain,9.535564909413957,1
+lh_shape_pope_layers_22_31,popular,87,219622,car,0,positive_present,5.06473632238272,1
+lh_shape_pope_layers_22_31,popular,88,219622,chair,1,negative_related_present,9.67194361982004,1
+lh_shape_pope_layers_22_31,popular,89,219622,frisbee,0,positive_present,1.8629210995375822,1
+lh_shape_pope_layers_22_31,popular,90,219622,cup,1,negative_absent_plain,8.83367911464011,1
+lh_shape_pope_layers_22_31,popular,91,300368,knife,0,positive_present,4.157218662839668,1
+lh_shape_pope_layers_22_31,popular,92,300368,car,1,negative_related_present,2.2381561234750342,1
+lh_shape_pope_layers_22_31,popular,93,300368,person,0,positive_present,-4.757863089142687,0
+lh_shape_pope_layers_22_31,popular,94,300368,chair,1,negative_related_present,7.608893469005725,1
+lh_shape_pope_layers_22_31,popular,95,300368,cake,0,positive_present,-0.39105199494425147,0
+lh_shape_pope_layers_22_31,popular,96,300368,cup,1,negative_related_present,4.631881005508546,1
+lh_shape_pope_layers_22_31,popular,97,482476,person,0,positive_present,-1.0601059064186806,0
+lh_shape_pope_layers_22_31,popular,98,482476,dining table,1,negative_absent_plain,5.642310715768184,1
+lh_shape_pope_layers_22_31,popular,99,482476,remote,0,positive_missing_coco_label,3.7364186586454604,1
+lh_shape_pope_layers_22_31,popular,100,482476,car,1,negative_related_present,4.36098489393098,1
+lh_shape_pope_layers_22_31,popular,101,482476,handbag,0,positive_present,3.741830251467338,1
+lh_shape_pope_layers_22_31,popular,102,482476,chair,1,negative_related_present,6.459079386044694,1
+lh_shape_pope_layers_22_31,popular,103,131115,baseball glove,0,positive_present,-10.512569121474439,0
+lh_shape_pope_layers_22_31,popular,104,131115,dining table,1,negative_absent_plain,5.483404205270755,1
+lh_shape_pope_layers_22_31,popular,105,131115,person,0,positive_present,-9.43102079781868,0
+lh_shape_pope_layers_22_31,popular,106,131115,car,1,negative_related_present,1.745666141759938,1
+lh_shape_pope_layers_22_31,popular,107,131115,baseball bat,0,positive_present,-8.588311976133705,0
+lh_shape_pope_layers_22_31,popular,108,131115,chair,1,negative_related_present,0.25024864372219785,1
+lh_shape_pope_layers_22_31,popular,109,157084,sink,0,positive_present,-3.3559923835414405,0
+lh_shape_pope_layers_22_31,popular,110,157084,person,1,negative_related_present,1.0250862744265166,1
+lh_shape_pope_layers_22_31,popular,111,157084,bench,0,positive_present,-4.517537284395657,0
+lh_shape_pope_layers_22_31,popular,112,157084,dining table,1,negative_related_present,0.6994898833079203,1
+lh_shape_pope_layers_22_31,popular,113,157084,toilet,0,positive_present,-0.9827849187458421,0
+lh_shape_pope_layers_22_31,popular,114,157084,car,1,negative_absent_plain,6.621146780098907,1
+lh_shape_pope_layers_22_31,popular,115,381895,person,0,positive_present,-3.6913315317039146,0
+lh_shape_pope_layers_22_31,popular,116,381895,dining table,1,negative_absent_plain,7.550560826626288,1
+lh_shape_pope_layers_22_31,popular,117,381895,teddy bear,0,positive_present,-4.153668418452823,0
+lh_shape_pope_layers_22_31,popular,118,381895,car,1,negative_related_present,6.46615688115607,1
+lh_shape_pope_layers_22_31,popular,119,381895,bear,0,positive_missing_coco_label,-4.946014706039196,0
+lh_shape_pope_layers_22_31,popular,120,381895,chair,1,negative_related_present,9.347489426008586,1
+lh_shape_pope_layers_22_31,adversarial,1,310196,snowboard,0,positive_present,-1.8231197356657423,0
+lh_shape_pope_layers_22_31,adversarial,2,310196,backpack,1,negative_related_present,7.556205748219408,1
+lh_shape_pope_layers_22_31,adversarial,3,310196,person,0,positive_present,4.265680472839667,1
+lh_shape_pope_layers_22_31,adversarial,4,310196,car,1,negative_related_present,16.664851283543555,1
+lh_shape_pope_layers_22_31,adversarial,5,310196,skis,0,positive_missing_coco_label,8.012849086389403,1
+lh_shape_pope_layers_22_31,adversarial,6,310196,dog,1,negative_related_present,11.540974115033471,1
+lh_shape_pope_layers_22_31,adversarial,7,210789,truck,0,positive_present,-14.51030567317506,0
+lh_shape_pope_layers_22_31,adversarial,8,210789,car,1,negative_related_present,-12.54665440676911,0
+lh_shape_pope_layers_22_31,adversarial,9,210789,person,0,positive_present,-17.86288372092807,0
+lh_shape_pope_layers_22_31,adversarial,10,210789,dining table,1,negative_absent_plain,-5.015566643562017,0
+lh_shape_pope_layers_22_31,adversarial,11,210789,umbrella,0,positive_present,-11.652567707486455,0
+lh_shape_pope_layers_22_31,adversarial,12,210789,handbag,1,negative_related_present,-9.137089744218803,0
+lh_shape_pope_layers_22_31,adversarial,13,429109,person,0,positive_present,-3.4969100210392567,0
+lh_shape_pope_layers_22_31,adversarial,14,429109,dining table,1,negative_absent_plain,3.3025007220084066,1
+lh_shape_pope_layers_22_31,adversarial,15,429109,bicycle,0,positive_present,-1.2402423166978827,0
+lh_shape_pope_layers_22_31,adversarial,16,429109,motorcycle,1,negative_related_present,-5.931860725045877,0
+lh_shape_pope_layers_22_31,adversarial,17,429109,car,0,positive_present,1.4603865805121121,1
+lh_shape_pope_layers_22_31,adversarial,18,429109,truck,1,negative_related_present,5.8101266048093505,1
+lh_shape_pope_layers_22_31,adversarial,19,211674,person,0,positive_present,2.19905670980028,1
+lh_shape_pope_layers_22_31,adversarial,20,211674,dining table,1,negative_related_present,8.505491757138584,1
+lh_shape_pope_layers_22_31,adversarial,21,211674,potted plant,0,positive_present,12.241697404811228,1
+lh_shape_pope_layers_22_31,adversarial,22,211674,vase,1,negative_related_present,6.18578466140089,1
+lh_shape_pope_layers_22_31,adversarial,23,211674,car,0,positive_present,7.132981799712435,1
+lh_shape_pope_layers_22_31,adversarial,24,211674,truck,1,negative_related_present,6.451090095010296,1
+lh_shape_pope_layers_22_31,adversarial,25,458338,traffic light,0,positive_present,10.202499520662384,1
+lh_shape_pope_layers_22_31,adversarial,26,458338,bus,1,negative_related_present,3.6074136892937934,1
+lh_shape_pope_layers_22_31,adversarial,27,458338,person,0,positive_present,-4.457093664951201,0
+lh_shape_pope_layers_22_31,adversarial,28,458338,dining table,1,negative_absent_plain,2.6628389263613266,1
+lh_shape_pope_layers_22_31,adversarial,29,458338,car,0,positive_present,5.494326753673123,1
+lh_shape_pope_layers_22_31,adversarial,30,458338,truck,1,negative_related_present,3.704077715488105,1
+lh_shape_pope_layers_22_31,adversarial,31,283412,dog,0,positive_present,-2.63350867178342,0
+lh_shape_pope_layers_22_31,adversarial,32,283412,person,1,negative_related_present,-2.213663724606247,0
+lh_shape_pope_layers_22_31,adversarial,33,283412,dining table,0,positive_missing_coco_label,6.067096734256429,1
+lh_shape_pope_layers_22_31,adversarial,34,283412,chair,1,negative_related_present,11.790463734322362,1
+lh_shape_pope_layers_22_31,adversarial,35,283412,bed,0,positive_present,11.926643539548937,1
+lh_shape_pope_layers_22_31,adversarial,36,283412,book,1,negative_related_present,3.2890608234364747,1
+lh_shape_pope_layers_22_31,adversarial,37,265719,person,0,positive_present,-3.738183221962498,0
+lh_shape_pope_layers_22_31,adversarial,38,265719,car,1,negative_related_present,4.013138068267844,1
+lh_shape_pope_layers_22_31,adversarial,39,265719,spoon,0,positive_present,2.2269890560654493,1
+lh_shape_pope_layers_22_31,adversarial,40,265719,cup,1,negative_related_present,3.6667682538884248,1
+lh_shape_pope_layers_22_31,adversarial,41,265719,fork,0,positive_present,3.0996355991569766,1
+lh_shape_pope_layers_22_31,adversarial,42,265719,dining table,1,negative_related_present,0.26829025362622394,1
+lh_shape_pope_layers_22_31,adversarial,43,461331,tv,0,positive_present,-5.684749590800723,0
+lh_shape_pope_layers_22_31,adversarial,44,461331,person,1,negative_absent_plain,-9.378940941438293,0
+lh_shape_pope_layers_22_31,adversarial,45,461331,toaster,0,positive_missing_coco_label,-15.803349041959256,0
+lh_shape_pope_layers_22_31,adversarial,46,461331,book,1,negative_related_present,-0.7463680240679567,0
+lh_shape_pope_layers_22_31,adversarial,47,461331,microwave,0,positive_present,-8.640303555560385,0
+lh_shape_pope_layers_22_31,adversarial,48,461331,bottle,1,negative_related_present,-4.239356289868024,0
+lh_shape_pope_layers_22_31,adversarial,49,544456,backpack,0,positive_present,-7.260847569632996,0
+lh_shape_pope_layers_22_31,adversarial,50,544456,handbag,1,negative_related_present,-4.596121313511108,0
+lh_shape_pope_layers_22_31,adversarial,51,544456,person,0,positive_present,-14.074153822975934,0
+lh_shape_pope_layers_22_31,adversarial,52,544456,car,1,negative_related_present,2.2632249057979563,1
+lh_shape_pope_layers_22_31,adversarial,53,544456,skis,0,positive_present,0.5494339526396039,1
+lh_shape_pope_layers_22_31,adversarial,54,544456,snowboard,1,negative_related_present,-6.596018529320034,0
+lh_shape_pope_layers_22_31,adversarial,55,17708,bird,0,positive_present,-0.7148031278207654,0
+lh_shape_pope_layers_22_31,adversarial,56,17708,handbag,1,negative_related_present,-1.1813402831441295,0
+lh_shape_pope_layers_22_31,adversarial,57,17708,person,0,positive_present,-3.959049227199771,0
+lh_shape_pope_layers_22_31,adversarial,58,17708,car,1,negative_related_present,0.4827359663010327,1
+lh_shape_pope_layers_22_31,adversarial,59,17708,boat,0,positive_present,-7.811126572260038,0
+lh_shape_pope_layers_22_31,adversarial,60,17708,chair,1,negative_related_present,4.50743711548926,1
+lh_shape_pope_layers_22_31,adversarial,61,574692,person,0,positive_present,-10.417042993865525,0
+lh_shape_pope_layers_22_31,adversarial,62,574692,car,1,negative_related_present,3.8314339432503903,1
+lh_shape_pope_layers_22_31,adversarial,63,574692,orange,0,positive_present,3.593711613734732,1
+lh_shape_pope_layers_22_31,adversarial,64,574692,dining table,1,negative_related_present,8.014061701341346,1
+lh_shape_pope_layers_22_31,adversarial,65,574692,bottle,0,positive_present,0.04127136470981757,1
+lh_shape_pope_layers_22_31,adversarial,66,574692,cup,1,negative_related_present,10.564567702068763,1
+lh_shape_pope_layers_22_31,adversarial,67,353180,backpack,0,positive_present,8.485930162839825,1
+lh_shape_pope_layers_22_31,adversarial,68,353180,handbag,1,negative_related_present,9.003088444268048,1
+lh_shape_pope_layers_22_31,adversarial,69,353180,person,0,positive_present,0.3694956358165286,1
+lh_shape_pope_layers_22_31,adversarial,70,353180,car,1,negative_related_present,2.800869264385759,1
+lh_shape_pope_layers_22_31,adversarial,71,353180,bus,0,positive_present,-0.4619527740092627,0
+lh_shape_pope_layers_22_31,adversarial,72,353180,traffic light,1,negative_related_present,5.719630096779228,1
+lh_shape_pope_layers_22_31,adversarial,73,239444,person,0,positive_present,-12.202902552154722,0
+lh_shape_pope_layers_22_31,adversarial,74,239444,car,1,negative_related_present,2.2656414907366313,1
+lh_shape_pope_layers_22_31,adversarial,75,239444,dining table,0,positive_present,-4.931286619332854,0
+lh_shape_pope_layers_22_31,adversarial,76,239444,cup,1,negative_related_present,0.712360489615367,1
+lh_shape_pope_layers_22_31,adversarial,77,239444,chair,0,positive_present,-7.56862413008467,0
+lh_shape_pope_layers_22_31,adversarial,78,239444,couch,1,negative_related_present,-0.7895085145587484,1
+lh_shape_pope_layers_22_31,adversarial,79,569839,person,0,positive_present,-14.535792210827534,0
+lh_shape_pope_layers_22_31,adversarial,80,569839,car,1,negative_related_present,-0.43267253952068735,1
+lh_shape_pope_layers_22_31,adversarial,81,569839,sandwich,0,positive_present,-0.16814290982017827,1
+lh_shape_pope_layers_22_31,adversarial,82,569839,bowl,1,negative_related_present,7.082909545944623,1
+lh_shape_pope_layers_22_31,adversarial,83,569839,hot dog,0,positive_present,-1.5613934548417787,0
+lh_shape_pope_layers_22_31,adversarial,84,569839,handbag,1,negative_related_present,-2.2198907501955873,0
+lh_shape_pope_layers_22_31,adversarial,85,219622,person,0,positive_present,1.5231124422237439,1
+lh_shape_pope_layers_22_31,adversarial,86,219622,dining table,1,negative_absent_plain,9.535564909413957,1
+lh_shape_pope_layers_22_31,adversarial,87,219622,car,0,positive_present,5.06473632238272,1
+lh_shape_pope_layers_22_31,adversarial,88,219622,truck,1,negative_related_present,5.454646375828893,1
+lh_shape_pope_layers_22_31,adversarial,89,219622,frisbee,0,positive_present,1.8629210995375822,1
+lh_shape_pope_layers_22_31,adversarial,90,219622,dog,1,negative_related_present,8.27261099629114,1
+lh_shape_pope_layers_22_31,adversarial,91,300368,knife,0,positive_present,4.157218662839668,1
+lh_shape_pope_layers_22_31,adversarial,92,300368,cup,1,negative_related_present,4.631881005508546,1
+lh_shape_pope_layers_22_31,adversarial,93,300368,person,0,positive_present,-4.757863089142687,0
+lh_shape_pope_layers_22_31,adversarial,94,300368,car,1,negative_related_present,2.2381561234750342,1
+lh_shape_pope_layers_22_31,adversarial,95,300368,cake,0,positive_present,-0.39105199494425147,0
+lh_shape_pope_layers_22_31,adversarial,96,300368,bottle,1,negative_related_present,5.962789378525079,1
+lh_shape_pope_layers_22_31,adversarial,97,482476,person,0,positive_present,-1.0601059064186806,0
+lh_shape_pope_layers_22_31,adversarial,98,482476,car,1,negative_related_present,4.36098489393098,1
+lh_shape_pope_layers_22_31,adversarial,99,482476,remote,0,positive_missing_coco_label,3.7364186586454604,1
+lh_shape_pope_layers_22_31,adversarial,100,482476,tv,1,negative_related_present,5.017657117473465,1
+lh_shape_pope_layers_22_31,adversarial,101,482476,handbag,0,positive_present,3.741830251467338,1
+lh_shape_pope_layers_22_31,adversarial,102,482476,backpack,1,negative_related_present,8.466116933566418,1
+lh_shape_pope_layers_22_31,adversarial,103,131115,baseball glove,0,positive_present,-10.512569121474439,0
+lh_shape_pope_layers_22_31,adversarial,104,131115,sports ball,1,negative_related_present,-6.916003277152609,0
+lh_shape_pope_layers_22_31,adversarial,105,131115,person,0,positive_present,-9.43102079781868,0
+lh_shape_pope_layers_22_31,adversarial,106,131115,car,1,negative_related_present,1.745666141759938,1
+lh_shape_pope_layers_22_31,adversarial,107,131115,baseball bat,0,positive_present,-8.588311976133705,0
+lh_shape_pope_layers_22_31,adversarial,108,131115,bench,1,negative_related_present,-0.8235063534643747,0
+lh_shape_pope_layers_22_31,adversarial,109,157084,sink,0,positive_present,-3.3559923835414405,0
+lh_shape_pope_layers_22_31,adversarial,110,157084,bottle,1,negative_related_present,5.876629035184095,1
+lh_shape_pope_layers_22_31,adversarial,111,157084,bench,0,positive_present,-4.517537284395657,0
+lh_shape_pope_layers_22_31,adversarial,112,157084,person,1,negative_related_present,1.0250862744265166,1
+lh_shape_pope_layers_22_31,adversarial,113,157084,toilet,0,positive_present,-0.9827849187458421,0
+lh_shape_pope_layers_22_31,adversarial,114,157084,vase,1,negative_related_present,1.469402968583293,1
+lh_shape_pope_layers_22_31,adversarial,115,381895,person,0,positive_present,-3.6913315317039146,0
+lh_shape_pope_layers_22_31,adversarial,116,381895,car,1,negative_related_present,6.46615688115607,1
+lh_shape_pope_layers_22_31,adversarial,117,381895,teddy bear,0,positive_present,-4.153668418452823,0
+lh_shape_pope_layers_22_31,adversarial,118,381895,bed,1,negative_related_present,7.0633546059589625,1
+lh_shape_pope_layers_22_31,adversarial,119,381895,bear,0,positive_missing_coco_label,-4.946014706039196,0
+lh_shape_pope_layers_22_31,adversarial,120,381895,couch,1,negative_absent_plain,7.455972592879116,1
+prompt_token_pos,random,1,310196,snowboard,0,positive_present,585.0,0
+prompt_token_pos,random,2,310196,car,1,negative_related_present,584.0,0
+prompt_token_pos,random,3,310196,person,0,positive_present,584.0,0
+prompt_token_pos,random,4,310196,sandwich,1,negative_absent_plain,585.0,0
+prompt_token_pos,random,5,310196,skis,0,positive_missing_coco_label,585.0,0
+prompt_token_pos,random,6,310196,couch,1,negative_absent_plain,585.0,0
+prompt_token_pos,random,7,210789,truck,0,positive_present,585.0,0
+prompt_token_pos,random,8,210789,pizza,1,negative_absent_plain,585.0,0
+prompt_token_pos,random,9,210789,person,0,positive_present,584.0,0
+prompt_token_pos,random,10,210789,sink,1,negative_absent_plain,584.0,0
+prompt_token_pos,random,11,210789,umbrella,0,positive_present,586.0,1
+prompt_token_pos,random,12,210789,cell phone,1,negative_related_present,585.0,0
+prompt_token_pos,random,13,429109,person,0,positive_present,584.0,0
+prompt_token_pos,random,14,429109,sheep,1,negative_related_present,584.0,0
+prompt_token_pos,random,15,429109,bicycle,0,positive_present,586.0,1
+prompt_token_pos,random,16,429109,broccoli,1,negative_absent_plain,586.0,1
+prompt_token_pos,random,17,429109,car,0,positive_present,584.0,0
+prompt_token_pos,random,18,429109,tennis racket,1,negative_related_present,586.0,1
+prompt_token_pos,random,19,211674,person,0,positive_present,584.0,0
+prompt_token_pos,random,20,211674,teddy bear,1,negative_related_present,586.0,0
+prompt_token_pos,random,21,211674,potted plant,0,positive_present,586.0,0
+prompt_token_pos,random,22,211674,broccoli,1,negative_absent_plain,586.0,0
+prompt_token_pos,random,23,211674,car,0,positive_present,584.0,0
+prompt_token_pos,random,24,211674,orange,1,negative_absent_plain,584.0,0
+prompt_token_pos,random,25,458338,traffic light,0,positive_present,585.0,0
+prompt_token_pos,random,26,458338,train,1,negative_related_present,584.0,0
+prompt_token_pos,random,27,458338,person,0,positive_present,584.0,0
+prompt_token_pos,random,28,458338,surfboard,1,negative_related_present,586.0,0
+prompt_token_pos,random,29,458338,car,0,positive_present,584.0,0
+prompt_token_pos,random,30,458338,kite,1,negative_related_present,585.0,0
+prompt_token_pos,random,31,283412,dog,0,positive_present,584.0,0
+prompt_token_pos,random,32,283412,toaster,1,negative_absent_plain,585.0,0
+prompt_token_pos,random,33,283412,dining table,0,positive_missing_coco_label,586.0,1
+prompt_token_pos,random,34,283412,sports ball,1,negative_related_present,585.0,0
+prompt_token_pos,random,35,283412,bed,0,positive_present,584.0,0
+prompt_token_pos,random,36,283412,book,1,negative_related_present,584.0,0
+prompt_token_pos,random,37,265719,person,0,positive_present,-584.0,1
+prompt_token_pos,random,38,265719,traffic light,1,negative_related_present,-585.0,1
+prompt_token_pos,random,39,265719,spoon,0,positive_present,-585.0,1
+prompt_token_pos,random,40,265719,bird,1,negative_related_present,-584.0,1
+prompt_token_pos,random,41,265719,fork,0,positive_present,-584.0,1
+prompt_token_pos,random,42,265719,truck,1,negative_related_present,-585.0,1
+prompt_token_pos,random,43,461331,tv,0,positive_present,584.0,0
+prompt_token_pos,random,44,461331,bowl,1,negative_related_present,585.0,0
+prompt_token_pos,random,45,461331,toaster,0,positive_missing_coco_label,585.0,0
+prompt_token_pos,random,46,461331,cow,1,negative_absent_plain,584.0,0
+prompt_token_pos,random,47,461331,microwave,0,positive_present,586.0,1
+prompt_token_pos,random,48,461331,laptop,1,negative_related_present,584.0,0
+prompt_token_pos,random,49,544456,backpack,0,positive_present,585.0,0
+prompt_token_pos,random,50,544456,cell phone,1,negative_related_present,585.0,0
+prompt_token_pos,random,51,544456,person,0,positive_present,584.0,0
+prompt_token_pos,random,52,544456,couch,1,negative_absent_plain,585.0,0
+prompt_token_pos,random,53,544456,skis,0,positive_present,585.0,0
+prompt_token_pos,random,54,544456,tennis racket,1,negative_related_present,586.0,1
+prompt_token_pos,random,55,17708,bird,0,positive_present,584.0,0
+prompt_token_pos,random,56,17708,fire hydrant,1,negative_related_present,586.0,1
+prompt_token_pos,random,57,17708,person,0,positive_present,584.0,0
+prompt_token_pos,random,58,17708,bed,1,negative_absent_plain,584.0,0
+prompt_token_pos,random,59,17708,boat,0,positive_present,584.0,0
+prompt_token_pos,random,60,17708,bench,1,negative_related_present,585.0,0
+prompt_token_pos,random,61,574692,person,0,positive_present,584.0,0
+prompt_token_pos,random,62,574692,bear,1,negative_related_present,584.0,0
+prompt_token_pos,random,63,574692,orange,0,positive_present,584.0,0
+prompt_token_pos,random,64,574692,cow,1,negative_related_present,584.0,0
+prompt_token_pos,random,65,574692,bottle,0,positive_present,585.0,0
+prompt_token_pos,random,66,574692,bed,1,negative_absent_plain,584.0,0
+prompt_token_pos,random,67,353180,backpack,0,positive_present,-585.0,1
+prompt_token_pos,random,68,353180,potted plant,1,negative_absent_plain,-586.0,1
+prompt_token_pos,random,69,353180,person,0,positive_present,-584.0,1
+prompt_token_pos,random,70,353180,wine glass,1,negative_absent_plain,-585.0,1
+prompt_token_pos,random,71,353180,bus,0,positive_present,-584.0,1
+prompt_token_pos,random,72,353180,suitcase,1,negative_related_present,-585.0,1
+prompt_token_pos,random,73,239444,person,0,positive_present,584.0,0
+prompt_token_pos,random,74,239444,airplane,1,negative_related_present,585.0,0
+prompt_token_pos,random,75,239444,dining table,0,positive_present,586.0,1
+prompt_token_pos,random,76,239444,clock,1,negative_related_present,584.0,0
+prompt_token_pos,random,77,239444,chair,0,positive_present,584.0,0
+prompt_token_pos,random,78,239444,horse,1,negative_related_present,584.0,0
+prompt_token_pos,random,79,569839,person,0,positive_present,584.0,0
+prompt_token_pos,random,80,569839,zebra,1,negative_related_present,586.0,1
+prompt_token_pos,random,81,569839,sandwich,0,positive_present,585.0,0
+prompt_token_pos,random,82,569839,tie,1,negative_related_present,584.0,0
+prompt_token_pos,random,83,569839,hot dog,0,positive_present,585.0,0
+prompt_token_pos,random,84,569839,car,1,negative_related_present,584.0,0
+prompt_token_pos,random,85,219622,person,0,positive_present,584.0,0
+prompt_token_pos,random,86,219622,carrot,1,negative_absent_plain,585.0,0
+prompt_token_pos,random,87,219622,car,0,positive_present,584.0,0
+prompt_token_pos,random,88,219622,potted plant,1,negative_absent_plain,586.0,0
+prompt_token_pos,random,89,219622,frisbee,0,positive_present,587.0,1
+prompt_token_pos,random,90,219622,chair,1,negative_related_present,584.0,0
+prompt_token_pos,random,91,300368,knife,0,positive_present,-585.0,1
+prompt_token_pos,random,92,300368,teddy bear,1,negative_related_present,-586.0,1
+prompt_token_pos,random,93,300368,person,0,positive_present,-584.0,1
+prompt_token_pos,random,94,300368,hot dog,1,negative_related_present,-585.0,1
+prompt_token_pos,random,95,300368,cake,0,positive_present,-585.0,1
+prompt_token_pos,random,96,300368,tie,1,negative_related_present,-584.0,1
+prompt_token_pos,random,97,482476,person,0,positive_present,-584.0,1
+prompt_token_pos,random,98,482476,keyboard,1,negative_related_present,-584.0,1
+prompt_token_pos,random,99,482476,remote,0,positive_missing_coco_label,-584.0,1
+prompt_token_pos,random,100,482476,frisbee,1,negative_related_present,-587.0,0
+prompt_token_pos,random,101,482476,handbag,0,positive_present,-585.0,1
+prompt_token_pos,random,102,482476,elephant,1,negative_related_present,-586.0,1
+prompt_token_pos,random,103,131115,baseball glove,0,positive_present,586.0,1
+prompt_token_pos,random,104,131115,suitcase,1,negative_related_present,585.0,0
+prompt_token_pos,random,105,131115,person,0,positive_present,584.0,0
+prompt_token_pos,random,106,131115,sheep,1,negative_related_present,584.0,0
+prompt_token_pos,random,107,131115,baseball bat,0,positive_present,585.0,0
+prompt_token_pos,random,108,131115,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,random,109,157084,sink,0,positive_present,584.0,0
+prompt_token_pos,random,110,157084,cow,1,negative_absent_plain,584.0,0
+prompt_token_pos,random,111,157084,bench,0,positive_present,585.0,0
+prompt_token_pos,random,112,157084,scissors,1,negative_related_present,586.0,0
+prompt_token_pos,random,113,157084,toilet,0,positive_present,586.0,0
+prompt_token_pos,random,114,157084,bear,1,negative_related_present,584.0,0
+prompt_token_pos,random,115,381895,person,0,positive_present,584.0,0
+prompt_token_pos,random,116,381895,carrot,1,negative_absent_plain,585.0,0
+prompt_token_pos,random,117,381895,teddy bear,0,positive_present,586.0,1
+prompt_token_pos,random,118,381895,bird,1,negative_related_present,584.0,0
+prompt_token_pos,random,119,381895,bear,0,positive_missing_coco_label,584.0,0
+prompt_token_pos,random,120,381895,mouse,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,1,310196,snowboard,0,positive_present,585.0,0
+prompt_token_pos,popular,2,310196,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,3,310196,person,0,positive_present,584.0,0
+prompt_token_pos,popular,4,310196,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,5,310196,skis,0,positive_missing_coco_label,585.0,0
+prompt_token_pos,popular,6,310196,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,7,210789,truck,0,positive_present,585.0,0
+prompt_token_pos,popular,8,210789,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,9,210789,person,0,positive_present,584.0,0
+prompt_token_pos,popular,10,210789,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,11,210789,umbrella,0,positive_present,586.0,1
+prompt_token_pos,popular,12,210789,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,13,429109,person,0,positive_present,584.0,0
+prompt_token_pos,popular,14,429109,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,15,429109,bicycle,0,positive_present,586.0,1
+prompt_token_pos,popular,16,429109,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,17,429109,car,0,positive_present,584.0,0
+prompt_token_pos,popular,18,429109,cup,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,19,211674,person,0,positive_present,584.0,0
+prompt_token_pos,popular,20,211674,dining table,1,negative_related_present,586.0,0
+prompt_token_pos,popular,21,211674,potted plant,0,positive_present,586.0,0
+prompt_token_pos,popular,22,211674,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,23,211674,car,0,positive_present,584.0,0
+prompt_token_pos,popular,24,211674,cup,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,25,458338,traffic light,0,positive_present,585.0,0
+prompt_token_pos,popular,26,458338,dining table,1,negative_absent_plain,586.0,0
+prompt_token_pos,popular,27,458338,person,0,positive_present,584.0,0
+prompt_token_pos,popular,28,458338,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,29,458338,car,0,positive_present,584.0,0
+prompt_token_pos,popular,30,458338,cup,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,31,283412,dog,0,positive_present,584.0,0
+prompt_token_pos,popular,32,283412,person,1,negative_related_present,584.0,0
+prompt_token_pos,popular,33,283412,dining table,0,positive_missing_coco_label,586.0,1
+prompt_token_pos,popular,34,283412,car,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,35,283412,bed,0,positive_present,584.0,0
+prompt_token_pos,popular,36,283412,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,37,265719,person,0,positive_present,-584.0,1
+prompt_token_pos,popular,38,265719,dining table,1,negative_related_present,-586.0,1
+prompt_token_pos,popular,39,265719,spoon,0,positive_present,-585.0,1
+prompt_token_pos,popular,40,265719,car,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,41,265719,fork,0,positive_present,-584.0,1
+prompt_token_pos,popular,42,265719,chair,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,43,461331,tv,0,positive_present,584.0,0
+prompt_token_pos,popular,44,461331,person,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,45,461331,toaster,0,positive_missing_coco_label,585.0,0
+prompt_token_pos,popular,46,461331,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,47,461331,microwave,0,positive_present,586.0,1
+prompt_token_pos,popular,48,461331,car,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,49,544456,backpack,0,positive_present,585.0,0
+prompt_token_pos,popular,50,544456,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,51,544456,person,0,positive_present,584.0,0
+prompt_token_pos,popular,52,544456,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,53,544456,skis,0,positive_present,585.0,0
+prompt_token_pos,popular,54,544456,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,55,17708,bird,0,positive_present,584.0,0
+prompt_token_pos,popular,56,17708,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,57,17708,person,0,positive_present,584.0,0
+prompt_token_pos,popular,58,17708,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,59,17708,boat,0,positive_present,584.0,0
+prompt_token_pos,popular,60,17708,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,61,574692,person,0,positive_present,584.0,0
+prompt_token_pos,popular,62,574692,dining table,1,negative_related_present,586.0,1
+prompt_token_pos,popular,63,574692,orange,0,positive_present,584.0,0
+prompt_token_pos,popular,64,574692,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,65,574692,bottle,0,positive_present,585.0,0
+prompt_token_pos,popular,66,574692,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,67,353180,backpack,0,positive_present,-585.0,1
+prompt_token_pos,popular,68,353180,dining table,1,negative_absent_plain,-586.0,1
+prompt_token_pos,popular,69,353180,person,0,positive_present,-584.0,1
+prompt_token_pos,popular,70,353180,car,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,71,353180,bus,0,positive_present,-584.0,1
+prompt_token_pos,popular,72,353180,chair,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,73,239444,person,0,positive_present,584.0,0
+prompt_token_pos,popular,74,239444,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,75,239444,dining table,0,positive_present,586.0,1
+prompt_token_pos,popular,76,239444,cup,1,negative_related_present,584.0,0
+prompt_token_pos,popular,77,239444,chair,0,positive_present,584.0,0
+prompt_token_pos,popular,78,239444,bottle,1,negative_related_present,585.0,0
+prompt_token_pos,popular,79,569839,person,0,positive_present,584.0,0
+prompt_token_pos,popular,80,569839,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,81,569839,sandwich,0,positive_present,585.0,0
+prompt_token_pos,popular,82,569839,bottle,1,negative_related_present,585.0,0
+prompt_token_pos,popular,83,569839,hot dog,0,positive_present,585.0,0
+prompt_token_pos,popular,84,569839,backpack,1,negative_related_present,585.0,0
+prompt_token_pos,popular,85,219622,person,0,positive_present,584.0,0
+prompt_token_pos,popular,86,219622,dining table,1,negative_absent_plain,586.0,0
+prompt_token_pos,popular,87,219622,car,0,positive_present,584.0,0
+prompt_token_pos,popular,88,219622,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,89,219622,frisbee,0,positive_present,587.0,1
+prompt_token_pos,popular,90,219622,cup,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,91,300368,knife,0,positive_present,-585.0,1
+prompt_token_pos,popular,92,300368,car,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,93,300368,person,0,positive_present,-584.0,1
+prompt_token_pos,popular,94,300368,chair,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,95,300368,cake,0,positive_present,-585.0,1
+prompt_token_pos,popular,96,300368,cup,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,97,482476,person,0,positive_present,-584.0,1
+prompt_token_pos,popular,98,482476,dining table,1,negative_absent_plain,-586.0,1
+prompt_token_pos,popular,99,482476,remote,0,positive_missing_coco_label,-584.0,1
+prompt_token_pos,popular,100,482476,car,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,101,482476,handbag,0,positive_present,-585.0,1
+prompt_token_pos,popular,102,482476,chair,1,negative_related_present,-584.0,1
+prompt_token_pos,popular,103,131115,baseball glove,0,positive_present,586.0,1
+prompt_token_pos,popular,104,131115,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,105,131115,person,0,positive_present,584.0,0
+prompt_token_pos,popular,106,131115,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,107,131115,baseball bat,0,positive_present,585.0,0
+prompt_token_pos,popular,108,131115,chair,1,negative_related_present,584.0,0
+prompt_token_pos,popular,109,157084,sink,0,positive_present,584.0,0
+prompt_token_pos,popular,110,157084,person,1,negative_related_present,584.0,0
+prompt_token_pos,popular,111,157084,bench,0,positive_present,585.0,0
+prompt_token_pos,popular,112,157084,dining table,1,negative_related_present,586.0,0
+prompt_token_pos,popular,113,157084,toilet,0,positive_present,586.0,0
+prompt_token_pos,popular,114,157084,car,1,negative_absent_plain,584.0,0
+prompt_token_pos,popular,115,381895,person,0,positive_present,584.0,0
+prompt_token_pos,popular,116,381895,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,popular,117,381895,teddy bear,0,positive_present,586.0,1
+prompt_token_pos,popular,118,381895,car,1,negative_related_present,584.0,0
+prompt_token_pos,popular,119,381895,bear,0,positive_missing_coco_label,584.0,0
+prompt_token_pos,popular,120,381895,chair,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,1,310196,snowboard,0,positive_present,585.0,0
+prompt_token_pos,adversarial,2,310196,backpack,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,3,310196,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,4,310196,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,5,310196,skis,0,positive_missing_coco_label,585.0,0
+prompt_token_pos,adversarial,6,310196,dog,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,7,210789,truck,0,positive_present,585.0,0
+prompt_token_pos,adversarial,8,210789,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,9,210789,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,10,210789,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,adversarial,11,210789,umbrella,0,positive_present,586.0,1
+prompt_token_pos,adversarial,12,210789,handbag,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,13,429109,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,14,429109,dining table,1,negative_absent_plain,586.0,1
+prompt_token_pos,adversarial,15,429109,bicycle,0,positive_present,586.0,1
+prompt_token_pos,adversarial,16,429109,motorcycle,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,17,429109,car,0,positive_present,584.0,0
+prompt_token_pos,adversarial,18,429109,truck,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,19,211674,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,20,211674,dining table,1,negative_related_present,586.0,0
+prompt_token_pos,adversarial,21,211674,potted plant,0,positive_present,586.0,0
+prompt_token_pos,adversarial,22,211674,vase,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,23,211674,car,0,positive_present,584.0,0
+prompt_token_pos,adversarial,24,211674,truck,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,25,458338,traffic light,0,positive_present,585.0,0
+prompt_token_pos,adversarial,26,458338,bus,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,27,458338,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,28,458338,dining table,1,negative_absent_plain,586.0,0
+prompt_token_pos,adversarial,29,458338,car,0,positive_present,584.0,0
+prompt_token_pos,adversarial,30,458338,truck,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,31,283412,dog,0,positive_present,584.0,0
+prompt_token_pos,adversarial,32,283412,person,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,33,283412,dining table,0,positive_missing_coco_label,586.0,1
+prompt_token_pos,adversarial,34,283412,chair,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,35,283412,bed,0,positive_present,584.0,0
+prompt_token_pos,adversarial,36,283412,book,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,37,265719,person,0,positive_present,-584.0,1
+prompt_token_pos,adversarial,38,265719,car,1,negative_related_present,-584.0,1
+prompt_token_pos,adversarial,39,265719,spoon,0,positive_present,-585.0,1
+prompt_token_pos,adversarial,40,265719,cup,1,negative_related_present,-584.0,1
+prompt_token_pos,adversarial,41,265719,fork,0,positive_present,-584.0,1
+prompt_token_pos,adversarial,42,265719,dining table,1,negative_related_present,-586.0,1
+prompt_token_pos,adversarial,43,461331,tv,0,positive_present,584.0,0
+prompt_token_pos,adversarial,44,461331,person,1,negative_absent_plain,584.0,0
+prompt_token_pos,adversarial,45,461331,toaster,0,positive_missing_coco_label,585.0,0
+prompt_token_pos,adversarial,46,461331,book,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,47,461331,microwave,0,positive_present,586.0,1
+prompt_token_pos,adversarial,48,461331,bottle,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,49,544456,backpack,0,positive_present,585.0,0
+prompt_token_pos,adversarial,50,544456,handbag,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,51,544456,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,52,544456,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,53,544456,skis,0,positive_present,585.0,0
+prompt_token_pos,adversarial,54,544456,snowboard,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,55,17708,bird,0,positive_present,584.0,0
+prompt_token_pos,adversarial,56,17708,handbag,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,57,17708,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,58,17708,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,59,17708,boat,0,positive_present,584.0,0
+prompt_token_pos,adversarial,60,17708,chair,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,61,574692,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,62,574692,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,63,574692,orange,0,positive_present,584.0,0
+prompt_token_pos,adversarial,64,574692,dining table,1,negative_related_present,586.0,1
+prompt_token_pos,adversarial,65,574692,bottle,0,positive_present,585.0,0
+prompt_token_pos,adversarial,66,574692,cup,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,67,353180,backpack,0,positive_present,-585.0,1
+prompt_token_pos,adversarial,68,353180,handbag,1,negative_related_present,-585.0,1
+prompt_token_pos,adversarial,69,353180,person,0,positive_present,-584.0,1
+prompt_token_pos,adversarial,70,353180,car,1,negative_related_present,-584.0,1
+prompt_token_pos,adversarial,71,353180,bus,0,positive_present,-584.0,1
+prompt_token_pos,adversarial,72,353180,traffic light,1,negative_related_present,-585.0,1
+prompt_token_pos,adversarial,73,239444,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,74,239444,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,75,239444,dining table,0,positive_present,586.0,1
+prompt_token_pos,adversarial,76,239444,cup,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,77,239444,chair,0,positive_present,584.0,0
+prompt_token_pos,adversarial,78,239444,couch,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,79,569839,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,80,569839,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,81,569839,sandwich,0,positive_present,585.0,0
+prompt_token_pos,adversarial,82,569839,bowl,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,83,569839,hot dog,0,positive_present,585.0,0
+prompt_token_pos,adversarial,84,569839,handbag,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,85,219622,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,86,219622,dining table,1,negative_absent_plain,586.0,0
+prompt_token_pos,adversarial,87,219622,car,0,positive_present,584.0,0
+prompt_token_pos,adversarial,88,219622,truck,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,89,219622,frisbee,0,positive_present,587.0,1
+prompt_token_pos,adversarial,90,219622,dog,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,91,300368,knife,0,positive_present,-585.0,1
+prompt_token_pos,adversarial,92,300368,cup,1,negative_related_present,-584.0,1
+prompt_token_pos,adversarial,93,300368,person,0,positive_present,-584.0,1
+prompt_token_pos,adversarial,94,300368,car,1,negative_related_present,-584.0,1
+prompt_token_pos,adversarial,95,300368,cake,0,positive_present,-585.0,1
+prompt_token_pos,adversarial,96,300368,bottle,1,negative_related_present,-585.0,1
+prompt_token_pos,adversarial,97,482476,person,0,positive_present,-584.0,1
+prompt_token_pos,adversarial,98,482476,car,1,negative_related_present,-584.0,1
+prompt_token_pos,adversarial,99,482476,remote,0,positive_missing_coco_label,-584.0,1
+prompt_token_pos,adversarial,100,482476,tv,1,negative_related_present,-584.0,1
+prompt_token_pos,adversarial,101,482476,handbag,0,positive_present,-585.0,1
+prompt_token_pos,adversarial,102,482476,backpack,1,negative_related_present,-585.0,1
+prompt_token_pos,adversarial,103,131115,baseball glove,0,positive_present,586.0,1
+prompt_token_pos,adversarial,104,131115,sports ball,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,105,131115,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,106,131115,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,107,131115,baseball bat,0,positive_present,585.0,0
+prompt_token_pos,adversarial,108,131115,bench,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,109,157084,sink,0,positive_present,584.0,0
+prompt_token_pos,adversarial,110,157084,bottle,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,111,157084,bench,0,positive_present,585.0,0
+prompt_token_pos,adversarial,112,157084,person,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,113,157084,toilet,0,positive_present,586.0,0
+prompt_token_pos,adversarial,114,157084,vase,1,negative_related_present,585.0,0
+prompt_token_pos,adversarial,115,381895,person,0,positive_present,584.0,0
+prompt_token_pos,adversarial,116,381895,car,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,117,381895,teddy bear,0,positive_present,586.0,1
+prompt_token_pos,adversarial,118,381895,bed,1,negative_related_present,584.0,0
+prompt_token_pos,adversarial,119,381895,bear,0,positive_missing_coco_label,584.0,0
+prompt_token_pos,adversarial,120,381895,couch,1,negative_absent_plain,585.0,0
+target_span_len,random,1,310196,snowboard,0,positive_present,2.0,0
+target_span_len,random,2,310196,car,1,negative_related_present,1.0,0
+target_span_len,random,3,310196,person,0,positive_present,1.0,0
+target_span_len,random,4,310196,sandwich,1,negative_absent_plain,2.0,0
+target_span_len,random,5,310196,skis,0,positive_missing_coco_label,2.0,0
+target_span_len,random,6,310196,couch,1,negative_absent_plain,2.0,0
+target_span_len,random,7,210789,truck,0,positive_present,2.0,0
+target_span_len,random,8,210789,pizza,1,negative_absent_plain,2.0,0
+target_span_len,random,9,210789,person,0,positive_present,1.0,0
+target_span_len,random,10,210789,sink,1,negative_absent_plain,1.0,0
+target_span_len,random,11,210789,umbrella,0,positive_present,3.0,1
+target_span_len,random,12,210789,cell phone,1,negative_related_present,2.0,0
+target_span_len,random,13,429109,person,0,positive_present,1.0,0
+target_span_len,random,14,429109,sheep,1,negative_related_present,1.0,0
+target_span_len,random,15,429109,bicycle,0,positive_present,3.0,1
+target_span_len,random,16,429109,broccoli,1,negative_absent_plain,3.0,1
+target_span_len,random,17,429109,car,0,positive_present,1.0,0
+target_span_len,random,18,429109,tennis racket,1,negative_related_present,3.0,1
+target_span_len,random,19,211674,person,0,positive_present,1.0,0
+target_span_len,random,20,211674,teddy bear,1,negative_related_present,3.0,0
+target_span_len,random,21,211674,potted plant,0,positive_present,3.0,0
+target_span_len,random,22,211674,broccoli,1,negative_absent_plain,3.0,0
+target_span_len,random,23,211674,car,0,positive_present,1.0,0
+target_span_len,random,24,211674,orange,1,negative_absent_plain,1.0,0
+target_span_len,random,25,458338,traffic light,0,positive_present,2.0,0
+target_span_len,random,26,458338,train,1,negative_related_present,1.0,0
+target_span_len,random,27,458338,person,0,positive_present,1.0,0
+target_span_len,random,28,458338,surfboard,1,negative_related_present,3.0,0
+target_span_len,random,29,458338,car,0,positive_present,1.0,0
+target_span_len,random,30,458338,kite,1,negative_related_present,2.0,0
+target_span_len,random,31,283412,dog,0,positive_present,1.0,0
+target_span_len,random,32,283412,toaster,1,negative_absent_plain,2.0,0
+target_span_len,random,33,283412,dining table,0,positive_missing_coco_label,3.0,1
+target_span_len,random,34,283412,sports ball,1,negative_related_present,2.0,0
+target_span_len,random,35,283412,bed,0,positive_present,1.0,0
+target_span_len,random,36,283412,book,1,negative_related_present,1.0,0
+target_span_len,random,37,265719,person,0,positive_present,-1.0,1
+target_span_len,random,38,265719,traffic light,1,negative_related_present,-2.0,1
+target_span_len,random,39,265719,spoon,0,positive_present,-2.0,1
+target_span_len,random,40,265719,bird,1,negative_related_present,-1.0,1
+target_span_len,random,41,265719,fork,0,positive_present,-1.0,1
+target_span_len,random,42,265719,truck,1,negative_related_present,-2.0,1
+target_span_len,random,43,461331,tv,0,positive_present,1.0,0
+target_span_len,random,44,461331,bowl,1,negative_related_present,2.0,0
+target_span_len,random,45,461331,toaster,0,positive_missing_coco_label,2.0,0
+target_span_len,random,46,461331,cow,1,negative_absent_plain,1.0,0
+target_span_len,random,47,461331,microwave,0,positive_present,3.0,1
+target_span_len,random,48,461331,laptop,1,negative_related_present,1.0,0
+target_span_len,random,49,544456,backpack,0,positive_present,2.0,0
+target_span_len,random,50,544456,cell phone,1,negative_related_present,2.0,0
+target_span_len,random,51,544456,person,0,positive_present,1.0,0
+target_span_len,random,52,544456,couch,1,negative_absent_plain,2.0,0
+target_span_len,random,53,544456,skis,0,positive_present,2.0,0
+target_span_len,random,54,544456,tennis racket,1,negative_related_present,3.0,1
+target_span_len,random,55,17708,bird,0,positive_present,1.0,0
+target_span_len,random,56,17708,fire hydrant,1,negative_related_present,3.0,1
+target_span_len,random,57,17708,person,0,positive_present,1.0,0
+target_span_len,random,58,17708,bed,1,negative_absent_plain,1.0,0
+target_span_len,random,59,17708,boat,0,positive_present,1.0,0
+target_span_len,random,60,17708,bench,1,negative_related_present,2.0,0
+target_span_len,random,61,574692,person,0,positive_present,1.0,0
+target_span_len,random,62,574692,bear,1,negative_related_present,1.0,0
+target_span_len,random,63,574692,orange,0,positive_present,1.0,0
+target_span_len,random,64,574692,cow,1,negative_related_present,1.0,0
+target_span_len,random,65,574692,bottle,0,positive_present,2.0,0
+target_span_len,random,66,574692,bed,1,negative_absent_plain,1.0,0
+target_span_len,random,67,353180,backpack,0,positive_present,-2.0,1
+target_span_len,random,68,353180,potted plant,1,negative_absent_plain,-3.0,1
+target_span_len,random,69,353180,person,0,positive_present,-1.0,1
+target_span_len,random,70,353180,wine glass,1,negative_absent_plain,-2.0,1
+target_span_len,random,71,353180,bus,0,positive_present,-1.0,1
+target_span_len,random,72,353180,suitcase,1,negative_related_present,-2.0,1
+target_span_len,random,73,239444,person,0,positive_present,1.0,0
+target_span_len,random,74,239444,airplane,1,negative_related_present,2.0,0
+target_span_len,random,75,239444,dining table,0,positive_present,3.0,1
+target_span_len,random,76,239444,clock,1,negative_related_present,1.0,0
+target_span_len,random,77,239444,chair,0,positive_present,1.0,0
+target_span_len,random,78,239444,horse,1,negative_related_present,1.0,0
+target_span_len,random,79,569839,person,0,positive_present,1.0,0
+target_span_len,random,80,569839,zebra,1,negative_related_present,3.0,1
+target_span_len,random,81,569839,sandwich,0,positive_present,2.0,0
+target_span_len,random,82,569839,tie,1,negative_related_present,1.0,0
+target_span_len,random,83,569839,hot dog,0,positive_present,2.0,0
+target_span_len,random,84,569839,car,1,negative_related_present,1.0,0
+target_span_len,random,85,219622,person,0,positive_present,1.0,0
+target_span_len,random,86,219622,carrot,1,negative_absent_plain,2.0,0
+target_span_len,random,87,219622,car,0,positive_present,1.0,0
+target_span_len,random,88,219622,potted plant,1,negative_absent_plain,3.0,0
+target_span_len,random,89,219622,frisbee,0,positive_present,4.0,1
+target_span_len,random,90,219622,chair,1,negative_related_present,1.0,0
+target_span_len,random,91,300368,knife,0,positive_present,-2.0,1
+target_span_len,random,92,300368,teddy bear,1,negative_related_present,-3.0,1
+target_span_len,random,93,300368,person,0,positive_present,-1.0,1
+target_span_len,random,94,300368,hot dog,1,negative_related_present,-2.0,1
+target_span_len,random,95,300368,cake,0,positive_present,-2.0,1
+target_span_len,random,96,300368,tie,1,negative_related_present,-1.0,1
+target_span_len,random,97,482476,person,0,positive_present,-1.0,1
+target_span_len,random,98,482476,keyboard,1,negative_related_present,-1.0,1
+target_span_len,random,99,482476,remote,0,positive_missing_coco_label,-1.0,1
+target_span_len,random,100,482476,frisbee,1,negative_related_present,-4.0,0
+target_span_len,random,101,482476,handbag,0,positive_present,-2.0,1
+target_span_len,random,102,482476,elephant,1,negative_related_present,-3.0,1
+target_span_len,random,103,131115,baseball glove,0,positive_present,3.0,1
+target_span_len,random,104,131115,suitcase,1,negative_related_present,2.0,0
+target_span_len,random,105,131115,person,0,positive_present,1.0,0
+target_span_len,random,106,131115,sheep,1,negative_related_present,1.0,0
+target_span_len,random,107,131115,baseball bat,0,positive_present,2.0,0
+target_span_len,random,108,131115,dining table,1,negative_absent_plain,3.0,1
+target_span_len,random,109,157084,sink,0,positive_present,1.0,0
+target_span_len,random,110,157084,cow,1,negative_absent_plain,1.0,0
+target_span_len,random,111,157084,bench,0,positive_present,2.0,0
+target_span_len,random,112,157084,scissors,1,negative_related_present,3.0,0
+target_span_len,random,113,157084,toilet,0,positive_present,3.0,0
+target_span_len,random,114,157084,bear,1,negative_related_present,1.0,0
+target_span_len,random,115,381895,person,0,positive_present,1.0,0
+target_span_len,random,116,381895,carrot,1,negative_absent_plain,2.0,0
+target_span_len,random,117,381895,teddy bear,0,positive_present,3.0,1
+target_span_len,random,118,381895,bird,1,negative_related_present,1.0,0
+target_span_len,random,119,381895,bear,0,positive_missing_coco_label,1.0,0
+target_span_len,random,120,381895,mouse,1,negative_absent_plain,1.0,0
+target_span_len,popular,1,310196,snowboard,0,positive_present,2.0,0
+target_span_len,popular,2,310196,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,3,310196,person,0,positive_present,1.0,0
+target_span_len,popular,4,310196,car,1,negative_related_present,1.0,0
+target_span_len,popular,5,310196,skis,0,positive_missing_coco_label,2.0,0
+target_span_len,popular,6,310196,chair,1,negative_related_present,1.0,0
+target_span_len,popular,7,210789,truck,0,positive_present,2.0,0
+target_span_len,popular,8,210789,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,9,210789,person,0,positive_present,1.0,0
+target_span_len,popular,10,210789,car,1,negative_related_present,1.0,0
+target_span_len,popular,11,210789,umbrella,0,positive_present,3.0,1
+target_span_len,popular,12,210789,chair,1,negative_related_present,1.0,0
+target_span_len,popular,13,429109,person,0,positive_present,1.0,0
+target_span_len,popular,14,429109,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,15,429109,bicycle,0,positive_present,3.0,1
+target_span_len,popular,16,429109,chair,1,negative_related_present,1.0,0
+target_span_len,popular,17,429109,car,0,positive_present,1.0,0
+target_span_len,popular,18,429109,cup,1,negative_absent_plain,1.0,0
+target_span_len,popular,19,211674,person,0,positive_present,1.0,0
+target_span_len,popular,20,211674,dining table,1,negative_related_present,3.0,0
+target_span_len,popular,21,211674,potted plant,0,positive_present,3.0,0
+target_span_len,popular,22,211674,chair,1,negative_related_present,1.0,0
+target_span_len,popular,23,211674,car,0,positive_present,1.0,0
+target_span_len,popular,24,211674,cup,1,negative_absent_plain,1.0,0
+target_span_len,popular,25,458338,traffic light,0,positive_present,2.0,0
+target_span_len,popular,26,458338,dining table,1,negative_absent_plain,3.0,0
+target_span_len,popular,27,458338,person,0,positive_present,1.0,0
+target_span_len,popular,28,458338,chair,1,negative_related_present,1.0,0
+target_span_len,popular,29,458338,car,0,positive_present,1.0,0
+target_span_len,popular,30,458338,cup,1,negative_absent_plain,1.0,0
+target_span_len,popular,31,283412,dog,0,positive_present,1.0,0
+target_span_len,popular,32,283412,person,1,negative_related_present,1.0,0
+target_span_len,popular,33,283412,dining table,0,positive_missing_coco_label,3.0,1
+target_span_len,popular,34,283412,car,1,negative_absent_plain,1.0,0
+target_span_len,popular,35,283412,bed,0,positive_present,1.0,0
+target_span_len,popular,36,283412,chair,1,negative_related_present,1.0,0
+target_span_len,popular,37,265719,person,0,positive_present,-1.0,1
+target_span_len,popular,38,265719,dining table,1,negative_related_present,-3.0,1
+target_span_len,popular,39,265719,spoon,0,positive_present,-2.0,1
+target_span_len,popular,40,265719,car,1,negative_related_present,-1.0,1
+target_span_len,popular,41,265719,fork,0,positive_present,-1.0,1
+target_span_len,popular,42,265719,chair,1,negative_related_present,-1.0,1
+target_span_len,popular,43,461331,tv,0,positive_present,1.0,0
+target_span_len,popular,44,461331,person,1,negative_absent_plain,1.0,0
+target_span_len,popular,45,461331,toaster,0,positive_missing_coco_label,2.0,0
+target_span_len,popular,46,461331,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,47,461331,microwave,0,positive_present,3.0,1
+target_span_len,popular,48,461331,car,1,negative_absent_plain,1.0,0
+target_span_len,popular,49,544456,backpack,0,positive_present,2.0,0
+target_span_len,popular,50,544456,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,51,544456,person,0,positive_present,1.0,0
+target_span_len,popular,52,544456,car,1,negative_related_present,1.0,0
+target_span_len,popular,53,544456,skis,0,positive_present,2.0,0
+target_span_len,popular,54,544456,chair,1,negative_related_present,1.0,0
+target_span_len,popular,55,17708,bird,0,positive_present,1.0,0
+target_span_len,popular,56,17708,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,57,17708,person,0,positive_present,1.0,0
+target_span_len,popular,58,17708,car,1,negative_related_present,1.0,0
+target_span_len,popular,59,17708,boat,0,positive_present,1.0,0
+target_span_len,popular,60,17708,chair,1,negative_related_present,1.0,0
+target_span_len,popular,61,574692,person,0,positive_present,1.0,0
+target_span_len,popular,62,574692,dining table,1,negative_related_present,3.0,1
+target_span_len,popular,63,574692,orange,0,positive_present,1.0,0
+target_span_len,popular,64,574692,car,1,negative_related_present,1.0,0
+target_span_len,popular,65,574692,bottle,0,positive_present,2.0,0
+target_span_len,popular,66,574692,chair,1,negative_related_present,1.0,0
+target_span_len,popular,67,353180,backpack,0,positive_present,-2.0,1
+target_span_len,popular,68,353180,dining table,1,negative_absent_plain,-3.0,1
+target_span_len,popular,69,353180,person,0,positive_present,-1.0,1
+target_span_len,popular,70,353180,car,1,negative_related_present,-1.0,1
+target_span_len,popular,71,353180,bus,0,positive_present,-1.0,1
+target_span_len,popular,72,353180,chair,1,negative_related_present,-1.0,1
+target_span_len,popular,73,239444,person,0,positive_present,1.0,0
+target_span_len,popular,74,239444,car,1,negative_related_present,1.0,0
+target_span_len,popular,75,239444,dining table,0,positive_present,3.0,1
+target_span_len,popular,76,239444,cup,1,negative_related_present,1.0,0
+target_span_len,popular,77,239444,chair,0,positive_present,1.0,0
+target_span_len,popular,78,239444,bottle,1,negative_related_present,2.0,0
+target_span_len,popular,79,569839,person,0,positive_present,1.0,0
+target_span_len,popular,80,569839,car,1,negative_related_present,1.0,0
+target_span_len,popular,81,569839,sandwich,0,positive_present,2.0,0
+target_span_len,popular,82,569839,bottle,1,negative_related_present,2.0,0
+target_span_len,popular,83,569839,hot dog,0,positive_present,2.0,0
+target_span_len,popular,84,569839,backpack,1,negative_related_present,2.0,0
+target_span_len,popular,85,219622,person,0,positive_present,1.0,0
+target_span_len,popular,86,219622,dining table,1,negative_absent_plain,3.0,0
+target_span_len,popular,87,219622,car,0,positive_present,1.0,0
+target_span_len,popular,88,219622,chair,1,negative_related_present,1.0,0
+target_span_len,popular,89,219622,frisbee,0,positive_present,4.0,1
+target_span_len,popular,90,219622,cup,1,negative_absent_plain,1.0,0
+target_span_len,popular,91,300368,knife,0,positive_present,-2.0,1
+target_span_len,popular,92,300368,car,1,negative_related_present,-1.0,1
+target_span_len,popular,93,300368,person,0,positive_present,-1.0,1
+target_span_len,popular,94,300368,chair,1,negative_related_present,-1.0,1
+target_span_len,popular,95,300368,cake,0,positive_present,-2.0,1
+target_span_len,popular,96,300368,cup,1,negative_related_present,-1.0,1
+target_span_len,popular,97,482476,person,0,positive_present,-1.0,1
+target_span_len,popular,98,482476,dining table,1,negative_absent_plain,-3.0,1
+target_span_len,popular,99,482476,remote,0,positive_missing_coco_label,-1.0,1
+target_span_len,popular,100,482476,car,1,negative_related_present,-1.0,1
+target_span_len,popular,101,482476,handbag,0,positive_present,-2.0,1
+target_span_len,popular,102,482476,chair,1,negative_related_present,-1.0,1
+target_span_len,popular,103,131115,baseball glove,0,positive_present,3.0,1
+target_span_len,popular,104,131115,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,105,131115,person,0,positive_present,1.0,0
+target_span_len,popular,106,131115,car,1,negative_related_present,1.0,0
+target_span_len,popular,107,131115,baseball bat,0,positive_present,2.0,0
+target_span_len,popular,108,131115,chair,1,negative_related_present,1.0,0
+target_span_len,popular,109,157084,sink,0,positive_present,1.0,0
+target_span_len,popular,110,157084,person,1,negative_related_present,1.0,0
+target_span_len,popular,111,157084,bench,0,positive_present,2.0,0
+target_span_len,popular,112,157084,dining table,1,negative_related_present,3.0,0
+target_span_len,popular,113,157084,toilet,0,positive_present,3.0,0
+target_span_len,popular,114,157084,car,1,negative_absent_plain,1.0,0
+target_span_len,popular,115,381895,person,0,positive_present,1.0,0
+target_span_len,popular,116,381895,dining table,1,negative_absent_plain,3.0,1
+target_span_len,popular,117,381895,teddy bear,0,positive_present,3.0,1
+target_span_len,popular,118,381895,car,1,negative_related_present,1.0,0
+target_span_len,popular,119,381895,bear,0,positive_missing_coco_label,1.0,0
+target_span_len,popular,120,381895,chair,1,negative_related_present,1.0,0
+target_span_len,adversarial,1,310196,snowboard,0,positive_present,2.0,0
+target_span_len,adversarial,2,310196,backpack,1,negative_related_present,2.0,0
+target_span_len,adversarial,3,310196,person,0,positive_present,1.0,0
+target_span_len,adversarial,4,310196,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,5,310196,skis,0,positive_missing_coco_label,2.0,0
+target_span_len,adversarial,6,310196,dog,1,negative_related_present,1.0,0
+target_span_len,adversarial,7,210789,truck,0,positive_present,2.0,0
+target_span_len,adversarial,8,210789,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,9,210789,person,0,positive_present,1.0,0
+target_span_len,adversarial,10,210789,dining table,1,negative_absent_plain,3.0,1
+target_span_len,adversarial,11,210789,umbrella,0,positive_present,3.0,1
+target_span_len,adversarial,12,210789,handbag,1,negative_related_present,2.0,0
+target_span_len,adversarial,13,429109,person,0,positive_present,1.0,0
+target_span_len,adversarial,14,429109,dining table,1,negative_absent_plain,3.0,1
+target_span_len,adversarial,15,429109,bicycle,0,positive_present,3.0,1
+target_span_len,adversarial,16,429109,motorcycle,1,negative_related_present,2.0,0
+target_span_len,adversarial,17,429109,car,0,positive_present,1.0,0
+target_span_len,adversarial,18,429109,truck,1,negative_related_present,2.0,0
+target_span_len,adversarial,19,211674,person,0,positive_present,1.0,0
+target_span_len,adversarial,20,211674,dining table,1,negative_related_present,3.0,0
+target_span_len,adversarial,21,211674,potted plant,0,positive_present,3.0,0
+target_span_len,adversarial,22,211674,vase,1,negative_related_present,2.0,0
+target_span_len,adversarial,23,211674,car,0,positive_present,1.0,0
+target_span_len,adversarial,24,211674,truck,1,negative_related_present,2.0,0
+target_span_len,adversarial,25,458338,traffic light,0,positive_present,2.0,0
+target_span_len,adversarial,26,458338,bus,1,negative_related_present,1.0,0
+target_span_len,adversarial,27,458338,person,0,positive_present,1.0,0
+target_span_len,adversarial,28,458338,dining table,1,negative_absent_plain,3.0,0
+target_span_len,adversarial,29,458338,car,0,positive_present,1.0,0
+target_span_len,adversarial,30,458338,truck,1,negative_related_present,2.0,0
+target_span_len,adversarial,31,283412,dog,0,positive_present,1.0,0
+target_span_len,adversarial,32,283412,person,1,negative_related_present,1.0,0
+target_span_len,adversarial,33,283412,dining table,0,positive_missing_coco_label,3.0,1
+target_span_len,adversarial,34,283412,chair,1,negative_related_present,1.0,0
+target_span_len,adversarial,35,283412,bed,0,positive_present,1.0,0
+target_span_len,adversarial,36,283412,book,1,negative_related_present,1.0,0
+target_span_len,adversarial,37,265719,person,0,positive_present,-1.0,1
+target_span_len,adversarial,38,265719,car,1,negative_related_present,-1.0,1
+target_span_len,adversarial,39,265719,spoon,0,positive_present,-2.0,1
+target_span_len,adversarial,40,265719,cup,1,negative_related_present,-1.0,1
+target_span_len,adversarial,41,265719,fork,0,positive_present,-1.0,1
+target_span_len,adversarial,42,265719,dining table,1,negative_related_present,-3.0,1
+target_span_len,adversarial,43,461331,tv,0,positive_present,1.0,0
+target_span_len,adversarial,44,461331,person,1,negative_absent_plain,1.0,0
+target_span_len,adversarial,45,461331,toaster,0,positive_missing_coco_label,2.0,0
+target_span_len,adversarial,46,461331,book,1,negative_related_present,1.0,0
+target_span_len,adversarial,47,461331,microwave,0,positive_present,3.0,1
+target_span_len,adversarial,48,461331,bottle,1,negative_related_present,2.0,0
+target_span_len,adversarial,49,544456,backpack,0,positive_present,2.0,0
+target_span_len,adversarial,50,544456,handbag,1,negative_related_present,2.0,0
+target_span_len,adversarial,51,544456,person,0,positive_present,1.0,0
+target_span_len,adversarial,52,544456,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,53,544456,skis,0,positive_present,2.0,0
+target_span_len,adversarial,54,544456,snowboard,1,negative_related_present,2.0,0
+target_span_len,adversarial,55,17708,bird,0,positive_present,1.0,0
+target_span_len,adversarial,56,17708,handbag,1,negative_related_present,2.0,0
+target_span_len,adversarial,57,17708,person,0,positive_present,1.0,0
+target_span_len,adversarial,58,17708,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,59,17708,boat,0,positive_present,1.0,0
+target_span_len,adversarial,60,17708,chair,1,negative_related_present,1.0,0
+target_span_len,adversarial,61,574692,person,0,positive_present,1.0,0
+target_span_len,adversarial,62,574692,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,63,574692,orange,0,positive_present,1.0,0
+target_span_len,adversarial,64,574692,dining table,1,negative_related_present,3.0,1
+target_span_len,adversarial,65,574692,bottle,0,positive_present,2.0,0
+target_span_len,adversarial,66,574692,cup,1,negative_related_present,1.0,0
+target_span_len,adversarial,67,353180,backpack,0,positive_present,-2.0,1
+target_span_len,adversarial,68,353180,handbag,1,negative_related_present,-2.0,1
+target_span_len,adversarial,69,353180,person,0,positive_present,-1.0,1
+target_span_len,adversarial,70,353180,car,1,negative_related_present,-1.0,1
+target_span_len,adversarial,71,353180,bus,0,positive_present,-1.0,1
+target_span_len,adversarial,72,353180,traffic light,1,negative_related_present,-2.0,1
+target_span_len,adversarial,73,239444,person,0,positive_present,1.0,0
+target_span_len,adversarial,74,239444,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,75,239444,dining table,0,positive_present,3.0,1
+target_span_len,adversarial,76,239444,cup,1,negative_related_present,1.0,0
+target_span_len,adversarial,77,239444,chair,0,positive_present,1.0,0
+target_span_len,adversarial,78,239444,couch,1,negative_related_present,2.0,0
+target_span_len,adversarial,79,569839,person,0,positive_present,1.0,0
+target_span_len,adversarial,80,569839,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,81,569839,sandwich,0,positive_present,2.0,0
+target_span_len,adversarial,82,569839,bowl,1,negative_related_present,2.0,0
+target_span_len,adversarial,83,569839,hot dog,0,positive_present,2.0,0
+target_span_len,adversarial,84,569839,handbag,1,negative_related_present,2.0,0
+target_span_len,adversarial,85,219622,person,0,positive_present,1.0,0
+target_span_len,adversarial,86,219622,dining table,1,negative_absent_plain,3.0,0
+target_span_len,adversarial,87,219622,car,0,positive_present,1.0,0
+target_span_len,adversarial,88,219622,truck,1,negative_related_present,2.0,0
+target_span_len,adversarial,89,219622,frisbee,0,positive_present,4.0,1
+target_span_len,adversarial,90,219622,dog,1,negative_related_present,1.0,0
+target_span_len,adversarial,91,300368,knife,0,positive_present,-2.0,1
+target_span_len,adversarial,92,300368,cup,1,negative_related_present,-1.0,1
+target_span_len,adversarial,93,300368,person,0,positive_present,-1.0,1
+target_span_len,adversarial,94,300368,car,1,negative_related_present,-1.0,1
+target_span_len,adversarial,95,300368,cake,0,positive_present,-2.0,1
+target_span_len,adversarial,96,300368,bottle,1,negative_related_present,-2.0,1
+target_span_len,adversarial,97,482476,person,0,positive_present,-1.0,1
+target_span_len,adversarial,98,482476,car,1,negative_related_present,-1.0,1
+target_span_len,adversarial,99,482476,remote,0,positive_missing_coco_label,-1.0,1
+target_span_len,adversarial,100,482476,tv,1,negative_related_present,-1.0,1
+target_span_len,adversarial,101,482476,handbag,0,positive_present,-2.0,1
+target_span_len,adversarial,102,482476,backpack,1,negative_related_present,-2.0,1
+target_span_len,adversarial,103,131115,baseball glove,0,positive_present,3.0,1
+target_span_len,adversarial,104,131115,sports ball,1,negative_related_present,2.0,0
+target_span_len,adversarial,105,131115,person,0,positive_present,1.0,0
+target_span_len,adversarial,106,131115,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,107,131115,baseball bat,0,positive_present,2.0,0
+target_span_len,adversarial,108,131115,bench,1,negative_related_present,2.0,0
+target_span_len,adversarial,109,157084,sink,0,positive_present,1.0,0
+target_span_len,adversarial,110,157084,bottle,1,negative_related_present,2.0,0
+target_span_len,adversarial,111,157084,bench,0,positive_present,2.0,0
+target_span_len,adversarial,112,157084,person,1,negative_related_present,1.0,0
+target_span_len,adversarial,113,157084,toilet,0,positive_present,3.0,0
+target_span_len,adversarial,114,157084,vase,1,negative_related_present,2.0,0
+target_span_len,adversarial,115,381895,person,0,positive_present,1.0,0
+target_span_len,adversarial,116,381895,car,1,negative_related_present,1.0,0
+target_span_len,adversarial,117,381895,teddy bear,0,positive_present,3.0,1
+target_span_len,adversarial,118,381895,bed,1,negative_related_present,1.0,0
+target_span_len,adversarial,119,381895,bear,0,positive_missing_coco_label,1.0,0
+target_span_len,adversarial,120,381895,couch,1,negative_absent_plain,2.0,0
+target_char_len,random,1,310196,snowboard,0,positive_present,-9.0,0
+target_char_len,random,2,310196,car,1,negative_related_present,-3.0,1
+target_char_len,random,3,310196,person,0,positive_present,-6.0,0
+target_char_len,random,4,310196,sandwich,1,negative_absent_plain,-8.0,0
+target_char_len,random,5,310196,skis,0,positive_missing_coco_label,-4.0,1
+target_char_len,random,6,310196,couch,1,negative_absent_plain,-5.0,1
+target_char_len,random,7,210789,truck,0,positive_present,-5.0,1
+target_char_len,random,8,210789,pizza,1,negative_absent_plain,-5.0,1
+target_char_len,random,9,210789,person,0,positive_present,-6.0,0
+target_char_len,random,10,210789,sink,1,negative_absent_plain,-4.0,1
+target_char_len,random,11,210789,umbrella,0,positive_present,-8.0,0
+target_char_len,random,12,210789,cell phone,1,negative_related_present,-10.0,0
+target_char_len,random,13,429109,person,0,positive_present,-6.0,0
+target_char_len,random,14,429109,sheep,1,negative_related_present,-5.0,1
+target_char_len,random,15,429109,bicycle,0,positive_present,-7.0,0
+target_char_len,random,16,429109,broccoli,1,negative_absent_plain,-8.0,0
+target_char_len,random,17,429109,car,0,positive_present,-3.0,1
+target_char_len,random,18,429109,tennis racket,1,negative_related_present,-13.0,0
+target_char_len,random,19,211674,person,0,positive_present,-6.0,0
+target_char_len,random,20,211674,teddy bear,1,negative_related_present,-10.0,0
+target_char_len,random,21,211674,potted plant,0,positive_present,-12.0,0
+target_char_len,random,22,211674,broccoli,1,negative_absent_plain,-8.0,0
+target_char_len,random,23,211674,car,0,positive_present,-3.0,1
+target_char_len,random,24,211674,orange,1,negative_absent_plain,-6.0,0
+target_char_len,random,25,458338,traffic light,0,positive_present,-13.0,0
+target_char_len,random,26,458338,train,1,negative_related_present,-5.0,0
+target_char_len,random,27,458338,person,0,positive_present,-6.0,0
+target_char_len,random,28,458338,surfboard,1,negative_related_present,-9.0,0
+target_char_len,random,29,458338,car,0,positive_present,-3.0,1
+target_char_len,random,30,458338,kite,1,negative_related_present,-4.0,0
+target_char_len,random,31,283412,dog,0,positive_present,3.0,0
+target_char_len,random,32,283412,toaster,1,negative_absent_plain,7.0,0
+target_char_len,random,33,283412,dining table,0,positive_missing_coco_label,12.0,1
+target_char_len,random,34,283412,sports ball,1,negative_related_present,11.0,1
+target_char_len,random,35,283412,bed,0,positive_present,3.0,0
+target_char_len,random,36,283412,book,1,negative_related_present,4.0,0
+target_char_len,random,37,265719,person,0,positive_present,-6.0,0
+target_char_len,random,38,265719,traffic light,1,negative_related_present,-13.0,0
+target_char_len,random,39,265719,spoon,0,positive_present,-5.0,1
+target_char_len,random,40,265719,bird,1,negative_related_present,-4.0,1
+target_char_len,random,41,265719,fork,0,positive_present,-4.0,1
+target_char_len,random,42,265719,truck,1,negative_related_present,-5.0,1
+target_char_len,random,43,461331,tv,0,positive_present,-2.0,1
+target_char_len,random,44,461331,bowl,1,negative_related_present,-4.0,1
+target_char_len,random,45,461331,toaster,0,positive_missing_coco_label,-7.0,0
+target_char_len,random,46,461331,cow,1,negative_absent_plain,-3.0,1
+target_char_len,random,47,461331,microwave,0,positive_present,-9.0,0
+target_char_len,random,48,461331,laptop,1,negative_related_present,-6.0,0
+target_char_len,random,49,544456,backpack,0,positive_present,-8.0,0
+target_char_len,random,50,544456,cell phone,1,negative_related_present,-10.0,0
+target_char_len,random,51,544456,person,0,positive_present,-6.0,0
+target_char_len,random,52,544456,couch,1,negative_absent_plain,-5.0,1
+target_char_len,random,53,544456,skis,0,positive_present,-4.0,1
+target_char_len,random,54,544456,tennis racket,1,negative_related_present,-13.0,0
+target_char_len,random,55,17708,bird,0,positive_present,-4.0,1
+target_char_len,random,56,17708,fire hydrant,1,negative_related_present,-12.0,0
+target_char_len,random,57,17708,person,0,positive_present,-6.0,0
+target_char_len,random,58,17708,bed,1,negative_absent_plain,-3.0,1
+target_char_len,random,59,17708,boat,0,positive_present,-4.0,1
+target_char_len,random,60,17708,bench,1,negative_related_present,-5.0,1
+target_char_len,random,61,574692,person,0,positive_present,6.0,0
+target_char_len,random,62,574692,bear,1,negative_related_present,4.0,0
+target_char_len,random,63,574692,orange,0,positive_present,6.0,0
+target_char_len,random,64,574692,cow,1,negative_related_present,3.0,0
+target_char_len,random,65,574692,bottle,0,positive_present,6.0,0
+target_char_len,random,66,574692,bed,1,negative_absent_plain,3.0,0
+target_char_len,random,67,353180,backpack,0,positive_present,-8.0,0
+target_char_len,random,68,353180,potted plant,1,negative_absent_plain,-12.0,0
+target_char_len,random,69,353180,person,0,positive_present,-6.0,0
+target_char_len,random,70,353180,wine glass,1,negative_absent_plain,-10.0,0
+target_char_len,random,71,353180,bus,0,positive_present,-3.0,1
+target_char_len,random,72,353180,suitcase,1,negative_related_present,-8.0,0
+target_char_len,random,73,239444,person,0,positive_present,-6.0,0
+target_char_len,random,74,239444,airplane,1,negative_related_present,-8.0,0
+target_char_len,random,75,239444,dining table,0,positive_present,-12.0,0
+target_char_len,random,76,239444,clock,1,negative_related_present,-5.0,1
+target_char_len,random,77,239444,chair,0,positive_present,-5.0,1
+target_char_len,random,78,239444,horse,1,negative_related_present,-5.0,1
+target_char_len,random,79,569839,person,0,positive_present,6.0,0
+target_char_len,random,80,569839,zebra,1,negative_related_present,5.0,0
+target_char_len,random,81,569839,sandwich,0,positive_present,8.0,0
+target_char_len,random,82,569839,tie,1,negative_related_present,3.0,0
+target_char_len,random,83,569839,hot dog,0,positive_present,7.0,0
+target_char_len,random,84,569839,car,1,negative_related_present,3.0,0
+target_char_len,random,85,219622,person,0,positive_present,-6.0,0
+target_char_len,random,86,219622,carrot,1,negative_absent_plain,-6.0,0
+target_char_len,random,87,219622,car,0,positive_present,-3.0,1
+target_char_len,random,88,219622,potted plant,1,negative_absent_plain,-12.0,0
+target_char_len,random,89,219622,frisbee,0,positive_present,-7.0,0
+target_char_len,random,90,219622,chair,1,negative_related_present,-5.0,0
+target_char_len,random,91,300368,knife,0,positive_present,-5.0,1
+target_char_len,random,92,300368,teddy bear,1,negative_related_present,-10.0,0
+target_char_len,random,93,300368,person,0,positive_present,-6.0,0
+target_char_len,random,94,300368,hot dog,1,negative_related_present,-7.0,0
+target_char_len,random,95,300368,cake,0,positive_present,-4.0,1
+target_char_len,random,96,300368,tie,1,negative_related_present,-3.0,1
+target_char_len,random,97,482476,person,0,positive_present,-6.0,0
+target_char_len,random,98,482476,keyboard,1,negative_related_present,-8.0,0
+target_char_len,random,99,482476,remote,0,positive_missing_coco_label,-6.0,0
+target_char_len,random,100,482476,frisbee,1,negative_related_present,-7.0,0
+target_char_len,random,101,482476,handbag,0,positive_present,-7.0,0
+target_char_len,random,102,482476,elephant,1,negative_related_present,-8.0,0
+target_char_len,random,103,131115,baseball glove,0,positive_present,14.0,1
+target_char_len,random,104,131115,suitcase,1,negative_related_present,8.0,0
+target_char_len,random,105,131115,person,0,positive_present,6.0,0
+target_char_len,random,106,131115,sheep,1,negative_related_present,5.0,0
+target_char_len,random,107,131115,baseball bat,0,positive_present,12.0,1
+target_char_len,random,108,131115,dining table,1,negative_absent_plain,12.0,1
+target_char_len,random,109,157084,sink,0,positive_present,-4.0,0
+target_char_len,random,110,157084,cow,1,negative_absent_plain,-3.0,1
+target_char_len,random,111,157084,bench,0,positive_present,-5.0,0
+target_char_len,random,112,157084,scissors,1,negative_related_present,-8.0,0
+target_char_len,random,113,157084,toilet,0,positive_present,-6.0,0
+target_char_len,random,114,157084,bear,1,negative_related_present,-4.0,0
+target_char_len,random,115,381895,person,0,positive_present,-6.0,0
+target_char_len,random,116,381895,carrot,1,negative_absent_plain,-6.0,0
+target_char_len,random,117,381895,teddy bear,0,positive_present,-10.0,0
+target_char_len,random,118,381895,bird,1,negative_related_present,-4.0,1
+target_char_len,random,119,381895,bear,0,positive_missing_coco_label,-4.0,1
+target_char_len,random,120,381895,mouse,1,negative_absent_plain,-5.0,1
+target_char_len,popular,1,310196,snowboard,0,positive_present,-9.0,0
+target_char_len,popular,2,310196,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,3,310196,person,0,positive_present,-6.0,0
+target_char_len,popular,4,310196,car,1,negative_related_present,-3.0,1
+target_char_len,popular,5,310196,skis,0,positive_missing_coco_label,-4.0,1
+target_char_len,popular,6,310196,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,7,210789,truck,0,positive_present,-5.0,1
+target_char_len,popular,8,210789,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,9,210789,person,0,positive_present,-6.0,0
+target_char_len,popular,10,210789,car,1,negative_related_present,-3.0,1
+target_char_len,popular,11,210789,umbrella,0,positive_present,-8.0,0
+target_char_len,popular,12,210789,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,13,429109,person,0,positive_present,-6.0,0
+target_char_len,popular,14,429109,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,15,429109,bicycle,0,positive_present,-7.0,0
+target_char_len,popular,16,429109,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,17,429109,car,0,positive_present,-3.0,1
+target_char_len,popular,18,429109,cup,1,negative_absent_plain,-3.0,1
+target_char_len,popular,19,211674,person,0,positive_present,-6.0,0
+target_char_len,popular,20,211674,dining table,1,negative_related_present,-12.0,0
+target_char_len,popular,21,211674,potted plant,0,positive_present,-12.0,0
+target_char_len,popular,22,211674,chair,1,negative_related_present,-5.0,0
+target_char_len,popular,23,211674,car,0,positive_present,-3.0,1
+target_char_len,popular,24,211674,cup,1,negative_absent_plain,-3.0,1
+target_char_len,popular,25,458338,traffic light,0,positive_present,-13.0,0
+target_char_len,popular,26,458338,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,27,458338,person,0,positive_present,-6.0,0
+target_char_len,popular,28,458338,chair,1,negative_related_present,-5.0,0
+target_char_len,popular,29,458338,car,0,positive_present,-3.0,1
+target_char_len,popular,30,458338,cup,1,negative_absent_plain,-3.0,1
+target_char_len,popular,31,283412,dog,0,positive_present,3.0,0
+target_char_len,popular,32,283412,person,1,negative_related_present,6.0,0
+target_char_len,popular,33,283412,dining table,0,positive_missing_coco_label,12.0,1
+target_char_len,popular,34,283412,car,1,negative_absent_plain,3.0,0
+target_char_len,popular,35,283412,bed,0,positive_present,3.0,0
+target_char_len,popular,36,283412,chair,1,negative_related_present,5.0,0
+target_char_len,popular,37,265719,person,0,positive_present,-6.0,0
+target_char_len,popular,38,265719,dining table,1,negative_related_present,-12.0,0
+target_char_len,popular,39,265719,spoon,0,positive_present,-5.0,1
+target_char_len,popular,40,265719,car,1,negative_related_present,-3.0,1
+target_char_len,popular,41,265719,fork,0,positive_present,-4.0,1
+target_char_len,popular,42,265719,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,43,461331,tv,0,positive_present,-2.0,1
+target_char_len,popular,44,461331,person,1,negative_absent_plain,-6.0,0
+target_char_len,popular,45,461331,toaster,0,positive_missing_coco_label,-7.0,0
+target_char_len,popular,46,461331,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,47,461331,microwave,0,positive_present,-9.0,0
+target_char_len,popular,48,461331,car,1,negative_absent_plain,-3.0,1
+target_char_len,popular,49,544456,backpack,0,positive_present,-8.0,0
+target_char_len,popular,50,544456,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,51,544456,person,0,positive_present,-6.0,0
+target_char_len,popular,52,544456,car,1,negative_related_present,-3.0,1
+target_char_len,popular,53,544456,skis,0,positive_present,-4.0,1
+target_char_len,popular,54,544456,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,55,17708,bird,0,positive_present,-4.0,1
+target_char_len,popular,56,17708,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,57,17708,person,0,positive_present,-6.0,0
+target_char_len,popular,58,17708,car,1,negative_related_present,-3.0,1
+target_char_len,popular,59,17708,boat,0,positive_present,-4.0,1
+target_char_len,popular,60,17708,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,61,574692,person,0,positive_present,6.0,0
+target_char_len,popular,62,574692,dining table,1,negative_related_present,12.0,1
+target_char_len,popular,63,574692,orange,0,positive_present,6.0,0
+target_char_len,popular,64,574692,car,1,negative_related_present,3.0,0
+target_char_len,popular,65,574692,bottle,0,positive_present,6.0,0
+target_char_len,popular,66,574692,chair,1,negative_related_present,5.0,0
+target_char_len,popular,67,353180,backpack,0,positive_present,-8.0,0
+target_char_len,popular,68,353180,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,69,353180,person,0,positive_present,-6.0,0
+target_char_len,popular,70,353180,car,1,negative_related_present,-3.0,1
+target_char_len,popular,71,353180,bus,0,positive_present,-3.0,1
+target_char_len,popular,72,353180,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,73,239444,person,0,positive_present,-6.0,0
+target_char_len,popular,74,239444,car,1,negative_related_present,-3.0,1
+target_char_len,popular,75,239444,dining table,0,positive_present,-12.0,0
+target_char_len,popular,76,239444,cup,1,negative_related_present,-3.0,1
+target_char_len,popular,77,239444,chair,0,positive_present,-5.0,1
+target_char_len,popular,78,239444,bottle,1,negative_related_present,-6.0,0
+target_char_len,popular,79,569839,person,0,positive_present,6.0,0
+target_char_len,popular,80,569839,car,1,negative_related_present,3.0,0
+target_char_len,popular,81,569839,sandwich,0,positive_present,8.0,0
+target_char_len,popular,82,569839,bottle,1,negative_related_present,6.0,0
+target_char_len,popular,83,569839,hot dog,0,positive_present,7.0,0
+target_char_len,popular,84,569839,backpack,1,negative_related_present,8.0,0
+target_char_len,popular,85,219622,person,0,positive_present,-6.0,0
+target_char_len,popular,86,219622,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,87,219622,car,0,positive_present,-3.0,1
+target_char_len,popular,88,219622,chair,1,negative_related_present,-5.0,0
+target_char_len,popular,89,219622,frisbee,0,positive_present,-7.0,0
+target_char_len,popular,90,219622,cup,1,negative_absent_plain,-3.0,1
+target_char_len,popular,91,300368,knife,0,positive_present,-5.0,1
+target_char_len,popular,92,300368,car,1,negative_related_present,-3.0,1
+target_char_len,popular,93,300368,person,0,positive_present,-6.0,0
+target_char_len,popular,94,300368,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,95,300368,cake,0,positive_present,-4.0,1
+target_char_len,popular,96,300368,cup,1,negative_related_present,-3.0,1
+target_char_len,popular,97,482476,person,0,positive_present,-6.0,0
+target_char_len,popular,98,482476,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,99,482476,remote,0,positive_missing_coco_label,-6.0,0
+target_char_len,popular,100,482476,car,1,negative_related_present,-3.0,1
+target_char_len,popular,101,482476,handbag,0,positive_present,-7.0,0
+target_char_len,popular,102,482476,chair,1,negative_related_present,-5.0,1
+target_char_len,popular,103,131115,baseball glove,0,positive_present,14.0,1
+target_char_len,popular,104,131115,dining table,1,negative_absent_plain,12.0,1
+target_char_len,popular,105,131115,person,0,positive_present,6.0,0
+target_char_len,popular,106,131115,car,1,negative_related_present,3.0,0
+target_char_len,popular,107,131115,baseball bat,0,positive_present,12.0,1
+target_char_len,popular,108,131115,chair,1,negative_related_present,5.0,0
+target_char_len,popular,109,157084,sink,0,positive_present,-4.0,0
+target_char_len,popular,110,157084,person,1,negative_related_present,-6.0,0
+target_char_len,popular,111,157084,bench,0,positive_present,-5.0,0
+target_char_len,popular,112,157084,dining table,1,negative_related_present,-12.0,0
+target_char_len,popular,113,157084,toilet,0,positive_present,-6.0,0
+target_char_len,popular,114,157084,car,1,negative_absent_plain,-3.0,1
+target_char_len,popular,115,381895,person,0,positive_present,-6.0,0
+target_char_len,popular,116,381895,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,popular,117,381895,teddy bear,0,positive_present,-10.0,0
+target_char_len,popular,118,381895,car,1,negative_related_present,-3.0,1
+target_char_len,popular,119,381895,bear,0,positive_missing_coco_label,-4.0,1
+target_char_len,popular,120,381895,chair,1,negative_related_present,-5.0,1
+target_char_len,adversarial,1,310196,snowboard,0,positive_present,-9.0,0
+target_char_len,adversarial,2,310196,backpack,1,negative_related_present,-8.0,0
+target_char_len,adversarial,3,310196,person,0,positive_present,-6.0,0
+target_char_len,adversarial,4,310196,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,5,310196,skis,0,positive_missing_coco_label,-4.0,1
+target_char_len,adversarial,6,310196,dog,1,negative_related_present,-3.0,1
+target_char_len,adversarial,7,210789,truck,0,positive_present,-5.0,1
+target_char_len,adversarial,8,210789,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,9,210789,person,0,positive_present,-6.0,0
+target_char_len,adversarial,10,210789,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,adversarial,11,210789,umbrella,0,positive_present,-8.0,0
+target_char_len,adversarial,12,210789,handbag,1,negative_related_present,-7.0,0
+target_char_len,adversarial,13,429109,person,0,positive_present,-6.0,0
+target_char_len,adversarial,14,429109,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,adversarial,15,429109,bicycle,0,positive_present,-7.0,0
+target_char_len,adversarial,16,429109,motorcycle,1,negative_related_present,-10.0,0
+target_char_len,adversarial,17,429109,car,0,positive_present,-3.0,1
+target_char_len,adversarial,18,429109,truck,1,negative_related_present,-5.0,1
+target_char_len,adversarial,19,211674,person,0,positive_present,-6.0,0
+target_char_len,adversarial,20,211674,dining table,1,negative_related_present,-12.0,0
+target_char_len,adversarial,21,211674,potted plant,0,positive_present,-12.0,0
+target_char_len,adversarial,22,211674,vase,1,negative_related_present,-4.0,0
+target_char_len,adversarial,23,211674,car,0,positive_present,-3.0,1
+target_char_len,adversarial,24,211674,truck,1,negative_related_present,-5.0,0
+target_char_len,adversarial,25,458338,traffic light,0,positive_present,-13.0,0
+target_char_len,adversarial,26,458338,bus,1,negative_related_present,-3.0,1
+target_char_len,adversarial,27,458338,person,0,positive_present,-6.0,0
+target_char_len,adversarial,28,458338,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,adversarial,29,458338,car,0,positive_present,-3.0,1
+target_char_len,adversarial,30,458338,truck,1,negative_related_present,-5.0,0
+target_char_len,adversarial,31,283412,dog,0,positive_present,3.0,0
+target_char_len,adversarial,32,283412,person,1,negative_related_present,6.0,0
+target_char_len,adversarial,33,283412,dining table,0,positive_missing_coco_label,12.0,1
+target_char_len,adversarial,34,283412,chair,1,negative_related_present,5.0,0
+target_char_len,adversarial,35,283412,bed,0,positive_present,3.0,0
+target_char_len,adversarial,36,283412,book,1,negative_related_present,4.0,0
+target_char_len,adversarial,37,265719,person,0,positive_present,-6.0,0
+target_char_len,adversarial,38,265719,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,39,265719,spoon,0,positive_present,-5.0,1
+target_char_len,adversarial,40,265719,cup,1,negative_related_present,-3.0,1
+target_char_len,adversarial,41,265719,fork,0,positive_present,-4.0,1
+target_char_len,adversarial,42,265719,dining table,1,negative_related_present,-12.0,0
+target_char_len,adversarial,43,461331,tv,0,positive_present,-2.0,1
+target_char_len,adversarial,44,461331,person,1,negative_absent_plain,-6.0,0
+target_char_len,adversarial,45,461331,toaster,0,positive_missing_coco_label,-7.0,0
+target_char_len,adversarial,46,461331,book,1,negative_related_present,-4.0,1
+target_char_len,adversarial,47,461331,microwave,0,positive_present,-9.0,0
+target_char_len,adversarial,48,461331,bottle,1,negative_related_present,-6.0,0
+target_char_len,adversarial,49,544456,backpack,0,positive_present,-8.0,0
+target_char_len,adversarial,50,544456,handbag,1,negative_related_present,-7.0,0
+target_char_len,adversarial,51,544456,person,0,positive_present,-6.0,0
+target_char_len,adversarial,52,544456,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,53,544456,skis,0,positive_present,-4.0,1
+target_char_len,adversarial,54,544456,snowboard,1,negative_related_present,-9.0,0
+target_char_len,adversarial,55,17708,bird,0,positive_present,-4.0,1
+target_char_len,adversarial,56,17708,handbag,1,negative_related_present,-7.0,0
+target_char_len,adversarial,57,17708,person,0,positive_present,-6.0,0
+target_char_len,adversarial,58,17708,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,59,17708,boat,0,positive_present,-4.0,1
+target_char_len,adversarial,60,17708,chair,1,negative_related_present,-5.0,1
+target_char_len,adversarial,61,574692,person,0,positive_present,6.0,0
+target_char_len,adversarial,62,574692,car,1,negative_related_present,3.0,0
+target_char_len,adversarial,63,574692,orange,0,positive_present,6.0,0
+target_char_len,adversarial,64,574692,dining table,1,negative_related_present,12.0,1
+target_char_len,adversarial,65,574692,bottle,0,positive_present,6.0,0
+target_char_len,adversarial,66,574692,cup,1,negative_related_present,3.0,0
+target_char_len,adversarial,67,353180,backpack,0,positive_present,-8.0,0
+target_char_len,adversarial,68,353180,handbag,1,negative_related_present,-7.0,0
+target_char_len,adversarial,69,353180,person,0,positive_present,-6.0,0
+target_char_len,adversarial,70,353180,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,71,353180,bus,0,positive_present,-3.0,1
+target_char_len,adversarial,72,353180,traffic light,1,negative_related_present,-13.0,0
+target_char_len,adversarial,73,239444,person,0,positive_present,-6.0,0
+target_char_len,adversarial,74,239444,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,75,239444,dining table,0,positive_present,-12.0,0
+target_char_len,adversarial,76,239444,cup,1,negative_related_present,-3.0,1
+target_char_len,adversarial,77,239444,chair,0,positive_present,-5.0,1
+target_char_len,adversarial,78,239444,couch,1,negative_related_present,-5.0,1
+target_char_len,adversarial,79,569839,person,0,positive_present,6.0,0
+target_char_len,adversarial,80,569839,car,1,negative_related_present,3.0,0
+target_char_len,adversarial,81,569839,sandwich,0,positive_present,8.0,0
+target_char_len,adversarial,82,569839,bowl,1,negative_related_present,4.0,0
+target_char_len,adversarial,83,569839,hot dog,0,positive_present,7.0,0
+target_char_len,adversarial,84,569839,handbag,1,negative_related_present,7.0,0
+target_char_len,adversarial,85,219622,person,0,positive_present,-6.0,0
+target_char_len,adversarial,86,219622,dining table,1,negative_absent_plain,-12.0,0
+target_char_len,adversarial,87,219622,car,0,positive_present,-3.0,1
+target_char_len,adversarial,88,219622,truck,1,negative_related_present,-5.0,0
+target_char_len,adversarial,89,219622,frisbee,0,positive_present,-7.0,0
+target_char_len,adversarial,90,219622,dog,1,negative_related_present,-3.0,1
+target_char_len,adversarial,91,300368,knife,0,positive_present,-5.0,1
+target_char_len,adversarial,92,300368,cup,1,negative_related_present,-3.0,1
+target_char_len,adversarial,93,300368,person,0,positive_present,-6.0,0
+target_char_len,adversarial,94,300368,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,95,300368,cake,0,positive_present,-4.0,1
+target_char_len,adversarial,96,300368,bottle,1,negative_related_present,-6.0,0
+target_char_len,adversarial,97,482476,person,0,positive_present,-6.0,0
+target_char_len,adversarial,98,482476,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,99,482476,remote,0,positive_missing_coco_label,-6.0,0
+target_char_len,adversarial,100,482476,tv,1,negative_related_present,-2.0,1
+target_char_len,adversarial,101,482476,handbag,0,positive_present,-7.0,0
+target_char_len,adversarial,102,482476,backpack,1,negative_related_present,-8.0,0
+target_char_len,adversarial,103,131115,baseball glove,0,positive_present,14.0,1
+target_char_len,adversarial,104,131115,sports ball,1,negative_related_present,11.0,1
+target_char_len,adversarial,105,131115,person,0,positive_present,6.0,0
+target_char_len,adversarial,106,131115,car,1,negative_related_present,3.0,0
+target_char_len,adversarial,107,131115,baseball bat,0,positive_present,12.0,1
+target_char_len,adversarial,108,131115,bench,1,negative_related_present,5.0,0
+target_char_len,adversarial,109,157084,sink,0,positive_present,-4.0,0
+target_char_len,adversarial,110,157084,bottle,1,negative_related_present,-6.0,0
+target_char_len,adversarial,111,157084,bench,0,positive_present,-5.0,0
+target_char_len,adversarial,112,157084,person,1,negative_related_present,-6.0,0
+target_char_len,adversarial,113,157084,toilet,0,positive_present,-6.0,0
+target_char_len,adversarial,114,157084,vase,1,negative_related_present,-4.0,0
+target_char_len,adversarial,115,381895,person,0,positive_present,-6.0,0
+target_char_len,adversarial,116,381895,car,1,negative_related_present,-3.0,1
+target_char_len,adversarial,117,381895,teddy bear,0,positive_present,-10.0,0
+target_char_len,adversarial,118,381895,bed,1,negative_related_present,-3.0,1
+target_char_len,adversarial,119,381895,bear,0,positive_missing_coco_label,-4.0,1
+target_char_len,adversarial,120,381895,couch,1,negative_absent_plain,-5.0,1

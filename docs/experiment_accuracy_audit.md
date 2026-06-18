@@ -342,6 +342,48 @@ Interpretation: internal LH-Shape transfers beyond prompt-only confounds, but it
 is not yet a clean POPE gate. It is better viewed as a TDEV-lite triage signal
 or a feature to combine with target-vs-neighbor evidence.
 
+The same pilot was used to test LH-Shape as a triage layer before OWLv2/TDEV
+calls. `mitigation/scripts/evaluate_pope_lh_tdev_cascade.py` joins the LH-Shape
+OOF scores with existing OWLv2 hybrid predictions and simulates two policies:
+call full TDEV on top-q absent-risk rows, or call TDEV only when vanilla already
+answered `yes` and LH-Shape marks the row high risk.
+
+Cascade command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/evaluate_pope_lh_tdev_cascade.py \
+  --lh_predictions_csv mitigation/results/pope_lh_shape_transfer_120_imagecv/pope_lh_shape_transfer_predictions.csv \
+  --tdev_predictions_csv mitigation/results/semantic_neighbor_audit/owlv2_hybrid_region_rule/hybrid_predictions.csv \
+  --output_dir mitigation/results/pope_lh_tdev_cascade_120 \
+  --score_names lh_shape_pope_layers_22_31,lh_shape_pope_layers_31,prompt_token_pos,target_char_len \
+  --call_rates 0.10,0.25,0.50,0.75,1.00
+```
+
+Result files:
+
+```text
+mitigation/results/pope_lh_tdev_cascade_120/pope_lh_tdev_cascade_metrics.json
+mitigation/results/pope_lh_tdev_cascade_120/pope_lh_tdev_cascade_metrics.csv
+```
+
+Pilot cascade summary on the same 360 rows:
+
+| Method | TDEV calls | Call savings | MCC | TPR | FPR | Related FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| vanilla base | 0 | 100% | 0.739 | 0.850 | 0.111 | 0.149 |
+| full TDEV hybrid | 360 | 0% | 0.796 | 0.867 | 0.072 | 0.097 |
+| LH 22+31 all-selected 50% | 180 | 50% | 0.773 | 0.867 | 0.094 | 0.127 |
+| LH 22+31 all-selected 75% | 270 | 25% | 0.790 | 0.867 | 0.078 | 0.104 |
+| LH 22+31 base-yes-selected 75% | 130 | 64% | 0.780 | 0.850 | 0.072 | 0.097 |
+
+Interpretation: the best practical use of LH-Shape in this pilot is not as a
+standalone gate, but as a suppress-only triage layer. Calling TDEV on high-risk
+vanilla-yes rows recovers the full TDEV FPR at 130/360 calls, but it cannot
+recover the full hybrid TPR because it does not invoke the rescue branch for
+vanilla-no rows. This supports the paper's practicality story while preserving
+TDEV-region as the primary verifier.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

@@ -103,9 +103,11 @@ select heads or regions more carefully than mean attention.
    checks, synthetic evaluator smoke, and a real 2-row 8-bit POPE cache smoke
    pass. A 120-row-per-split image-CV pilot is positive but imperfect: layers
    22+31 reach MCC 0.408/AUROC 0.739 and beat prompt-only controls, while
-   present-object FPR remains 0.400. The full GPU cache still needs to be
-   generated before claiming semantic-neighbor transfer; keep HALP as related
-   work or an official-code baseline if code becomes available.
+   present-object FPR remains 0.400. The same pilot supports suppress-only TDEV
+   triage: full-TDEV FPR is recovered with 130/360 calls, though full hybrid TPR
+   is not. The full GPU cache still needs to be generated before claiming
+   semantic-neighbor transfer; keep HALP as related work or an official-code
+   baseline if code becomes available.
 4. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.
