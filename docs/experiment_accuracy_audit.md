@@ -53,6 +53,47 @@ Caveat: IC, GLSim, and Beyond-ADS/CGC are adapted or paper-level
 implementations, not bit-level official reruns. Paper text should use that
 scope explicitly.
 
+## Per-Head TDEV-Lite Probe Audit
+
+`detection/scripts/diagnose_per_head.py` now emits machine-readable audit JSON
+for the per-head attention-shape diagnostic. The run reuses the existing
+per-head row-cache shards and evaluates held-out logistic probes with image-grouped
+folds, so object mentions from the same image do not cross train/test.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/diagnose_per_head.py \
+  --cache_glob 'experiments/coco_llava_7b_rows/per_head_row_cache_shard*.npz' \
+  --generation_json experiments/coco_llava_7b/generation.json \
+  --epochs 80 \
+  --output_json detection/baselines/results/per_head_probe/per_head_probe_audit.json
+```
+
+Result file:
+
+```text
+detection/baselines/results/per_head_probe/per_head_probe_audit.json
+```
+
+Key controlled metrics on the same 16,426 CHAIR object mentions:
+
+| Probe | Overall AUROC | Within-bin AUROC | Matched-pair AUROC | Residual AUROC |
+|---|---:|---:|---:|---:|
+| position-only | 0.830 | 0.577 | 0.546 | 0.522 |
+| mean-head probe | 0.812 | 0.545 | 0.537 | 0.526 |
+| all-layer per-head image-CV | 0.771 | 0.640 | 0.628 | 0.587 |
+| layer 22 per-head image-CV | 0.837 | 0.684 | 0.670 | 0.609 |
+| layer 31 per-head image-CV | 0.855 | 0.726 | 0.719 | 0.650 |
+
+This supports a TDEV-lite practicality direction: target-grounding signal exists
+inside late-layer per-head attention features and is washed out by mean-head or
+early/all-layer aggregation. The result is still a supervised diagnostic probe
+with `epochs=80`, not a final training-free method or an external-detector
+replacement. It should be used to justify the next LH-Shape/TDEV-lite detector
+rather than as the paper's deployed mitigation result.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

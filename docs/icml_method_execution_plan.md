@@ -61,18 +61,26 @@ The ICML version should show two tiers:
 | Tier | Role | Current status | Why it matters |
 |---|---|---|---|
 | TDEV-region | strongest verifier using cached OWLv2 image-object scores | positive POPE and CHAIR evidence exists | establishes the target-discrimination criterion |
-| TDEV-lite | cheaper internal/proposal backend | not implemented yet | answers the practicality concern that OWLv2 is an external detector |
+| TDEV-lite | cheaper internal/proposal backend | supervised per-head diagnostic implemented; training-free variant pending | answers the practicality concern that OWLv2 is an external detector |
 
 TDEV-lite should not be a weaker restatement of CLIP margin; those variants are
-already negative. The best next implementation target is a late-query/internal
-probe inspired by HALP, but trained/evaluated under semantic-neighbor controls:
+already negative. The current internal-probe audit shows that late-layer
+per-head attention-shape features preserve position-controlled signal: layer 31
+image-grouped CV reaches 0.726 within-bin AUROC and 0.719 matched-pair AUROC on
+CHAIR object mentions, while the mean-head probe is only 0.545 within-bin. This
+is evidence that a practical no-detector route exists, but it remains supervised
+and diagnostic.
 
-1. Cache late query-token states or selected visual-token states at object
-   decision points.
-2. Train a small probe on held-out split labels or target-vs-neighbor evidence
-   labels.
-3. Report whether the probe reduces related-present FPR at fixed TPR.
-4. Treat this as a practicality ablation unless it matches TDEV-region.
+Next implementation target:
+
+1. Convert the layer-31 per-head result into LH-Shape/TDEV-lite: a fixed-head or
+   split-selected lightweight score that avoids using test labels at scoring
+   time.
+2. Evaluate it under the same within-bin, matched-pair, and residual controls
+   against IC/PAS/SVAR/GLSim.
+3. If it stays strong, test whether it can replace or prefilter OWLv2 in POPE
+   and caption mitigation; otherwise present it as a diagnostic/practicality
+   ablation only.
 
 ## Baseline Priority
 
@@ -94,8 +102,9 @@ probe inspired by HALP, but trained/evaluated under semantic-neighbor controls:
    from 0.1340 to 0.1186 and CHAIRs from 0.4921 to 0.4505; the top-10% hybrid
    MCC branch reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is
    a fluent rewrite or decoding integration rather than raw phrase deletion.
-2. **TDEV-lite probe.** Build a small cached-feature probe on LLaVA decision
-   states and evaluate it against related-present negatives.
+2. **TDEV-lite probe.** Convert the completed supervised per-head diagnostic
+   into a fair LH-Shape score: fixed-head or split-selected, evaluated without
+   test-label supervision against related-present negatives.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
 4. **Baseline availability check.** Re-check CAI/CAST/region-aware code before

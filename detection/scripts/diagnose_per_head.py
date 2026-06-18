@@ -127,7 +127,7 @@ def train_logreg(X, y, l2=1.0, lr=0.5, epochs=300):
     return w, b
 
 
-def kfold_scores(X, y, k=5, l2=1.0, seed=0):
+def kfold_scores(X, y, k=5, l2=1.0, seed=0, epochs=300, name="object-CV"):
     rng = np.random.RandomState(seed)
     idx = rng.permutation(len(y))
     folds = np.array_split(idx, k)
@@ -137,12 +137,13 @@ def kfold_scores(X, y, k=5, l2=1.0, seed=0):
         tr = np.concatenate([folds[g] for g in range(k) if g != f])
         mu, sd = X[tr].mean(0), X[tr].std(0) + 1e-8
         Xtr, Xte = (X[tr] - mu) / sd, (X[te] - mu) / sd
-        w, b = train_logreg(Xtr, y[tr], l2=l2)
+        print(f"  {name} fold {f + 1}/{k}: train={len(tr)} test={len(te)} epochs={epochs}", flush=True)
+        w, b = train_logreg(Xtr, y[tr], l2=l2, epochs=epochs)
         preds[te] = Xte @ w + b
     return preds
 
 
-def image_group_kfold_scores(X, y, image_ids, k=5, l2=1.0, seed=0):
+def image_group_kfold_scores(X, y, image_ids, k=5, l2=1.0, seed=0, epochs=300, name="image-CV"):
     rng = np.random.RandomState(seed)
     unique_images = np.asarray(sorted(set(image_ids.tolist())))
     rng.shuffle(unique_images)
@@ -153,18 +154,44 @@ def image_group_kfold_scores(X, y, image_ids, k=5, l2=1.0, seed=0):
         tr = ~te
         mu, sd = X[tr].mean(0), X[tr].std(0) + 1e-8
         Xtr, Xte = (X[tr] - mu) / sd, (X[te] - mu) / sd
-        w, b = train_logreg(Xtr, y[tr], l2=l2)
+        print(f"  {name} fold {f + 1}/{k}: train={int(tr.sum())} test={int(te.sum())} epochs={epochs}", flush=True)
+        w, b = train_logreg(Xtr, y[tr], l2=l2, epochs=epochs)
         preds[te] = Xte @ w + b
     return preds
 
 
-def report_metrics(name, values, labels, gen_pos, bin_width=10):
+def metric_bundle(name, values, labels, gen_pos, bin_width=10) -> dict:
     matched, pairs = matched_pair_auc(labels, values, gen_pos)
     residual = residualize_by_position(values, gen_pos, bin_width=bin_width)
-    print(f"{name:<24} overall={roc_auc(labels, values):.4f}  "
-          f"within-bin={within_bin_auroc(values, labels, gen_pos, bin_width=bin_width):.4f}  "
-          f"matched={matched:.4f}  residual={roc_auc(labels, residual):.4f}  "
-          f"pairs={pairs}")
+    return {
+        "name": name,
+        "overall_auroc": roc_auc(labels, values),
+        "within_bin_auroc": within_bin_auroc(values, labels, gen_pos, bin_width=bin_width),
+        "matched_pair_auroc": matched,
+        "matched_pair_count": int(pairs),
+        "residual_auroc": roc_auc(labels, residual),
+    }
+
+
+def report_metrics(name, values, labels, gen_pos, bin_width=10) -> dict:
+    metrics = metric_bundle(name, values, labels, gen_pos, bin_width=bin_width)
+    print(f"{name:<24} overall={metrics['overall_auroc']:.4f}  "
+          f"within-bin={metrics['within_bin_auroc']:.4f}  "
+          f"matched={metrics['matched_pair_auroc']:.4f}  residual={metrics['residual_auroc']:.4f}  "
+          f"pairs={metrics['matched_pair_count']}")
+    return metrics
+
+
+def json_ready(value):
+    if isinstance(value, dict):
+        return {str(k): json_ready(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [json_ready(v) for v in value]
+    if isinstance(value, tuple):
+        return [json_ready(v) for v in value]
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
 
 
 # ---------- main ----------
@@ -177,6 +204,8 @@ def main() -> None:
     p.add_argument("--bin_width", type=int, default=10)
     p.add_argument("--l2", type=float, default=1.0)
     p.add_argument("--top", type=int, default=25)
+    p.add_argument("--epochs", type=int, default=300, help="Gradient steps per logistic-regression fold.")
+    p.add_argument("--output_json", default=None, help="Optional path for machine-readable probe audit metrics.")
     args = p.parse_args()
 
     if args.cache_glob:
@@ -222,9 +251,20 @@ def main() -> None:
                 if wb is not None:
                     rows.append((int(layer_indices[li]), h, feature_names[fi], ov, wb))
     rows.sort(key=lambda r: r[4], reverse=True)
+    top_single = [
+        {
+            "layer": layer,
+            "head": head,
+            "feature": fname,
+            "overall_auroc": ov,
+            "within_bin_auroc": wb,
+        }
+        for layer, head, fname, ov, wb in rows[: args.top]
+    ]
     print(f"{'layer':>5} {'head':>4} {'feature':<18} {'overall':>8} {'within-bin':>10}")
-    for layer, head, fname, ov, wb in rows[: args.top]:
-        print(f"{layer:>5} {head:>4} {fname:<18} {ov:8.4f} {wb:10.4f}")
+    for item in top_single:
+        print(f"{item['layer']:>5} {item['head']:>4} {item['feature']:<18} "
+              f"{item['overall_auroc']:8.4f} {item['within_bin_auroc']:10.4f}")
     best = rows[0]
     print(f"\nBest single per-head feature within-bin AUROC = {best[4]:.4f} "
           f"(layer {best[0]}, head {best[1]}, {best[2]})")
@@ -235,27 +275,87 @@ def main() -> None:
     X = feats.reshape(N, L * H * F)
     finite = np.isfinite(X).all(axis=1)
     Xg, yg, gpg, ig = X[finite], labels[finite], gen_pos[finite], image_ids[finite]
-    preds_object = kfold_scores(Xg, yg.astype(np.float64), k=5, l2=args.l2)
-    preds_image = image_group_kfold_scores(Xg, yg.astype(np.float64), ig, k=5, l2=args.l2)
+    preds_object = kfold_scores(Xg, yg.astype(np.float64), k=5, l2=args.l2, epochs=args.epochs, name="per-head object-CV")
+    preds_image = image_group_kfold_scores(Xg, yg.astype(np.float64), ig, k=5, l2=args.l2, epochs=args.epochs, name="per-head image-CV")
     mean_head = feats[finite].mean(axis=2).reshape(Xg.shape[0], L * F)
-    preds_mean_head = image_group_kfold_scores(mean_head, yg.astype(np.float64), ig, k=5, l2=args.l2)
+    preds_mean_head = image_group_kfold_scores(mean_head, yg.astype(np.float64), ig, k=5, l2=args.l2, epochs=args.epochs, name="mean-head image-CV")
 
-    report_metrics("position-only", gpg.astype(np.float64), yg, gpg, bin_width=args.bin_width)
-    report_metrics("mean-head probe", preds_mean_head, yg, gpg, bin_width=args.bin_width)
-    report_metrics("per-head object-CV", preds_object, yg, gpg, bin_width=args.bin_width)
-    report_metrics("per-head image-CV", preds_image, yg, gpg, bin_width=args.bin_width)
+    probe_metrics = [
+        report_metrics("position-only", gpg.astype(np.float64), yg, gpg, bin_width=args.bin_width),
+        report_metrics("mean-head probe", preds_mean_head, yg, gpg, bin_width=args.bin_width),
+        report_metrics("per-head object-CV", preds_object, yg, gpg, bin_width=args.bin_width),
+        report_metrics("per-head image-CV", preds_image, yg, gpg, bin_width=args.bin_width),
+    ]
+
+    print("\n=== Test C: image-grouped per-layer probes ===")
+    layer_probe_metrics = []
+    for li, layer in enumerate(layer_indices):
+        X_layer = feats[finite, li].reshape(Xg.shape[0], H * F)
+        preds_layer = image_group_kfold_scores(
+            X_layer,
+            yg.astype(np.float64),
+            ig,
+            k=5,
+            l2=args.l2,
+            epochs=args.epochs,
+            name=f"layer {int(layer)} image-CV",
+        )
+        layer_probe_metrics.append(
+            report_metrics(f"layer {int(layer)} image-CV", preds_layer, yg, gpg, bin_width=args.bin_width)
+        )
 
     print("\n--- VERDICT ---")
     wb_image = within_bin_auroc(preds_image, yg, gpg, bin_width=args.bin_width)
-    verdict_signal = max(best[4], wb_image if wb_image else 0.0)
+    best_layer_wb = max(m["within_bin_auroc"] or 0.0 for m in layer_probe_metrics)
+    verdict_signal = max(best[4], wb_image if wb_image else 0.0, best_layer_wb)
     if verdict_signal >= 0.60:
+        verdict = {
+            "signal_survives_position_control": True,
+            "threshold": 0.60,
+            "best_within_bin_auroc": verdict_signal,
+            "interpretation": "grounding info is present in per-head attention features but is washed out by head/layer averaging",
+            "recommended_route": "build a late-layer per-head, position-controlled TDEV-lite detector",
+        }
         print(f"Per-head signal SURVIVES position control ({verdict_signal:.3f} >= 0.60): "
               "grounding info is present in attention but washed out by head averaging. "
               "=> Route: build a per-head/position-controlled detector.")
     else:
+        verdict = {
+            "signal_survives_position_control": False,
+            "threshold": 0.60,
+            "best_within_bin_auroc": verdict_signal,
+            "interpretation": "attention shape carries no position-independent grounding signal even per-head",
+            "recommended_route": "constructive contribution should be position-calibrated fusion, not attention",
+        }
         print(f"Per-head signal does NOT survive ({verdict_signal:.3f} < 0.60): "
               "attention shape carries no position-independent grounding signal even per-head. "
               "=> Route: constructive contribution should be position-calibrated fusion, not attention.")
+
+    if args.output_json:
+        payload = {
+            "cache": args.cache_glob or args.cache,
+            "generation_json": args.generation_json,
+            "num_mentions": int(N),
+            "num_finite_mentions": int(Xg.shape[0]),
+            "num_images": int(len(set(image_ids.tolist()))),
+            "hallucinated_mentions": int(labels.sum()),
+            "grounded_mentions": int(len(labels) - labels.sum()),
+            "layer_indices": [int(x) for x in layer_indices],
+            "num_heads": int(H),
+            "feature_names": feature_names,
+            "bin_width": int(args.bin_width),
+            "l2": float(args.l2),
+            "epochs": int(args.epochs),
+            "top_single_features": top_single,
+            "probe_metrics": probe_metrics,
+            "layer_probe_metrics": layer_probe_metrics,
+            "verdict": verdict,
+            "caveat": "supervised diagnostic probe; use as TDEV-lite evidence/upper bound, not as the final training-free method",
+        }
+        out = Path(args.output_json)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(json_ready(payload), indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(f"Wrote {out}")
 
 
 if __name__ == "__main__":

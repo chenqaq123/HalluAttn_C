@@ -86,9 +86,12 @@ select heads or regions more carefully than mean attention.
    head/region positive controls. As of the current check, CAI/CAST arXiv pages
    expose no direct code link and Region-Aware says code will be public; run a
    semantic-neighbor subset audit if usable code appears.
-3. Implement a local HALP-style late-query probe only as the TDEV-lite
-   practicality ablation, not as an official reproduction, unless official code
-   becomes available.
+3. The local TDEV-lite supervised per-head diagnostic is now implemented and
+   emits `detection/baselines/results/per_head_probe/per_head_probe_audit.json`:
+   layer-31 image-grouped CV reaches 0.726 within-bin AUROC and 0.719
+   matched-pair AUROC. Next, convert it into a fair fixed-head or split-selected
+   LH-Shape score before comparing it as a method; keep HALP as related work or
+   an official-code baseline if code becomes available.
 4. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.

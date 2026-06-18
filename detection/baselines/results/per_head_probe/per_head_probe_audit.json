@@ -1,0 +1,287 @@
+{
+  "bin_width": 10,
+  "cache": "experiments/coco_llava_7b_rows/per_head_row_cache_shard*.npz",
+  "caveat": "supervised diagnostic probe; use as TDEV-lite evidence/upper bound, not as the final training-free method",
+  "epochs": 80,
+  "feature_names": [
+    "entropy",
+    "neg_top1_mass",
+    "neg_top5_mass",
+    "neg_max_over_mea"
+  ],
+  "generation_json": "experiments/coco_llava_7b/generation.json",
+  "grounded_mentions": 12417,
+  "hallucinated_mentions": 4009,
+  "l2": 1.0,
+  "layer_indices": [
+    0,
+    1,
+    10,
+    22,
+    31
+  ],
+  "layer_probe_metrics": [
+    {
+      "matched_pair_auroc": 0.5635119154273428,
+      "matched_pair_count": 2930025,
+      "name": "layer 0 image-CV",
+      "overall_auroc": 0.829372757233247,
+      "residual_auroc": 0.5370427812287457,
+      "within_bin_auroc": 0.5802808177931088
+    },
+    {
+      "matched_pair_auroc": 0.5113608245663432,
+      "matched_pair_count": 2930025,
+      "name": "layer 1 image-CV",
+      "overall_auroc": 0.7701529173919365,
+      "residual_auroc": 0.5186774831928154,
+      "within_bin_auroc": 0.5179848690330593
+    },
+    {
+      "matched_pair_auroc": 0.6064159862117218,
+      "matched_pair_count": 2930025,
+      "name": "layer 10 image-CV",
+      "overall_auroc": 0.7745810028426617,
+      "residual_auroc": 0.5642776893649915,
+      "within_bin_auroc": 0.6242919737057715
+    },
+    {
+      "matched_pair_auroc": 0.6704526411890683,
+      "matched_pair_count": 2930025,
+      "name": "layer 22 image-CV",
+      "overall_auroc": 0.8373599402954048,
+      "residual_auroc": 0.6085381138793517,
+      "within_bin_auroc": 0.6842629490623741
+    },
+    {
+      "matched_pair_auroc": 0.7186433562853559,
+      "matched_pair_count": 2930025,
+      "name": "layer 31 image-CV",
+      "overall_auroc": 0.8547728832644067,
+      "residual_auroc": 0.6496919138992112,
+      "within_bin_auroc": 0.7260010348690838
+    }
+  ],
+  "num_finite_mentions": 16426,
+  "num_heads": 32,
+  "num_images": 4977,
+  "num_mentions": 16426,
+  "probe_metrics": [
+    {
+      "matched_pair_auroc": 0.5461943157481591,
+      "matched_pair_count": 2930025,
+      "name": "position-only",
+      "overall_auroc": 0.8304142650125242,
+      "residual_auroc": 0.5216243238490959,
+      "within_bin_auroc": 0.5774555780666141
+    },
+    {
+      "matched_pair_auroc": 0.5373175996791836,
+      "matched_pair_count": 2930025,
+      "name": "mean-head probe",
+      "overall_auroc": 0.8117757032663461,
+      "residual_auroc": 0.5257788442622445,
+      "within_bin_auroc": 0.5449726916108433
+    },
+    {
+      "matched_pair_auroc": 0.6286130664414126,
+      "matched_pair_count": 2930025,
+      "name": "per-head object-CV",
+      "overall_auroc": 0.7711964942855382,
+      "residual_auroc": 0.587942149893753,
+      "within_bin_auroc": 0.6400042074190256
+    },
+    {
+      "matched_pair_auroc": 0.6279983959181236,
+      "matched_pair_count": 2930025,
+      "name": "per-head image-CV",
+      "overall_auroc": 0.7708203373367482,
+      "residual_auroc": 0.5869982922574968,
+      "within_bin_auroc": 0.6395414136145514
+    }
+  ],
+  "top_single_features": [
+    {
+      "feature": "neg_top1_mass",
+      "head": 9,
+      "layer": 31,
+      "overall_auroc": 0.6719231612097393,
+      "within_bin_auroc": 0.5948017079469303
+    },
+    {
+      "feature": "neg_max_over_mea",
+      "head": 9,
+      "layer": 31,
+      "overall_auroc": 0.671923151165495,
+      "within_bin_auroc": 0.5948017079469303
+    },
+    {
+      "feature": "neg_top5_mass",
+      "head": 9,
+      "layer": 31,
+      "overall_auroc": 0.6954839751816366,
+      "within_bin_auroc": 0.5883321618936497
+    },
+    {
+      "feature": "entropy",
+      "head": 9,
+      "layer": 31,
+      "overall_auroc": 0.7054332913222772,
+      "within_bin_auroc": 0.5880428505493973
+    },
+    {
+      "feature": "entropy",
+      "head": 24,
+      "layer": 31,
+      "overall_auroc": 0.7036592266739451,
+      "within_bin_auroc": 0.5836463568653258
+    },
+    {
+      "feature": "neg_top5_mass",
+      "head": 19,
+      "layer": 31,
+      "overall_auroc": 0.6352849219641568,
+      "within_bin_auroc": 0.5828836237629952
+    },
+    {
+      "feature": "neg_top5_mass",
+      "head": 27,
+      "layer": 31,
+      "overall_auroc": 0.5988401449079106,
+      "within_bin_auroc": 0.5792869965057907
+    },
+    {
+      "feature": "neg_top1_mass",
+      "head": 27,
+      "layer": 31,
+      "overall_auroc": 0.5961941795894408,
+      "within_bin_auroc": 0.5761506846558867
+    },
+    {
+      "feature": "neg_max_over_mea",
+      "head": 27,
+      "layer": 31,
+      "overall_auroc": 0.5961941996779293,
+      "within_bin_auroc": 0.5761506846558867
+    },
+    {
+      "feature": "neg_top5_mass",
+      "head": 24,
+      "layer": 31,
+      "overall_auroc": 0.6642036070367806,
+      "within_bin_auroc": 0.5760747764391138
+    },
+    {
+      "feature": "neg_top1_mass",
+      "head": 24,
+      "layer": 31,
+      "overall_auroc": 0.6385967302810843,
+      "within_bin_auroc": 0.5690218017196916
+    },
+    {
+      "feature": "neg_max_over_mea",
+      "head": 24,
+      "layer": 31,
+      "overall_auroc": 0.6385967202368401,
+      "within_bin_auroc": 0.5690218017196916
+    },
+    {
+      "feature": "entropy",
+      "head": 12,
+      "layer": 0,
+      "overall_auroc": 0.7897692059661284,
+      "within_bin_auroc": 0.5662157453111807
+    },
+    {
+      "feature": "neg_top1_mass",
+      "head": 19,
+      "layer": 31,
+      "overall_auroc": 0.5885770063985653,
+      "within_bin_auroc": 0.561202498723413
+    },
+    {
+      "feature": "neg_max_over_mea",
+      "head": 19,
+      "layer": 31,
+      "overall_auroc": 0.5885770063985653,
+      "within_bin_auroc": 0.561202498723413
+    },
+    {
+      "feature": "neg_top5_mass",
+      "head": 28,
+      "layer": 31,
+      "overall_auroc": 0.6232112280669613,
+      "within_bin_auroc": 0.5608828760114307
+    },
+    {
+      "feature": "neg_top1_mass",
+      "head": 28,
+      "layer": 31,
+      "overall_auroc": 0.5971675170826982,
+      "within_bin_auroc": 0.5603645549732564
+    },
+    {
+      "feature": "neg_max_over_mea",
+      "head": 28,
+      "layer": 31,
+      "overall_auroc": 0.5971675271269425,
+      "within_bin_auroc": 0.5603645549732564
+    },
+    {
+      "feature": "entropy",
+      "head": 19,
+      "layer": 31,
+      "overall_auroc": 0.5576836831633134,
+      "within_bin_auroc": 0.5595779955910662
+    },
+    {
+      "feature": "neg_top5_mass",
+      "head": 19,
+      "layer": 10,
+      "overall_auroc": 0.4692594497204516,
+      "within_bin_auroc": 0.5559378066126495
+    },
+    {
+      "feature": "entropy",
+      "head": 27,
+      "layer": 31,
+      "overall_auroc": 0.589892209790595,
+      "within_bin_auroc": 0.5552064853668026
+    },
+    {
+      "feature": "entropy",
+      "head": 21,
+      "layer": 0,
+      "overall_auroc": 0.48436819282731275,
+      "within_bin_auroc": 0.5538349700580506
+    },
+    {
+      "feature": "neg_top1_mass",
+      "head": 19,
+      "layer": 10,
+      "overall_auroc": 0.4869192299929652,
+      "within_bin_auroc": 0.5529594069749226
+    },
+    {
+      "feature": "neg_max_over_mea",
+      "head": 19,
+      "layer": 10,
+      "overall_auroc": 0.4869192199487209,
+      "within_bin_auroc": 0.5529594069749226
+    },
+    {
+      "feature": "entropy",
+      "head": 19,
+      "layer": 10,
+      "overall_auroc": 0.5039753712719306,
+      "within_bin_auroc": 0.5526768881600445
+    }
+  ],
+  "verdict": {
+    "best_within_bin_auroc": 0.7260010348690838,
+    "interpretation": "grounding info is present in per-head attention features but is washed out by head/layer averaging",
+    "recommended_route": "build a late-layer per-head, position-controlled TDEV-lite detector",
+    "signal_survives_position_control": true,
+    "threshold": 0.6
+  }
+}
