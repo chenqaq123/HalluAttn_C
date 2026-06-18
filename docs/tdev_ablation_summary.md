@@ -8,7 +8,9 @@ python scripts/build_tdev_ablation_summary.py
 
 This table consolidates the current TDEV ablations from existing metric
 artifacts. It is intended as a paper-facing checkpoint, not a replacement for
-the full result files.
+the full result files. The same command also writes a machine-readable summary
+to `mitigation/results/semantic_neighbor_audit/tdev_ablation_summary.json` by
+default.
 
 ## POPE Semantic-Neighbor Ablation
 

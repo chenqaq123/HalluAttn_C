@@ -8,6 +8,7 @@ summary so paper tables can be regenerated instead of copied by hand.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 from pathlib import Path
@@ -75,6 +76,8 @@ CHAIR_LABELS = {
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing metric artifact: {path}")
     with path.open("r", encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
 
@@ -88,6 +91,14 @@ def find_row(rows: list[dict[str, str]], split: str, subset: str) -> dict[str, s
 
 def fmt(value: str | float, digits: int = 3) -> str:
     return f"{float(value):.{digits}f}"
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="Build paper-facing TDEV ablation summary tables")
+    p.add_argument("--output_md", default="docs/tdev_ablation_summary.md")
+    p.add_argument("--output_json", default="mitigation/results/semantic_neighbor_audit/tdev_ablation_summary.json")
+    p.add_argument("--no_json", action="store_true", help="Do not write the machine-readable JSON summary")
+    return p.parse_args()
 
 
 def build_pope_rows() -> list[dict[str, str]]:
@@ -163,6 +174,7 @@ def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
 
 
 def main() -> None:
+    args = parse_args()
     pope_rows = build_pope_rows()
     chair_rows = build_chair_rows()
     chair_baseline_rows = build_chair_baseline_rows()
@@ -207,7 +219,9 @@ python scripts/build_tdev_ablation_summary.py
 
 This table consolidates the current TDEV ablations from existing metric
 artifacts. It is intended as a paper-facing checkpoint, not a replacement for
-the full result files.
+the full result files. The same command also writes a machine-readable summary
+to `mitigation/results/semantic_neighbor_audit/tdev_ablation_summary.json` by
+default.
 
 ## POPE Semantic-Neighbor Ablation
 
@@ -235,9 +249,27 @@ explain broad position/uncertainty effects. They remain far below TDEV on
 within-bin and matched-pair controls, and generated-caption co-occurrence support
 is near random by itself.
 """
-    out_path = ROOT / "docs/tdev_ablation_summary.md"
+    out_path = ROOT / args.output_md
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(text, encoding="utf-8")
     print(f"Wrote {out_path}")
+
+    if not args.no_json:
+        json_path = ROOT / args.output_json
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "pope_semantic_neighbor_ablation": pope_rows,
+            "chair_object_mention_ablation": chair_rows,
+            "chair_statistical_baseline_comparison": chair_baseline_rows,
+            "sources": {
+                "pope_methods": [rel_path for _, rel_path in POPE_METHODS],
+                "chair_posthoc": "detection/baselines/results/owlv2_region_posthoc_scores/owlv2_region_posthoc_metrics.csv",
+                "chair_core": "detection/baselines/results/coco_llava_7b_baselines/metrics.json",
+                "chair_lure": "detection/baselines/results/lure_style_detection/lure_style_detection_metrics.csv",
+            },
+        }
+        json_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(f"Wrote {json_path}")
 
 
 if __name__ == "__main__":
