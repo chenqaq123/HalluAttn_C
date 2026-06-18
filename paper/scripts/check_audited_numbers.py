@@ -17,7 +17,7 @@ def _numbers_from_row(table_text: str, row_label: str) -> list[float]:
     match = pattern.search(table_text)
     if not match:
         raise AssertionError(f"Missing table row: {row_label}")
-    return [float(value) for value in re.findall(r"[+-]?(?:\d+\.\d+|\.\d+)", match.group(1))]
+    return [float(value) for value in re.findall(r"[+-]?(?:\d+\.\d+|\.\d+|\d+)", match.group(1))]
 
 
 def _assert_rounded(actual: list[float], expected: list[float], digits: int, label: str) -> None:
@@ -257,6 +257,83 @@ def check_region_verifier_pope() -> None:
         _assert_rounded(actual, expected, 3, f"region-pope:{row_label}")
 
 
+def check_appendix_qwen() -> None:
+    audit = json.loads((PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/qwen25vl_replication_audit.json").read_text())
+    table = (PAPER_ROOT / "tables/table_appendix_qwen.tex").read_text()
+    mapping = {
+        "Qwen2.5-VL & vanilla": audit["macro"]["vanilla"],
+        "Qwen2.5-VL & fixed TDEV hybrid": audit["macro"]["fixed_tdev"],
+    }
+    for row_label, row in mapping.items():
+        expected = [
+            row["mcc"],
+            row["recall_tpr"],
+            row["fpr"],
+            row["related_fpr"],
+            row["plain_fpr"],
+        ]
+        actual = _numbers_from_row(table, row_label)
+        _assert_rounded(actual, expected, 3, f"appendix-qwen:{row_label}")
+
+
+def check_appendix_tdev_lite() -> None:
+    rows = list(csv.DictReader((PROJECT_ROOT / "mitigation/results/pope_internal_external_ablation_full/pope_internal_external_ablation.csv").open()))
+    table = (PAPER_ROOT / "tables/table_appendix_tdev_lite.tex").read_text()
+
+    def find_row(method: str, score: str, selection_rate: str, subset: str) -> dict[str, str]:
+        for row in rows:
+            if (
+                row["split"] == "macro"
+                and row["method"] == method
+                and row["score"] == score
+                and row["selection_rate"] == selection_rate
+                and row["subset"] == subset
+            ):
+                return row
+        raise AssertionError(f"Missing TDEV-lite row: {(method, score, selection_rate, subset)}")
+
+    mapping = {
+        "full TDEV hybrid": ("full_tdev", "anchor", "1.0"),
+        "LH-alone suppress": ("lh_alone_base_yes_suppress", "lh_shape_pope_layers_22_31", "0.5"),
+        "LH-routed TDEV": ("lh_to_tdev_base_yes", "lh_shape_pope_layers_22_31", "0.5"),
+        "prompt-position routing": ("lh_to_tdev_base_yes", "prompt_token_pos", "0.5"),
+        "target-length routing": ("lh_to_tdev_base_yes", "target_char_len", "0.5"),
+    }
+    for row_label, (method, score, selection_rate) in mapping.items():
+        row = find_row(method, score, selection_rate, "all")
+        related = find_row(method, score, selection_rate, "negative_related_present")
+        expected = [
+            float(row["detector_calls"]),
+            float(row["mcc"]),
+            float(row["tpr"]),
+            float(row["fpr"]),
+            float(related["fpr"]),
+        ]
+        actual = _numbers_from_row(table, row_label)
+        _assert_rounded(actual, expected, 3, f"appendix-tdev-lite:{row_label}")
+
+
+def check_appendix_caption_proxy() -> None:
+    rewrite = json.loads((PROJECT_ROOT / "detection/baselines/results/tdev_caption_rewrite_neutral/chair_metrics.json").read_text())
+    deletion = json.loads((PROJECT_ROOT / "detection/baselines/results/tdev_caption_edit_hybrid_mcc_top10/chair_metrics.json").read_text())
+    table = (PAPER_ROOT / "tables/table_appendix_caption_proxy.tex").read_text()
+    mapping = {
+        "vanilla": rewrite["vanilla"],
+        "neutral rewrite top-5": rewrite["rewritten"],
+        "deletion top-10": deletion["edited"],
+    }
+    for row_label, row in mapping.items():
+        expected = [
+            row["chair"]["CHAIRi"],
+            row["chair"]["CHAIRs"],
+            row["caption_stats"]["mean_words"],
+        ]
+        actual = _numbers_from_row(table, row_label)
+        rounded = [round(expected[0], 4), round(expected[1], 4), round(expected[2], 2)]
+        if actual != rounded:
+            raise AssertionError(f"appendix-caption:{row_label}: table={actual} expected={rounded}")
+
+
 def main() -> None:
     check_detection_main()
     check_strong_controls()
@@ -265,6 +342,9 @@ def main() -> None:
     check_semantic_neighbor_fpr()
     check_region_verifier_detection()
     check_region_verifier_pope()
+    check_appendix_qwen()
+    check_appendix_tdev_lite()
+    check_appendix_caption_proxy()
     print("All audited paper numbers match current result artifacts.")
 
 

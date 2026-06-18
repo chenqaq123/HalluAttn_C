@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4.0pt}
+\begin{tabular}{lrrrrrl}
+\toprule
+Method & TDEV calls & Macro MCC & TPR & FPR & Related FPR & Interpretation \\
+\midrule
+full TDEV hybrid & 9000 & 0.763 & 0.806 & 0.051 & 0.069 & strongest verifier \\
+LH-alone suppress & 0 & 0.495 & 0.432 & 0.018 & 0.026 & recall collapses \\
+LH-routed TDEV & 2025 & 0.754 & 0.801 & 0.056 & 0.075 & useful supervised triage \\
+prompt-position routing & 2025 & 0.741 & 0.805 & 0.070 & 0.091 & routing control \\
+target-length routing & 2025 & 0.743 & 0.802 & 0.066 & 0.087 & routing control \\
+\bottomrule
+\end{tabular}
+\caption{TDEV-lite practicality audit on full POPE. The routed rows select half of vanilla ``yes'' cases for TDEV, yielding 2025 detector calls out of 9000 total questions. LH-Shape is a supervised readout used for routing; by itself it suppresses false positives mainly by sacrificing recall.}
+\label{tab:appendix-tdev-lite}
+\end{table*}

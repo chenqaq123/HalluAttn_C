@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4.0pt}
+\begin{tabular}{lrrrl}
+\toprule
+Caption variant & CHAIR$_i$ & CHAIR$_s$ & Mean words & Scope \\
+\midrule
+vanilla & 0.1340 & 0.4921 & 89.54 & mention scope \\
+neutral rewrite top-5 & 0.1186 & 0.4505 & 89.41 & local placeholder rewrite \\
+deletion top-10 & 0.1048 & 0.4047 & 88.97 & stronger edit \\
+\bottomrule
+\end{tabular}
+\caption{Caption-side proxy correction on 4977 COCO captions with CHAIR object mentions and cached TDEV scores. These deterministic edits show that target-discriminative mention scores can identify useful correction targets, but they are not natural decoding-time generation.}
+\label{tab:appendix-caption-proxy}
+\end{table}
