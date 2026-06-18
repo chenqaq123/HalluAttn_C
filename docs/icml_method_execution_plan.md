@@ -179,12 +179,13 @@ failure to the constructive TDEV method.
    also keeps the claim modest: TDEV corrects 39.8% of vanilla related-present
    false positives, not all failures.
 1. **Caption mitigation beyond the proxy.** The object-mention filter proxy,
-   deterministic text-edit proxy, and official post-edit PAS CHAIR rerun now
-   all show useful hallucination reduction at low caption-length cost. On the
-   4,977-image object-mention scope, the top-5% hybrid branch reduces CHAIRi
-   from 0.1340 to 0.1186 and CHAIRs from 0.4921 to 0.4505; the top-10% hybrid
-   MCC branch reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is
-   a fluent rewrite or decoding integration rather than raw phrase deletion.
+   deterministic text-edit proxy, neutral-rewrite proxy, and official PAS CHAIR
+   reruns now all show useful hallucination reduction at low caption-length
+   cost. On the 4,977-image object-mention scope, the top-5% neutral rewrite
+   reduces CHAIRi from 0.1340 to 0.1186 and CHAIRs from 0.4921 to 0.4505 while
+   reducing mean length by only 0.134 words; the top-10% deletion branch reduces
+   CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is fluent constrained
+   regeneration or decoding integration rather than deterministic placeholders.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

@@ -922,6 +922,48 @@ deterministic deletion proxy still leaves occasional ungrammatical fragments
 when the deleted object was the syntactic subject; the paper should not present
 it as a fluent caption rewriter or decoding-time method.
 
+### TDEV Caption Neutral-Rewrite Proxy
+
+`detection/scripts/evaluate_tdev_caption_rewrite.py` tests a less destructive
+variant of the text-edit proxy. It selects the same high-risk TDEV object
+mentions as the top-5% deletion run, but replaces the matched object phrase with
+a neutral placeholder: `something` for objects and `someone` for person-like
+phrases. This keeps sentence structure closer to the original caption while
+removing the specific object claim. It is still deterministic post-processing,
+not a neural fluent rewriter.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_tdev_caption_rewrite.py \
+  --output_dir detection/baselines/results/tdev_caption_rewrite_neutral \
+  --top_frac 0.05 \
+  --run_chair
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_caption_rewrite_neutral/
+```
+
+Official PAS CHAIR comparison on the same 4,977-image object-mention scope:
+
+| Policy | CHAIRi | CHAIRs | Mean words | Mean object mentions | Mean hallucinated mentions |
+|---|---:|---:|---:|---:|---:|
+| vanilla anchor | 0.133984 | 0.492063 | 89.541 | 7.641 | 1.024 |
+| neutral rewrite, top 5% | 0.118630 | 0.450472 | 89.407 | 7.476 | 0.887 |
+| deletion edit, top 5% | 0.118630 | 0.450472 | 89.242 | 7.476 | 0.887 |
+| deletion edit, top 10% | 0.104762 | 0.404661 | 88.975 | 7.317 | 0.767 |
+
+Interpretation: neutral rewrite gives the same CHAIRi/CHAIRs improvement as
+top-5 deletion because CHAIR no longer counts the replaced object phrase, but it
+reduces caption length less (`-0.134` mean words versus `-0.298` for deletion).
+This is better evidence that TDEV can drive local claim rewriting rather than
+only phrase deletion. It should still be reported as a deterministic rewrite
+proxy until a fluent regeneration or decoding-time implementation is added.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The
