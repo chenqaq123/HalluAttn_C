@@ -137,7 +137,7 @@ Current status for a credible ICML submission:
 | External-detector positioning | complete for current draft | `docs/tdev_detector_positioning.md`; do not pitch OWLv2 as the method |
 | Cheap co-occurrence/position baseline | complete as analysis baseline | `detection/scripts/evaluate_lure_style_detection.py`; LURE-style factors remain far below TDEV under controls |
 | Strong decoding baseline beyond VCD | partial | OPERA official-hook interface is wired; still need an environment with the OPERA transformers fork and an adversarial subset result |
-| Caption-style mitigation evidence | incomplete | CHAIR detection is strong; end-to-end caption hallucination reduction is not yet shown |
+| Caption-style mitigation evidence | proxy complete, end-to-end incomplete | CHAIR detection is strong; object-mention filtering proxy removes 17.0% of hallucinated mentions at 1.1% grounded loss for the top-5% hybrid branch, but real regenerated/edited caption CHAIR is not yet shown |
 | Multi-model replication | full all-splits evidence | Qwen2.5-VL full POPE vanilla has macro MCC 0.765/FPR 0.033; fixed LLaVA-selected TDEV hybrid improves to macro MCC 0.769/FPR 0.027 with TPR 0.782 vs. 0.786. Macro related-present FPR drops from 0.041 to 0.034 (`docs/multimodel_replication_audit.md`). |
 
 ## Required Metrics for Any Added Baseline

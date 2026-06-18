@@ -295,6 +295,48 @@ signal, and neighbor dominance can improve position-residualized detection. It
 also prevents overclaiming the POPE hybrid rule: CHAIR object mentions only test
 the positive-claim verification branch, not the no-answer rescue branch.
 
+
+### TDEV Caption Object-Mention Filter Proxy
+
+`detection/scripts/evaluate_tdev_caption_filter.py` simulates a conservative
+caption-side mitigation using the existing CHAIR object-mention labels and
+OWLv2/TDEV scores. This is not a regenerated-caption result. It asks how many
+hallucinated object mentions would be removed by abstaining on high-risk object
+mentions, and how many grounded mentions would be lost.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_tdev_caption_filter.py
+```
+
+Baseline object-mention counts from the same CHAIR cache:
+
+| Quantity | Value |
+|---|---:|
+| images with object mentions | 4,977 |
+| object mentions | 16,426 |
+| hallucinated mentions | 4,009 |
+| grounded mentions | 12,417 |
+| mention hallucination rate | 0.244 |
+| image hallucination rate | 0.492 |
+
+Representative operating points:
+
+| Score / policy | Removed mentions | Hallucination reduction | Grounded loss | Removal precision | Remaining mention hallu. rate |
+|---|---:|---:|---:|---:|---:|
+| hybrid positive branch, top 5% | 821 | 0.170 | 0.011 | 0.832 | 0.213 |
+| hybrid MCC positive branch, top 10% | 1,643 | 0.326 | 0.027 | 0.795 | 0.183 |
+| hybrid positive branch, grounded-loss cap 1% | 732 | 0.152 | 0.010 | 0.831 | 0.217 |
+| hybrid MCC positive branch, grounded-loss cap 2% | 1,274 | 0.256 | 0.020 | 0.805 | 0.197 |
+| target absence + neighbor dominance 0.25, grounded-loss cap 5% | 2,623 | 0.500 | 0.050 | 0.764 | 0.145 |
+
+This gives caption-side mitigation evidence at the object-mention level: TDEV
+scores rank hallucinated mentions far above their base rate (24.4%). The result
+should be described as an abstention/filtering proxy until a real caption
+rewriting or decoding integration is evaluated with CHAIR after text edits.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The

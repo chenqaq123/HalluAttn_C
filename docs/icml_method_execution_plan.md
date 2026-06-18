@@ -87,9 +87,10 @@ probe inspired by HALP, but trained/evaluated under semantic-neighbor controls:
 
 ## Next Experiments
 
-1. **Caption mitigation, not only detection.** Use existing CHAIR object-mention
-   scores to simulate a conservative object-mention filter or abstention policy.
-   Report hallucinated mentions at matched caption length and object count.
+1. **Caption mitigation beyond the proxy.** The object-mention filter proxy now
+   shows useful hallucinated-mention removal at low grounded-mention loss. The
+   next step is a real caption edit or decoding integration followed by CHAIR
+   re-evaluation after text changes.
 2. **TDEV-lite probe.** Build a small cached-feature probe on LLaVA decision
    states and evaluate it against related-present negatives.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
