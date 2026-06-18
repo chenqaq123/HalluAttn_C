@@ -26,6 +26,41 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 EDIT_SCRIPT = REPO_ROOT / "detection" / "scripts" / "evaluate_tdev_caption_edit.py"
 
 
+GENERIC_REPLACEMENTS = {
+    "dining table": ("a surface", "some surfaces"),
+    "table": ("a surface", "some surfaces"),
+    "potted plant": ("a decorative item", "some decorative items"),
+    "tv": ("a device", "some devices"),
+    "television": ("a device", "some devices"),
+    "remote": ("a device", "some devices"),
+    "cell phone": ("a device", "some devices"),
+    "laptop": ("a device", "some devices"),
+    "microwave": ("an appliance", "some appliances"),
+    "toaster": ("an appliance", "some appliances"),
+    "oven": ("an appliance", "some appliances"),
+    "refrigerator": ("an appliance", "some appliances"),
+    "car": ("a vehicle", "some vehicles"),
+    "airplane": ("a vehicle", "some vehicles"),
+    "bus": ("a vehicle", "some vehicles"),
+    "truck": ("a vehicle", "some vehicles"),
+    "bicycle": ("a vehicle", "some vehicles"),
+    "skis": ("some equipment", "some equipment"),
+    "sports ball": ("an item", "some items"),
+    "baseball bat": ("some equipment", "some equipment"),
+    "baseball glove": ("some equipment", "some equipment"),
+}
+
+PLURAL_HINTS = {
+    "people",
+    "men",
+    "women",
+    "children",
+    "boys",
+    "girls",
+    "skis",
+    "scissors",
+}
+
 PERSON_WORDS = {
     "person",
     "people",
@@ -39,6 +74,46 @@ PERSON_WORDS = {
     "girls",
     "child",
     "children",
+}
+
+LEFT_MODIFIER_STOP_WORDS = {
+    "a",
+    "an",
+    "the",
+    "and",
+    "or",
+    "of",
+    "in",
+    "on",
+    "with",
+    "without",
+    "near",
+    "by",
+    "to",
+    "from",
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "being",
+    "been",
+    "has",
+    "have",
+    "had",
+    "having",
+    "include",
+    "includes",
+    "including",
+    "contain",
+    "contains",
+    "containing",
+    "feature",
+    "features",
+    "featuring",
+    "around",
+    "inside",
+    "outside",
 }
 
 
@@ -70,6 +145,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--hybrid_margin", type=float, default=-0.20)
     p.add_argument("--hybrid_mcc_margin", type=float, default=-0.30)
     p.add_argument("--neighbor_dominance_alpha", type=float, default=0.25)
+    p.add_argument("--rewrite_policy", choices=("neutral_placeholder", "generic_noun"), default="neutral_placeholder")
     p.add_argument("--object_placeholder", default="something")
     p.add_argument("--person_placeholder", default="someone")
     p.add_argument("--run_chair", action="store_true", help="Rerun official PAS CHAIR on original and rewritten captions.")
@@ -86,10 +162,25 @@ def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
         writer.writerows(rows)
 
 
+def _is_plural_phrase(text: str) -> bool:
+    tokens = [token.strip(".,;:!?()[]{}\"'").lower() for token in text.split()]
+    tokens = [token for token in tokens if token]
+    if not tokens:
+        return False
+    if any(token in PLURAL_HINTS for token in tokens):
+        return True
+    last = tokens[-1]
+    return last.endswith("s") and not last.endswith("ss")
+
+
 def choose_placeholder(target_word: str, matched_phrase: str, args: argparse.Namespace) -> str:
     tokens = set(target_word.lower().split()) | set(matched_phrase.lower().split())
     if tokens & PERSON_WORDS:
         return args.person_placeholder
+    if args.rewrite_policy == "generic_noun":
+        key = target_word.lower().strip()
+        singular, plural = GENERIC_REPLACEMENTS.get(key, ("an item", "some items"))
+        return plural if _is_plural_phrase(matched_phrase) else singular
     return args.object_placeholder
 
 
@@ -100,12 +191,44 @@ def preserve_case(replacement: str, matched_text: str) -> str:
     return replacement
 
 
+def drop_leading_determiner(replacement: str) -> str:
+    lowered = replacement.lower()
+    for prefix in ("an ", "a ", "some "):
+        if lowered.startswith(prefix):
+            return replacement[len(prefix):]
+    return replacement
+
+
+def starts_with_determiner(text: str) -> bool:
+    lowered = text.lstrip().lower()
+    return lowered.startswith(("a ", "an ", "the ", "some "))
+
+
+def has_left_modifier(caption: str, start: int) -> bool:
+    prefix = caption[:start].rstrip()
+    if not prefix:
+        return False
+    if prefix[-1:] in ".!?;:(,":
+        return False
+    token = prefix.split()[-1].strip(".,;:!?\"'()[]{}")
+    if not token:
+        return False
+    return token[-1:].isalnum() and token.lower() not in LEFT_MODIFIER_STOP_WORDS
+
+
 def rewrite_one_phrase(caption: str, patterns: list[tuple[str, object]], target_word: str, args: argparse.Namespace, edit) -> tuple[str, str | None, str | None]:
     for phrase, pattern in patterns:
         match = pattern.search(caption)
         if not match:
             continue
-        replacement = preserve_case(choose_placeholder(target_word, phrase, args), match.group(0))
+        replacement = choose_placeholder(target_word, phrase, args)
+        if (
+            args.rewrite_policy == "generic_noun"
+            and not starts_with_determiner(match.group(0))
+            and has_left_modifier(caption, match.start())
+        ):
+            replacement = drop_leading_determiner(replacement)
+        replacement = preserve_case(replacement, match.group(0))
         rewritten = caption[: match.start()] + replacement + caption[match.end() :]
         return edit.clean_caption(rewritten), phrase, replacement
     return caption, None, None
@@ -196,7 +319,7 @@ def main() -> None:
         "score": args.score,
         "score_direction": "larger score means higher risk and is selected first",
         "top_frac": args.top_frac,
-        "rewrite_policy": "neutral_placeholder",
+        "rewrite_policy": args.rewrite_policy,
         "object_placeholder": args.object_placeholder,
         "person_placeholder": args.person_placeholder,
         "mentions": mentions,

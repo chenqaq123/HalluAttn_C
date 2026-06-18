@@ -315,11 +315,13 @@ def check_appendix_tdev_lite() -> None:
 
 def check_appendix_caption_proxy() -> None:
     rewrite = json.loads((PROJECT_ROOT / "detection/baselines/results/tdev_caption_rewrite_neutral/chair_metrics.json").read_text())
+    generic = json.loads((PROJECT_ROOT / "detection/baselines/results/tdev_caption_rewrite_generic/chair_metrics.json").read_text())
     deletion = json.loads((PROJECT_ROOT / "detection/baselines/results/tdev_caption_edit_hybrid_mcc_top10/chair_metrics.json").read_text())
     table = (PAPER_ROOT / "tables/table_appendix_caption_proxy.tex").read_text()
     mapping = {
         "vanilla": rewrite["vanilla"],
         "neutral rewrite top-5": rewrite["rewritten"],
+        "generic noun rewrite top-5": generic["rewritten"],
         "deletion top-10": deletion["edited"],
     }
     for row_label, row in mapping.items():

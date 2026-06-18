@@ -19,7 +19,7 @@ without verifying the queried target object.
 | C4. Generic region/object evidence is not enough. | Supported | Same table: OWLv2 target direct MCC `0.777` but related FPR `0.184` and adversarial related FPR `0.281`. | Main mitigation/control table, row group: region evidence. | Avoid calling OWLv2 target score a failed detector; it is strong aggregate evidence but non-discriminative under semantic neighbors. |
 | C5. Target-vs-neighbor verification is the constructive criterion. | Supported, modest effect | Hybrid gate+rescue: MCC `0.763`, FPR `0.051`, related FPR `0.069`; strict margin related FPR `0.010` but TPR `0.359`. | Main TDEV table plus calibration ablation. | Need to frame as best current tradeoff, not solved hallucination. |
 | C6. The criterion transfers to object-mention detection. | Supported | `docs/tdev_ablation_summary.md`: target absence + 0.25 neighbor dominance reaches overall `0.874`, within-bin `0.852`, matched-pair `0.854`, residual `0.722`. | CHAIR detection table. | Make clear this is post-hoc object-mention scoring, not fluent generation. |
-| C7. Caption-side mitigation exists but is still proxy/rewrite-based. | Partial | Top-5 neutral rewrite: CHAIRi `0.1340 -> 0.1186`, CHAIRs `0.4921 -> 0.4505`, mean words `89.54 -> 89.41`; top-10 deletion: CHAIRi `0.1048`, CHAIRs `0.4047`. | Caption mitigation table, likely appendix unless a fluent rewrite is added. | Biggest ICML weakness remains that this is deterministic local rewriting, not natural decoding-time generation. Next action is fluent rewrite or constrained regeneration. |
+| C7. Caption-side mitigation exists but is still proxy/rewrite-based. | Partial | Top-5 neutral rewrite: CHAIRi `0.1340 -> 0.1186`, CHAIRs `0.4921 -> 0.4505`, mean words `89.54 -> 89.41`; top-5 generic noun rewrite keeps length closer (`89.53`) with the same CHAIR drop; top-10 deletion: CHAIRi `0.1048`, CHAIRs `0.4047`. | Caption mitigation table, appendix only unless a fluent rewrite is added. | Biggest ICML weakness remains that these are deterministic local rewrites that can replace errors with generic nouns rather than true visual correction. Next action is fluent rewrite or constrained regeneration. |
 | C8. TDEV-lite gives practicality but not standalone mitigation. | Supported with scope | LH-alone POPE MCC `0.495`, TPR `0.432`; LH->TDEV at 2,025/9,000 calls MCC `0.754`, FPR `0.056`, related FPR `0.075`. | Efficiency/practicality table. | Must be labeled supervised routing/triage; do not present it as a training-free attention method. |
 | C9. Cross-model direction holds on Qwen2.5-VL. | Supported, small effect | `docs/multimodel_replication_audit.md`: Qwen vanilla macro MCC `0.765`, FPR `0.033`, related FPR `0.041`; fixed TDEV macro MCC `0.769`, FPR `0.027`, related FPR `0.034`. | Cross-model table. | Evidence is output-level plus model-independent OWLv2 verification, not Qwen internal attention evidence. |
 | C10. Novelty is not external detection or chain verification. | Supported by related-work boundary | Woodpecker/UNIHD/R-CoV cover tool or chain verification; CAI/CAST/Region-Aware cover internal attention steering. | Related work + limitation section. | Need one paragraph explicitly separating TDEV from high-latency post-hoc verification and attention steering. |
@@ -34,7 +34,7 @@ without verifying the queried target object.
 | Table 3: TDEV POPE/CHAIR ablations | Show raw target evidence, margin, two-stage, hybrid, and CHAIR transfer. | `scripts/build_tdev_ablation_summary.py`; `docs/tdev_ablation_summary.md`. | Ready. |
 | Table 4: TDEV-lite practicality | Show LH-alone fails, LH-routed TDEV saves calls and beats prompt controls. | `mitigation/results/pope_internal_external_ablation_full/`; CHAIR cascade metrics. | Ready but should be secondary. |
 | Table 5: Cross-model Qwen replication | Show direction holds beyond LLaVA. | `mitigation/scripts/audit_qwen25vl_replication.py`; `docs/multimodel_replication_audit.md`. | Ready with scoped wording. |
-| Table 6: Caption rewrite / correction | Show caption-side usefulness. | `detection/baselines/results/tdev_caption_rewrite_neutral/chair_metrics.json` and `detection/baselines/results/tdev_caption_edit*/chair_metrics.json`. | Partial; deterministic rewrite proxy is ready, fluent regeneration still missing. |
+| Table 6: Caption rewrite / correction | Show caption-side usefulness. | `detection/baselines/results/tdev_caption_rewrite_{neutral,generic}/chair_metrics.json` and `detection/baselines/results/tdev_caption_edit*/chair_metrics.json`. | Partial; deterministic rewrite proxies are ready, fluent regeneration still missing. |
 
 ## Current ICML Weak Points
 
@@ -43,11 +43,14 @@ Baseline availability is tracked separately in
 whether CAI, CAST, Region-Aware Attention Recalibration, or other recent
 head/region steering methods are runnable baselines or related-work pressure.
 
-1. **Caption mitigation is not yet a natural method.** The neutral-rewrite proxy is
-   less destructive than deletion and keeps sentence length closer to vanilla,
-   but it is still deterministic post-processing. For a stronger ICML story,
-   implement constrained regeneration, a learned/LLM sentence-local rewrite, or
-   a decoding-time object gate if local generation hooks are reliable.
+1. **Caption mitigation is not yet a natural method.** The neutral and
+   generic-noun rewrite proxies are less destructive than deletion and keep
+   sentence length closer to vanilla, but they are still deterministic
+   post-processing. The generic-noun version confirms that CHAIR can improve
+   while object claims are replaced by broad nouns, so it should not be promoted
+   as visual correction. For a stronger ICML story, implement constrained
+   regeneration, a learned/LLM sentence-local rewrite, or a decoding-time object
+   gate if local generation hooks are reliable.
 2. **Positive head/region baselines are not fully reproduced.** Current local
    ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, and DAMRO subset.
    CAI/CAST, Focus Matters, and Region-Aware Attention Recalibration remain

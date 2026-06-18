@@ -928,9 +928,11 @@ it as a fluent caption rewriter or decoding-time method.
 variant of the text-edit proxy. It selects the same high-risk TDEV object
 mentions as the top-5% deletion run, but replaces the matched object phrase with
 a neutral placeholder: `something` for objects and `someone` for person-like
-phrases. This keeps sentence structure closer to the original caption while
-removing the specific object claim. It is still deterministic post-processing,
-not a neural fluent rewriter.
+phrases. It also supports `--rewrite_policy generic_noun`, which replaces
+selected object phrases with broad class nouns such as `an item`, `a surface`,
+or `an appliance`. These variants keep sentence structure closer to the
+original caption while removing the specific object claim. They are still
+deterministic post-processing, not neural fluent rewriters.
 
 Reproducibility command:
 
@@ -940,12 +942,20 @@ Reproducibility command:
   --output_dir detection/baselines/results/tdev_caption_rewrite_neutral \
   --top_frac 0.05 \
   --run_chair
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_tdev_caption_rewrite.py \
+  --rewrite_policy generic_noun \
+  --output_dir detection/baselines/results/tdev_caption_rewrite_generic \
+  --top_frac 0.05 \
+  --run_chair
 ```
 
 Result root:
 
 ```text
 detection/baselines/results/tdev_caption_rewrite_neutral/
+detection/baselines/results/tdev_caption_rewrite_generic/
 ```
 
 Official PAS CHAIR comparison on the same 4,977-image object-mention scope:
@@ -954,15 +964,19 @@ Official PAS CHAIR comparison on the same 4,977-image object-mention scope:
 |---|---:|---:|---:|---:|---:|
 | vanilla anchor | 0.133984 | 0.492063 | 89.541 | 7.641 | 1.024 |
 | neutral rewrite, top 5% | 0.118630 | 0.450472 | 89.407 | 7.476 | 0.887 |
+| generic noun rewrite, top 5% | 0.118630 | 0.450472 | 89.530 | 7.476 | 0.887 |
 | deletion edit, top 5% | 0.118630 | 0.450472 | 89.242 | 7.476 | 0.887 |
 | deletion edit, top 10% | 0.104762 | 0.404661 | 88.975 | 7.317 | 0.767 |
 
-Interpretation: neutral rewrite gives the same CHAIRi/CHAIRs improvement as
-top-5 deletion because CHAIR no longer counts the replaced object phrase, but it
-reduces caption length less (`-0.134` mean words versus `-0.298` for deletion).
-This is better evidence that TDEV can drive local claim rewriting rather than
-only phrase deletion. It should still be reported as a deterministic rewrite
-proxy until a fluent regeneration or decoding-time implementation is added.
+Interpretation: neutral and generic-noun rewrites give the same CHAIRi/CHAIRs
+improvement as top-5 deletion because CHAIR no longer counts the replaced object
+phrase. The generic-noun variant changes length least (`-0.011` mean words),
+which rules out pure caption shortening as the explanation, but it sometimes
+replaces a wrong object with an underspecified phrase such as `an item` or
+`an appliance`. This is evidence that TDEV can select useful local correction
+targets, not evidence that the current system performs fluent visual correction.
+It should remain appendix/proxy evidence until a fluent regeneration or
+decoding-time implementation is added.
 
 ### SPIN Adversarial Subset Audit
 
