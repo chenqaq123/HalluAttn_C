@@ -1,7 +1,14 @@
 \section{Associated Evidence Audit}
 \label{sec:associated-audit}
 
-\noindent The detection and mitigation results point to the same missing criterion: target-discriminative evidence. A method can attend to the image, or even to a semantically meaningful region, without verifying the queried object. We therefore add an associated-evidence audit on POPE negatives: the target object is absent, but we separate negatives according to whether the image contains objects that make the target plausible.
+\noindent The detection and mitigation results point to the same missing criterion: target-discriminative evidence. A method can attend to the image, or even to a semantically meaningful region, without verifying the queried object. We therefore add an associated-evidence audit on POPE negatives: the target object is absent, but we separate negatives according to whether the image contains objects that make the target plausible. Figure~\ref{fig:semantic-neighbor-mechanism} illustrates this mechanism before we aggregate it over the full benchmark.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{../mitigation/results/pope_mechanism_alignment_full/figure/pope_mechanism_alignment_contact_sheet.png}
+\caption{Semantic-neighbor failure examples from POPE. In each row, the queried target is absent but a related object or scene cue is present. Vanilla and attention-only interventions answer ``yes,'' while TDEV answers ``no'' because the best-neighbor evidence is stronger than the target evidence. The examples are selected only to illustrate the mechanism; aggregate behavior is reported in Tables~\ref{tab:semantic-neighbor-fpr} and~\ref{tab:region-verifier-pope}.}
+\label{fig:semantic-neighbor-mechanism}
+\end{figure*}
 
 \paragraph{Audit construction.}
 We use the COCO val2014 instance annotations for the images underlying POPE. For each COCO category, we build a top-$10$ neighbor set by image-level Jaccard co-occurrence and also treat same-supercategory categories as related. Each POPE question is parsed into a target object and image id; rows with label ``no'' are marked as \emph{related-present} if any co-occurrence neighbor or supercategory sibling is annotated in the image, and \emph{plain absent} otherwise. The parser covers all $9{,}000$ POPE rows, including the fixed ``imange'' typo in part of the adversarial split, with zero unknown targets and zero missing image ids.
