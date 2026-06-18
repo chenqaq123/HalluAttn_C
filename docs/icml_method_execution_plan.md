@@ -71,13 +71,19 @@ CHAIR object mentions, while the mean-head probe is only 0.545 within-bin. This
 is evidence that a practical no-detector route exists, but it remains supervised
 and diagnostic.
 
+A first LH-Shape split-selected ablation is negative: train-fold selected
+layer31 top-5 head/features reach only 0.597 within-bin AUROC and 0.606
+matched-pair AUROC, far below the layer31 logistic probe. Training-free
+late-layer mean-head features are near random after controls. This rules out the
+simplest fixed-head averaging route.
+
 Next implementation target:
 
-1. Convert the layer-31 per-head result into LH-Shape/TDEV-lite: a fixed-head or
-   split-selected lightweight score that avoids using test labels at scoring
-   time.
+1. Distill the layer-31 per-head result into a tiny regularized linear readout
+   or low-dimensional score, trained only on held-out calibration images.
 2. Evaluate it under the same within-bin, matched-pair, and residual controls
-   against IC/PAS/SVAR/GLSim.
+   against IC/PAS/SVAR/GLSim, with explicit separation from the supervised
+   diagnostic probe.
 3. If it stays strong, test whether it can replace or prefilter OWLv2 in POPE
    and caption mitigation; otherwise present it as a diagnostic/practicality
    ablation only.
@@ -102,9 +108,10 @@ Next implementation target:
    from 0.1340 to 0.1186 and CHAIRs from 0.4921 to 0.4505; the top-10% hybrid
    MCC branch reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is
    a fluent rewrite or decoding integration rather than raw phrase deletion.
-2. **TDEV-lite probe.** Convert the completed supervised per-head diagnostic
-   into a fair LH-Shape score: fixed-head or split-selected, evaluated without
-   test-label supervision against related-present negatives.
+2. **TDEV-lite probe.** The simple split-selected LH-Shape average is now a
+   negative ablation. Next, distill the layer31 probe into a tiny calibrated
+   linear readout and evaluate it without test-label supervision against
+   related-present negatives.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
 4. **Baseline availability check.** Re-check CAI/CAST/region-aware code before

@@ -94,6 +94,48 @@ with `epochs=80`, not a final training-free method or an external-detector
 replacement. It should be used to justify the next LH-Shape/TDEV-lite detector
 rather than as the paper's deployed mitigation result.
 
+### LH-Shape Split-Selected Ablation
+
+`detection/scripts/evaluate_lh_shape.py` tests a lighter, more interpretable
+readout than the logistic probe: choose top-k late-layer head/feature dimensions
+inside each train image fold using position-residualized AUROC, orient them on
+train data, then average their z-scored values on held-out images. It also
+reports training-free late-layer mean-head shape features.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_lh_shape.py \
+  --cache_glob 'experiments/coco_llava_7b_rows/per_head_row_cache_shard*.npz' \
+  --generation_json experiments/coco_llava_7b/generation.json \
+  --output_dir detection/baselines/results/lh_shape
+```
+
+Result files:
+
+```text
+detection/baselines/results/lh_shape/lh_shape_metrics.json
+detection/baselines/results/lh_shape/lh_shape_metrics.csv
+```
+
+Key results:
+
+| Score | Overall AUROC | Within-bin AUROC | Matched-pair AUROC | Residual AUROC |
+|---|---:|---:|---:|---:|
+| training-free layer31 mean heads, neg top1 mass | 0.527 | 0.521 | 0.530 | 0.518 |
+| split-selected layer31 top1 | 0.635 | 0.583 | 0.596 | 0.586 |
+| split-selected layer31 top5 | 0.643 | 0.597 | 0.606 | 0.592 |
+| split-selected layers22+31 top5 | 0.644 | 0.593 | 0.603 | 0.590 |
+| supervised layer31 logistic probe, reference | 0.855 | 0.726 | 0.719 | 0.650 |
+
+This is negative evidence for a naive training-free or top-k-average LH-Shape
+method. The late-head signal exists, but simple head selection and averaging do
+not preserve enough of the supervised probe's strength. The next TDEV-lite
+implementation should use a tiny regularized linear readout or distill the
+layer31 probe into a fixed, low-dimensional score, then evaluate it with the
+same image-grouped and position-controlled protocol.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers
