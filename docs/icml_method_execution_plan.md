@@ -5,6 +5,8 @@ Date: 2026-06-18
 This note turns the current audits into an execution plan for a complete ICML
 submission. It should be read together with `docs/claims_alignment_audit.md`,
 which is the current hard gate on what the evidence does and does not support.
+`docs/icml_evidence_matrix.md` is the paper-facing claim-to-evidence matrix and
+should be used as the writing checklist before adding or strengthening claims.
 The current result gates are authoritative:
 
 - `mitigation/scripts/audit_qwen25vl_replication.py` for Qwen2.5-VL all-splits
