@@ -49,6 +49,28 @@ The missing criterion is **counterfactual target discrimination**: if the same
 attended visual evidence also supports a related absent object, attention is not
 enough to call the claim grounded.
 
+### 2.1 Detector-Based Positioning
+
+The method should not be framed as "attach an external detector". Tool-heavy
+correction and validation pipelines already exist, including Woodpecker-style
+concept extraction, visual validation, and response correction, and UNIHD-style
+multi-tool hallucination detection. LURE also uses co-occurrence, uncertainty,
+and position as post-hoc revision factors. Recent grounding analysis further
+argues that object grounding objectives alone have little to no effect on
+open-generation hallucination under stricter protocols.
+
+The publishable gap is therefore narrower and sharper:
+
+> Region evidence is useful only when it is target-discriminative under
+> semantic-neighbor controls.
+
+In the paper, OWLv2 should be described as the strongest current evidence
+backend, not the contribution itself. The contribution is the semantic-neighbor
+stress protocol, the target-vs-neighbor decision criterion, the asymmetric
+yes/no verifier, and the continuous hallucination score for generated object
+mentions. See `docs/tdev_detector_positioning.md` for the current related-work
+positioning memo.
+
 ## 3. Proposed Method: Target-Discriminative Evidence Verification
 
 Name placeholder: **TDEV** (Target-Discriminative Evidence Verification).
