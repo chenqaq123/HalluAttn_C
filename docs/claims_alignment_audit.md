@@ -108,6 +108,40 @@ higher evidence than the target (`0.534` vs `0.033`). This is exactly the
 `looking is not grounding` failure: the image contains plausible visual evidence,
 but not evidence for the queried target object.
 
+## Paper-Facing Semantic-Neighbor Control Table
+
+`scripts/build_semantic_neighbor_control_table.py` now builds a compact control
+table that should be treated as a main paper-table candidate rather than an
+auxiliary log. It pools split-level confusion counts from saved POPE metrics and
+places aggregate behavior next to the actual stress test: related-present FPR
+versus plain-absent FPR.
+
+Result files:
+
+```text
+mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.csv
+mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md
+mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.json
+```
+
+Key table facts:
+
+- Vanilla has macro related-present FPR `0.114` versus plain-absent FPR `0.028`.
+- PAI, ClearSight, VisAttnSink, and VCD-greedy do not close this gap; ClearSight
+  and VCD increase related-present FPR relative to vanilla.
+- Raw OWLv2 target evidence has high aggregate MCC (`0.777`) but worsens
+  related-present FPR to `0.184`, showing that generic target detection is not
+  enough.
+- Strict target-vs-neighbor margin nearly removes related-present FPs (`0.010`)
+  but collapses TPR to `0.359`.
+- Hybrid gate+rescue gives the current best tradeoff: MCC `0.763`, FPR `0.051`,
+  related-present FPR `0.069`, and adversarial related-present FPR `0.105`.
+
+This table makes the paper argument more precise: the result is not that an
+external detector is strong, but that target-vs-neighbor verification improves
+the specific semantic-neighbor failure mode exposed by `looking is not
+grounding`.
+
 ## Current Result Quality
 
 The method-shaped result is real but modest.
