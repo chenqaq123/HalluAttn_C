@@ -506,6 +506,26 @@ TDEV-region. At the same 2,025-call budget, LH-Shape routing beats prompt-only
 position/length controls on MCC and semantic-neighbor FPR, so the gain is not
 only a prompt artifact.
 
+A mechanism-alignment table was also generated to reconnect these aggregate
+metrics to the original `looking is not grounding` motivation. It selects
+related-present negatives where vanilla is a false positive, semantic-neighbor
+evidence exceeds target evidence, and TDEV corrects the answer.
+
+Result files:
+
+```text
+mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_examples.csv
+mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_examples.md
+mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_summary.json
+```
+
+Summary over full POPE related-present negatives: vanilla related-present FPR is
+0.114; neighbor evidence exceeds target evidence in 98.6% of related-present
+negatives and 96.0% of vanilla related-present false positives; TDEV corrects
+39.8% of those vanilla related-present false positives. This supports the
+associated-evidence interpretation while preserving the caveat that TDEV is a
+partial verifier, not a full hallucination solution.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

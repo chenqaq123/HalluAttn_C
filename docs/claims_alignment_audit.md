@@ -63,6 +63,40 @@ This is why external OWLv2 evidence is acceptable as an experimental backend:
 it tests whether the criterion itself repairs the failure mode. It is not proof
 that an external detector is the paper contribution.
 
+## Mechanism Alignment Evidence
+
+`mitigation/scripts/build_pope_mechanism_alignment.py` now builds a compact
+related-present example table from saved predictions. It selects POPE rows where
+vanilla answers `yes` to an absent target, semantic-neighbor evidence is stronger
+than target evidence, and TDEV flips the answer to `no`. The table also attaches
+PAI, ClearSight, and VisAttnSink predictions to show whether attention-only
+interventions fix the same target-verification failure.
+
+Result files:
+
+```text
+mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_examples.csv
+mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_examples.md
+mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_summary.json
+```
+
+Key summary from all full POPE related-present negatives:
+
+| Quantity | Value | Interpretation |
+|---|---:|---|
+| vanilla related-present FPR | 0.114 | baseline semantic-neighbor false-positive rate |
+| neighbor evidence > target evidence among all related negatives | 0.986 | related-present rows usually contain stronger associated evidence than target evidence |
+| neighbor evidence > target evidence among vanilla related FPs | 0.960 | most vanilla false positives fit associated-evidence grounding |
+| TDEV correction rate among vanilla related FPs | 0.398 | TDEV fixes a substantial slice but not all failures |
+
+The selected examples are intentionally mechanism-facing rather than score-
+maximizing. For example, rows such as random `question_id=340` ask for an absent
+`dog` while `bed|book` are present; vanilla, PAI, ClearSight, and VisAttnSink all
+answer `yes`, while TDEV answers `no` because the best neighbor (`bed`) has much
+higher evidence than the target (`0.534` vs `0.033`). This is exactly the
+`looking is not grounding` failure: the image contains plausible visual evidence,
+but not evidence for the queried target object.
+
 ## Current Result Quality
 
 The method-shaped result is real but modest.

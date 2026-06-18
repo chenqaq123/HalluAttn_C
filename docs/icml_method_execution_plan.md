@@ -132,12 +132,13 @@ Current implementation target:
 
 ## Next Experiments
 
-0. **Mechanism alignment figure/table.** Before adding another method, build a
-   small qualitative/quantitative table of related-present cases showing the
-   original defect: the model or attention baseline has plausible visual routing
-   or associated evidence, but the target object is absent. This reconnects the
-   solution to `looking is not grounding` and prevents the story from drifting
-   into an external-detector pipeline.
+0. **Mechanism alignment figure/table.** Completed as a first pass in
+   `mitigation/results/pope_mechanism_alignment_full/`. The table selects
+   related-present cases where vanilla and attention-only interventions answer
+   `yes`, but target evidence is weaker than semantic-neighbor evidence and TDEV
+   answers `no`. This reconnects the solution to `looking is not grounding` and
+   also keeps the claim modest: TDEV corrects 39.8% of vanilla related-present
+   false positives, not all failures.
 1. **Caption mitigation beyond the proxy.** The object-mention filter proxy,
    deterministic text-edit proxy, and official post-edit PAS CHAIR rerun now
    all show useful hallucination reduction at low caption-length cost. On the
