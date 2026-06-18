@@ -290,6 +290,58 @@ end-to-end smoke, and the real 2-row 8-bit POPE cache smoke all pass. The
 transfer evaluator can read the real smoke cache, but the smoke is too small for
 a paper-facing transfer number.
 
+A 120-row-per-split pilot was then generated with 8-bit LLaVA, layers 22 and 31,
+and all three POPE splits. Cache quality checks pass: `rows_cached=360`,
+`missing_targets=0`, `present_rows=180`, `absent_rows=180`, and feature shape
+`(360, 2, 32, 4)`. The cache metrics file is:
+
+```text
+experiments/pope_llava_7b_per_head_120/pope_per_head_row_cache_metrics.json
+```
+
+Important leakage check: fixed random-split calibration is inflated because
+popular/adversarial share 60 positive image-target-label rows with random in the
+120-row pilot. Therefore the trusted pilot uses `--image_cv_folds 5`, not the
+fixed split-calibrated numbers.
+
+Image-grouped OOF command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/evaluate_pope_lh_shape_transfer.py \
+  --cache experiments/pope_llava_7b_per_head_120/pope_per_head_row_cache.npz \
+  --output_dir mitigation/results/pope_lh_shape_transfer_120_imagecv \
+  --layer_sets '31;22,31' \
+  --eval_splits random,popular,adversarial \
+  --epochs 120 \
+  --image_cv_folds 5 \
+  --seed 0 \
+  --include_prompt_baselines
+```
+
+Result files:
+
+```text
+mitigation/results/pope_lh_shape_transfer_120_imagecv/pope_lh_shape_transfer_metrics.json
+mitigation/results/pope_lh_shape_transfer_120_imagecv/pope_lh_shape_transfer_metrics.csv
+```
+
+Pilot image-CV summary:
+
+| Score | Macro MCC | Absent TPR | Present FPR | AUROC |
+|---|---:|---:|---:|---:|
+| LH-Shape POPE, layers 22+31 | 0.408 | 0.800 | 0.400 | 0.739 |
+| LH-Shape POPE, layer 31 | 0.219 | 0.683 | 0.467 | 0.710 |
+| prompt token position | -0.042 | 0.294 | 0.333 | 0.499 |
+| target token span length | -0.042 | 0.294 | 0.333 | 0.499 |
+| target character length | 0.086 | 0.417 | 0.333 | 0.508 |
+
+For layers 22+31, related-present absent TPR is 0.775 on random, 0.875 on
+popular, and 0.778 on adversarial, but the present-object FPR is still 0.400.
+Interpretation: internal LH-Shape transfers beyond prompt-only confounds, but it
+is not yet a clean POPE gate. It is better viewed as a TDEV-lite triage signal
+or a feature to combine with target-vs-neighbor evidence.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

@@ -86,10 +86,10 @@ training-free baseline table.
 
 Next implementation target:
 
-1. Scale the new POPE question-token per-head cache entry point from the
-   passing 2-row 8-bit smoke to full sharded POPE caches, then run
-   `mitigation/scripts/evaluate_pope_lh_shape_transfer.py` to measure
-   random-calibrated transfer by split and semantic-neighbor subset.
+1. Scale the new POPE question-token per-head cache entry point beyond the
+   120-row-per-split pilot. The pilot shows real image-CV signal (layers 22+31:
+   MCC 0.408, AUROC 0.739) above prompt-only baselines, but present-object FPR
+   is 0.400, so it is not yet a deployable POPE gate.
 2. Treat LH-Shape prefiltering as a CHAIR-side practicality result: it can save
    25% of OWLv2 calls while retaining 99.6% of full TDEV top-5 hallucination
    deletions at 75% call rate, but position-only/PAS are competitive at higher
@@ -119,9 +119,10 @@ Next implementation target:
    a fluent rewrite or decoding integration rather than raw phrase deletion.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
-   calls, but the gain is partly shared by position/PAS prefilters; POPE
-   semantic-neighbor transfer still requires running the new question-token
-   per-head cache and evaluating it by related-present FPR/MCC.
+   calls, but the gain is partly shared by position/PAS prefilters. The POPE
+   120-row image-CV pilot shows transfer above prompt-only controls but with
+   high present-object FPR, so use it as a triage/feature direction rather than
+   the primary verifier.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
 4. **Baseline availability check.** Re-check CAI/CAST/region-aware code before

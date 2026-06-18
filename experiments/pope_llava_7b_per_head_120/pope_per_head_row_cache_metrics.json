@@ -1,0 +1,20 @@
+{
+  "absent_rows": 180,
+  "cache": "experiments/pope_llava_7b_per_head_120/pope_per_head_row_cache.npz",
+  "label_name": "target_absent",
+  "layers": [
+    22,
+    31
+  ],
+  "missing_target_examples": [],
+  "missing_targets": 0,
+  "present_rows": 180,
+  "rows_cached": 360,
+  "rows_requested": 360,
+  "splits": [
+    "random",
+    "popular",
+    "adversarial"
+  ],
+  "target_token_policy": "mean"
+}

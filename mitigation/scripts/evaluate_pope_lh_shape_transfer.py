@@ -30,6 +30,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--l2", type=float, default=1.0)
     p.add_argument("--lr", type=float, default=0.5)
     p.add_argument("--epochs", type=int, default=120)
+    p.add_argument("--image_cv_folds", type=int, default=0, help="If >1, use image-grouped out-of-fold evaluation instead of fixed train_splits")
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--include_prompt_baselines", action="store_true", help="Also evaluate prompt-only token-position/length baselines")
     return p.parse_args()
 
 
@@ -62,6 +65,8 @@ def load_cache(cache: str, cache_glob: str | None) -> dict:
         "question_ids": np.concatenate([part["question_ids"].astype(str) for part in parts], axis=0),
         "image_ids": np.concatenate([part["image_ids"] for part in parts], axis=0).astype(np.int64),
         "token_pos": np.concatenate([part["token_pos"] for part in parts], axis=0).astype(np.int32),
+        "target_token_start": np.concatenate([part["target_token_start"] for part in parts], axis=0).astype(np.int32),
+        "target_token_end": np.concatenate([part["target_token_end"] for part in parts], axis=0).astype(np.int32),
         "layer_indices": first_layers,
         "feature_names": first_features,
     }
@@ -104,9 +109,9 @@ def roc_auc(labels: np.ndarray, values: np.ndarray) -> float | None:
     return float((ranks[labels == 1].sum() - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg))
 
 
-def binary_metrics(labels: np.ndarray, scores: np.ndarray, threshold: float) -> dict:
+def binary_metrics_from_pred(labels: np.ndarray, scores: np.ndarray, pred_absent: np.ndarray) -> dict:
     labels = np.asarray(labels, dtype=np.int32)
-    pred_absent = np.asarray(scores, dtype=np.float64) > threshold
+    pred_absent = np.asarray(pred_absent, dtype=bool)
     tp = int(((labels == 1) & pred_absent).sum())
     fp = int(((labels == 0) & pred_absent).sum())
     tn = int(((labels == 0) & ~pred_absent).sum())
@@ -133,6 +138,10 @@ def binary_metrics(labels: np.ndarray, scores: np.ndarray, threshold: float) -> 
         "predicted_absent_rate": (tp + fp) / n if n else 0.0,
         "auroc": roc_auc(labels, scores),
     }
+
+
+def binary_metrics(labels: np.ndarray, scores: np.ndarray, threshold: float) -> dict:
+    return binary_metrics_from_pred(labels, scores, np.asarray(scores, dtype=np.float64) > threshold)
 
 
 def choose_threshold(labels: np.ndarray, scores: np.ndarray) -> tuple[float, dict]:
@@ -164,6 +173,116 @@ def parse_layers(layer_indices: np.ndarray, spec: str) -> list[int]:
 
 def split_list(spec: str) -> list[str]:
     return [item.strip() for item in spec.split(",") if item.strip()]
+
+
+def image_folds(image_ids: np.ndarray, folds: int, seed: int) -> list[tuple[np.ndarray, np.ndarray]]:
+    rng = np.random.RandomState(seed)
+    unique_images = np.asarray(sorted(set(int(x) for x in image_ids.tolist())))
+    rng.shuffle(unique_images)
+    fold_images = np.array_split(unique_images, folds)
+    output = []
+    for items in fold_images:
+        test = np.isin(image_ids, items)
+        output.append((~test, test))
+    return output
+
+
+def oof_linear_scores(
+    X: np.ndarray,
+    labels: np.ndarray,
+    image_ids: np.ndarray,
+    folds: int,
+    seed: int,
+    l2: float,
+    lr: float,
+    epochs: int,
+) -> tuple[np.ndarray, np.ndarray, list[dict]]:
+    scores = np.zeros(labels.shape[0], dtype=np.float64)
+    pred_absent = np.zeros(labels.shape[0], dtype=bool)
+    details = []
+    for fold_id, (train, test) in enumerate(image_folds(image_ids, folds, seed), start=1):
+        if np.unique(labels[train]).size < 2:
+            raise ValueError(f"Fold {fold_id} training rows do not contain both classes")
+        mu = X[train].mean(axis=0)
+        sd = X[train].std(axis=0) + 1e-8
+        X_train = (X[train] - mu) / sd
+        X_test = (X[test] - mu) / sd
+        w, b = train_logreg(X_train, labels[train], l2=l2, lr=lr, epochs=epochs)
+        train_scores = X_train @ w + b
+        threshold, train_metrics = choose_threshold(labels[train], train_scores)
+        test_scores = X_test @ w + b
+        scores[test] = test_scores
+        pred_absent[test] = test_scores > threshold
+        details.append({
+            "fold": fold_id,
+            "train_rows": int(train.sum()),
+            "test_rows": int(test.sum()),
+            "threshold": float(threshold),
+            "train_mcc": float(train_metrics["mcc"]),
+            "train_absent_tpr": float(train_metrics["absent_tpr"]),
+            "train_present_fpr": float(train_metrics["present_fpr"]),
+            "weight_l2_norm": float(np.linalg.norm(w)),
+            "bias": float(b),
+        })
+    return scores, pred_absent, details
+
+
+def oof_threshold_scores(
+    values: np.ndarray,
+    labels: np.ndarray,
+    image_ids: np.ndarray,
+    folds: int,
+    seed: int,
+) -> tuple[np.ndarray, np.ndarray, list[dict]]:
+    raw = np.asarray(values, dtype=np.float64)
+    scores = np.zeros(labels.shape[0], dtype=np.float64)
+    pred_absent = np.zeros(labels.shape[0], dtype=bool)
+    details = []
+    for fold_id, (train, test) in enumerate(image_folds(image_ids, folds, seed), start=1):
+        best = None
+        for direction, train_scores, test_scores in (("positive", raw[train], raw[test]), ("negative", -raw[train], -raw[test])):
+            threshold, train_metrics = choose_threshold(labels[train], train_scores)
+            candidate = (train_metrics["mcc"], direction, threshold, train_scores, test_scores, train_metrics)
+            if best is None or candidate[0] > best[0]:
+                best = candidate
+        assert best is not None
+        _mcc, direction, threshold, _train_scores, test_scores, train_metrics = best
+        scores[test] = test_scores
+        pred_absent[test] = test_scores > threshold
+        details.append({
+            "fold": fold_id,
+            "direction": direction,
+            "threshold": float(threshold),
+            "train_mcc": float(train_metrics["mcc"]),
+            "train_absent_tpr": float(train_metrics["absent_tpr"]),
+            "train_present_fpr": float(train_metrics["present_fpr"]),
+        })
+    return scores, pred_absent, details
+
+
+def fixed_threshold_scores(values: np.ndarray, labels: np.ndarray, train_mask: np.ndarray) -> tuple[np.ndarray, np.ndarray, dict]:
+    raw = np.asarray(values, dtype=np.float64)
+    best = None
+    for direction, candidate_scores in (("positive", raw), ("negative", -raw)):
+        threshold, train_metrics = choose_threshold(labels[train_mask], candidate_scores[train_mask])
+        candidate = (train_metrics["mcc"], direction, threshold, candidate_scores, train_metrics)
+        if best is None or candidate[0] > best[0]:
+            best = candidate
+    assert best is not None
+    _mcc, direction, threshold, scores, train_metrics = best
+    return scores, scores > threshold, {
+        "direction": direction,
+        "threshold": float(threshold),
+        "calibration_metrics": train_metrics,
+    }
+
+
+def prompt_baseline_values(data: dict) -> dict[str, np.ndarray]:
+    return {
+        "prompt_token_pos": data["token_pos"].astype(np.float64),
+        "target_span_len": (data["target_token_end"] - data["target_token_start"]).astype(np.float64),
+        "target_char_len": np.asarray([len(str(target)) for target in data["targets"]], dtype=np.float64),
+    }
 
 
 def subset_mask(labels: np.ndarray, negative_types: np.ndarray, subset: str) -> np.ndarray:
@@ -200,20 +319,41 @@ def main() -> None:
         layer_ids = parse_layers(data["layer_indices"], layer_spec)
         name = "lh_shape_pope_layers_" + "_".join(str(int(data["layer_indices"][idx])) for idx in layer_ids)
         X = data["feats"][:, layer_ids, :, :].reshape(labels.shape[0], -1)
-        mu = X[train_mask].mean(axis=0)
-        sd = X[train_mask].std(axis=0) + 1e-8
-        X_train = (X[train_mask] - mu) / sd
-        w, b = train_logreg(X_train, labels[train_mask], l2=args.l2, lr=args.lr, epochs=args.epochs)
-        scores = ((X - mu) / sd) @ w + b
-        threshold, calibration_metrics = choose_threshold(labels[train_mask], scores[train_mask])
-        model_payload[name] = {
-            "layers": [int(data["layer_indices"][idx]) for idx in layer_ids],
-            "dims": int(X.shape[1]),
-            "threshold": threshold,
-            "calibration_metrics": calibration_metrics,
-            "weight_l2_norm": float(np.linalg.norm(w)),
-            "bias": float(b),
-        }
+        if args.image_cv_folds > 1:
+            scores, pred_absent, fold_details = oof_linear_scores(
+                X,
+                labels,
+                data["image_ids"],
+                folds=args.image_cv_folds,
+                seed=args.seed,
+                l2=args.l2,
+                lr=args.lr,
+                epochs=args.epochs,
+            )
+            model_payload[name] = {
+                "mode": "image_grouped_oof",
+                "layers": [int(data["layer_indices"][idx]) for idx in layer_ids],
+                "dims": int(X.shape[1]),
+                "folds": int(args.image_cv_folds),
+                "fold_details": fold_details,
+            }
+        else:
+            mu = X[train_mask].mean(axis=0)
+            sd = X[train_mask].std(axis=0) + 1e-8
+            X_train = (X[train_mask] - mu) / sd
+            w, b = train_logreg(X_train, labels[train_mask], l2=args.l2, lr=args.lr, epochs=args.epochs)
+            scores = ((X - mu) / sd) @ w + b
+            threshold, calibration_metrics = choose_threshold(labels[train_mask], scores[train_mask])
+            pred_absent = scores > threshold
+            model_payload[name] = {
+                "mode": "fixed_train_splits",
+                "layers": [int(data["layer_indices"][idx]) for idx in layer_ids],
+                "dims": int(X.shape[1]),
+                "threshold": threshold,
+                "calibration_metrics": calibration_metrics,
+                "weight_l2_norm": float(np.linalg.norm(w)),
+                "bias": float(b),
+            }
         for split in eval_splits + ["macro"]:
             split_mask = np.ones(labels.shape[0], dtype=bool) if split == "macro" else splits == split
             for subset in subsets:
@@ -224,8 +364,35 @@ def main() -> None:
                     "score": name,
                     "split": split,
                     "subset": subset,
-                    **binary_metrics(labels[mask], scores[mask], threshold),
+                    **binary_metrics_from_pred(labels[mask], scores[mask], pred_absent[mask]),
                 })
+
+    if args.include_prompt_baselines:
+        for name, values in prompt_baseline_values(data).items():
+            if args.image_cv_folds > 1:
+                scores, pred_absent, details = oof_threshold_scores(
+                    values, labels, data["image_ids"], args.image_cv_folds, args.seed
+                )
+                model_payload[name] = {
+                    "mode": "prompt_only_image_grouped_oof",
+                    "folds": int(args.image_cv_folds),
+                    "fold_details": details,
+                }
+            else:
+                scores, pred_absent, details = fixed_threshold_scores(values, labels, train_mask)
+                model_payload[name] = {"mode": "prompt_only_fixed_train_splits", **details}
+            for split in eval_splits + ["macro"]:
+                split_mask = np.ones(labels.shape[0], dtype=bool) if split == "macro" else splits == split
+                for subset in subsets:
+                    mask = split_mask & subset_mask(labels, negative_types, subset)
+                    if mask.sum() == 0:
+                        continue
+                    metric_rows.append({
+                        "score": name,
+                        "split": split,
+                        "subset": subset,
+                        **binary_metrics_from_pred(labels[mask], scores[mask], pred_absent[mask]),
+                    })
 
     with (output_dir / "pope_lh_shape_transfer_metrics.csv").open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=list(metric_rows[0].keys()), lineterminator="\n")
@@ -240,6 +407,9 @@ def main() -> None:
         "l2": float(args.l2),
         "lr": float(args.lr),
         "epochs": int(args.epochs),
+        "image_cv_folds": int(args.image_cv_folds),
+        "seed": int(args.seed),
+        "include_prompt_baselines": bool(args.include_prompt_baselines),
         "models": model_payload,
         "metrics": metric_rows,
         "caveat": "This evaluates target-absence detection from cached POPE question-token features; it does not by itself apply a yes/no gate to generated model outputs.",
