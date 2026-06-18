@@ -18,9 +18,9 @@ practicality/caption results kept scoped.
 | C4. Generic region/object evidence is not enough | Covered in region-verifier POPE table: raw target score over-fires on related negatives. | Main text ready. |
 | C5. TDEV target-vs-neighbor verification is constructive | Covered with hybrid gate-plus-rescue and scoped method text. | Main text ready. |
 | C6. TDEV transfers to CHAIR object-mention detection | Partly covered through OWLv2 region-verifier detection table. | Main text ready, but make clear this is scoring/post-hoc detection. |
-| C7. Caption-side mitigation exists but is proxy/rewrite-based | Not in current main draft except baseline CHAIR mitigation discussion. | Appendix only unless fluent rewrite/constrained regeneration is added. |
-| C8. TDEV-lite/LH-Shape practicality | Not in current main draft. | Add a compact appendix or secondary table; label as supervised triage. |
-| C9. Qwen2.5-VL replication | Not in current main draft. | Add a compact appendix table or short robustness paragraph. |
+| C7. Caption-side mitigation exists but is proxy/rewrite-based | Covered in appendix table as deterministic proxy correction. | Appendix only unless fluent rewrite/constrained regeneration is added. |
+| C8. TDEV-lite/LH-Shape practicality | Covered in appendix table with LH-alone failure and routed-TDEV controls. | Keep secondary; label as supervised triage. |
+| C9. Qwen2.5-VL replication | Covered in appendix cross-model robustness table. | Keep secondary; output-level plus OWLv2 evidence only. |
 | C10. Novelty is not external detection or chain verification | Covered in related work and limitations. | Main text ready; keep wording conservative. |
 
 ## Alignment With the Initial Defect
@@ -59,14 +59,15 @@ defect. The stronger and more defensible claim is that the benchmark exposes a
 previously hidden target-vs-neighbor verification failure, and that explicit
 target-discriminative evidence is a necessary ingredient for reducing it.
 
-## Missing Paper Artifacts
+## Appendix Artifacts Now Added
 
 ### 1. Cross-model robustness table
 
+Status: added to `paper/tables/table_appendix_qwen.tex` and audited by
+`paper/scripts/check_audited_numbers.py`.
+
 Purpose: show that the semantic-neighbor/TDEV direction is not purely LLaVA-
 specific.
-
-Recommended placement: appendix or a short robustness paragraph near Discussion.
 
 Use current scoped numbers only:
 
@@ -80,11 +81,11 @@ it is not Qwen internal attention evidence.
 
 ### 2. TDEV-lite practicality table
 
+Status: added to `paper/tables/table_appendix_tdev_lite.tex` and audited by
+`paper/scripts/check_audited_numbers.py`.
+
 Purpose: answer the practicality concern that full TDEV uses external region
 evidence on every question.
-
-Recommended placement: appendix or secondary experiment subsection after the
-main associated-evidence audit.
 
 Use current scoped numbers:
 
@@ -101,12 +102,12 @@ training-free mitigation method and not a replacement for TDEV.
 
 ### 3. Caption-side correction appendix
 
+Status: added to `paper/tables/table_appendix_caption_proxy.tex` and audited by
+`paper/scripts/check_audited_numbers.py`.
+
 Purpose: show that target-discriminative object-mention scoring can support
 caption correction, while not pretending we have a fluent decoder-integrated
 method.
-
-Recommended placement: appendix only until a fluent sentence-local rewrite or
-constrained regeneration is implemented.
 
 Use current scoped numbers:
 
@@ -121,21 +122,24 @@ natural generation or decoding-time mitigation.
 
 ## Recommended Next Paper Edits
 
-1. Add a compact appendix subsection named `Additional Robustness and
-   Practicality Evidence`.
-2. Include Qwen and TDEV-lite tables there, with conservative captions.
-3. Include caption correction only as a separate appendix paragraph/table, or
-   leave it out until fluent rewrite is ready.
-4. Keep the main text focused on the diagnostic protocol, semantic-neighbor
+1. Keep Qwen, TDEV-lite, and caption proxy results in the appendix unless a
+   stronger fluent caption-side method is added.
+2. Keep the main text focused on the diagnostic protocol, semantic-neighbor
    mechanism, and TDEV verifier. Do not make Qwen/TDEV-lite/caption results carry
    the headline claim.
+3. The highest-value next paper edit is now a fluent caption-side correction
+   subsection only if the method produces natural local rewrites or constrained
+   regeneration results.
+4. Re-check CAI/CAST/Focus Matters/Region-Aware code before experiment freeze;
+   if official code appears, run only the bounded semantic-neighbor audit first.
 
 ## Current Readiness Judgment
 
-The current paper draft is coherent for the main ICML story but incomplete as a
-full evidence package. The missing pieces are not contradictions; they are
-secondary support results that should be added carefully. The highest-value next
-paper edit is a compact appendix table for Qwen robustness and TDEV-lite
-practicality. The highest-value experimental edit remains fluent caption-side
-correction, but the current deterministic rewrite should not be promoted to a
-main method claim.
+The current paper draft is coherent for the main ICML story and now contains
+the available secondary evidence package in the appendix. The remaining gap is
+not a missing table; it is method strength. The highest-value experimental edit
+remains fluent caption-side correction or constrained regeneration, but the
+current deterministic rewrite should not be promoted to a main method claim.
+The second gate is external baseline availability: CAI, CAST, Focus Matters, and
+Region-Aware Attention Recalibration should be audited under semantic-neighbor
+controls only if official runnable code appears.

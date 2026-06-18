@@ -15,7 +15,7 @@ without verifying the queried target object.
 |---|---|---|---|---|
 | C1. Global attention scores are position-confounded. | Supported | `detection/baselines/results/coco_llava_7b_baselines/controlled_analysis/controlled_summary.csv`: PAS overall `0.835` but within-bin `0.593`, same-word `0.569`; position-only AUROC `0.830`. | Table 1: controlled CHAIR detection baselines. | Wording must say attention mass is an unreliable proxy, not that all attention is useless. |
 | C2. Semantic-neighbor negatives expose the actual failure mode. | Supported | `mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv`; mechanism summary: neighbor evidence exceeds target evidence in `96.0%` of vanilla related FPs. | Figure 1 + mechanism examples table. | Add visual examples or region overlays if time allows; current table is textual/score-based. |
-| C3. Existing attention/decoding controls do not close the related-present gap. | Supported for local controlled ports | `mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md`: PAI `0.110`, ClearSight `0.160`, VisAttnSink `0.123`, VCD `0.127` related FPR versus vanilla `0.114`. | Main mitigation/control table. | CAI/CAST/region-aware attention remain related-work positive controls unless code becomes runnable. |
+| C3. Existing attention/decoding controls do not close the related-present gap. | Supported for local controlled ports | `mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md`: PAI `0.110`, ClearSight `0.160`, VisAttnSink `0.123`, VCD `0.127` related FPR versus vanilla `0.114`. | Main mitigation/control table. | CAI/CAST/Focus Matters/region-aware attention remain related-work positive controls unless code becomes runnable. |
 | C4. Generic region/object evidence is not enough. | Supported | Same table: OWLv2 target direct MCC `0.777` but related FPR `0.184` and adversarial related FPR `0.281`. | Main mitigation/control table, row group: region evidence. | Avoid calling OWLv2 target score a failed detector; it is strong aggregate evidence but non-discriminative under semantic neighbors. |
 | C5. Target-vs-neighbor verification is the constructive criterion. | Supported, modest effect | Hybrid gate+rescue: MCC `0.763`, FPR `0.051`, related FPR `0.069`; strict margin related FPR `0.010` but TPR `0.359`. | Main TDEV table plus calibration ablation. | Need to frame as best current tradeoff, not solved hallucination. |
 | C6. The criterion transfers to object-mention detection. | Supported | `docs/tdev_ablation_summary.md`: target absence + 0.25 neighbor dominance reaches overall `0.874`, within-bin `0.852`, matched-pair `0.854`, residual `0.722`. | CHAIR detection table. | Make clear this is post-hoc object-mention scoring, not fluent generation. |
@@ -50,8 +50,9 @@ head/region steering methods are runnable baselines or related-work pressure.
    a decoding-time object gate if local generation hooks are reliable.
 2. **Positive head/region baselines are not fully reproduced.** Current local
    ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, and DAMRO subset.
-   CAI/CAST and Region-Aware Attention Recalibration remain closest attention
-   competitors; run semantic-neighbor subset audits only if usable code appears.
+   CAI/CAST, Focus Matters, and Region-Aware Attention Recalibration remain
+   closest attention/visual-token competitors; run semantic-neighbor subset
+   audits only if usable code appears.
 3. **TDEV-region uses OWLv2.** This is acceptable as a backend for the criterion
    only if the paper repeatedly states that OWLv2 is not the contribution.
 4. **Effect sizes are modest on strong models.** Qwen improves only slightly.
@@ -66,6 +67,7 @@ Recent related work reinforces the chosen scope:
 |---|---|---|
 | Tool or chain verification | Woodpecker, UNIHD, R-CoV | They validate or rewrite with multi-step tools/chains. We should not claim novelty as a post-hoc correction pipeline. |
 | Caption/head steering | CAI, CAST | They increase visual attention through caption-query patterns. Our required test is whether the steered evidence is target-discriminative under related-present negatives. |
+| Phase-aware visual-token suppression | Focus Matters | It filters/suppresses visual tokens from internal attention dynamics. Treat as positive related work; audit if code becomes public/runnable. |
 | Region/head recalibration | Region-Aware Attention Recalibration | Closest low-cost internal mitigation direction. Treat as positive related work; audit if code becomes public/runnable. |
 | Internal probes | HALP, local LH-Shape | Supports practicality of internal routing, but TDEV-lite must remain a triage/readout story unless it passes full semantic-neighbor controls. |
 | Generic grounding/localization detectors | Fine-grained token grounding, raw OWLv2 target score | Localization/target evidence alone is insufficient; the discriminative margin versus semantic neighbors is the contribution. |
@@ -77,6 +79,7 @@ Checked sources:
 - R-CoV: https://arxiv.org/abs/2604.20696
 - CAI: https://arxiv.org/abs/2506.23590
 - CAST: https://arxiv.org/abs/2605.04641
+- Focus Matters: https://arxiv.org/abs/2604.03556
 - Region-Aware Attention Recalibration: https://arxiv.org/abs/2605.24957
 - HALP: https://arxiv.org/abs/2603.05465
 - Fine-Grained Token Grounding: https://arxiv.org/abs/2604.04863

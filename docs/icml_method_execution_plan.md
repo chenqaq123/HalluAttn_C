@@ -154,6 +154,7 @@ whether a recent method is runnable, a required baseline, or only related work.
 | P0 | OPERA | Keep guarded integration; only report numbers if the environment passes `check_opera_support.py`. |
 | P0 | CAI/CAST | Closest caption-query/head-steering baselines. As of the June 18, 2026 refresh, no direct official code link was found. Do not implement an unofficial surrogate; run a bounded semantic-neighbor audit only if official code appears. |
 | P0 | Region-Aware Attention Recalibration | Closest region/head recalibration baseline. The arXiv page says code will be public, but no runnable code was found in the refresh. Monitor and audit related-present negatives when available. |
+| P1 | Focus Matters | Recent phase-aware visual-token/attention suppression method with low-latency mitigation claims. Treat as related work unless official code appears, then run the same semantic-neighbor audit gate. |
 | P1 | Dynamic Multimodal Activation Steering | Relevant activation/head steering baseline; treat as related work unless official code appears and is easy to adapt to the POPE semantic-neighbor split. |
 | P1 | HALP-style probe | If official code is unavailable, implement a local late-query probe as TDEV-lite rather than as a direct paper-to-paper reproduction. |
 | P1 | Official VCD/GLSim parity | Optional parity checks; current controlled versions are enough for mechanism claims if wording stays scoped. |
@@ -207,7 +208,7 @@ failure to the constructive TDEV method.
    defensible use remains suppress-only TDEV triage, not replacing the verifier.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
-4. **Baseline availability check.** Re-check CAI/CAST/region-aware code before
+4. **Baseline availability check.** Re-check CAI/CAST/Focus Matters/region-aware code before
    freezing experiments. If unavailable, explicitly mark them as closest
    concurrent related work and compare conceptually.
 
@@ -256,6 +257,7 @@ neighbor verification criterion and its cheap routing story.
 
 - CAI, arXiv:2506.23590, https://arxiv.org/abs/2506.23590
 - CAST, arXiv:2605.04641, https://arxiv.org/abs/2605.04641
+- Focus Matters, arXiv:2604.03556, https://arxiv.org/abs/2604.03556
 - Region-Aware Attention Recalibration / SADI, arXiv:2605.24957,
   https://arxiv.org/abs/2605.24957
 - Conscious Gaze, arXiv:2512.05546, https://arxiv.org/abs/2512.05546
