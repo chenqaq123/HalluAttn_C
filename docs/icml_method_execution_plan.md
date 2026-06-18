@@ -88,7 +88,8 @@ Next implementation target:
 
 1. Run the new POPE question-token per-head cache entry point
    (`mitigation/scripts/cache_pope_per_head_rows.py`) once a GPU has enough free
-   memory, then evaluate LH-Shape transfer to semantic-neighbor yes/no gating.
+   memory, then run `mitigation/scripts/evaluate_pope_lh_shape_transfer.py` to
+   measure random-calibrated transfer by split and semantic-neighbor subset.
 2. Treat LH-Shape prefiltering as a CHAIR-side practicality result: it can save
    25% of OWLv2 calls while retaining 99.6% of full TDEV top-5 hallucination
    deletions at 75% call rate, but position-only/PAS are competitive at higher

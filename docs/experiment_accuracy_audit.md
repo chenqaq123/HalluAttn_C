@@ -267,6 +267,25 @@ LLaVA-1.5-7B fp16 with eager attentions:
 As of this audit update, the maximum observed free GPU memory was about 10.5GB,
 so the model-forward smoke was intentionally not run to avoid an expected OOM.
 
+Once the real cache exists, `mitigation/scripts/evaluate_pope_lh_shape_transfer.py`
+trains the calibrated LH-Shape readout on calibration splits, chooses an
+absence threshold by MCC, and reports target-absence metrics by split and
+semantic-neighbor subset:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/evaluate_pope_lh_shape_transfer.py \
+  --cache_glob 'experiments/pope_llava_7b_per_head/pope_per_head_row_cache*.npz' \
+  --output_dir mitigation/results/pope_lh_shape_transfer \
+  --layer_sets '31;22,31' \
+  --train_splits random \
+  --eval_splits random,popular,adversarial
+```
+
+Validation status: `py_compile`, `--help`, and a synthetic `/tmp` cache
+end-to-end smoke pass. The script is ready for real POPE cache outputs but has
+not yet produced a paper-facing transfer number.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers
