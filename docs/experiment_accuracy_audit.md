@@ -350,13 +350,15 @@ Reproducibility commands:
 
 ```bash
 /home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
-  detection/scripts/evaluate_tdev_caption_edit.py
+  detection/scripts/evaluate_tdev_caption_edit.py \
+  --run_chair
 
 /home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
   detection/scripts/evaluate_tdev_caption_edit.py \
   --score hybrid_mcc_positive_branch_absence \
   --top_frac 0.10 \
-  --output_dir detection/baselines/results/tdev_caption_edit_hybrid_mcc_top10
+  --output_dir detection/baselines/results/tdev_caption_edit_hybrid_mcc_top10 \
+  --run_chair
 ```
 
 Result roots:
@@ -373,13 +375,27 @@ Representative text-edit operating points:
 | hybrid positive branch, top 5% | 821 | 820 | 0.999 | 682 | 138 | 0.170 | 0.011 | 0.213 |
 | hybrid MCC positive branch, top 10% | 1,643 | 1,624 | 0.988 | 1,290 | 334 | 0.322 | 0.027 | 0.184 |
 
-The current active environment cannot unpickle/run the PAS CHAIR evaluator
-because it lacks `nltk`, so these are not official post-edit CHAIRi/CHAIRs
-numbers yet. The edited JSON files are suitable inputs for that rerun once the
-PAS environment is available. Qualitatively, this deterministic deletion proxy
-still leaves occasional ungrammatical fragments when the deleted object was the
-syntactic subject; the paper should not present it as a fluent caption rewriter
-or decoding-time method.
+The same script now reruns the official PAS CHAIR evaluator when `--run_chair`
+is supplied. The scope is the 4,977 images with CHAIR object mentions in the
+OWLv2 score CSV, so the vanilla anchor differs slightly from the 5,000-caption
+mitigation table scope.
+
+Official PAS CHAIR rerun:
+
+| Policy | CHAIRi | CHAIRs | Total object mentions | Total hallucinated mentions | Mean words | Delta CHAIRi | Delta CHAIRs |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| vanilla anchor | 0.133984 | 0.492063 | 38,027 | 5,095 | 89.541 | anchor | anchor |
+| hybrid positive branch, top 5% | 0.118630 | 0.450472 | 37,208 | 4,414 | 89.242 | -0.015353 | -0.041591 |
+| hybrid MCC positive branch, top 10% | 0.104762 | 0.404661 | 36,416 | 3,815 | 88.975 | -0.029222 | -0.087402 |
+
+This validates the deletion-accounting direction under official CHAIR: the
+caption edit reduces both instance-level and sentence-level hallucination while
+shortening captions by less than one word on average. The exact official CHAIR
+deltas differ slightly from the deletion-only counts because CHAIR retokenizes,
+POS-tags, and lemmatizes the edited caption text. Qualitatively, this
+deterministic deletion proxy still leaves occasional ungrammatical fragments
+when the deleted object was the syntactic subject; the paper should not present
+it as a fluent caption rewriter or decoding-time method.
 
 ### SPIN Adversarial Subset Audit
 

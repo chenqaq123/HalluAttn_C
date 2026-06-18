@@ -87,13 +87,13 @@ probe inspired by HALP, but trained/evaluated under semantic-neighbor controls:
 
 ## Next Experiments
 
-1. **Caption mitigation beyond the proxy.** The object-mention filter proxy and
-   deterministic text-edit proxy now both show useful hallucinated-mention
-   removal at low grounded-mention loss. The top-5% hybrid branch deletes 682
-   hallucinated mentions at 138 grounded deletions after phrase matching. The
-   next step is official post-edit CHAIR rerun in a PAS environment with `nltk`,
-   then a fluent rewrite or decoding integration rather than raw phrase
-   deletion.
+1. **Caption mitigation beyond the proxy.** The object-mention filter proxy,
+   deterministic text-edit proxy, and official post-edit PAS CHAIR rerun now
+   all show useful hallucination reduction at low caption-length cost. On the
+   4,977-image object-mention scope, the top-5% hybrid branch reduces CHAIRi
+   from 0.1340 to 0.1186 and CHAIRs from 0.4921 to 0.4505; the top-10% hybrid
+   MCC branch reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is
+   a fluent rewrite or decoding integration rather than raw phrase deletion.
 2. **TDEV-lite probe.** Build a small cached-feature probe on LLaVA decision
    states and evaluate it against related-present negatives.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed

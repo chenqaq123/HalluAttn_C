@@ -4,7 +4,7 @@
 This is a deterministic text-edit proxy for caption-side mitigation. It uses
 TDEV-derived object risk scores to select CHAIR object mentions, removes a
 matching object phrase from the caption, and reports deletion-only CHAIR-style
-accounting. It does not regenerate captions or rerun the official CHAIR scorer.
+accounting. It does not regenerate captions. With --run_chair, it also reruns the official CHAIR scorer on the original and edited captions.
 """
 
 from __future__ import annotations
@@ -13,10 +13,18 @@ import argparse
 import csv
 import json
 import re
+import sys
 from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DETECTION_SRC = REPO_ROOT / "detection" / "src"
+PAS_SRC = REPO_ROOT.parent / "pas" / "src"
+for import_path in (DETECTION_SRC, PAS_SRC):
+    if str(import_path) not in sys.path:
+        sys.path.insert(0, str(import_path))
 
 
 def parse_args() -> argparse.Namespace:
@@ -41,6 +49,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--hybrid_margin", type=float, default=-0.20)
     p.add_argument("--hybrid_mcc_margin", type=float, default=-0.30)
     p.add_argument("--neighbor_dominance_alpha", type=float, default=0.25)
+    p.add_argument("--run_chair", action="store_true", help="Rerun official PAS CHAIR on original and edited captions.")
+    p.add_argument("--chair_pkl", default="../pas/data/chair_coco.pkl")
     return p.parse_args()
 
 
@@ -190,6 +200,58 @@ def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
         writer.writerows(rows)
 
 
+def caption_stats(data: list[dict[str, object]]) -> dict[str, float | int]:
+    lengths = [len(str(row["caption"]).split()) for row in data]
+    return {
+        "num_captions": len(data),
+        "mean_words": sum(lengths) / len(lengths) if lengths else 0.0,
+    }
+
+
+def chair_summary(data: list[dict[str, object]], chair_pkl: str, output_dir: Path, prefix: str) -> dict:
+    from sinkdetect.chair import evaluate_chair, load_chair_evaluator
+
+    evaluator = load_chair_evaluator(chair_pkl)
+    per_sample, overall = evaluate_chair(
+        evaluator,
+        data=data,
+        json_path=str(output_dir / f"{prefix}_chair_input.json"),
+    )
+    mention_counts = []
+    hallucinated_counts = []
+    with (output_dir / f"{prefix}_chair_per_sample.jsonl").open("w", encoding="utf-8") as f:
+        for sample in per_sample:
+            generated = list(sample.get("mscoco_generated_words", []))
+            grounded = set(sample.get("mscoco_gt_words", []))
+            hallucinated = sum(word not in grounded for word in generated)
+            mention_counts.append(len(generated))
+            hallucinated_counts.append(hallucinated)
+            f.write(json.dumps({
+                "image_id": sample.get("image_id"),
+                "caption": sample.get("caption", ""),
+                "object_mentions": len(generated),
+                "hallucinated_mentions": hallucinated,
+            }, ensure_ascii=False) + "\n")
+    stats = caption_stats(data)
+    stats.update({
+        "mean_object_mentions": sum(mention_counts) / len(mention_counts) if mention_counts else 0.0,
+        "mean_hallucinated_mentions": sum(hallucinated_counts) / len(hallucinated_counts) if hallucinated_counts else 0.0,
+        "total_object_mentions": sum(mention_counts),
+        "total_hallucinated_mentions": sum(hallucinated_counts),
+    })
+    return {"chair": overall, "caption_stats": stats}
+
+
+def metric_delta(edited: dict, vanilla: dict) -> dict[str, float]:
+    delta = {}
+    for section in ("chair", "caption_stats"):
+        for key, value in edited[section].items():
+            base = vanilla[section].get(key)
+            if isinstance(value, (int, float)) and isinstance(base, (int, float)):
+                delta[f"delta_{section}_{key}"] = value - base
+    return delta
+
+
 def main() -> None:
     args = parse_args()
     rows = read_rows(Path(args.scores_csv))
@@ -293,8 +355,26 @@ def main() -> None:
         "remaining_hallucinated": remaining_hallucinated,
         "remaining_mention_hallucination_rate": remaining_hallucinated / remaining if remaining else 0.0,
         "remaining_image_hallucination_rate": image_hallucination_rate(rows, keep_mask),
-        "chair_rerun_status": "not_run_missing_nltk_in_active_environment",
+        "chair_rerun_status": "not_run_use_--run_chair",
     }
+
+    if args.run_chair:
+        vanilla_data = [
+            {"image_id": image_id, "caption": original_captions[image_id]}
+            for image_id in captions
+        ]
+        official_chair = {
+            "chair_pkl": args.chair_pkl,
+            "sample_scope": "images with CHAIR object mentions in the OWLv2 score CSV",
+            "vanilla": chair_summary(vanilla_data, args.chair_pkl, output_dir, "vanilla"),
+            "edited": chair_summary(edited_captions, args.chair_pkl, output_dir, "edited"),
+        }
+        official_chair["delta"] = metric_delta(official_chair["edited"], official_chair["vanilla"])
+        with (output_dir / "chair_metrics.json").open("w", encoding="utf-8") as f:
+            json.dump(official_chair, f, indent=2, sort_keys=True)
+            f.write("\n")
+        metrics["chair_rerun_status"] = "run"
+        metrics["chair_metrics_file"] = str(output_dir / "chair_metrics.json")
     with (output_dir / "caption_edit_metrics.json").open("w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, sort_keys=True)
         f.write("\n")
