@@ -38,6 +38,11 @@ without verifying the queried target object.
 
 ## Current ICML Weak Points
 
+Baseline availability is tracked separately in
+`docs/baseline_availability_refresh.md`. That document is the current gate for
+whether CAI, CAST, Region-Aware Attention Recalibration, or other recent
+head/region steering methods are runnable baselines or related-work pressure.
+
 1. **Caption mitigation is not yet a natural method.** The neutral-rewrite proxy is
    less destructive than deletion and keeps sentence length closer to vanilla,
    but it is still deterministic post-processing. For a stronger ICML story,

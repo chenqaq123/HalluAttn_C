@@ -145,14 +145,24 @@ Current implementation target:
 
 ## Baseline Priority
 
+The latest availability refresh is recorded in
+`docs/baseline_availability_refresh.md`. Use that note as the current gate for
+whether a recent method is runnable, a required baseline, or only related work.
+
 | Priority | Baseline | Action |
 |---|---|---|
 | P0 | OPERA | Keep guarded integration; only report numbers if the environment passes `check_opera_support.py`. |
-| P0 | CAI/CAST | Treat as the most relevant head-selection baseline. As of the current check, arXiv pages expose no direct code link; run a subset semantic-neighbor audit if code appears. |
-| P0 | Region-Aware Attention Recalibration | Closest region/head recalibration baseline. The arXiv page says code will be public; monitor and audit related-present negatives when available. |
+| P0 | CAI/CAST | Closest caption-query/head-steering baselines. As of the June 18, 2026 refresh, no direct official code link was found. Do not implement an unofficial surrogate; run a bounded semantic-neighbor audit only if official code appears. |
+| P0 | Region-Aware Attention Recalibration | Closest region/head recalibration baseline. The arXiv page says code will be public, but no runnable code was found in the refresh. Monitor and audit related-present negatives when available. |
+| P1 | Dynamic Multimodal Activation Steering | Relevant activation/head steering baseline; treat as related work unless official code appears and is easy to adapt to the POPE semantic-neighbor split. |
 | P1 | HALP-style probe | If official code is unavailable, implement a local late-query probe as TDEV-lite rather than as a direct paper-to-paper reproduction. |
 | P1 | Official VCD/GLSim parity | Optional parity checks; current controlled versions are enough for mechanism claims if wording stays scoped. |
 | P2 | Woodpecker/UNIHD/Volcano | Discuss as high-latency tool/revision systems unless the paper needs a broad post-hoc correction comparison. |
+
+If any P0 code appears, first run the adversarial semantic-neighbor subset and
+report MCC, TPR, FPR, yes rate, related-present FPR, plain-absent FPR, and the
+related-minus-plain gap. Full all-split reruns are only justified if the subset
+result changes the paper conclusion.
 
 ## Paper Table Source Update
 
