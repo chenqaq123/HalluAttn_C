@@ -332,10 +332,54 @@ Representative operating points:
 | hybrid MCC positive branch, grounded-loss cap 2% | 1,274 | 0.256 | 0.020 | 0.805 | 0.197 |
 | target absence + neighbor dominance 0.25, grounded-loss cap 5% | 2,623 | 0.500 | 0.050 | 0.764 | 0.145 |
 
-This gives caption-side mitigation evidence at the object-mention level: TDEV
-scores rank hallucinated mentions far above their base rate (24.4%). The result
-should be described as an abstention/filtering proxy until a real caption
-rewriting or decoding integration is evaluated with CHAIR after text edits.
+This gives caption-side mitigation evidence at the object-mention selection
+level: TDEV scores rank hallucinated mentions far above their base rate
+(24.4%). The result should be described as an abstention/filtering proxy, not a
+regenerated-caption result.
+
+### TDEV Caption Text-Edit Proxy
+
+`detection/scripts/evaluate_tdev_caption_edit.py` takes the high-risk object
+mentions selected by TDEV, deletes the matched object phrase from the saved
+caption text, and writes edited captions. It uses PAS CHAIR `synonyms_txt` plus
+simple plural matching for phrase deletion. The accounting below is
+"deletion-only": a selected mention only counts as removed if a phrase was
+actually deleted from the caption.
+
+Reproducibility commands:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_tdev_caption_edit.py
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_tdev_caption_edit.py \
+  --score hybrid_mcc_positive_branch_absence \
+  --top_frac 0.10 \
+  --output_dir detection/baselines/results/tdev_caption_edit_hybrid_mcc_top10
+```
+
+Result roots:
+
+```text
+detection/baselines/results/tdev_caption_edit/
+detection/baselines/results/tdev_caption_edit_hybrid_mcc_top10/
+```
+
+Representative text-edit operating points:
+
+| Score / policy | Selected | Actually deleted | Delete success | Deleted hallucinated | Deleted grounded | Hallu. reduction | Grounded loss | Remaining mention hallu. rate |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| hybrid positive branch, top 5% | 821 | 820 | 0.999 | 682 | 138 | 0.170 | 0.011 | 0.213 |
+| hybrid MCC positive branch, top 10% | 1,643 | 1,624 | 0.988 | 1,290 | 334 | 0.322 | 0.027 | 0.184 |
+
+The current active environment cannot unpickle/run the PAS CHAIR evaluator
+because it lacks `nltk`, so these are not official post-edit CHAIRi/CHAIRs
+numbers yet. The edited JSON files are suitable inputs for that rerun once the
+PAS environment is available. Qualitatively, this deterministic deletion proxy
+still leaves occasional ungrammatical fragments when the deleted object was the
+syntactic subject; the paper should not present it as a fluent caption rewriter
+or decoding-time method.
 
 ### SPIN Adversarial Subset Audit
 
