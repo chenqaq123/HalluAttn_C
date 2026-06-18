@@ -227,6 +227,46 @@ nearly all top-5% TDEV hallucination deletions, and it is strongest among the
 50%-75% call rates. This is a useful practicality ablation, not proof of POPE
 transfer or a standalone mitigation method.
 
+### POPE Per-Head Transfer Cache Entry Point
+
+The current artifacts do not contain POPE question-token per-head features, so
+LH-Shape transfer to semantic-neighbor POPE gating remains unproven. A new cache
+entry point now exists at `mitigation/scripts/cache_pope_per_head_rows.py`. It
+aligns POPE rows with `semantic_neighbor_rows.csv`, locates the target object
+phrase in the LLaVA question prompt, and caches per-head visual-attention shape
+features for the target phrase tokens. The label convention is `target_absent=1`,
+matching the hallucination-risk direction used by CHAIR detection.
+
+Tokenizer-only validation passed on the first 30 random-split POPE rows with
+zero target-location failures. Static checks also pass:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python -m py_compile \
+  mitigation/scripts/cache_pope_per_head_rows.py
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/cache_pope_per_head_rows.py --help
+```
+
+GPU smoke command to run when at least one GPU has enough free memory for
+LLaVA-1.5-7B fp16 with eager attentions:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/cache_pope_per_head_rows.py \
+  --model_path /home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9 \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --pope_dir /home/chenguanxu/common_dataset/pope \
+  --audit_csv mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv \
+  --splits random \
+  --limit 2 \
+  --per_head_layers 31 \
+  --output_dir experiments/pope_llava_7b_per_head_smoke \
+  --device <gpu_id>
+```
+
+As of this audit update, the maximum observed free GPU memory was about 10.5GB,
+so the model-forward smoke was intentionally not run to avoid an expected OOM.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

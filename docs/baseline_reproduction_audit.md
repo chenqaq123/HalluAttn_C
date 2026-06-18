@@ -97,9 +97,11 @@ select heads or regions more carefully than mean attention.
    cascade audit (`detection/baselines/results/lh_shape_tdev_cascade/lh_shape_tdev_cascade_metrics.json`)
    shows LH-Shape can prefilter OWLv2/TDEV-region calls, especially at a 25%
    candidate budget, but position-only and PAS are competitive at 50%-75% call
-   rates. Next, build a POPE per-head cache before claiming semantic-neighbor
-   transfer; keep HALP as related work or an official-code baseline if code
-   becomes available.
+   rates. A POPE per-head cache script now exists
+   (`mitigation/scripts/cache_pope_per_head_rows.py`) and passes tokenizer/CLI
+   checks, but the actual GPU cache still needs to be generated before claiming
+   semantic-neighbor transfer; keep HALP as related work or an official-code
+   baseline if code becomes available.
 4. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.
