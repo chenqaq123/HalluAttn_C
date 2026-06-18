@@ -20,6 +20,7 @@ detector to an LVLM", which is already a crowded and less interesting space.
 | Fine-grained grounding detectors | Fine-Grained Token Grounding, arXiv:2604.04863 | Detects token hallucinations through patch-level localization and semantic alignment. | Our method should distinguish localized related-object evidence from target evidence; localization alone is not enough. |
 | Caption/head steering | CAI/CAST, arXiv:2506.23590 and arXiv:2605.04641 | Uses caption-query attention patterns or steering directions to reduce hallucination with low inference cost. | These are important head-specific baselines or inspirations; TDEV should require target margin for any steered visual evidence. |
 | Region-aware attention recalibration | Region-Aware Attention Recalibration, arXiv:2605.24957 | Uses inter-head disagreement across regions for training-free attention correction. | Closest recent mitigation direction; we need to compare conceptually and, if possible, test whether it passes related-present negatives. |
+| Phase-aware visual-token suppression | Focus Matters, arXiv:2604.03556 | Uses a three-phase vision-encoder attention analysis and suppresses low-attention tokens during the focus phase with low latency. | Another practical internal-routing baseline; our semantic-neighbor audit should test whether such suppression distinguishes targets from related objects. |
 | Internal decoding/attention methods | VCD, OPERA, SPIN, DAMRO | Try to reduce language priors, over-trust, or attention/head failures without external detectors. | These are the right behavioral baselines for showing semantic-neighbor failures. |
 
 ## Differentiation That Still Looks Publishable
@@ -98,8 +99,8 @@ This separates us from existing detector-heavy work in five ways:
    GLSim/fine-grained grounding as similarity or localization detectors,
    HALP as an internal-probe baseline, and grounding-objective work as evidence
    that grounding alone is insufficient.
-5. **Attention baseline priority:** CAI/CAST and region-aware attention
-   recalibration are the most relevant recent positive counterexamples. If code
+5. **Attention baseline priority:** CAI/CAST, Focus Matters, and region-aware
+   attention recalibration are the most relevant recent positive counterexamples. If code
    is available, run a subset semantic-neighbor audit; otherwise discuss them as
    closely related head/region-selection methods and keep the claim scoped.
 6. **Paper thesis:** "Looking is not verifying" should become "Grounding is also
@@ -128,6 +129,8 @@ This separates us from existing detector-heavy work in five ways:
   Hallucination in Large Vision-Language Models, https://arxiv.org/abs/2506.23590
 - CAST: Mitigating Object Hallucination in Large Vision-Language Models via
   Caption-Guided Visual Attention Steering, https://arxiv.org/abs/2605.04641
+- Focus Matters: Phase-Aware Suppression for Hallucination in Vision-Language
+  Models, https://arxiv.org/abs/2604.03556
 - Mitigating Object Hallucinations in Vision-Language Models through
   Region-Aware Attention Recalibration, https://arxiv.org/abs/2605.24957
 - Mitigating Object Hallucinations in Large Vision-Language Models through
