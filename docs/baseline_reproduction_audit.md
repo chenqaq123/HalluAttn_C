@@ -80,14 +80,22 @@ select heads or regions more carefully than mean attention.
 1. OPERA on the same adversarial or semantic-neighbor subset after the active
    Python environment reports `ready_for_official_opera=true` via
    `mitigation/scripts/check_opera_support.py`. A subset result is enough to
-   decide whether full POPE is worth the cost.
-2. Deprioritize full SPIN unless a stronger official-parity setting is needed;
+   decide whether full POPE is worth the cost, but OPERA should not block the
+   method-side work while the local transformers fork is unavailable.
+2. CAI/CAST and Region-Aware Attention Recalibration are the highest-priority
+   head/region positive controls. As of the current check, CAI/CAST arXiv pages
+   expose no direct code link and Region-Aware says code will be public; run a
+   semantic-neighbor subset audit if usable code appears.
+3. Implement a local HALP-style late-query probe only as the TDEV-lite
+   practicality ablation, not as an official reproduction, unless official code
+   becomes available.
+4. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.
-3. Deprioritize full DAMRO unless official parity is required; its controlled
+5. Deprioritize full DAMRO unless official parity is required; its controlled
    adversarial subset raises false positives more than recall and worsens
    related-present FPR.
-4. Discuss Woodpecker/UNIHD/Volcano as high-latency tool or revision pipelines
+6. Discuss Woodpecker/UNIHD/Volcano as high-latency tool or revision pipelines
    unless the final paper needs an explicit post-hoc correction comparison. They
    are less central to the allocation-vs-verification claim.
 

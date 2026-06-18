@@ -364,18 +364,19 @@ it satisfies three criteria:
 
 ## 7. Immediate Next Work
 
-1. Implement semantic-neighbor split construction from COCO annotations and text
-   embedding similarity.
-2. Add an audit script that reports FPR and score gaps for random vs
-   semantic-neighbor negatives.
-3. Prototype TDEV-zero using existing row-cache visual representations if
-   available; otherwise extend row cache to save visual hidden states for key
-   layers/patches.
-4. Move to OPERA or method-side TDEV improvements; local DAMRO and SPIN
-   subsets do not show target-discriminative gains.
-5. Use the completed Qwen2.5-VL all-splits replication as the second-model
-   check, then prioritize method-side recall improvements or a third-model
-   sanity check over rerunning every baseline on Qwen.
+The execution plan is tracked in `docs/icml_method_execution_plan.md`.
+
+1. Use the completed semantic-neighbor split, Qwen replication gate, and TDEV
+   ablation summary as the paper-facing result sources.
+2. Prototype caption-style mitigation from existing CHAIR object-mention TDEV
+   scores, with matched caption length and object-count controls.
+3. Build a TDEV-lite late-query/internal probe as the practical no-detector
+   ablation; whole-image and naive CLIP-patch variants are already negative.
+4. Keep OPERA guarded by `check_opera_support.py`; add CAI/CAST or
+   region-aware attention recalibration only if code becomes available enough
+   for a semantic-neighbor subset audit.
+5. If compute allows, run a third-model sanity check with vanilla plus fixed
+   TDEV only; do not rerun every baseline on every model.
 
 ## 8. Current Paper Positioning Sentence
 
