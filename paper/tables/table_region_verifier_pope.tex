@@ -12,8 +12,9 @@ direct & two-stage & 0.769 & 0.850 & 0.083 & 0.111 & 0.167 \\
 \midrule
 gate & target score & 0.738 & 0.812 & 0.078 & 0.105 & 0.156 \\
 gate & two-stage & 0.751 & 0.793 & 0.051 & 0.069 & 0.104 \\
+hybrid & gate+rescue & 0.763 & 0.806 & 0.051 & 0.069 & 0.105 \\
 \bottomrule
 \end{tabular}
-\caption{OWLv2 region evidence on POPE with semantic-neighbor negatives. Direct rules answer from region evidence alone; gate rules override only unsupported vanilla ``yes'' answers. The two-stage gate lowers related-present false positives while preserving a strong macro MCC, but the reduction comes with a recall trade-off. FPR columns are rates, not percentages.}
+\caption{OWLv2 region evidence on POPE with semantic-neighbor negatives. Direct rules answer from region evidence alone; gate rules override unsupported vanilla ``yes'' answers; the hybrid rule adds a conservative rescue branch for high-confidence target evidence. Target-vs-neighbor verification lowers related-present false positives, and the hybrid rule gives the current best trade-off, but the gain remains modest. FPR columns are rates, not percentages.}
 \label{tab:region-verifier-pope}
 \end{table*}

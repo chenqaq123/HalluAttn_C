@@ -249,6 +249,7 @@ def check_region_verifier_pope() -> None:
         "direct & two-stage": "mitigation/results/semantic_neighbor_audit/owlv2_two_stage_direct/two_stage_metrics.csv",
         "gate & target score": "mitigation/results/semantic_neighbor_audit/owlv2_target_score_gate/tdev_gate_metrics.csv",
         "gate & two-stage": "mitigation/results/semantic_neighbor_audit/owlv2_two_stage_gate/two_stage_metrics.csv",
+        "hybrid & gate+rescue": "mitigation/results/semantic_neighbor_audit/owlv2_hybrid_region_rule/hybrid_metrics.csv",
     }
     for row_label, metrics_path in mapping.items():
         expected = _pope_metric_values(metrics_path)

@@ -27,7 +27,7 @@ For yes/no mitigation-style evaluation, TDEV predicts ``yes'' when
 \begin{equation}
 E(I,c)>\tau_h\quad\textrm{or}\quad E(I,c)>\tau_l \;\land\; M(I,c)>\tau_m.
 \end{equation}
-We evaluate both a \emph{direct} rule, which answers from region evidence alone, and a \emph{gate} rule, which only overrides unsupported vanilla ``yes'' answers: if the base LVLM says ``no,'' the gate keeps ``no.'' Thresholds are calibrated on the random POPE split, either for MCC or for the semantic-aware objective
+We evaluate three operating modes. A \emph{direct} rule answers from region evidence alone. A \emph{gate} rule only overrides unsupported vanilla ``yes'' answers: if the base LVLM says ``no,'' the gate keeps ``no.'' A \emph{hybrid gate-plus-rescue} rule uses the same suppressive gate for unsafe ``yes'' answers, but rescues base ``no'' answers only when both target evidence and target-vs-neighbor margin are high. Thresholds are calibrated on the random POPE split, either for MCC or for the semantic-aware objective
 \begin{equation}
 \mathrm{MCC} - \lambda\,\mathrm{FPR}_{\mathrm{related}},
 \end{equation}
