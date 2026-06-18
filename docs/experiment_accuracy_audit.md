@@ -371,6 +371,37 @@ that the controlled greedy DAMRO port does not fix the semantic-neighbor failure
 mode: suppressing CLS-selected outlier influence is not the same as verifying the
 queried object against associated evidence.
 
+
+### Qwen2.5-VL All-Splits Replication Audit
+
+The second-model POPE replication now covers Qwen2.5-VL-7B-Instruct on all
+three full POPE splits. The generation artifacts passed the following
+consistency checks:
+
+| Split | Rows | Unique IDs | Yes labels | No labels | Invalid outputs | Semantic audit missing | Fixed-TDEV missing base |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| random | 3000 | 3000 | 1500 | 1500 | 0 | 0 | 0 |
+| popular | 3000 | 3000 | 1500 | 1500 | 0 | 0 | 0 |
+| adversarial | 3000 | 3000 | 1500 | 1500 | 0 | 0 | 0 |
+
+`predictions.jsonl` and `shard0.jsonl` have the same content by question ID for
+all three splits; the row order differs because `merge_evaluate.py` writes
+`predictions.jsonl` sorted by `question_id`.
+
+Independent recomputation from the saved JSON/CSV files matches
+`docs/multimodel_replication_audit.md`:
+
+| Rule | Macro MCC | Macro TPR | Macro FPR | Macro yes rate | Macro related FPR | Macro plain FPR |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen2.5-VL vanilla | 0.765125 | 0.785556 | 0.033333 | 0.409444 | 0.040982 | 0.010432 |
+| Qwen2.5-VL + fixed TDEV hybrid | 0.768808 | 0.781556 | 0.027111 | 0.404333 | 0.033728 | 0.007824 |
+
+This confirms that the paper-safe Qwen claim is all-splits output-level
+replication: the semantic-neighbor gap persists on a stronger model, and the
+fixed LLaVA-selected TDEV verifier reduces false positives without Qwen-specific
+recalibration. It is not evidence about Qwen internal attention because the
+current attention adapter is LLaVA-specific.
+
 ## Mitigation CHAIR
 
 CHAIR caption metrics support the same scoped conclusion: current attention
@@ -400,14 +431,19 @@ ports do not reliably reduce object hallucination under caption-style controls.
    but raises TPR and FPR equally and worsens related-present FPR.
 7. The controlled DAMRO port also has a negative adversarial-subset signal: it
    raises FPR more than TPR and worsens related-present FPR.
-8. Claims must remain scoped: these are controlled ports/adapted baselines, not
+8. Qwen2.5-VL all-splits replication supports the main semantic-neighbor and
+   fixed-verifier conclusions beyond LLaVA-1.5, with the caveat that this is
+   output-level plus external region verification rather than Qwen internal
+   attention evidence.
+9. Claims must remain scoped: these are controlled ports/adapted baselines, not
    proof that every attention-based method or every official method fails.
 
 ## Missing Evidence Before ICML Submission
 
 - Official-code parity checks on small subsets for PAI, ClearSight, and
   VisAttnSink where feasible.
-- Multi-model replication beyond LLaVA-1.5-7B.
+- Optional third-model replication or a Qwen-specific internal-attention
+  adapter; the required second-model POPE output-level replication is complete.
 - Full regeneration of POPE/CHAIR mitigation results with the now-tracked
   runtime stack, or a documented hash-level equivalence check against the
   existing full run.
