@@ -50,6 +50,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--per_head_layers", default="0,1,10,22,31")
     p.add_argument("--target_token_policy", choices=["first", "last", "mean"], default="mean")
     p.add_argument("--device", type=int, default=0)
+    p.add_argument("--load_in_8bit", action="store_true", help="Load LLaVA with bitsandbytes 8-bit weights for low-memory cache runs")
+    p.add_argument("--load_in_4bit", action="store_true", help="Load LLaVA with bitsandbytes 4-bit weights for low-memory cache runs")
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--shard_idx", type=int, default=0)
     p.add_argument("--num_shards", type=int, default=1)
@@ -61,6 +63,45 @@ def parse_layers(spec: str) -> list[int]:
     if not layers:
         raise ValueError("--per_head_layers must contain at least one layer")
     return layers
+
+
+def load_cache_model_and_processor(args: argparse.Namespace, device: torch.device):
+    if args.load_in_8bit and args.load_in_4bit:
+        raise ValueError("Choose at most one of --load_in_8bit and --load_in_4bit")
+    if not (args.load_in_8bit or args.load_in_4bit):
+        return load_model_and_processor(
+            args.model_path,
+            device,
+            cache_dir=args.cache_dir or None,
+            attn_implementation="eager",
+        )
+
+    from transformers import BitsAndBytesConfig, LlavaForConditionalGeneration, LlavaProcessor
+
+    kwargs = {"cache_dir": args.cache_dir} if args.cache_dir else {}
+    processor = LlavaProcessor.from_pretrained(args.model_path, **kwargs)
+    quant_config = BitsAndBytesConfig(
+        load_in_8bit=bool(args.load_in_8bit),
+        load_in_4bit=bool(args.load_in_4bit),
+        bnb_4bit_compute_dtype=torch.float16,
+    )
+    model = LlavaForConditionalGeneration.from_pretrained(
+        args.model_path,
+        quantization_config=quant_config,
+        device_map={"": int(args.device)},
+        attn_implementation="eager",
+        **kwargs,
+    )
+    vision_config = getattr(model.config, "vision_config", None)
+    if getattr(processor, "patch_size", None) is None and vision_config is not None:
+        processor.patch_size = getattr(vision_config, "patch_size", None)
+    if getattr(processor, "vision_feature_select_strategy", None) is None:
+        processor.vision_feature_select_strategy = getattr(model.config, "vision_feature_select_strategy", "default")
+    additional_image_tokens = getattr(processor, "num_additional_image_tokens", None)
+    if additional_image_tokens is None or int(additional_image_tokens) == 0:
+        processor.num_additional_image_tokens = 1
+    model.eval()
+    return model, processor
 
 
 def read_audit_rows(path: Path, splits: list[str]) -> dict[tuple[str, str], dict[str, str]]:
@@ -174,12 +215,7 @@ def main() -> None:
     logger.info("Caching %d POPE rows for splits=%s shard=%d/%d", len(records), splits, args.shard_idx, args.num_shards)
 
     device = torch.device(f"cuda:{args.device}")
-    model, processor = load_model_and_processor(
-        args.model_path,
-        device,
-        cache_dir=args.cache_dir or None,
-        attn_implementation="eager",
-    )
+    model, processor = load_cache_model_and_processor(args, device)
     tokenizer = processor.tokenizer
     image_token_id = getattr(processor, "image_token_id", None)
     if image_token_id is None:

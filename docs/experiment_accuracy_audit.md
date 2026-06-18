@@ -247,8 +247,9 @@ zero target-location failures. Static checks also pass:
   mitigation/scripts/cache_pope_per_head_rows.py --help
 ```
 
-GPU smoke command to run when at least one GPU has enough free memory for
-LLaVA-1.5-7B fp16 with eager attentions:
+A real low-memory GPU smoke now passes using the script's bitsandbytes 8-bit
+loading path. The smoke used GPU 1 with about 10.9GB free memory, `limit=2`, and
+layer 31 only:
 
 ```bash
 /home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
@@ -260,12 +261,14 @@ LLaVA-1.5-7B fp16 with eager attentions:
   --splits random \
   --limit 2 \
   --per_head_layers 31 \
-  --output_dir experiments/pope_llava_7b_per_head_smoke \
-  --device <gpu_id>
+  --output_dir /tmp/pope_llava_7b_per_head_smoke \
+  --device 1 \
+  --load_in_8bit
 ```
 
-As of this audit update, the maximum observed free GPU memory was about 10.5GB,
-so the model-forward smoke was intentionally not run to avoid an expected OOM.
+Smoke output check: `rows_requested=2`, `rows_cached=2`, `missing_targets=0`,
+`present_rows=1`, `absent_rows=1`, and feature shape `(2, 1, 32, 4)` for
+`(rows, layers, heads, features)`.
 
 Once the real cache exists, `mitigation/scripts/evaluate_pope_lh_shape_transfer.py`
 trains the calibrated LH-Shape readout on calibration splits, chooses an
@@ -282,9 +285,10 @@ semantic-neighbor subset:
   --eval_splits random,popular,adversarial
 ```
 
-Validation status: `py_compile`, `--help`, and a synthetic `/tmp` cache
-end-to-end smoke pass. The script is ready for real POPE cache outputs but has
-not yet produced a paper-facing transfer number.
+Validation status: `py_compile`, `--help`, a synthetic `/tmp` cache
+end-to-end smoke, and the real 2-row 8-bit POPE cache smoke all pass. The
+transfer evaluator can read the real smoke cache, but the smoke is too small for
+a paper-facing transfer number.
 
 ## Detection Reproducibility Guard
 

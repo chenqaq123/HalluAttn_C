@@ -99,10 +99,11 @@ select heads or regions more carefully than mean attention.
    candidate budget, but position-only and PAS are competitive at 50%-75% call
    rates. A POPE per-head cache script now exists
    (`mitigation/scripts/cache_pope_per_head_rows.py`) and a transfer evaluator
-   is ready (`mitigation/scripts/evaluate_pope_lh_shape_transfer.py`), both with
-   static/smoke checks. The actual GPU cache still needs to be generated before
-   claiming semantic-neighbor transfer; keep HALP as related work or an
-   official-code baseline if code becomes available.
+   is ready (`mitigation/scripts/evaluate_pope_lh_shape_transfer.py`). Static
+   checks, synthetic evaluator smoke, and a real 2-row 8-bit POPE cache smoke
+   pass. The full GPU cache still needs to be generated before claiming
+   semantic-neighbor transfer; keep HALP as related work or an official-code
+   baseline if code becomes available.
 4. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.
