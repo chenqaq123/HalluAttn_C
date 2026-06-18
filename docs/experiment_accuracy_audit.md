@@ -136,6 +136,52 @@ implementation should use a tiny regularized linear readout or distill the
 layer31 probe into a fixed, low-dimensional score, then evaluate it with the
 same image-grouped and position-controlled protocol.
 
+### Calibrated LH-Shape Linear Readout
+
+`detection/scripts/evaluate_lh_shape_linear.py` implements that next readout: a
+small L2-regularized linear/logistic model over late-layer per-head
+attention-shape features, trained with image-grouped folds and evaluated on
+held-out images. The output also recomputes core CHAIR detection baselines on
+the same 16,426 rows using the same metric implementation.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_lh_shape_linear.py \
+  --cache_glob 'experiments/coco_llava_7b_rows/per_head_row_cache_shard*.npz' \
+  --generation_json experiments/coco_llava_7b/generation.json \
+  --baseline_scores_csv detection/baselines/results/coco_llava_7b_baselines/baseline_scores.csv \
+  --output_dir detection/baselines/results/lh_shape_linear
+```
+
+Result files:
+
+```text
+detection/baselines/results/lh_shape_linear/lh_shape_linear_metrics.json
+detection/baselines/results/lh_shape_linear/lh_shape_linear_metrics.csv
+```
+
+Key comparison:
+
+| Score | Overall AUROC | Within-bin AUROC | Matched-pair AUROC | Residual AUROC |
+|---|---:|---:|---:|---:|
+| LH-Shape linear, layers 22+31 | 0.869 | 0.755 | 0.745 | 0.664 |
+| LH-Shape linear, layer 31 | 0.856 | 0.728 | 0.721 | 0.651 |
+| IC | 0.776 | 0.690 | 0.703 | 0.633 |
+| Entropy | 0.721 | 0.641 | 0.655 | 0.633 |
+| NLL | 0.711 | 0.639 | 0.652 | 0.629 |
+| PAS | 0.835 | 0.605 | 0.583 | 0.576 |
+| SVAR | 0.834 | 0.583 | 0.576 | 0.561 |
+| GLSim-local | 0.772 | 0.561 | 0.593 | 0.600 |
+
+This is positive evidence for a practical internal TDEV-lite path: a calibrated
+late-head readout beats the strongest training-free CHAIR baselines under
+position-controlled metrics. It remains supervised calibration and should be
+reported separately from unsupervised detectors. The next required check is
+whether the same calibrated readout transfers to semantic-neighbor POPE gating or
+serves as a cheap prefilter before TDEV-region.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

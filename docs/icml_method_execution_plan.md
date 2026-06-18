@@ -61,7 +61,7 @@ The ICML version should show two tiers:
 | Tier | Role | Current status | Why it matters |
 |---|---|---|---|
 | TDEV-region | strongest verifier using cached OWLv2 image-object scores | positive POPE and CHAIR evidence exists | establishes the target-discrimination criterion |
-| TDEV-lite | cheaper internal/proposal backend | supervised per-head diagnostic implemented; training-free variant pending | answers the practicality concern that OWLv2 is an external detector |
+| TDEV-lite | cheaper internal/proposal backend | calibrated late-head linear readout positive on CHAIR detection; POPE transfer pending | answers the practicality concern that OWLv2 is an external detector |
 
 TDEV-lite should not be a weaker restatement of CLIP margin; those variants are
 already negative. The current internal-probe audit shows that late-layer
@@ -77,16 +77,21 @@ matched-pair AUROC, far below the layer31 logistic probe. Training-free
 late-layer mean-head features are near random after controls. This rules out the
 simplest fixed-head averaging route.
 
+The calibrated LH-Shape linear readout is positive. With image-grouped folds,
+layers 22+31 reach 0.755 within-bin AUROC, 0.745 matched-pair AUROC, and 0.664
+residual AUROC on CHAIR object mentions, ahead of IC (0.690/0.703/0.633) under
+the same metric implementation. This gives the paper a practical internal
+variant, but it is supervised calibration and must be separated from the
+training-free baseline table.
+
 Next implementation target:
 
-1. Distill the layer-31 per-head result into a tiny regularized linear readout
-   or low-dimensional score, trained only on held-out calibration images.
-2. Evaluate it under the same within-bin, matched-pair, and residual controls
-   against IC/PAS/SVAR/GLSim, with explicit separation from the supervised
-   diagnostic probe.
-3. If it stays strong, test whether it can replace or prefilter OWLv2 in POPE
-   and caption mitigation; otherwise present it as a diagnostic/practicality
-   ablation only.
+1. Test whether calibrated LH-Shape can gate or prefilter POPE semantic-neighbor
+   decisions, especially related-present false positives.
+2. Evaluate whether LH-Shape can prefilter expensive OWLv2/TDEV-region calls in
+   caption mitigation without losing the CHAIR gains.
+3. If transfer is weak, present LH-Shape as an internal diagnostic/practicality
+   ablation rather than the primary mitigation method.
 
 ## Baseline Priority
 
@@ -108,10 +113,9 @@ Next implementation target:
    from 0.1340 to 0.1186 and CHAIRs from 0.4921 to 0.4505; the top-10% hybrid
    MCC branch reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is
    a fluent rewrite or decoding integration rather than raw phrase deletion.
-2. **TDEV-lite probe.** The simple split-selected LH-Shape average is now a
-   negative ablation. Next, distill the layer31 probe into a tiny calibrated
-   linear readout and evaluate it without test-label supervision against
-   related-present negatives.
+2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
+   CHAIR detection; next test whether it transfers to POPE semantic-neighbor
+   gating or can prefilter TDEV-region calls.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
 4. **Baseline availability check.** Re-check CAI/CAST/region-aware code before

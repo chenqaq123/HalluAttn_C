@@ -1,0 +1,188 @@
+{
+  "baseline_cols": [
+    "pas_layer0_hallu_score",
+    "svar_layer0_hallu_score",
+    "ic_hallu_score",
+    "glsim_local_hallu_score",
+    "entropy_hallu_score",
+    "nll_hallu_score",
+    "beyond_adscgc_hallu_score"
+  ],
+  "baseline_scores_csv": "detection/baselines/results/coco_llava_7b_baselines/baseline_scores.csv",
+  "bin_width": 10,
+  "cache": "experiments/coco_llava_7b_rows/per_head_row_cache_shard*.npz",
+  "caveat": "LH-Shape linear readouts are supervised image-grouped calibration baselines; they are not training-free and should be reported separately from unsupervised baselines",
+  "epochs": 120,
+  "feature_names": [
+    "entropy",
+    "neg_top1_mass",
+    "neg_top5_mass",
+    "neg_max_over_mea"
+  ],
+  "folds": 5,
+  "folds_detail": {
+    "lh_shape_linear_layers_22_31": [
+      {
+        "bias": -1.8543841559772345,
+        "fold": 1,
+        "test_mentions": 3335,
+        "train_mentions": 13091,
+        "weight_l2_norm": 1.1002618986013049
+      },
+      {
+        "bias": -1.8521573525387538,
+        "fold": 2,
+        "test_mentions": 3209,
+        "train_mentions": 13217,
+        "weight_l2_norm": 1.0733148371294992
+      },
+      {
+        "bias": -1.8539063690058324,
+        "fold": 3,
+        "test_mentions": 3202,
+        "train_mentions": 13224,
+        "weight_l2_norm": 1.0859901228767002
+      },
+      {
+        "bias": -1.8357052628558366,
+        "fold": 4,
+        "test_mentions": 3390,
+        "train_mentions": 13036,
+        "weight_l2_norm": 1.1004672740762367
+      },
+      {
+        "bias": -1.8275146141142837,
+        "fold": 5,
+        "test_mentions": 3290,
+        "train_mentions": 13136,
+        "weight_l2_norm": 1.0739825699533463
+      }
+    ],
+    "lh_shape_linear_layers_31": [
+      {
+        "bias": -1.6886060940770014,
+        "fold": 1,
+        "test_mentions": 3335,
+        "train_mentions": 13091,
+        "weight_l2_norm": 1.1912483640567089
+      },
+      {
+        "bias": -1.6857560828576479,
+        "fold": 2,
+        "test_mentions": 3209,
+        "train_mentions": 13217,
+        "weight_l2_norm": 1.1848193418617439
+      },
+      {
+        "bias": -1.6839173465035369,
+        "fold": 3,
+        "test_mentions": 3202,
+        "train_mentions": 13224,
+        "weight_l2_norm": 1.1933544413467314
+      },
+      {
+        "bias": -1.6698080634033687,
+        "fold": 4,
+        "test_mentions": 3390,
+        "train_mentions": 13036,
+        "weight_l2_norm": 1.1974260929172418
+      },
+      {
+        "bias": -1.6611109902528234,
+        "fold": 5,
+        "test_mentions": 3290,
+        "train_mentions": 13136,
+        "weight_l2_norm": 1.1759883839666978
+      }
+    ]
+  },
+  "generation_json": "experiments/coco_llava_7b/generation.json",
+  "grounded_mentions": 12417,
+  "hallucinated_mentions": 4009,
+  "l2": 1.0,
+  "layer_indices": [
+    0,
+    1,
+    10,
+    22,
+    31
+  ],
+  "lr": 0.5,
+  "metrics": [
+    {
+      "matched_pair_auroc": 0.5833404151841708,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.8348587627584251,
+      "residual_auroc": 0.5755254952751574,
+      "score": "pas_layer0_hallu_score",
+      "within_bin_auroc": 0.6049458059257371
+    },
+    {
+      "matched_pair_auroc": 0.5758824583407991,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.833643007429145,
+      "residual_auroc": 0.5606572415094144,
+      "score": "svar_layer0_hallu_score",
+      "within_bin_auroc": 0.5833834432706971
+    },
+    {
+      "matched_pair_auroc": 0.7028980981390944,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.7761007170927505,
+      "residual_auroc": 0.6330250373078388,
+      "score": "ic_hallu_score",
+      "within_bin_auroc": 0.6901182128172711
+    },
+    {
+      "matched_pair_auroc": 0.5930812877023234,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.7723919200643683,
+      "residual_auroc": 0.6000531782469872,
+      "score": "glsim_local_hallu_score",
+      "within_bin_auroc": 0.5612837351926722
+    },
+    {
+      "matched_pair_auroc": 0.6545254733321388,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.7205922255178727,
+      "residual_auroc": 0.6330911686122669,
+      "score": "entropy_hallu_score",
+      "within_bin_auroc": 0.6409088330780022
+    },
+    {
+      "matched_pair_auroc": 0.6523828294980418,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.7113877101800806,
+      "residual_auroc": 0.629294966570043,
+      "score": "nll_hallu_score",
+      "within_bin_auroc": 0.6392850737905965
+    },
+    {
+      "matched_pair_auroc": 0.5234596974428546,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.6925725806634677,
+      "residual_auroc": 0.5209659236356596,
+      "score": "beyond_adscgc_hallu_score",
+      "within_bin_auroc": 0.5122271366485434
+    },
+    {
+      "matched_pair_auroc": 0.7209668859480721,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.8563175273288318,
+      "residual_auroc": 0.6512685991029324,
+      "score": "lh_shape_linear_layers_31",
+      "within_bin_auroc": 0.7282407051053786
+    },
+    {
+      "matched_pair_auroc": 0.7450523459697442,
+      "matched_pair_count": 2930025,
+      "overall_auroc": 0.8693306292620616,
+      "residual_auroc": 0.6637774799726306,
+      "score": "lh_shape_linear_layers_22_31",
+      "within_bin_auroc": 0.7548022763699984
+    }
+  ],
+  "num_images": 4977,
+  "num_mentions": 16426,
+  "seed": 0
+}
