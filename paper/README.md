@@ -1,50 +1,74 @@
-# *ACL Paper Styles
+# Looking Is Not Verifying Paper
 
-This directory contains the latest LaTeX templates for *ACL conferences.
+This directory contains the current paper draft for:
 
-## Instructions for authors
+> Looking Is Not Verifying: Target-Discriminative Evidence for LVLM Object Hallucination
 
-Paper submissions to *ACL conferences must use the official ACL style
-templates.
+The paper should be treated as a diagnostic-plus-verification submission, not as
+a state-of-the-art standalone mitigation paper. The core motivation remains
+`looking is not grounding`: visual routing can be meaningful while still failing
+target-object verification.
 
-The LaTeX style files are available
+## Main Files
 
-- as an [Overleaf template](https://www.overleaf.com/latex/templates/association-for-computational-linguistics-acl-conference/jvxskxpnznfj)
-- in this repository
-- as a [.zip file](https://github.com/acl-org/acl-style-files/archive/refs/heads/master.zip)
+| Path | Purpose |
+|---|---|
+| `acl_latex.tex` | Main LaTeX entry point for the current draft. |
+| `sections/` | Paper sections included by the main file. |
+| `tables/` | Audited paper tables. |
+| `custom.bib` | Non-Anthology bibliography entries. |
+| `scripts/check_paper_all.py` | Single verification entry point before committing paper changes. |
 
-Please see [`acl_latex.tex`](https://github.com/acl-org/acl-style-files/blob/master/acl_latex.tex) for an example.
+## Verification
 
-Please follow the paper formatting guidelines general to *ACL
-conferences:
+Run this before committing paper edits:
 
-- [Paper formatting guidelines](https://acl-org.github.io/ACLPUB/formatting.html)
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python paper/scripts/check_paper_all.py
+```
 
-Authors may not modify these style files or use templates designed for
-other conferences.
+The unified checker runs:
 
-## Instructions for publications chairs
+- `paper/scripts/check_paper_static.py`: citation keys, refs, figure paths, TODO markers, and forbidden over-strong claims.
+- `paper/scripts/check_audited_numbers.py`: table numbers against saved result artifacts.
 
-To adapt the style files for your conference, please fork this repository and
-make necessary changes. Minimally, you'll need to update the name of
-the conference and rename the files.
+LaTeX compilation is not currently part of the local gate because this runtime has
+no `latexmk` or `pdflatex`. If a TeX environment is available, compile
+`paper/acl_latex.tex` after the scripted checks.
 
-If you make improvements to the templates that should be propagated to
-future conferences, please submit a pull request. Thank you in
-advance!
+## Current Paper Claim Gate
 
-In older versions of the templates, authors were asked to fill in the
-START submission ID so that it would be stamped at the top of each
-page of the anonymized version. This is no longer needed, because it
-is now possible to do this stamping automatically within
-START. Currently, the way to do this is for the program chair to email
-support@softconf.com and request it.
+Supported framing:
 
-## Instructions for making changes to style files
+- attention mass and simple attention-shape scores are unreliable grounding proxies under position and same-object controls;
+- attention/decoding interventions can change routing, yes rate, or caption object richness without verifying target-object presence;
+- semantic-neighbor negatives expose the key failure mode: associated evidence can be present while the queried target is absent;
+- TDEV is a target-vs-neighbor verification criterion, currently instantiated with OWLv2 region evidence;
+- the strongest POPE result is a modest hybrid gate-plus-rescue verifier: macro MCC `0.730 -> 0.763`, related FPR `0.114 -> 0.069`;
+- LH-Shape/TDEV-lite evidence is supervised triage/readout evidence, not a standalone mitigation method.
 
-- merge pull request in github, or push to github
-- git pull from github to a local repository
-- then, git push from your local repository to overleaf project 
-    - Overleaf project is https://www.overleaf.com/project/5f64f1fb97c4c50001b60549
-    - Overleaf git url is https://git.overleaf.com/5f64f1fb97c4c50001b60549
-- then, click "Submit" and then "Submit as Template" in overleaf in order to ask overleaf to update the overleaf template from the overleaf project 
+Avoid claiming:
+
+- that the method solves hallucination;
+- state-of-the-art mitigation;
+- that OWLv2/external detection is the contribution;
+- that attention is useless;
+- that LH-Shape is a standalone mitigator;
+- that aggregate POPE MCC alone proves grounding.
+
+## Main Evidence Artifacts
+
+| Evidence | Artifact |
+|---|---|
+| Claim/evidence matrix | `../docs/icml_evidence_matrix.md` |
+| Paper blueprint | `../docs/icml_paper_blueprint.md` |
+| Claim gate | `../docs/claims_alignment_audit.md` |
+| Baseline availability | `../docs/baseline_availability_refresh.md` |
+| TDEV ablations | `../docs/tdev_ablation_summary.md` |
+| Mechanism figure | `../mitigation/results/pope_mechanism_alignment_full/figure/pope_mechanism_alignment_contact_sheet.png` |
+
+## Editing Notes
+
+Keep the draft aligned with the current result boundary. If a new experiment
+improves or contradicts the current TDEV story, update the relevant docs first,
+then update the paper and rerun `check_paper_all.py`.
