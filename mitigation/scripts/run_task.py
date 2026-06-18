@@ -21,14 +21,14 @@ from tqdm import tqdm
 from sinkdetect.sink_utils import find_vis_bounds
 from sinkdetect.utils import build_caption_prompt, load_model_and_processor
 from src.data import iter_pope_records, load_chair_manifest, load_pope_image
-from src.decoding import generate_damro_greedy, generate_vcd_greedy
+from src.decoding import generate_damro_greedy, generate_opera_beam, generate_vcd_greedy
 from src.interventions import install_intervention, set_visual_bounds
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Generate POPE answers or CHAIR captions with mitigation interventions")
     p.add_argument("--task", choices=["pope", "chair"], required=True)
-    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink", "vcd", "spin", "damro"], required=True)
+    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink", "vcd", "spin", "damro", "opera"], required=True)
     p.add_argument("--model_path", default="llava-hf/llava-1.5-7b-hf")
     p.add_argument("--cache_dir", default="")
     p.add_argument("--coco_path", required=True)
@@ -59,6 +59,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--damro_alpha", type=float, default=2.0)
     p.add_argument("--damro_beta", type=float, default=0.1)
     p.add_argument("--damro_topk", type=int, default=10)
+    p.add_argument("--opera_num_beams", type=int, default=5)
+    p.add_argument("--opera_scale_factor", type=float, default=50.0)
+    p.add_argument("--opera_threshold", type=int, default=15)
+    p.add_argument("--opera_num_attn_candidates", type=int, default=5)
+    p.add_argument("--opera_penalty_weights", type=float, default=1.0)
     return p.parse_args()
 
 
@@ -153,7 +158,7 @@ def main() -> None:
                 prompt = build_caption_prompt()
             inputs, vis_start, vis_end = _prepare(model, processor, image, prompt, device)
             image.close()
-            if args.method in {"vcd", "damro"}:
+            if args.method in {"vcd", "damro", "opera"}:
                 try:
                     stable_id = int(record[id_key])
                 except (TypeError, ValueError):
@@ -170,7 +175,7 @@ def main() -> None:
                         noise_step=args.vcd_noise_step,
                     )
                     outlier_indices = None
-                else:
+                elif args.method == "damro":
                     text, outlier_indices = generate_damro_greedy(
                         model,
                         processor,
@@ -180,6 +185,21 @@ def main() -> None:
                         beta=args.damro_beta,
                         topk=args.damro_topk,
                     )
+                else:
+                    text = generate_opera_beam(
+                        model,
+                        processor,
+                        inputs,
+                        args.max_new_tokens,
+                        image_start=vis_start,
+                        image_end=vis_end,
+                        num_beams=args.opera_num_beams,
+                        scale_factor=args.opera_scale_factor,
+                        threshold=args.opera_threshold,
+                        num_attn_candidates=args.opera_num_attn_candidates,
+                        penalty_weights=args.opera_penalty_weights,
+                    )
+                    outlier_indices = None
             else:
                 text = _generate(model, processor, inputs, args.max_new_tokens)
                 outlier_indices = None
@@ -204,6 +224,20 @@ def main() -> None:
                     "topk": args.damro_topk,
                     "decode": "greedy",
                     "outlier_indices": outlier_indices,
+                }
+            if args.method == "opera":
+                payload["opera"] = {
+                    "decode": "official_beam_search_hook",
+                    "num_beams": args.opera_num_beams,
+                    "scale_factor": args.opera_scale_factor,
+                    "threshold": args.opera_threshold,
+                    "num_attn_candidates": args.opera_num_attn_candidates,
+                    "penalty_weights": args.opera_penalty_weights,
+                    "key_position": {
+                        "image_start": vis_start,
+                        "image_end": vis_end,
+                        "response_start": int(inputs["input_ids"].shape[1]),
+                    },
                 }
             if args.task == "pope":
                 payload.update({"question": record["question"], "label": record["label"], "image": record["image"]})

@@ -306,7 +306,7 @@ Compare:
 - ClearSight;
 - Visual Attention Sink;
 - VCD-greedy (completed; negative under full POPE and semantic-neighbor audits);
-- OPERA;
+- OPERA official-hook subset (interface wired; current `latentGuard` transformers 4.57.6 lacks the OPERA hook, so numbers are still pending);
 - SPIN controlled head-suppression port (default and mild adversarial 120-row subsets negative; full audit lower priority);
 - TDEV gate/intervention.
 
@@ -341,7 +341,7 @@ need at least one replication to show the phenomenon is not LLaVA-specific.
 | Baseline | Why it matters | Feasibility |
 |---|---|---|
 | VCD | classic visual contrastive decoding; attacks language-prior reliance | controlled greedy port complete; official sampling parity optional |
-| OPERA | attention over-trust penalty and rollback | high priority if code works with LLaVA |
+| OPERA | attention over-trust penalty and rollback | interface wired through the official beam-search hook; current environment lacks OPERA-modified transformers, so subset result is pending |
 | DAMRO | CLS-selected outlier-token contrastive decoding | controlled adversarial subset negative; full audit lower priority unless official parity is needed |
 | SPIN | image-guided dynamic head suppression; direct positive counterexample | controlled HF port implemented; default subset collapses to yes prior and mild subset ties vanilla without target-selective gains |
 | CAI/CAST | caption-guided head/attention steering | strong recent head-specific baseline; code availability uncertain |

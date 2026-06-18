@@ -260,7 +260,7 @@ def _default_layers(method: str) -> tuple[int, int]:
 
 
 def install_intervention(model, method: str, device, **kwargs) -> InterventionConfig:
-    if method in {"vanilla", "vcd", "damro"}:
+    if method in {"vanilla", "vcd", "damro", "opera"}:
         return InterventionConfig(method=method, start_layer=0, end_layer=0)
     start, end = _default_layers(method)
     intervention = InterventionConfig(
