@@ -62,6 +62,7 @@ Avoid claiming:
 |---|---|
 | Claim/evidence matrix | `../docs/icml_evidence_matrix.md` |
 | Paper blueprint | `../docs/icml_paper_blueprint.md` |
+| Paper coverage audit | `../docs/icml_paper_coverage_audit.md` |
 | Claim gate | `../docs/claims_alignment_audit.md` |
 | Baseline availability | `../docs/baseline_availability_refresh.md` |
 | TDEV ablations | `../docs/tdev_ablation_summary.md` |
