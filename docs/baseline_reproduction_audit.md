@@ -130,7 +130,7 @@ Current status for a credible ICML submission:
 | Cheap co-occurrence/position baseline | complete as analysis baseline | `detection/scripts/evaluate_lure_style_detection.py`; LURE-style factors remain far below TDEV under controls |
 | Strong decoding baseline beyond VCD | partial | OPERA official-hook interface is wired; still need an environment with the OPERA transformers fork and an adversarial subset result |
 | Caption-style mitigation evidence | incomplete | CHAIR detection is strong; end-to-end caption hallucination reduction is not yet shown |
-| Multi-model replication | smoke only | Qwen2.5-VL vanilla POPE script runs and gives an 8-row adversarial smoke with invalid=0; next run 120-row Qwen subset plus TDEV gate (`docs/multimodel_replication_audit.md`) |
+| Multi-model replication | subset evidence | Qwen2.5-VL adversarial 120 vanilla has MCC 0.737/FPR 0.083; fixed LLaVA-selected TDEV hybrid improves to MCC 0.755/FPR 0.067 with unchanged TPR 0.817 (`docs/multimodel_replication_audit.md`) |
 
 ## Required Metrics for Any Added Baseline
 

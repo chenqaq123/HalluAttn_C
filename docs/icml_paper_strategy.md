@@ -319,7 +319,7 @@ matched object-count/length, not only accuracy or CHAIRi.
 Minimum ICML target:
 
 - LLaVA-1.5-7B, existing full run;
-- one newer open LVLM such as Qwen2.5-VL-7B (vanilla POPE smoke now runs; 120-row subset plus TDEV gate pending), LLaVA-NeXT, or InternVL;
+- one newer open LVLM such as Qwen2.5-VL-7B (adversarial 120 vanilla plus fixed-threshold TDEV subset complete), LLaVA-NeXT, or InternVL;
 - optional third model if compute allows.
 
 The key is not to rerun every baseline on every model; the main audit and TDEV
