@@ -40,3 +40,21 @@ recovering some recall.
 Interpretation: target absence is the main CHAIR signal. The hybrid positive
 branch transfers to object mentions, and a moderate neighbor-dominance penalty
 improves position-residualized AUROC without collapsing the controlled AUROCs.
+
+## CHAIR Statistical Baseline Comparison
+
+| CHAIR baseline | Overall | Within-bin | Matched-pair | Residual |
+| --- | ---: | ---: | ---: | ---: |
+| Position only | 0.830 | 0.572 | 0.546 | 0.522 |
+| Entropy | 0.721 | 0.637 | 0.655 | 0.634 |
+| NLL | 0.711 | 0.636 | 0.652 | 0.630 |
+| IC | 0.776 | 0.686 | 0.703 | 0.633 |
+| LURE-style position+uncertainty | 0.831 | 0.641 | 0.657 | 0.635 |
+| LURE-style all factors | 0.808 | 0.626 | 0.619 | 0.586 |
+| LURE-style cooccurrence support | 0.576 | 0.496 | 0.481 | 0.480 |
+| TDEV target absence + neighbor dominance | 0.874 | 0.852 | 0.854 | 0.722 |
+
+Interpretation: LURE-style position and uncertainty factors are useful but mostly
+explain broad position/uncertainty effects. They remain far below TDEV on
+within-bin and matched-pair controls, and generated-caption co-occurrence support
+is near random by itself.

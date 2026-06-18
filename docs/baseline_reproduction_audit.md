@@ -13,6 +13,12 @@ Detection/verification baselines currently audited in paper tables:
 - SVAR, PAS, and Beyond-ADS/CGC attention/patch-grounding scores.
 - SinkDetect attention-shape stress test.
 - TDEV with OWLv2 region evidence for CHAIR mention detection.
+- TDEV post-hoc CHAIR score variants: target absence, target-vs-neighbor
+  margin, two-stage absence, hybrid positive branch, and neighbor-dominance
+  continuous scores.
+- LURE-style statistical analysis factors for CHAIR detection: generation
+  position, NLL/entropy uncertainty, generated-caption co-occurrence support,
+  and simple combinations.
 
 Mitigation/gating baselines currently audited in paper tables:
 
@@ -21,7 +27,8 @@ Mitigation/gating baselines currently audited in paper tables:
 - ClearSight VAF component.
 - Visual Attention Sink redistribution component.
 - VCD-greedy controlled decoding baseline on all POPE splits.
-- TDEV direct and vanilla-gate rules on POPE semantic-neighbor splits.
+- TDEV direct, vanilla-gate, hybrid gate+rescue, and calibration-sensitivity
+  rules on POPE semantic-neighbor splits.
 
 Tracked mitigation baselines not yet in paper tables:
 
@@ -33,10 +40,13 @@ Tracked mitigation baselines not yet in paper tables:
   pending.
 
 Current evidence supports the paper's scoped claim: aggregate attention mass,
-unselective attention intervention, and controlled VCD-greedy decoding do not
-verify target-object presence; target-discriminative region evidence survives
-the same controls. It does not yet prove that all decoding-time or post-hoc
-mitigation methods fail.
+unselective attention intervention, controlled VCD-greedy decoding, SPIN subset
+checks, and DAMRO subset checks do not verify target-object presence;
+target-discriminative region evidence survives the same controls. It does not
+yet prove that all decoding-time or post-hoc mitigation methods fail, and the
+paper should avoid presenting OWLv2 itself as the contribution. The contribution
+is the semantic-neighbor stress protocol and target-vs-neighbor verification
+criterion.
 
 ## High-Priority End-to-End Baselines
 
@@ -48,8 +58,9 @@ submission.
 | VCD | arXiv:2311.16922 | canonical visual contrastive decoding baseline against language-prior reliance | controlled greedy port implemented; full POPE splits complete; official sampling parity only needed for direct paper-to-paper comparison |
 | OPERA | arXiv:2311.17911 | strong decoding baseline using over-trust penalty and rollback | not implemented locally; needs beam/search-time hook |
 | DAMRO | arXiv:2410.04514 | CLS-selected ViT outlier-token contrastive decoding, close to our attention-shape audit | controlled greedy port implemented; adversarial 120-row subset is negative: TPR +0.033 but FPR +0.067, MCC 0.667 -> 0.639, related-present FPR 0.204 -> 0.278; full POPE/CHAIR audit pending |
-| LURE | arXiv:2310.00754 | uses co-occurrence, uncertainty, and position factors aligned with our mechanism | not implemented locally; best used as post-hoc/revision or analysis baseline |
-| Woodpecker | arXiv:2310.16045 | post-hoc visual validation/correction pipeline | not implemented locally; higher latency and external-tool dependence |
+| LURE | arXiv:2310.00754 | uses co-occurrence, uncertainty, and position factors aligned with our mechanism | analysis baseline implemented for CHAIR detection; not a revisor reproduction |
+| Woodpecker | arXiv:2310.16045 | post-hoc visual validation/correction pipeline with external tools/open-set detection | not implemented locally; discuss as a detector/tool pipeline rather than a direct low-latency baseline |
+| UNIHD/MHaluBench | arXiv:2402.03190 | unified hallucination detection with auxiliary tools | not implemented locally; discuss as broad tool-based detection, distinct from our semantic-neighbor decision criterion |
 | Volcano | arXiv:2311.07362 | self-feedback guided revision baseline | not implemented locally; full model/data setup likely heavier |
 
 ## Head/Attention Positive Controls
@@ -66,18 +77,59 @@ select heads or regions more carefully than mean attention.
 
 ## Recommended Next Reproduction Order
 
-1. OPERA on the same subset if the official search-time logic ports cleanly to
-   HuggingFace LLaVA-1.5.
+1. OPERA on the same adversarial or semantic-neighbor subset if the official
+   search-time logic ports cleanly to HuggingFace LLaVA-1.5. A subset result is
+   enough to decide whether full POPE is worth the cost.
 2. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.
 3. Deprioritize full DAMRO unless official parity is required; its controlled
    adversarial subset raises false positives more than recall and worsens
    related-present FPR.
-4. LURE-style factors as an analysis baseline: co-occurrence, uncertainty, and
-   generation position are already available or cheap to compute in this repo.
-5. Woodpecker/Volcano only if the paper needs a high-latency post-hoc correction
-   comparison; they are less central to the allocation-vs-verification claim.
+4. Discuss Woodpecker/UNIHD/Volcano as high-latency tool or revision pipelines
+   unless the final paper needs an explicit post-hoc correction comparison. They
+   are less central to the allocation-vs-verification claim.
+
+
+## Current TDEV Paper-Facing Tables
+
+`docs/tdev_ablation_summary.md` is regenerated by:
+
+```bash
+python scripts/build_tdev_ablation_summary.py
+```
+
+It currently consolidates the POPE semantic-neighbor ablation and CHAIR
+object-mention detection ablation. The table is the authoritative paper-facing
+checkpoint for TDEV numbers; individual result directories remain the source of
+truth for full metrics.
+
+Key current TDEV numbers:
+
+- POPE hybrid gate+rescue: macro MCC 0.763, macro TPR 0.806, macro FPR 0.051,
+  adversarial MCC 0.717, adversarial related-present FPR 0.105.
+- CHAIR hybrid MCC positive branch: 0.874 overall AUROC, 0.853 within-bin AUROC,
+  0.855 matched-pair AUROC.
+- CHAIR target absence plus 0.25 neighbor dominance: 0.874 overall AUROC,
+  0.852 within-bin AUROC, 0.854 matched-pair AUROC, and 0.722 residual AUROC.
+- LURE-style position+uncertainty: 0.831 overall AUROC but only 0.641
+  within-bin AUROC and 0.657 matched-pair AUROC. Generated-caption
+  co-occurrence support alone is near random: 0.576 overall AUROC and 0.496
+  within-bin AUROC.
+
+## ICML Readiness Checklist
+
+Current status for a credible ICML submission:
+
+| Requirement | Status | Evidence / next action |
+|---|---|---|
+| Controlled failure diagnosis | mostly complete | position controls, semantic-neighbor subsets, attention/decoding negative audits |
+| Paper-facing TDEV ablation | complete for LLaVA-1.5 | `docs/tdev_ablation_summary.md` |
+| External-detector positioning | complete for current draft | `docs/tdev_detector_positioning.md`; do not pitch OWLv2 as the method |
+| Cheap co-occurrence/position baseline | complete as analysis baseline | `detection/scripts/evaluate_lure_style_detection.py`; LURE-style factors remain far below TDEV under controls |
+| Strong decoding baseline beyond VCD | partial | OPERA subset remains the highest-value missing decoding baseline |
+| Caption-style mitigation evidence | incomplete | CHAIR detection is strong; end-to-end caption hallucination reduction is not yet shown |
+| Multi-model replication | missing | run core diagnosis and TDEV on one newer open LVLM or explicitly scope first paper to LLaVA-1.5 with limitation |
 
 ## Required Metrics for Any Added Baseline
 

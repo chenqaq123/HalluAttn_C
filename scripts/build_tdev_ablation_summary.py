@@ -9,6 +9,7 @@ summary so paper tables can be regenerated instead of copied by hand.
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 
@@ -47,6 +48,18 @@ CHAIR_SCORES = [
     "owlv2_hybrid_mcc_positive_branch_absence",
     "owlv2_target_absence_plus_neighbor_dominance_0.25",
     "owlv2_neighbor_presence",
+]
+
+
+CHAIR_BASELINE_SCORES = [
+    ("Position only", "lure_position"),
+    ("Entropy", "entropy_hallu_score"),
+    ("NLL", "nll_hallu_score"),
+    ("IC", "ic_hallu_score"),
+    ("LURE-style position+uncertainty", "lure_position_uncertainty"),
+    ("LURE-style all factors", "lure_style_all_factors"),
+    ("LURE-style cooccurrence support", "lure_cooccurrence_support"),
+    ("TDEV target absence + neighbor dominance", "owlv2_target_absence_plus_neighbor_dominance_0.25"),
 ]
 
 
@@ -114,6 +127,32 @@ def build_chair_rows() -> list[dict[str, str]]:
     return out
 
 
+def build_chair_baseline_rows() -> list[dict[str, str]]:
+    core_metrics = json.loads((ROOT / "detection/baselines/results/coco_llava_7b_baselines/metrics.json").read_text())
+    core_by_name = core_metrics["scores"]
+    lure = read_csv(ROOT / "detection/baselines/results/lure_style_detection/lure_style_detection_metrics.csv")
+    lure_by_name = {row["score"]: row for row in lure}
+    tdev = read_csv(ROOT / "detection/baselines/results/owlv2_region_posthoc_scores/owlv2_region_posthoc_metrics.csv")
+    tdev_by_name = {row["score"]: row for row in tdev}
+
+    out = []
+    for label, score in CHAIR_BASELINE_SCORES:
+        if score in core_by_name:
+            row = core_by_name[score]
+        elif score in lure_by_name:
+            row = lure_by_name[score]
+        else:
+            row = tdev_by_name[score]
+        out.append({
+            "score": label,
+            "overall": fmt(row["overall_auroc"]),
+            "within": fmt(row["within_bin_auroc"]),
+            "matched": fmt(row["matched_pair_auroc"]),
+            "residual": fmt(row["residual_auroc"]),
+        })
+    return out
+
+
 def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
     lines = [
         "| " + " | ".join(headers) + " |",
@@ -126,6 +165,7 @@ def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
 def main() -> None:
     pope_rows = build_pope_rows()
     chair_rows = build_chair_rows()
+    chair_baseline_rows = build_chair_baseline_rows()
 
     pope_table = markdown_table(
         ["POPE variant", "Macro MCC", "TPR", "FPR", "Adv. MCC", "Adv. related FPR", "Adv. plain FPR", "Gap"],
@@ -148,6 +188,13 @@ def main() -> None:
         [
             [row["score"], row["overall"], row["within"], row["matched"], row["residual"]]
             for row in chair_rows
+        ],
+    )
+    chair_baseline_table = markdown_table(
+        ["CHAIR baseline", "Overall", "Within-bin", "Matched-pair", "Residual"],
+        [
+            [row["score"], row["overall"], row["within"], row["matched"], row["residual"]]
+            for row in chair_baseline_rows
         ],
     )
     text = f"""# TDEV Ablation Summary
@@ -178,6 +225,15 @@ recovering some recall.
 Interpretation: target absence is the main CHAIR signal. The hybrid positive
 branch transfers to object mentions, and a moderate neighbor-dominance penalty
 improves position-residualized AUROC without collapsing the controlled AUROCs.
+
+## CHAIR Statistical Baseline Comparison
+
+{chair_baseline_table}
+
+Interpretation: LURE-style position and uncertainty factors are useful but mostly
+explain broad position/uncertainty effects. They remain far below TDEV on
+within-bin and matched-pair controls, and generated-caption co-occurrence support
+is near random by itself.
 """
     out_path = ROOT / "docs/tdev_ablation_summary.md"
     out_path.write_text(text, encoding="utf-8")
