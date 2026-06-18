@@ -136,9 +136,66 @@ false positives without reducing recall on Qwen2.5-VL. It is not yet a final
 multi-model paper table because it covers only the first 120 adversarial rows
 and reuses OWLv2 scores from the LLaVA audit cache.
 
+## Qwen2.5-VL Full Adversarial Split
+
+The 120-row pilot was promoted to the full 3,000-row POPE adversarial split.
+The run resumed from the existing 120 JSONL rows and skipped duplicate
+question IDs, then completed with exactly 3,000 predictions:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/run_qwen25vl_pope.py \
+  --pope_dir /home/chenguanxu/common_dataset/pope \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --pope_split adversarial \
+  --output_file mitigation/results/qwen25vl_pope_adversarial_full/pope/adversarial/vanilla/shard0.jsonl \
+  --device cuda:1 \
+  --limit 0 \
+  --max_new_tokens 16
+```
+
+POPE adversarial metrics:
+
+| Model | Split | Samples | Invalid | Acc | MCC | TPR | FPR | Yes rate |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Qwen2.5-VL-7B-Instruct | adversarial | 3000 | 0 | 0.863 | 0.736 | 0.786 | 0.059 | 0.423 |
+
+Semantic-neighbor subset metrics:
+
+| Subset | Samples | FPR | TNR | Yes rate |
+|---|---:|---:|---:|---:|
+| all negatives | 1500 | 0.059 | 0.941 | 0.059 |
+| related-present negatives | 1272 | 0.067 | 0.933 | 0.067 |
+| plain-absent negatives | 228 | 0.018 | 0.982 | 0.018 |
+
+Interpretation: the full split confirms the pilot direction. Qwen2.5-VL is a
+stronger base model than the current LLaVA-1.5 adversarial runs, but
+related-present negatives are still harder than plain absent negatives
+(6.7% vs. 1.8% FPR). This supports the semantic-neighbor failure-mode claim
+across model families, with the important caveat that the effect size is model
+dependent.
+
+## Fixed-Threshold TDEV on Qwen2.5-VL Full Adversarial
+
+The same LLaVA-selected hybrid operating point was applied to the full Qwen
+adversarial run without recalibration:
+
+| Model / rule | Samples | MCC | TPR | FPR | Related FPR | Plain FPR | Yes rate |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Qwen2.5-VL vanilla | 3000 | 0.736 | 0.786 | 0.059 | 0.067 | 0.018 | 0.423 |
+| Qwen2.5-VL + fixed TDEV hybrid | 3000 | 0.745 | 0.782 | 0.048 | 0.054 | 0.013 | 0.415 |
+
+The fixed rule lowers Qwen's overall FPR by 1.1 points and related-present FPR
+by 1.3 points while reducing TPR by only 0.4 points. This is stronger evidence
+than the 120-row pilot that the TDEV decision rule transfers as a verifier, not
+only as a LLaVA-specific calibration artifact. It is still not a complete
+multi-model paper table because only the adversarial split has been run for
+Qwen, and the OWLv2 score cache is reused from the semantic-neighbor audit.
+
 ## Next Action
 
-Promote Qwen2.5-VL to full adversarial or full POPE only after deciding whether
-load time is acceptable for the paper budget. If promoted, keep thresholds fixed
-for the first pass and report whether the semantic-neighbor gap and TDEV FPR
-reduction persist beyond the 120-row subset.
+If compute budget allows, extend Qwen2.5-VL to the random and popular POPE
+splits using the same generation path and fixed TDEV thresholds. The current
+paper-safe claim is adversarial-only cross-model replication: the
+semantic-neighbor gap and the fixed-threshold TDEV FPR reduction persist on the
+full adversarial split.

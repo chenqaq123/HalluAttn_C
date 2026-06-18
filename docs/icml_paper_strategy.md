@@ -319,7 +319,9 @@ matched object-count/length, not only accuracy or CHAIRi.
 Minimum ICML target:
 
 - LLaVA-1.5-7B, existing full run;
-- one newer open LVLM such as Qwen2.5-VL-7B (adversarial 120 vanilla plus fixed-threshold TDEV subset complete), LLaVA-NeXT, or InternVL;
+- one newer open LVLM such as Qwen2.5-VL-7B (full adversarial split complete:
+  vanilla MCC 0.736/FPR 0.059; fixed LLaVA-selected TDEV hybrid MCC 0.745/FPR
+  0.048), LLaVA-NeXT, or InternVL;
 - optional third model if compute allows.
 
 The key is not to rerun every baseline on every model; the main audit and TDEV
@@ -371,7 +373,9 @@ it satisfies three criteria:
    layers/patches.
 4. Move to OPERA or method-side TDEV improvements; local DAMRO and SPIN
    subsets do not show target-discriminative gains.
-5. Run a small multi-model pilot before expanding all tables.
+5. Extend the Qwen2.5-VL replication from adversarial-only to random/popular
+   splits if compute budget permits; otherwise present it explicitly as a
+   full-adversarial cross-model check rather than an all-splits table.
 
 ## 8. Current Paper Positioning Sentence
 
