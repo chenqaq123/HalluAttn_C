@@ -19,6 +19,25 @@ strong standalone mitigation paper. The motivation remains `looking is not
 grounding`: visual routing can be meaningful while failing target-object
 verification.
 
+
+## Result-Quality Decision After Recheck
+
+The latest artifact-level recheck confirms that the results are accurate but
+modest. This changes the execution emphasis:
+
+1. Do not spend the next phase trying to make LH-Shape look like a standalone
+   detector; current POPE evidence contradicts that role.
+2. Do not frame OWLv2/TDEV as a generic external-detector pipeline; related work
+   already covers high-latency tool validation and correction.
+3. Prioritize experiments and figures that expose the target-vs-neighbor
+   failure: related-present examples, target evidence versus best-neighbor
+   evidence, and attention/decoding baselines that still answer `yes`.
+4. Treat TDEV as a verifier that partially repairs this failure, plus LH-Shape
+   as a cost-saving router into that verifier.
+5. The next publishability bottleneck is not another aggregate POPE point; it is
+   a cleaner constructive story for caption-style correction and a fair positive
+   control against recent head/region steering methods.
+
 ## Current Paper-Safe Claims
 
 1. **The failure mode is real.** Related-present negatives are consistently

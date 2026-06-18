@@ -23,6 +23,17 @@ TDEV-region is a constructive verifier for this criterion. LH-Shape is a
 supervised internal triage signal. Neither should be described as a full
 solution to hallucination.
 
+
+A fresh result-quality recheck on 2026-06-18 confirms the same boundary. The
+numbers are reproducible from saved artifacts, but they are not large enough to
+support a headline claim that TDEV or LH-Shape is a strong standalone detector.
+Full POPE TDEV improves MCC from 0.730 to 0.763 and lowers FPR from 0.087 to
+0.051; LH-alone collapses TPR to 0.432. The important evidence is mechanistic:
+among vanilla related-present false positives, semantic-neighbor evidence
+exceeds target evidence in 96.0% of cases, and TDEV fixes 39.8% of them. This
+keeps the paper aligned with `looking is not grounding`: the model often sees
+plausible associated evidence, but does not verify the queried target.
+
 ## Claim Gate
 
 | Candidate claim | Current status | Evidence | Paper wording |

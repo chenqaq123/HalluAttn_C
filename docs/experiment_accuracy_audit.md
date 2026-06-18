@@ -4,6 +4,58 @@ This audit records the current evidence that the main experimental conclusions
 are supported by saved artifacts. It should be updated whenever results are
 regenerated.
 
+
+## Latest Recheck: Result Quality and Claim Scope
+
+Date: 2026-06-18
+
+After the concern that the current numbers are modest and may have drifted away
+from the original `looking is not grounding` finding, the core result files were
+rechecked from saved predictions and score caches.
+
+Commands rerun:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/baselines/analyze_controls.py \
+  --result_dir detection/baselines/results/coco_llava_7b_baselines \
+  --output_dir /tmp/coco_llava_7b_baselines_control_verify
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/build_pope_internal_external_ablation.py \
+  --output_dir /tmp/pope_internal_external_ablation_verify
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/build_pope_mechanism_alignment.py \
+  --output_dir /tmp/pope_mechanism_alignment_verify \
+  --examples_per_split 6
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/audit_qwen25vl_replication.py
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  scripts/build_tdev_ablation_summary.py
+```
+
+The reruns support the numerical conclusions but not a strong standalone
+mitigation claim:
+
+| Check | Recomputed result | Claim implication |
+|---|---:|---|
+| CHAIR position-only AUROC | 0.830414 | generation position is a strong confound |
+| PAS controlled AUROC | overall 0.834859, within-bin 0.592847, same-word 0.569094 | high global attention score is not target grounding |
+| SVAR controlled AUROC | overall 0.833643, within-bin 0.574802, same-word 0.565447 | same proxy failure as PAS |
+| POPE vanilla -> full TDEV | MCC 0.730 -> 0.763, FPR 0.087 -> 0.051 | real but modest verification gain |
+| POPE LH-alone | MCC 0.495, TPR 0.432 | contradicted as standalone mitigation |
+| POPE LH->TDEV base-yes 50% | 2,025 calls, MCC 0.754, FPR 0.056 | useful routing into verifier |
+| POPE mechanism alignment | neighbor dominance in 96.0% of vanilla related FPs; TDEV fixes 39.8% | matches associated-evidence failure, but is incomplete |
+| Qwen2.5-VL replication audit | errors=[], fixed TDEV MCC 0.765125 -> 0.768808 | cross-model direction holds but gain is small |
+
+Conclusion: the experiments are internally consistent. The paper should not be
+written as "we found a strong detector." The defensible claim is that semantic-
+neighbor target verification diagnoses and partially repairs the precise proxy
+failure exposed by `looking is not grounding`.
+
 ## Detection Baselines
 
 Result root:
