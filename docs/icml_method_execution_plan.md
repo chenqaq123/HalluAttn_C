@@ -86,12 +86,15 @@ training-free baseline table.
 
 Next implementation target:
 
-1. Test whether calibrated LH-Shape can gate or prefilter POPE semantic-neighbor
-   decisions, especially related-present false positives.
-2. Evaluate whether LH-Shape can prefilter expensive OWLv2/TDEV-region calls in
-   caption mitigation without losing the CHAIR gains.
-3. If transfer is weak, present LH-Shape as an internal diagnostic/practicality
-   ablation rather than the primary mitigation method.
+1. Build a POPE question-token per-head cache before claiming LH-Shape transfer
+   to semantic-neighbor yes/no gating; no such cache exists in the current
+   artifacts.
+2. Treat LH-Shape prefiltering as a CHAIR-side practicality result: it can save
+   25% of OWLv2 calls while retaining 99.6% of full TDEV top-5 hallucination
+   deletions at 75% call rate, but position-only/PAS are competitive at higher
+   call rates.
+3. Present LH-Shape as an internal calibrated TDEV-lite diagnostic and triage
+   ablation unless POPE transfer passes the same semantic-neighbor controls.
 
 ## Baseline Priority
 
@@ -114,8 +117,9 @@ Next implementation target:
    MCC branch reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is
    a fluent rewrite or decoding integration rather than raw phrase deletion.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
-   CHAIR detection; next test whether it transfers to POPE semantic-neighbor
-   gating or can prefilter TDEV-region calls.
+   CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
+   calls, but the gain is partly shared by position/PAS prefilters; POPE
+   semantic-neighbor transfer still requires a question-token per-head cache.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
 4. **Baseline availability check.** Re-check CAI/CAST/region-aware code before

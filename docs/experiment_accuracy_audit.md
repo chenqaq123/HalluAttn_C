@@ -182,6 +182,51 @@ reported separately from unsupervised detectors. The next required check is
 whether the same calibrated readout transfers to semantic-neighbor POPE gating or
 serves as a cheap prefilter before TDEV-region.
 
+### LH-Shape to TDEV-Region Cascade Audit
+
+`detection/scripts/evaluate_lh_shape_tdev_cascade.py` tests a practical use of
+TDEV-lite that does not claim to replace OWLv2: use the calibrated LH-Shape
+linear readout as a cheap prefilter, then call OWLv2/TDEV-region only on the
+selected object mentions. The simulation keeps the full TDEV-region deletion
+threshold fixed, so missed candidates directly count as lost TDEV deletions.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/evaluate_lh_shape_tdev_cascade.py \
+  --cache_glob 'experiments/coco_llava_7b_rows/per_head_row_cache_shard*.npz' \
+  --generation_json experiments/coco_llava_7b/generation.json \
+  --baseline_scores_csv detection/baselines/results/coco_llava_7b_baselines/baseline_scores.csv \
+  --owlv2_scores_csv detection/baselines/results/owlv2_region_detection/owlv2_region_detection_scores.csv \
+  --output_dir detection/baselines/results/lh_shape_tdev_cascade
+```
+
+Result files:
+
+```text
+detection/baselines/results/lh_shape_tdev_cascade/lh_shape_tdev_cascade_metrics.json
+detection/baselines/results/lh_shape_tdev_cascade/lh_shape_tdev_cascade_metrics.csv
+```
+
+For the full TDEV hybrid-positive top-5% deletion set, LH-Shape prefiltering has
+this conservative retention behavior:
+
+| Prefilter | OWLv2 call rate | Hallucination coverage in candidates | Retained full-TDEV hallucination deletions | Cascade hallucination reduction | Grounded loss |
+|---|---:|---:|---:|---:|---:|
+| LH-Shape linear 22+31 | 25% | 0.639 | 0.706 | 0.120 | 0.002 |
+| IC | 25% | 0.525 | 0.670 | 0.114 | 0.003 |
+| position-only | 25% | 0.566 | 0.627 | 0.107 | 0.002 |
+| LH-Shape linear 22+31 | 50% | 0.923 | 0.934 | 0.159 | 0.006 |
+| position-only | 50% | 0.903 | 0.949 | 0.162 | 0.005 |
+| LH-Shape linear 22+31 | 75% | 0.990 | 0.996 | 0.170 | 0.009 |
+
+Interpretation: LH-Shape can save about 25% of OWLv2 calls while preserving
+nearly all top-5% TDEV hallucination deletions, and it is strongest among the
+25% candidate prefilters. However, position-only and PAS become competitive at
+50%-75% call rates. This is a useful practicality ablation, not proof of POPE
+transfer or a standalone mitigation method.
+
 ## Detection Reproducibility Guard
 
 A real smoke run exposed a processor-version mismatch: current transformers

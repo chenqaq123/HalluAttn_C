@@ -93,9 +93,13 @@ select heads or regions more carefully than mean attention.
    ablation (`detection/baselines/results/lh_shape/lh_shape_metrics.json`), but
    calibrated LH-Shape linear readout is positive
    (`detection/baselines/results/lh_shape_linear/lh_shape_linear_metrics.json`):
-   layers 22+31 reach 0.755 within-bin and 0.745 matched-pair AUROC. Next, test
-   POPE transfer or OWLv2-prefiltering; keep HALP as related work or an
-   official-code baseline if code becomes available.
+   layers 22+31 reach 0.755 within-bin and 0.745 matched-pair AUROC. The CHAIR
+   cascade audit (`detection/baselines/results/lh_shape_tdev_cascade/lh_shape_tdev_cascade_metrics.json`)
+   shows LH-Shape can prefilter OWLv2/TDEV-region calls, especially at a 25%
+   candidate budget, but position-only and PAS are competitive at 50%-75% call
+   rates. Next, build a POPE per-head cache before claiming semantic-neighbor
+   transfer; keep HALP as related work or an official-code baseline if code
+   becomes available.
 4. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.
@@ -144,7 +148,7 @@ Current status for a credible ICML submission:
 | External-detector positioning | complete for current draft | `docs/tdev_detector_positioning.md`; do not pitch OWLv2 as the method |
 | Cheap co-occurrence/position baseline | complete as analysis baseline | `detection/scripts/evaluate_lure_style_detection.py`; LURE-style factors remain far below TDEV under controls |
 | Strong decoding baseline beyond VCD | partial | OPERA official-hook interface is wired; still need an environment with the OPERA transformers fork and an adversarial subset result |
-| Caption-style mitigation evidence | proxy/text-edit and official CHAIR rerun complete on object-mention scope | CHAIR detection is strong; object-mention filtering proxy removes 17.0% of hallucinated mentions at 1.1% grounded loss for the top-5% hybrid branch. Official PAS CHAIR on the 4,977-image object-mention scope drops from CHAIRi 0.1340/CHAIRs 0.4921 to 0.1186/0.4505 for top-5%, and to 0.1048/0.4047 for top-10% hybrid MCC. Still not a fluent rewriter or decoding-time result |
+| Caption-style mitigation evidence | proxy/text-edit and official CHAIR rerun complete on object-mention scope | CHAIR detection is strong; object-mention filtering proxy removes 17.0% of hallucinated mentions at 1.1% grounded loss for the top-5% hybrid branch. Official PAS CHAIR on the 4,977-image object-mention scope drops from CHAIRi 0.1340/CHAIRs 0.4921 to 0.1186/0.4505 for top-5%, and to 0.1048/0.4047 for top-10% hybrid MCC. LH-Shape cascade triage can save 25% of OWLv2 calls while retaining 99.6% of full top-5 hallucination deletions, but this remains a cache-only triage simulation, not a fluent rewriter or decoding-time result |
 | Multi-model replication | full all-splits evidence | Qwen2.5-VL full POPE vanilla has macro MCC 0.765/FPR 0.033; fixed LLaVA-selected TDEV hybrid improves to macro MCC 0.769/FPR 0.027 with TPR 0.782 vs. 0.786. Macro related-present FPR drops from 0.041 to 0.034 (`docs/multimodel_replication_audit.md`). |
 
 ## Required Metrics for Any Added Baseline
