@@ -107,8 +107,11 @@ select heads or regions more carefully than mean attention.
    suppress-only TDEV triage rather than standalone mitigation: with
    2,025/9,000 detector calls, `base_yes_selected` reaches FPR 0.056 and
    related-present FPR 0.075, close to full TDEV's 0.051 and 0.069, though full
-   hybrid rescue TPR is not recovered. Keep HALP as related work or an
-   official-code baseline if code becomes available.
+   hybrid rescue TPR is not recovered. A compact internal-vs-external ablation
+   further shows LH-alone suppression collapses TPR to 0.432, while LH-routed
+   TDEV beats prompt-position and target-length routing controls at the same
+   detector-call budget. Keep HALP as related work or an official-code baseline
+   if code becomes available.
 4. Deprioritize full SPIN unless a stronger official-parity setting is needed;
    both default and mild adversarial 120-row checks fail to show target-
    discriminative gains.

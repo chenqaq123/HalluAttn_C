@@ -193,7 +193,7 @@ def main() -> None:
         "num_lh_prediction_rows": len(lh_rows),
         "metrics": summary_rows,
         "predictions_csv": str(output_dir / "pope_lh_tdev_cascade_predictions.csv"),
-        "caveat": "Pilot cascade uses cached 120-row-per-split LH-Shape OOF scores and existing OWLv2/TDEV predictions; it estimates call savings, not full-cache final performance.",
+        "caveat": "Cascade uses cached LH-Shape OOF scores and existing OWLv2/TDEV predictions; it estimates detector-call savings from saved predictions, not a fresh detector runtime benchmark.",
     }
     with (output_dir / "pope_lh_tdev_cascade_metrics.json").open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, sort_keys=True)

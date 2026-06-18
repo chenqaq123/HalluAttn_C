@@ -6,7 +6,7 @@
     0.75,
     1.0
   ],
-  "caveat": "Pilot cascade uses cached 120-row-per-split LH-Shape OOF scores and existing OWLv2/TDEV predictions; it estimates call savings, not full-cache final performance.",
+  "caveat": "Cascade uses cached LH-Shape OOF scores and existing OWLv2/TDEV predictions; it estimates detector-call savings from saved predictions, not a fresh detector runtime benchmark.",
   "lh_predictions_csv": "mitigation/results/pope_lh_shape_transfer_full_imagecv/pope_lh_shape_transfer_predictions.csv",
   "metrics": [
     {

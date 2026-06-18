@@ -3,29 +3,43 @@
 Date: 2026-06-18
 
 This note turns the current audits into an execution plan for a complete ICML
-submission. It assumes the current result gates are authoritative:
+submission. It should be read together with `docs/claims_alignment_audit.md`,
+which is the current hard gate on what the evidence does and does not support.
+The current result gates are authoritative:
 
 - `mitigation/scripts/audit_qwen25vl_replication.py` for Qwen2.5-VL all-splits
   replication;
 - `scripts/build_tdev_ablation_summary.py` for the paper-facing TDEV ablation
-  table and machine-readable summary.
+  table and machine-readable summary;
+- `mitigation/scripts/build_pope_internal_external_ablation.py` for the current
+  internal-vs-external routing/verification ablation.
+
+The paper should be treated as a diagnostic-plus-verification paper, not as a
+strong standalone mitigation paper. The motivation remains `looking is not
+grounding`: visual routing can be meaningful while failing target-object
+verification.
 
 ## Current Paper-Safe Claims
 
 1. **The failure mode is real.** Related-present negatives are consistently
    harder than plain-absent negatives under LLaVA and Qwen2.5-VL.
-2. **Attention/decoding shortcuts are insufficient.** Mean attention, attention
+2. **Looking is not grounding.** Attention-mass and hand-crafted attention-shape
+   scores can track generation position, visual routing, or associated evidence
+   without verifying the target object.
+3. **Attention/decoding shortcuts are insufficient.** Mean attention, attention
    redistribution, VCD-greedy, local SPIN settings, and local DAMRO settings do
    not pass semantic-neighbor controls.
-3. **Target-discriminative region evidence works better than generic grounding.**
+4. **Target-discriminative region evidence works better than generic grounding.**
    Raw OWLv2 target evidence is strong but over-fires on related-present
    negatives; target-vs-neighbor verification reduces those errors.
-4. **The strongest current method shape is asymmetric.** Use TDEV mainly to
-   verify unsafe positive claims, and only rescue `no` answers under very high
-   target evidence.
-5. **The claim must stay scoped.** OWLv2 is an evidence backend, not the
-   contribution. Qwen evidence is output-level plus model-independent region
-   verification, not Qwen internal attention evidence.
+5. **The strongest current method shape is asymmetric but modest.** Use TDEV
+   mainly to verify unsafe positive claims, and only rescue `no` answers under
+   very high target evidence. Report it as reducing semantic-neighbor false
+   positives, not as solving hallucination.
+6. **The claim must stay scoped.** OWLv2 is an evidence backend, not the
+   contribution. LH-Shape is supervised triage, not a standalone internal
+   mitigation method. Qwen evidence is output-level plus model-independent
+   region verification, not Qwen internal attention evidence.
 
 ## Method to Present
 
@@ -51,8 +65,10 @@ For caption object mentions:
 - evaluate under within-bin, matched-pair, and residual controls, not only
   overall AUROC.
 
-This gives the paper a constructive method while keeping the main insight
-backend-agnostic.
+This gives the paper a constructive verification criterion while keeping the
+main insight backend-agnostic. It should not be described as a complete
+hallucination solution; the current POPE gain is mostly a false-positive
+reduction on semantic-neighbor cases.
 
 ## Practicality Path
 
@@ -92,7 +108,10 @@ Current implementation target:
    0.205, so it is not a deployable standalone POPE gate. As a suppress-only
    triage layer before TDEV-region, it is useful: `base_yes_selected` reaches
    FPR 0.056 and related-present FPR 0.075 with 2,025/9,000 detector calls,
-   close to full TDEV's 0.051 and 0.069.
+   close to full TDEV's 0.051 and 0.069. A matched-budget ablation confirms the
+   role split: LH-alone suppression collapses TPR to 0.432, while LH-routed
+   TDEV at the same 2,025-call budget beats prompt-position and target-length
+   routing controls on MCC and related-present FPR.
 2. Treat LH-Shape prefiltering as a CHAIR-side practicality result: it can save
    25% of OWLv2 calls while retaining 99.6% of full TDEV top-5 hallucination
    deletions at 75% call rate, but position-only/PAS are competitive at higher
@@ -113,6 +132,12 @@ Current implementation target:
 
 ## Next Experiments
 
+0. **Mechanism alignment figure/table.** Before adding another method, build a
+   small qualitative/quantitative table of related-present cases showing the
+   original defect: the model or attention baseline has plausible visual routing
+   or associated evidence, but the target object is absent. This reconnects the
+   solution to `looking is not grounding` and prevents the story from drifting
+   into an external-detector pipeline.
 1. **Caption mitigation beyond the proxy.** The object-mention filter proxy,
    deterministic text-edit proxy, and official post-edit PAS CHAIR rerun now
    all show useful hallucination reduction at low caption-length cost. On the
@@ -163,11 +188,14 @@ The defensible contribution is narrower and cleaner:
 4. Any paper table involving LH-Shape should report it as supervised internal
    triage/TDEV-lite, not as training-free mitigation.
 
-Next concrete experiment choice: do not spend the next slot building another
-external detector pipeline. The higher-value addition is an internal-vs-external
-ablation table that shows what each component contributes under semantic-neighbor
-controls: vanilla, prompt-only, LH-Shape alone, TDEV-region, LH->TDEV triage,
-and position/PAS triage controls at matched detector-call budgets.
+The next concrete experiment choice from the literature refresh has now been
+partly completed. The internal-vs-external ablation shows that LH-Shape is not a
+standalone mitigator, but it is a useful router into target-vs-neighbor
+verification: at 2,025/9,000 TDEV calls, LH-routed TDEV reaches MCC 0.754 and
+related-present FPR 0.075, compared with prompt-position routing at 0.741/0.091
+and target-length routing at 0.743/0.087. This supports the paper framing: do
+not build another external detector pipeline next; strengthen the semantic-
+neighbor verification criterion and its cheap routing story.
 
 ## Sources Checked
 
