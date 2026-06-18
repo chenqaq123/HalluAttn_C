@@ -116,11 +116,15 @@ Use current scoped numbers:
 | vanilla | 0.1340 | 0.4921 | 89.54 | 4,977-image object-mention scope |
 | neutral rewrite top-5 | 0.1186 | 0.4505 | 89.41 | deterministic local placeholder rewrite |
 | generic noun rewrite top-5 | 0.1186 | 0.4505 | 89.53 | deterministic generic object rewrite |
+| sentence gate top-5 | 0.1165 | 0.4396 | 86.53 | prototype only; too coarse for appendix table unless discussed as negative evidence |
 | deletion top-10 | 0.1048 | 0.4047 | 88.98 | stronger but less natural edit |
 
 Required wording: this is deterministic post-processing/proxy evidence, not
 natural generation or decoding-time mitigation. The generic-noun row is a
-length-preserving stress test, not evidence of fluent visual correction.
+length-preserving stress test, not evidence of fluent visual correction. The
+sentence-gate prototype is more grammatical than clause deletion but too
+length-destructive, so it should be discussed only as a method-direction check
+unless a decode-time object-phrase gate replaces it.
 
 ## Recommended Next Paper Edits
 
@@ -131,7 +135,8 @@ length-preserving stress test, not evidence of fluent visual correction.
    the headline claim.
 3. The highest-value next paper edit is now a fluent caption-side correction
    subsection only if the method produces natural local rewrites or constrained
-   regeneration results; the generic-noun proxy is not enough for that role.
+   decoding results; neither the generic-noun proxy nor the sentence gate is
+   enough for that role.
 4. Re-check CAI/CAST/Focus Matters/Region-Aware code before experiment freeze;
    if official code appears, run only the bounded semantic-neighbor audit first.
 

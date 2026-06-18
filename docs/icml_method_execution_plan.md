@@ -206,10 +206,12 @@ failure to the constructive TDEV method.
    from 0.4921 to 0.4505 while reducing mean length by 0.134 words; the
    top-5% generic-noun rewrite reaches the same CHAIR numbers while reducing
    mean length by only 0.011 words, showing the effect is not just caption
-   shortening but also not fluent visual correction. The top-10% deletion branch
-   reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step is bounded
-   target-discriminative decoding or fluent constrained regeneration, not more
-   deterministic placeholder variants.
+   shortening but also not fluent visual correction. A sentence-level gate
+   prototype reaches CHAIRi 0.1165 and CHAIRs 0.4396 but removes 3.01 words per
+   caption on average, so completed-sentence deletion is too coarse. The top-10%
+   deletion branch reduces CHAIRi to 0.1048 and CHAIRs to 0.4047. The next step
+   is bounded target-discriminative decoding at object-token/object-phrase
+   granularity, not more deterministic placeholder or sentence-deletion variants.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

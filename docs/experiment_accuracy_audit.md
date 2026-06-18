@@ -978,6 +978,45 @@ targets, not evidence that the current system performs fluent visual correction.
 It should remain appendix/proxy evidence until a fluent regeneration or
 decoding-time implementation is added.
 
+### TDEV Caption Sentence-Gate Prototype
+
+`detection/scripts/evaluate_tdev_caption_clause_gate.py` tests a stricter local
+claim-suppression proxy for the proposed target-discriminative decoding gate. It
+selects the same high-risk top-5% TDEV object mentions, but instead of replacing
+the matched object with a placeholder or generic noun, it removes the sentence
+that contains the unsupported object claim. The script also retains an optional
+`--gate_unit clause` mode, but the clause heuristic produced dangling fragments
+in manual inspection; the reported result uses the default sentence gate.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python   detection/scripts/evaluate_tdev_caption_clause_gate.py   --output_dir detection/baselines/results/tdev_caption_sentence_gate_top5   --top_frac 0.05   --run_chair
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_caption_sentence_gate_top5/
+```
+
+Official PAS CHAIR comparison on the same 4,977-image object-mention scope:
+
+| Policy | CHAIRi | CHAIRs | Mean words | Mean object mentions | Mean hallucinated mentions |
+|---|---:|---:|---:|---:|---:|
+| vanilla anchor | 0.133984 | 0.492063 | 89.541 | 7.641 | 1.024 |
+| generic noun rewrite, top 5% | 0.118630 | 0.450472 | 89.530 | 7.476 | 0.887 |
+| sentence gate, top 5% | 0.116529 | 0.439622 | 86.528 | 7.273 | 0.847 |
+| deletion edit, top 10% | 0.104762 | 0.404661 | 88.975 | 7.317 | 0.767 |
+
+Interpretation: sentence-level claim suppression is more grammatical than the
+failed clause heuristic and avoids placeholder artifacts, but it is too coarse.
+It improves CHAIRi/CHAIRs slightly beyond the top-5 generic rewrite while
+removing about three words per caption on average. The stronger top-10 word-level
+deletion result still achieves lower CHAIR with a smaller length penalty. This
+means the target-discriminative gate should be implemented at decoding time or at
+object-phrase granularity, not by deleting completed sentences after generation.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The

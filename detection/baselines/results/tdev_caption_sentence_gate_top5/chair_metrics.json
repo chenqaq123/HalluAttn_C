@@ -1,0 +1,54 @@
+{
+  "chair_pkl": "../pas/data/chair_coco.pkl",
+  "delta": {
+    "delta_caption_stats_mean_hallucinated_mentions": -0.1762105686156319,
+    "delta_caption_stats_mean_object_mentions": -0.3676913803496076,
+    "delta_caption_stats_mean_words": -3.012457303596534,
+    "delta_caption_stats_num_captions": 0,
+    "delta_caption_stats_total_hallucinated_mentions": -877,
+    "delta_caption_stats_total_object_mentions": -1830,
+    "delta_chair_CHAIRi": -0.017454754273767886,
+    "delta_chair_CHAIRs": -0.05244122965641951,
+    "delta_chair_F1": 0.009100291041993502,
+    "delta_chair_Len": -0.03359453486035757,
+    "delta_chair_Precision": 0.03172004402098161,
+    "delta_chair_Recall": -0.013642650572111115
+  },
+  "gated": {
+    "caption_stats": {
+      "mean_hallucinated_mentions": 0.8474984930681133,
+      "mean_object_mentions": 7.272855133614628,
+      "mean_words": 86.52822985734379,
+      "num_captions": 4977,
+      "total_hallucinated_mentions": 4218,
+      "total_object_mentions": 36197
+    },
+    "chair": {
+      "CHAIRi": 0.11652899411553444,
+      "CHAIRs": 0.43962226240707253,
+      "F1": 0.7771938206720814,
+      "Len": 0.9623086196503918,
+      "Precision": 0.7876557556975918,
+      "Recall": 0.7670061611970326
+    }
+  },
+  "sample_scope": "images with CHAIR object mentions in the OWLv2 score CSV",
+  "vanilla": {
+    "caption_stats": {
+      "mean_hallucinated_mentions": 1.0237090616837452,
+      "mean_object_mentions": 7.640546513964235,
+      "mean_words": 89.54068716094032,
+      "num_captions": 4977,
+      "total_hallucinated_mentions": 5095,
+      "total_object_mentions": 38027
+    },
+    "chair": {
+      "CHAIRi": 0.13398374838930233,
+      "CHAIRs": 0.49206349206349204,
+      "F1": 0.7680935296300879,
+      "Len": 0.9959031545107494,
+      "Precision": 0.7559357116766102,
+      "Recall": 0.7806488117691437
+    }
+  }
+}

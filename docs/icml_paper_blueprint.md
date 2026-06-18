@@ -195,7 +195,7 @@ Recommended main tables:
 | Table 3: TDEV ablations | Show target score, margin, two-stage, hybrid tradeoffs | target direct MCC `0.777` but related FPR `0.184`; strict margin FPR low but TPR `0.359`; hybrid MCC `0.763`. |
 | Table 4: TDEV-lite routing | Practicality | LH-alone MCC `0.495`; LH-routed TDEV `2,025/9,000` calls, MCC `0.754`, related FPR `0.075`. |
 | Table 5: Cross-model Qwen | Scoped transfer | vanilla MCC `0.765`; fixed TDEV MCC `0.769`; related FPR `0.041 -> 0.034`. |
-| Appendix table: caption correction | Useful but secondary | neutral rewrite CHAIRi `0.1340 -> 0.1186`, CHAIRs `0.4921 -> 0.4505`. |
+| Appendix table: caption correction | Useful but secondary | neutral/generic rewrite CHAIRi `0.1340 -> 0.1186`; sentence gate reaches CHAIRi `0.1165` but removes `3.01` words on average; top-10 deletion reaches CHAIRi `0.1048`. |
 
 Recommended figures:
 
@@ -246,8 +246,10 @@ Required only if the paper aims for a stronger method identity:
 
 1. **Fluent caption-side correction.**
    Replace deterministic deletion/neutral placeholders with sentence-local
-   constrained regeneration or a decoding-time object gate. This is the biggest
-   current method weakness.
+   constrained regeneration or a decoding-time object gate. The offline
+   sentence-gate prototype is too coarse, so the useful version must act at
+   object-token/object-phrase granularity. This is the biggest current method
+   weakness.
 2. **Matched positive baselines if code appears.**
    Re-check CAI, CAST, and Region-Aware Attention Recalibration close to paper
    freeze. If runnable code exists, evaluate the semantic-neighbor subset, not

@@ -19,7 +19,7 @@ The result profile is mixed, not weak everywhere.
 | Is the semantic-neighbor failure real? | Yes. In full POPE related-present negatives, neighbor evidence exceeds target evidence in `98.6%` of rows and in `96.0%` of vanilla related FPs. | This is the strongest bridge from motivation to method. |
 | Does TDEV repair the exact failure? | Partly. Hybrid TDEV lowers macro related FPR from `0.114` to `0.069` and MCC from `0.730` to `0.763`; it corrects `39.8%` of vanilla related-present FPs. | Claim "reduces semantic-neighbor false positives", not "solves hallucination". |
 | Is raw detector evidence enough? | No. Direct OWLv2 target evidence has high aggregate MCC but related FPR `0.184` and adversarial related FPR `0.281`. | This supports target-vs-neighbor verification as the novelty, not external detection. |
-| Is current caption correction a real solution? | No. Neutral/generic rewrites lower CHAIRi/CHAIRs, but generic noun replacement shows that CHAIR can improve by replacing claims with broad nouns. | Keep caption correction in appendix as proxy evidence only. |
+| Is current caption correction a real solution? | No. Neutral/generic rewrites lower CHAIRi/CHAIRs, but generic noun replacement shows that CHAIR can improve by replacing claims with broad nouns. A sentence-gate prototype is more grammatical but too coarse: CHAIRi `0.1165`, CHAIRs `0.4396`, mean words `86.53`. | Keep caption correction in appendix/prototype evidence only. |
 | Is LH-Shape a standalone practical method? | No. LH-alone suppress collapses TPR to `0.432`; LH-routed TDEV is useful only as triage. | Present as supervised routing into TDEV, not mitigation. |
 
 ## Why This Still Matches Looking Is Not Grounding
@@ -88,6 +88,12 @@ Mechanism:
 Why this fits: it intervenes exactly at unsupported object claims, so it is
 closer to the original failure than post-hoc placeholder rewriting. It also gives
 caption-side evidence without pretending generic nouns are visual correction.
+
+Preliminary offline result: sentence-level suppression gives a cleaner output
+than the failed clause heuristic but is too coarse (`-3.01` mean words for only
+`-0.0175` CHAIRi). This confirms that the useful version of Route A must gate
+object-token or object-phrase continuations during decoding, not delete completed
+sentences after generation.
 
 Risk: it requires generation hooks and careful token/object mapping; if too
 slow, report it as a small-scale proof of concept on the 4,977 CHAIR scope.
