@@ -22,7 +22,10 @@ It is a public-code decoding baseline and directly tests whether dynamic
 language-prior suppression fixes the same failure mode. The first run should be
 the adversarial semantic-neighbor subset; full all-split POPE/CHAIR reruns are
 justified only if the subset lowers related-present FPR without a yes-rate or
-caption-length shortcut.
+caption-length shortcut. The compatibility caveat is recorded in
+`docs/nolan_baseline_feasibility.md`: the official code targets an older
+transformers/torch stack and monkey-patches sampling, so it needs a guarded port
+or isolated environment before use.
 
 Do not spend the next phase implementing unofficial approximations of CAI, CAST,
 Focus Matters, BRACS, AIR, or Region-Aware Attention Recalibration. If official

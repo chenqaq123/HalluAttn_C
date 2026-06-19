@@ -169,7 +169,8 @@ whether a recent method is runnable, a required baseline, or only related work.
 | P2 | Woodpecker/UNIHD/Volcano | Discuss as high-latency tool/revision systems unless the paper needs a broad post-hoc correction comparison. |
 
 For NoLan, code is already public, so the next baseline action is a guarded
-adversarial semantic-neighbor subset run. For other P0 methods, first confirm an
+adversarial semantic-neighbor subset run after the compatibility checks in
+`docs/nolan_baseline_feasibility.md`. For other P0 methods, first confirm an
 official runnable repository. In all cases, report MCC, TPR, FPR, yes rate,
 related-present FPR, plain-absent FPR, and the related-minus-plain gap. Full
 all-split reruns are only justified if the subset result changes the paper
