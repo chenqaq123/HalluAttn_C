@@ -54,10 +54,11 @@ head/region steering methods are runnable baselines or related-work pressure.
    regeneration, a learned/LLM sentence-local rewrite, or a decoding-time object
    gate if local generation hooks are reliable.
 2. **Positive head/region baselines are not fully reproduced.** Current local
-   ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, and DAMRO subset.
-   CAI/CAST, Focus Matters, and Region-Aware Attention Recalibration remain
-   closest attention/visual-token competitors; run semantic-neighbor subset
-   audits only if usable code appears.
+   ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, DAMRO subset, and
+   NoLan-compatible all-splits. AIR official code is now accessible and is the
+   next P0 attention-reallocation audit candidate; CAI/CAST, Focus Matters, and
+   Region-Aware Attention Recalibration remain close competitors to audit if
+   usable code appears.
 3. **TDEV-region uses OWLv2.** This is acceptable as a backend for the criterion
    only if the paper repeatedly states that OWLv2 is not the contribution.
 4. **Effect sizes are modest on strong models.** Qwen improves only slightly.

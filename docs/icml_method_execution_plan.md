@@ -161,7 +161,7 @@ whether a recent method is runnable, a required baseline, or only related work.
 |---|---|---|
 | Done | NoLan | Deterministic compatible port complete on POPE random/popular/adversarial. It lowers FPR and related-present FPR but lowers TPR/yes rate and should not be claimed as official NoLan. |
 | P0 | OPERA | Keep guarded integration; only report numbers if the environment passes `check_opera_support.py`. |
-| P0 | AIR | ArXiv v2 says code is available, but the stable repository URL was not recovered in the June 19 refresh. Find official repo; do not implement a surrogate. |
+| P0 | AIR | Official repo recovered at `https://github.com/Ice-wave/AIR`; inspect/run only in isolated AIR/LLaVA env, starting with an adversarial semantic-neighbor subset. |
 | P0 | CAI/CAST | Closest caption-query/head-steering baselines. As of the June 19, 2026 refresh, no direct official code link was found. Do not implement an unofficial surrogate; run a bounded semantic-neighbor audit only if official code appears. |
 | P0 | Region-Aware Attention Recalibration | Closest region/head recalibration baseline. The arXiv page says code will be public, but no runnable code was found in the refresh. Monitor and audit related-present negatives when available. |
 | P1 | BRACS | Recent adaptive closed-form steering baseline with CHAIR/POPE claims but no direct code found in the refresh. Treat as related work unless official code appears. |

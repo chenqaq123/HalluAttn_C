@@ -1,0 +1,93 @@
+# AIR Baseline Feasibility Note
+
+Date: 2026-06-19
+
+This note records the June 19 refresh for **AIR: Attention Imbalance
+Rectification**. AIR is now the closest newly runnable attention-reallocation
+baseline after NoLan. It should be treated as a P0 official-code candidate, but
+not as a drop-in method for the current HuggingFace mitigation runner.
+
+## Source Check
+
+- Paper: `https://arxiv.org/abs/2603.24058`.
+- Official repository from the arXiv code link: `https://github.com/Ice-wave/AIR`.
+- Temporary inspection clone: `/tmp/sinkdetect_air_check`.
+- Inspected commit: `cc0e00f1b5d608a011a1c312059be5ccc9d25641`.
+
+The repository README says it is the official CVPR 2026 implementation, supports
+LLaVA v1.5 / v1.6, and includes CHAIR, POPE, POPEv2, and MMHal evaluation
+scripts. The README reports strong CHAIR reductions for AIR* under both
+`max_new_tokens=256` and `max_new_tokens=64`.
+
+## What The Code Provides
+
+Relevant files from the inspection clone:
+
+- `LLaVA/eval_scripts/eval_pope_air.py`: POPE generation entry point.
+- `LLaVA/bash_scripts/decoding.sh`: official end-to-end caption/POPE runner.
+- `LLaVA/llava/model/language_model/modeling_llama.py`: AIR attention changes.
+- `LLaVA/llava/model/air_method.py`: method metadata and module names.
+- `LLaVA/requirements.txt` and `LLaVA/pyproject.toml`: forked LLaVA dependency stack.
+
+AIR's official implementation sets config flags and modifies LLaMA attention:
+modality rebalancing, cross-head vision lens, conditional AD-HH, and variance
+projection. It is not just a logits processor.
+
+## Compatibility Assessment
+
+AIR is runnable in principle, but should be isolated from the current environment.
+The README requires commands to run inside the repo's `LLaVA/` tree and notes a
+Transformers workaround: uncommenting `_validate_model_kwargs(...)` in the
+installed Transformers generation utility. The LLaVA stack pins
+`transformers==4.37.2`; the `newer_models/` path pins `transformers==4.45.2`.
+
+This means the safest route is an isolated env or container. Do not patch the
+current `latentGuard` environment in place unless the change is reversible and
+recorded.
+
+## POPE Semantic-Neighbor Audit Plan
+
+AIR's `eval_pope_air.py` expects LLaVA-style question JSONL rows with:
+
+- `question_id`
+- `image`
+- `text`
+
+The current local POPE dataset under `/home/chenguanxu/common_dataset/pope` is a
+HuggingFace/parquet layout, not the exact `dataset/pope/llava_pope_test.jsonl`
+layout expected by AIR's shell script. The project already has robust POPE
+record readers in `mitigation/scripts/build_semantic_neighbor_audit.py`; the
+next step is to export a LLaVA-style adversarial JSONL subset from the existing
+POPE rows, run AIR official generation against the COCO val2014 image folder,
+and evaluate the output with the existing semantic-neighbor audit script.
+
+Recommended first run:
+
+1. Export the 120-row adversarial semantic-neighbor subset to AIR/LLaVA JSONL
+   format.
+2. Run official AIR with `max_new_tokens=16` or `32`, greedy decoding, batch size
+   1 or 2, and LLaVA-1.5-7B.
+3. Convert AIR `answers.jsonl` to the existing prediction schema if needed.
+4. Evaluate with `mitigation/scripts/evaluate_semantic_neighbor_subsets.py` using
+   the same audit CSV and strict invalid handling.
+5. Promote to full adversarial or all-split only if AIR lowers related-present
+   FPR without merely collapsing TPR/yes rate.
+
+## Paper Positioning
+
+AIR is a stronger positive counterexample than the previous speculative
+attention-reallocation entries because official code is accessible. It increases
+pressure on the paper's attention-intervention discussion, but it does not change
+the core claim unless it passes the semantic-neighbor audit. The required
+comparison is still target verification:
+
+- If AIR lowers related-present FPR while preserving TPR, report it as a strong
+  attention-reallocation baseline and sharpen TDEV as target-vs-neighbor rather
+  than attention balancing.
+- If AIR improves aggregate POPE/CHAIR but leaves related-present FPR high, it
+  directly supports the `looking is not verifying` claim.
+- If AIR behaves like NoLan by lowering FPR with a lower yes rate, report it as a
+  conservative intervention rather than target-discriminative verification.
+
+Do not implement an unofficial AIR surrogate. Use the official fork or report it
+as related work until the isolated official-code run succeeds.

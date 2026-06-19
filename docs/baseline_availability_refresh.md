@@ -18,14 +18,19 @@ related-present false positives without simply shifting answer priors, shortenin
 captions, or replacing specific claims with vague text.
 
 **NoLan-compatible is now complete for POPE random/popular/adversarial.**
-It is the closest public-code decoding baseline found in this refresh and directly
-tests whether dynamic language-prior suppression fixes the same failure mode. The
-local deterministic compatibility port lowers all-split related-present FPR
-(`0.114 -> 0.076`) and FPR (`0.087 -> 0.058`), but TPR also drops
-(`0.813 -> 0.778`) and macro MCC stays tied with vanilla (`0.731` vs. `0.730`).
-The compatibility caveat remains: the official code targets an older
-transformers/torch stack and monkey-patches sampling, so report this as
-`NoLan-compatible`, not official NoLan.
+It directly tests whether dynamic language-prior suppression fixes the same
+failure mode. The local deterministic compatibility port lowers all-split
+related-present FPR (`0.114 -> 0.076`) and FPR (`0.087 -> 0.058`), but TPR also
+drops (`0.813 -> 0.778`) and macro MCC stays tied with vanilla (`0.731` vs.
+`0.730`). The compatibility caveat remains: report this as `NoLan-compatible`,
+not official NoLan.
+
+**AIR official code is now recovered and should be the next bounded baseline if
+compute/environment time is allocated.** The arXiv v2 code link resolves to
+`https://github.com/Ice-wave/AIR`, inspected at commit
+`cc0e00f1b5d608a011a1c312059be5ccc9d25641`. It supports LLaVA v1.5/v1.6 and
+POPE/CHAIR evaluation, but it uses a forked LLaVA stack and requires an isolated
+Transformers setup. See `docs/air_baseline_feasibility.md`.
 
 Do not spend the next phase implementing unofficial approximations of CAI, CAST,
 Focus Matters, BRACS, AIR, or Region-Aware Attention Recalibration. If official
@@ -39,7 +44,7 @@ verification criterion, not superiority over unreleased implementations.
 | Method | Source status on 2026-06-19 | Why it matters | Current action |
 |---|---|---|---|
 | NoLan: No-Language-Hallucination Decoding | Public GitHub repository found: `https://github.com/lingfengren/NoLan`; README says code released and supports LLaVA-1.5/InstructBLIP/Qwen-VL integration. | Closest runnable decoding baseline: suppresses language priors by comparing multimodal and text-only distributions. This directly tests whether language-prior suppression fixes related-object false positives. | Completed as a deterministic local compatibility port on all POPE splits; positive on FPR/related FPR, but lower TPR and not official NoLan. |
-| AIR: Attention Imbalance Rectification | arXiv v2, 2026-06-14, says CVPR 2026 Findings and that code is available via a GitHub link, but a stable repo URL was not recovered from search in this refresh. | Strong attention-reallocation baseline across CHAIR, POPE, and MM-Vet; conceptually close to our attention-proxy critique. | P0 monitor. Do not implement a surrogate; find official repo and run subset audit if available. |
+| AIR: Attention Imbalance Rectification | Official repository recovered and inspected: `https://github.com/Ice-wave/AIR` at commit `cc0e00f1b5d608a011a1c312059be5ccc9d25641`; README says CVPR 2026 official code and includes LLaVA v1.5/v1.6 POPE/CHAIR runners. | Strong attention-reallocation baseline across CHAIR, POPE, and MM-Vet; conceptually close to our attention-proxy critique and likely the next fair positive counterexample. | P0 runnable candidate in isolated env. Export a LLaVA-style adversarial semantic-neighbor subset and run official AIR before any full all-split rerun. |
 | BRACS: Barrier-Regulated Adaptive Closed-form Steering | arXiv page exists; no direct official code link found in the checked page. | Strong recent steering baseline; explicitly claims adaptive intervention when grounding deteriorates and reports CHAIR/POPE gains. | P1 related work unless code appears. Audit with semantic-neighbor FPR if runnable. |
 | CAI: Caption-Sensitive Attention Intervention | arXiv page exists; no direct official code link found in the current arXiv/search check. | Very close conceptually: uses caption-query attention patterns to enhance visual attention. | P0 related work; audit only if official code appears. |
 | CAST: Caption-Guided Visual Attention Steering | arXiv page exists; arXiv code/media section exposes generic code-finder links but no direct official GitHub link in the checked page. | Closest head-steering baseline: probes caption-guided heads and applies steering vectors; claims SOTA with low overhead. | P0 related work; audit semantic-neighbor FPR if code appears. |
@@ -84,7 +89,7 @@ routing is not the same as verifying the queried target.**
 ## Checked Sources
 
 - NoLan: https://arxiv.org/abs/2602.22144 and https://github.com/lingfengren/NoLan
-- AIR: https://arxiv.org/abs/2603.24058
+- AIR: https://arxiv.org/abs/2603.24058 and https://github.com/Ice-wave/AIR
 - BRACS: https://arxiv.org/abs/2605.29881
 - CAI: https://arxiv.org/abs/2506.23590
 - CAST: https://arxiv.org/abs/2605.04641
