@@ -197,8 +197,13 @@ Reading:
   substitution, but fixed token suppression is not enough. Soft penalty `1.0` is
   too weak and leaves the original `bird` claim unchanged on the stress image;
   soft penalty `4.0` behaves like hard blocking and still ends with `"two ch"`.
-  The next caption method should move to sentence-level stop/repair or
-  constrained rewrite after replacement verification.
+  An offline sentence-boundary repair on the iter2 5-image smoke removes
+  incomplete trailing fragments in 4/5 captions, reduces CHAIRi from `0.1111` to
+  `0.0588`, and reduces hallucinated mentions from 2 to 1, but shortens captions
+  by 5 words on average under the 64-token smoke budget. The next caption method
+  should move to decode-time sentence-level stop/repair or constrained rewrite
+  after replacement verification, then evaluate at a less truncated generation
+  budget.
 
 ## Paper-Safe Claim
 

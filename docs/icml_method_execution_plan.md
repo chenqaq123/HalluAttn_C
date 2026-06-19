@@ -276,9 +276,12 @@ failure to the constructive TDEV method.
    bounded second pass that adds only the TDEV-absent `person` substitute removes
    the new COCO hallucination but still leaves an incomplete caption. Fixed soft
    penalties do not solve the stress case: `p=1.0` leaves the original `bird`
-   claim, while `p=4.0` still truncates to `two ch`. The next method step should
-   combine dynamic replacement verification with sentence-level stop/repair or
-   constrained rewrite, not scale prefilter-only hard/soft token suppression.
+   claim, while `p=4.0` still truncates to `two ch`. Offline sentence-boundary
+   repair removes the incomplete fragments and improves 5-image CHAIRi from
+   0.1111 to 0.0588, but it shortens captions under the 64-token smoke budget.
+   The next method step should combine dynamic replacement verification with
+   decode-time sentence stop/repair or constrained rewrite, not scale prefilter-
+   only hard/soft token suppression.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

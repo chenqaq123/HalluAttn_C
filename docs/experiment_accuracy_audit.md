@@ -204,8 +204,16 @@ model can route to another unsupported COCO object. Bounded iterative expansion
 can suppress that substitute without the breadth of full absent-object blocking,
 but fixed token suppression still fails on the stress image: a weak soft penalty
 keeps the original hallucination, while a stronger penalty behaves like hard
-blocking and harms completion. The next caption method should therefore combine
-dynamic replacement verification with sentence-level stop/repair or constrained
+blocking and harms completion.
+
+A follow-up offline sentence-boundary repair trims incomplete trailing fragments
+from the iter2 5-image smoke outputs. It repairs 4/5 captions, removes 5 words
+per caption on average, reduces CHAIRi from 0.1111 to 0.0588, and reduces total
+hallucinated mentions from 2 to 1. This supports sentence-level stop/repair as a
+next method component, but it is not a final quality result because the smoke run
+uses a 64-token cap and the repair only truncates; it does not generate a fluent
+replacement sentence. The next caption method should therefore combine dynamic
+replacement verification with decode-time sentence stop/repair or constrained
 rewrite, with explicit audits for CHAIR, variant/root/open-vocabulary leaks,
 length, and fluency.
 

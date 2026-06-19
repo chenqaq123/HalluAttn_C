@@ -1,5 +1,5 @@
 {
-  "interpretation": "Five-image generated-caption smoke test. Prefilter-only blocking is easy to integrate but can route a denied object to a new unsupported COCO object. Bounded iterative expansion adds that substitute and removes the new hallucinated object route, but hard blocking and soft penalty 4 still leave an incomplete caption on the stress image. Soft penalty 1 is too weak and leaves the original bird hallucination unchanged. The next method should use sentence-level stop/repair or constrained rewrite after dynamic replacement verification rather than relying on fixed hard/soft token suppression.",
+  "interpretation": "Five-image generated-caption smoke test. Prefilter-only blocking is easy to integrate but can route a denied object to a new unsupported COCO object. Bounded iterative expansion adds that substitute and removes the new hallucinated object route, but hard blocking and soft penalty 4 still leave an incomplete caption on the stress image. Soft penalty 1 is too weak and leaves the original bird hallucination unchanged. Offline sentence-level repair removes incomplete trailing fragments and further reduces CHAIRi on the 5-image smoke, but it shortens several captions because the smoke run uses a 64-token cap. The next method should implement sentence-level stop/repair or constrained rewrite after dynamic replacement verification, then evaluate at a less truncated generation budget.",
   "runs": [
     {
       "captions_changed": 1,
@@ -459,5 +459,17 @@
       "total_gate_events_saved": 80,
       "unsupported_open_vocab_claims": []
     }
-  ]
+  ],
+  "sentence_repair": {
+    "gated_chairi": 0.1111111111111111,
+    "gated_hallucinated_mentions": 2,
+    "hard_iter2_repair_metrics": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_sentence_repair/sentence_repair_metrics.json",
+    "mean_removed_words_by_repair": 5.0,
+    "num_examples": 5,
+    "num_repaired": 4,
+    "repaired_chairi": 0.058823529411764705,
+    "repaired_hallucinated_mentions": 1,
+    "scope_note": "Offline sentence-boundary truncation proxy; it removes incomplete trailing fragments but also shortens captions affected by the 64-token smoke budget.",
+    "soft_p4_iter2_repair_metrics": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_soft_p4_sentence_repair/sentence_repair_metrics.json"
+  }
 }

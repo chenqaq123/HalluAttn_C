@@ -7,3 +7,16 @@
 | prefilter_iter2_single_token_only | 5 | hard | 1 | bird | - | - | adds person after first audit; no new COCO claim, but caption still ends with incomplete "two ch" |
 | prefilter_iter2_soft_p4 | 5 | soft p=4.0 | 1 | bird | - | - | same as hard iter2 on 5 images: no new COCO claim, but still incomplete "two ch" |
 | prefilter_iter2_soft_p1_22596 | 1 | soft p=1.0 | 0 | - | - | - | too weak on stress image; leaves original bird claim unchanged |
+
+## Sentence Repair
+
+| Metric | Value |
+|---|---:|
+| repaired captions | 4/5 |
+| mean removed words | 5.00 |
+| gated CHAIRi | 0.1111 |
+| repaired CHAIRi | 0.0588 |
+| gated hallucinated mentions | 2 |
+| repaired hallucinated mentions | 1 |
+
+Scope: offline sentence-boundary truncation of incomplete trailing fragments; no new text is generated.

@@ -1,0 +1,50 @@
+{
+  "chair": {
+    "gated": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_soft_p4_sentence_repair/gated_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.1111111111111111,
+        "CHAIRs": 0.2,
+        "F1": 0.7777777777777778,
+        "Len": 0.542,
+        "Precision": 0.7777777777777778,
+        "Recall": 0.7777777777777778
+      },
+      "total_hallucinated_mentions": 2,
+      "total_object_mentions": 18
+    },
+    "repaired": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_soft_p4_sentence_repair/repaired_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.058823529411764705,
+        "CHAIRs": 0.2,
+        "F1": 0.823529411764706,
+        "Len": 0.492,
+        "Precision": 0.875,
+        "Recall": 0.7777777777777778
+      },
+      "total_hallucinated_mentions": 1,
+      "total_object_mentions": 17
+    },
+    "vanilla": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_soft_p4_sentence_repair/vanilla_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.15789473684210525,
+        "CHAIRs": 0.4,
+        "F1": 0.7368421052631577,
+        "Len": 0.542,
+        "Precision": 0.7,
+        "Recall": 0.7777777777777778
+      },
+      "total_hallucinated_mentions": 3,
+      "total_object_mentions": 19
+    }
+  },
+  "examples_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_soft_p4/gated_generation_examples.json",
+  "mean_gated_words": 49.0,
+  "mean_removed_words_by_repair": 5.0,
+  "mean_repaired_words": 44.0,
+  "num_examples": 5,
+  "num_repaired": 4,
+  "scope_note": "Offline sentence-level repair proxy. It trims incomplete trailing sentence fragments from already generated captions and does not generate replacement text."
+}
