@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -38,6 +39,7 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--neighbors_json", default="mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json")
     p.add_argument("--chair_pkl", default="../pas/data/chair_coco.pkl")
+    p.add_argument("--variant_aliases_json", default="detection/config/object_variant_aliases.json")
     p.add_argument("--output_dir", default="detection/baselines/results/tdev_decode_gate_closed_loop_example")
     p.add_argument(
         "--owlv2_model_path",
@@ -58,6 +60,31 @@ def read_json(path: Path) -> Any:
 def read_neighbors(path: Path, top_k: int) -> dict[str, list[str]]:
     raw = read_json(path)
     return {obj: [item["object"] for item in items[:top_k]] for obj, items in raw.items()}
+
+
+def read_variant_aliases(path: Path) -> dict[str, list[str]]:
+    if not path.exists():
+        return {}
+    raw = read_json(path)
+    return {
+        str(obj).strip().lower(): [str(alias).strip().lower() for alias in aliases if str(alias).strip()]
+        for obj, aliases in raw.items()
+    }
+
+
+def phrase_pattern(phrase: str) -> re.Pattern[str]:
+    escaped = re.escape(phrase.lower())
+    return re.compile(rf"(?<![a-z0-9]){escaped}(?![a-z0-9])")
+
+
+def variant_hits(caption: str, denied_words: set[str], aliases: dict[str, list[str]]) -> list[dict[str, str]]:
+    text = caption.lower()
+    hits: list[dict[str, str]] = []
+    for word in sorted(denied_words):
+        for alias in aliases.get(word, []):
+            if phrase_pattern(alias).search(text):
+                hits.append({"word": word, "alias": alias})
+    return hits
 
 
 def two_stage_score(target_score: float, margin: float, low: float, high: float, margin_threshold: float) -> float:
@@ -154,6 +181,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     examples = read_json(Path(args.examples_json))
     neighbors = read_neighbors(Path(args.neighbors_json), args.top_neighbors)
+    variant_aliases = read_variant_aliases(Path(args.variant_aliases_json))
 
     caption_rows: list[dict[str, Any]] = []
     for example in examples:
@@ -181,6 +209,13 @@ def main() -> None:
         introduced = sorted(gated_words - vanilla_words)
         removed = sorted(vanilla_words - gated_words)
         introduced_hallucinated = sorted(set(gated["hallucinated_words"]) & set(introduced))
+        vanilla_variant_hits = variant_hits(example["vanilla_caption"], denied, variant_aliases)
+        gated_variant_hits = variant_hits(example["gated_caption"], denied, variant_aliases)
+        vanilla_hit_keys = {(hit["word"], hit["alias"]) for hit in vanilla_variant_hits}
+        introduced_variant_leaks = [
+            hit for hit in gated_variant_hits
+            if (hit["word"], hit["alias"]) not in vanilla_hit_keys
+        ]
         claim_scores = score_claims(Path(example["image_path"]), introduced, neighbors, args)
         audited.append(
             {
@@ -192,6 +227,8 @@ def main() -> None:
                 "removed_words": removed,
                 "introduced_words": introduced,
                 "introduced_hallucinated_words": introduced_hallucinated,
+                "gated_variant_hits": gated_variant_hits,
+                "introduced_variant_leaks": introduced_variant_leaks,
                 "introduced_claim_scores": claim_scores,
                 "interpretation": (
                     "A closed-loop gate should verify introduced_words before allowing "
@@ -203,6 +240,7 @@ def main() -> None:
     payload = {
         "examples_json": args.examples_json,
         "neighbors_json": args.neighbors_json,
+        "variant_aliases_json": args.variant_aliases_json,
         "owlv2_model_path": args.owlv2_model_path,
         "top_neighbors": args.top_neighbors,
         "two_stage_low": args.two_stage_low,

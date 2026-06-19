@@ -1384,9 +1384,46 @@ objects, keeps the supported `cup`, and the CHAIR audit reports
 `introduced_words = []` and `introduced_hallucinated_words = []`. Manual
 inspection still finds the phrase `bottled drink`, which CHAIR does not map to
 COCO `bottle`; therefore this should be treated as promising integration
-evidence, not a final quality claim. The next scaling experiment should add
-alias/variant auditing for such object-like paraphrases and then evaluate this
-policy on a multi-image subset.
+evidence, not a final quality claim.
+
+### TDEV Variant-Leak Audit for Object-Like Paraphrases
+
+`detection/config/object_variant_aliases.json` records a small, versioned set of
+denied-object paraphrases used by both the gate and the audit. The audit script
+now reports `gated_variant_hits` and `introduced_variant_leaks`, so CHAIR misses
+such as `bottled drink` are no longer only manual observations.
+
+Rechecking the single-token-first output with the variant audit flags the known
+leak automatically:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python   detection/scripts/audit_decode_gate_closed_loop_example.py   --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/gated_generation_examples.json   --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_variant_audit
+```
+
+Result: `introduced_variant_leaks = [{"word": "bottle", "alias": "bottled drink"}]`.
+This corrects the earlier CHAIR-only reading: the caption has no introduced COCO
+object under CHAIR, but it does introduce an object-like bottle paraphrase.
+
+The same alias file was then fed back into the single-token-first gate. This
+blocks `bottled drink`, but exposes the brittleness of static alias chasing:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python   detection/scripts/run_tdev_decode_gate_caption_smoke.py   --image_ids 391158   --max_new_tokens 160   --device 5   --generate_vanilla   --deny_phrase_source closed_loop   --gate_mode hard   --first_token_policy single_token_only   --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_smoke
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python   detection/scripts/audit_decode_gate_closed_loop_example.py   --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_smoke/gated_generation_examples.json   --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_audit
+```
+
+After adding `bottleneck`, the model routes to `bottling machine`; CHAIR maps this
+to an introduced hallucinated `bottle` and OWLv2/TDEV rejects it with target
+score `0.0266`, best neighbor `cup` score `0.3573`, and margin `-0.3307`.
+
+After adding `bottling machine` and `bottling`, the model routes again, this time
+to `bottletop`. CHAIR and the current variant list do not catch it, but manual
+inspection shows it is still an object-like bottle paraphrase. The important
+conclusion is negative and useful: static alias expansion is not a robust method.
+The paper-facing caption method should use an open-vocabulary object-like phrase
+candidate verifier, then apply TDEV target-vs-neighbor evidence to those
+candidates, rather than relying on a growing hand-written deny list.
 
 ### SPIN Adversarial Subset Audit
 

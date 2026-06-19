@@ -1,0 +1,1520 @@
+[
+  {
+    "image_id": 391158,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000391158.jpg",
+    "denied_items": [
+      {
+        "word": "dining table",
+        "matched_surface": "",
+        "score": 0.1562477283552289,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.003752271644771099,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.35350768733769655,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sandwich",
+        "matched_surface": "",
+        "score": 0.15550769943743945,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.004492300562560558,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3527676584199071,
+        "two_stage_present": 0
+      },
+      {
+        "word": "broccoli",
+        "matched_surface": "",
+        "score": 0.15467639159411192,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.005323608405888081,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.35193635057657957,
+        "two_stage_present": 0
+      },
+      {
+        "word": "book",
+        "matched_surface": "",
+        "score": 0.15110148195177317,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.008898518048226833,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3483614409342408,
+        "two_stage_present": 0
+      },
+      {
+        "word": "hot dog",
+        "matched_surface": "",
+        "score": 0.15105347134172917,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.008946528658270836,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3483134303241968,
+        "two_stage_present": 0
+      },
+      {
+        "word": "cake",
+        "matched_surface": "",
+        "score": 0.15091041553765536,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009089584462344646,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.348170374520123,
+        "two_stage_present": 0
+      },
+      {
+        "word": "pizza",
+        "matched_surface": "",
+        "score": 0.1507673317939043,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009232668206095695,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34802729077637196,
+        "two_stage_present": 0
+      },
+      {
+        "word": "potted plant",
+        "matched_surface": "",
+        "score": 0.1502266226708889,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0097733773291111,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34748658165335655,
+        "two_stage_present": 0
+      },
+      {
+        "word": "banana",
+        "matched_surface": "",
+        "score": 0.15017267767339945,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009827322326600552,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3474326366558671,
+        "two_stage_present": 0
+      },
+      {
+        "word": "carrot",
+        "matched_surface": "",
+        "score": 0.15014483578503132,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009855164214968681,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34740479476749897,
+        "two_stage_present": 0
+      },
+      {
+        "word": "microwave",
+        "matched_surface": "",
+        "score": 0.1485024568066001,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.011497543193399906,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34576241578906775,
+        "two_stage_present": 0
+      },
+      {
+        "word": "keyboard",
+        "matched_surface": "",
+        "score": 0.14766171466559172,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.012338285334408283,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34492167364805937,
+        "two_stage_present": 0
+      },
+      {
+        "word": "wine glass",
+        "matched_surface": "",
+        "score": 0.14743045330047608,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.012569546699523926,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3446904122829437,
+        "two_stage_present": 0
+      },
+      {
+        "word": "refrigerator",
+        "matched_surface": "",
+        "score": 0.14691626079380513,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.013083739206194878,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3441762197762728,
+        "two_stage_present": 0
+      },
+      {
+        "word": "tie",
+        "matched_surface": "",
+        "score": 0.1460201021656394,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0139798978343606,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34328006114810705,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bowl",
+        "matched_surface": "",
+        "score": 0.14583856131881476,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.014161438681185246,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3430985203012824,
+        "two_stage_present": 0
+      },
+      {
+        "word": "donut",
+        "matched_surface": "",
+        "score": 0.14278772458434105,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01721227541565895,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3400476835668087,
+        "two_stage_present": 0
+      },
+      {
+        "word": "vase",
+        "matched_surface": "",
+        "score": 0.14267197981476784,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.017328020185232162,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3399319387972355,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sink",
+        "matched_surface": "",
+        "score": 0.14207063600420952,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01792936399579048,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.33933059498667717,
+        "two_stage_present": 0
+      },
+      {
+        "word": "fork",
+        "matched_surface": "",
+        "score": 0.14200332187116146,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01799667812883854,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3392632808536291,
+        "two_stage_present": 0
+      },
+      {
+        "word": "orange",
+        "matched_surface": "",
+        "score": 0.13881854511797428,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02118145488202572,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.33607850410044193,
+        "two_stage_present": 0
+      },
+      {
+        "word": "mouse",
+        "matched_surface": "",
+        "score": 0.13827838733792305,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02172161266207695,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3355383463203907,
+        "two_stage_present": 0
+      },
+      {
+        "word": "laptop",
+        "matched_surface": "",
+        "score": 0.13763463482260704,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02236536517739296,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3348945938050747,
+        "two_stage_present": 0
+      },
+      {
+        "word": "knife",
+        "matched_surface": "",
+        "score": 0.1342964878678322,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.025703512132167816,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.33155644685029984,
+        "two_stage_present": 0
+      },
+      {
+        "word": "toothbrush",
+        "matched_surface": "",
+        "score": 0.13370540350675583,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02629459649324417,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3309653624892235,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bottle",
+        "matched_surface": "",
+        "score": 0.13344061732292176,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.026559382677078247,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3307005763053894,
+        "two_stage_present": 0
+      },
+      {
+        "word": "person",
+        "matched_surface": "",
+        "score": 0.1324539965391159,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.027546003460884094,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.32971395552158356,
+        "two_stage_present": 0
+      },
+      {
+        "word": "spoon",
+        "matched_surface": "",
+        "score": 0.13085699625313282,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02914300374686718,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.32811695523560047,
+        "two_stage_present": 0
+      },
+      {
+        "word": "oven",
+        "matched_surface": "",
+        "score": 0.12883349120616913,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03116650879383087,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3260934501886368,
+        "two_stage_present": 0
+      },
+      {
+        "word": "chair",
+        "matched_surface": "",
+        "score": 0.12433262899518013,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03566737100481987,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3215925879776478,
+        "two_stage_present": 0
+      },
+      {
+        "word": "car",
+        "matched_surface": "",
+        "score": 0.11838190242648125,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.04161809757351875,
+        "best_neighbor": "fire hydrant",
+        "best_neighbor_score": 0.33354929089546204,
+        "tdev_margin": -0.2919311933219433,
+        "two_stage_present": 0
+      },
+      {
+        "word": "toilet",
+        "matched_surface": "",
+        "score": 0.11708025246858597,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.04291974753141403,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3143402114510536,
+        "two_stage_present": 0
+      },
+      {
+        "word": "tv",
+        "matched_surface": "",
+        "score": 0.10964827969670296,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.05035172030329704,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3069082386791706,
+        "two_stage_present": 0
+      },
+      {
+        "word": "horse",
+        "matched_surface": "",
+        "score": 0.09821997154504061,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01288872491568327,
+        "best_neighbor": "bus",
+        "best_neighbor_score": 0.2611086964607239,
+        "tdev_margin": -0.2482199715450406,
+        "two_stage_present": 0
+      },
+      {
+        "word": "cat",
+        "matched_surface": "",
+        "score": 0.09340311717242003,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.006596882827579975,
+        "best_neighbor": "suitcase",
+        "best_neighbor_score": 0.23925724625587463,
+        "tdev_margin": -0.23266036342829466,
+        "two_stage_present": 0
+      },
+      {
+        "word": "cell phone",
+        "matched_surface": "",
+        "score": 0.09297714740037918,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.06702285259962082,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.29023710638284683,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sheep",
+        "matched_surface": "",
+        "score": 0.09288593791425229,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.018222758546471596,
+        "best_neighbor": "bus",
+        "best_neighbor_score": 0.2611086964607239,
+        "tdev_margin": -0.24288593791425228,
+        "two_stage_present": 0
+      },
+      {
+        "word": "teddy bear",
+        "matched_surface": "",
+        "score": 0.0922627117484808,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.007737288251519203,
+        "best_neighbor": "tv",
+        "best_neighbor_score": 0.05035172030329704,
+        "tdev_margin": -0.04261443205177784,
+        "two_stage_present": 0
+      },
+      {
+        "word": "zebra",
+        "matched_surface": "",
+        "score": 0.09208381213247777,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.00791618786752224,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.23072833754122257,
+        "two_stage_present": 0
+      },
+      {
+        "word": "dog",
+        "matched_surface": "",
+        "score": 0.09161684699356556,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.00838315300643444,
+        "best_neighbor": "boat",
+        "best_neighbor_score": 0.046816274523735046,
+        "tdev_margin": -0.038433121517300606,
+        "two_stage_present": 0
+      },
+      {
+        "word": "kite",
+        "matched_surface": "",
+        "score": 0.09136328045278788,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.008636719547212124,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.2300078058615327,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bed",
+        "matched_surface": "",
+        "score": 0.09065690860152245,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009343091398477554,
+        "best_neighbor": "suitcase",
+        "best_neighbor_score": 0.23925724625587463,
+        "tdev_margin": -0.22991415485739708,
+        "two_stage_present": 0
+      },
+      {
+        "word": "giraffe",
+        "matched_surface": "",
+        "score": 0.0900270663201809,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009972933679819107,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.2286715917289257,
+        "two_stage_present": 0
+      },
+      {
+        "word": "remote",
+        "matched_surface": "",
+        "score": 0.08959324229508639,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.010406757704913616,
+        "best_neighbor": "tv",
+        "best_neighbor_score": 0.05035172030329704,
+        "tdev_margin": -0.03994496259838343,
+        "two_stage_present": 0
+      },
+      {
+        "word": "apple",
+        "matched_surface": "",
+        "score": 0.08922251723706723,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.010777482762932777,
+        "best_neighbor": "oven",
+        "best_neighbor_score": 0.03116650879383087,
+        "tdev_margin": -0.020389026030898094,
+        "two_stage_present": 0
+      },
+      {
+        "word": "scissors",
+        "matched_surface": "",
+        "score": 0.08913836985826493,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.07086163014173508,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.2863983288407326,
+        "two_stage_present": 0
+      },
+      {
+        "word": "tennis racket",
+        "matched_surface": "",
+        "score": 0.08815982416272164,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.011840175837278366,
+        "best_neighbor": "clock",
+        "best_neighbor_score": 0.09440179169178009,
+        "tdev_margin": -0.08256161585450172,
+        "two_stage_present": 0
+      },
+      {
+        "word": "couch",
+        "matched_surface": "",
+        "score": 0.08677429091185332,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.013225709088146687,
+        "best_neighbor": "tv",
+        "best_neighbor_score": 0.05035172030329704,
+        "tdev_margin": -0.037126011215150356,
+        "two_stage_present": 0
+      },
+      {
+        "word": "baseball glove",
+        "matched_surface": "",
+        "score": 0.08566941637545825,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01433058362454176,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.22431394178420305,
+        "two_stage_present": 0
+      },
+      {
+        "word": "elephant",
+        "matched_surface": "",
+        "score": 0.08543998878449202,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.014560011215507984,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.22408451419323683,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bird",
+        "matched_surface": "",
+        "score": 0.08525664769113064,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.014743352308869362,
+        "best_neighbor": "clock",
+        "best_neighbor_score": 0.09440179169178009,
+        "tdev_margin": -0.07965843938291073,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bear",
+        "matched_surface": "",
+        "score": 0.0838482327759266,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01615176722407341,
+        "best_neighbor": "cell phone",
+        "best_neighbor_score": 0.06702285259962082,
+        "tdev_margin": -0.05087108537554741,
+        "two_stage_present": 0
+      },
+      {
+        "word": "cow",
+        "matched_surface": "",
+        "score": 0.08181399703025818,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01818600296974182,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.220458522439003,
+        "two_stage_present": 0
+      },
+      {
+        "word": "snowboard",
+        "matched_surface": "",
+        "score": 0.08028507456183434,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.019714925438165665,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.21892959997057915,
+        "two_stage_present": 0
+      },
+      {
+        "word": "handbag",
+        "matched_surface": "",
+        "score": 0.0767124392092228,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03439625725150108,
+        "best_neighbor": "bus",
+        "best_neighbor_score": 0.2611086964607239,
+        "tdev_margin": -0.2267124392092228,
+        "two_stage_present": 0
+      },
+      {
+        "word": "skis",
+        "matched_surface": "",
+        "score": 0.07335906326770783,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.026640936732292175,
+        "best_neighbor": "stop sign",
+        "best_neighbor_score": 0.12733958661556244,
+        "tdev_margin": -0.10069864988327026,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sports ball",
+        "matched_surface": "",
+        "score": 0.07260988503694535,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.027390114963054657,
+        "best_neighbor": "baseball bat",
+        "best_neighbor_score": 0.05352436751127243,
+        "tdev_margin": -0.026134252548217773,
+        "two_stage_present": 0
+      },
+      {
+        "word": "surfboard",
+        "matched_surface": "",
+        "score": 0.06785715594887734,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.032142844051122665,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.20650168135762215,
+        "two_stage_present": 0
+      },
+      {
+        "word": "umbrella",
+        "matched_surface": "",
+        "score": 0.06459561213850976,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03540438786149025,
+        "best_neighbor": "motorcycle",
+        "best_neighbor_score": 0.06492012739181519,
+        "tdev_margin": -0.029515739530324936,
+        "two_stage_present": 0
+      },
+      {
+        "word": "frisbee",
+        "matched_surface": "",
+        "score": 0.0644969217479229,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0355030782520771,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.2031414471566677,
+        "two_stage_present": 0
+      },
+      {
+        "word": "skateboard",
+        "matched_surface": "",
+        "score": 0.06356716752052308,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03643283247947693,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.20221169292926788,
+        "two_stage_present": 0
+      },
+      {
+        "word": "backpack",
+        "matched_surface": "",
+        "score": 0.057592796534299856,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.053515899926424026,
+        "best_neighbor": "bus",
+        "best_neighbor_score": 0.2611086964607239,
+        "tdev_margin": -0.20759279653429985,
+        "two_stage_present": 0
+      },
+      {
+        "word": "airplane",
+        "matched_surface": "",
+        "score": 0.056450983881950384,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0546577125787735,
+        "best_neighbor": "bus",
+        "best_neighbor_score": 0.2611086964607239,
+        "tdev_margin": -0.20645098388195038,
+        "two_stage_present": 0
+      },
+      {
+        "word": "toaster",
+        "matched_surface": "",
+        "score": 0.055170474946498876,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.04482952505350113,
+        "best_neighbor": "scissors",
+        "best_neighbor_score": 0.07086163014173508,
+        "tdev_margin": -0.026032105088233948,
+        "two_stage_present": 0
+      },
+      {
+        "word": "boat",
+        "matched_surface": "",
+        "score": 0.05318372547626496,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.046816274523735046,
+        "best_neighbor": "bicycle",
+        "best_neighbor_score": 0.058204326778650284,
+        "tdev_margin": -0.011388052254915237,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bicycle",
+        "matched_surface": "",
+        "score": 0.0529043696820736,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.058204326778650284,
+        "best_neighbor": "bus",
+        "best_neighbor_score": 0.2611086964607239,
+        "tdev_margin": -0.2029043696820736,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bench",
+        "matched_surface": "",
+        "score": 0.04840118661522866,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.05159881338477135,
+        "best_neighbor": "bicycle",
+        "best_neighbor_score": 0.058204326778650284,
+        "tdev_margin": -0.006605513393878937,
+        "two_stage_present": 0
+      },
+      {
+        "word": "baseball bat",
+        "matched_surface": "",
+        "score": 0.046475632488727575,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.05352436751127243,
+        "best_neighbor": "truck",
+        "best_neighbor_score": 0.2386445254087448,
+        "tdev_margin": -0.18512015789747238,
+        "two_stage_present": 0
+      },
+      {
+        "word": "motorcycle",
+        "matched_surface": "",
+        "score": 0.0461885690689087,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.06492012739181519,
+        "best_neighbor": "bus",
+        "best_neighbor_score": 0.2611086964607239,
+        "tdev_margin": -0.1961885690689087,
+        "two_stage_present": 0
+      },
+      {
+        "word": "hair drier",
+        "matched_surface": "",
+        "score": 0.039014691859483724,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.06098530814051628,
+        "best_neighbor": "toilet",
+        "best_neighbor_score": 0.04291974753141403,
+        "tdev_margin": 0.01806556060910225,
+        "two_stage_present": 0
+      },
+      {
+        "word": "stop sign",
+        "matched_surface": "",
+        "score": 0.032660413384437564,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.12733958661556244,
+        "best_neighbor": "fire hydrant",
+        "best_neighbor_score": 0.33354929089546204,
+        "tdev_margin": -0.2062097042798996,
+        "two_stage_present": 0
+      },
+      {
+        "word": "clock",
+        "matched_surface": "",
+        "score": 0.005598208308219915,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.09440179169178009,
+        "best_neighbor": "tv",
+        "best_neighbor_score": 0.05035172030329704,
+        "tdev_margin": 0.04405007138848305,
+        "two_stage_present": 0
+      }
+    ],
+    "num_denied_sequences": 346,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station or a museum. The train is prominently displayed, taking up a significant portion of the scene. The train's engine is visible, with its front end extending from the left side of the image to the right.\n\nIn addition to the train, there are two people in the scene, one located near the left side and the other closer to the right side. A cup can be seen placed on a surface, possibly a table or a counter, near the left side of the image.",
+    "gated_caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station or a museum. The train is prominently displayed, taking up a significant portion of the scene. The train's engine is visible, with its front end extending from the left side of the image to the right.\n\nIn addition to the train, there are two other objects in the scene. One is a cup placed near the left side of the train, and the other is a bottling machine located on the right side of the train. The combination of the train, the cup, and the bottling machine creates a nostalgic atmosphere, reminiscent of a bygone era.",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1591,
+        "banned_token_text": "table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6137,
+        "banned_token_text": "Table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3143,
+        "banned_token_text": "book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6726,
+        "banned_token_text": "Book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8277,
+        "banned_token_text": "books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13730,
+        "banned_token_text": "Books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12247,
+        "banned_token_text": "keyboard",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22134,
+        "banned_token_text": "tie",
+        "phrase_text": "tie|ties"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 27207,
+        "banned_token_text": "Bowl",
+        "phrase_text": "bowl|bowls"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 27350,
+        "banned_token_text": "fork",
+        "phrase_text": "fork|forks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24841,
+        "banned_token_text": "orange",
+        "phrase_text": "orange|oranges"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 26048,
+        "banned_token_text": "Orange",
+        "phrase_text": "orange|oranges"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9495,
+        "banned_token_text": "mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 25992,
+        "banned_token_text": "Mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 19022,
+        "banned_token_text": "laptop",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6601,
+        "banned_token_text": "computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20972,
+        "banned_token_text": "Computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11774,
+        "banned_token_text": "chair",
+        "phrase_text": "chair|chairs|seat"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24193,
+        "banned_token_text": "Chair",
+        "phrase_text": "chair|chairs|seat"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12949,
+        "banned_token_text": "seat",
+        "phrase_text": "chair|chairs|seat"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10435,
+        "banned_token_text": "horse",
+        "phrase_text": "horse|horses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15100,
+        "banned_token_text": "horses",
+        "phrase_text": "horse|horses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6635,
+        "banned_token_text": "cat",
+        "phrase_text": "cat|cats"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10459,
+        "banned_token_text": "Cat",
+        "phrase_text": "cat|cats"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 29735,
+        "banned_token_text": "sheep",
+        "phrase_text": "sheep|sheeps"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11203,
+        "banned_token_text": "dog",
+        "phrase_text": "dog|dogs"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18776,
+        "banned_token_text": "Dog",
+        "phrase_text": "dog|dogs"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 26361,
+        "banned_token_text": "dogs",
+        "phrase_text": "dog|dogs"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6592,
+        "banned_token_text": "bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14195,
+        "banned_token_text": "Bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 7592,
+        "banned_token_text": "remote",
+        "phrase_text": "remote|remotes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 26163,
+        "banned_token_text": "apple",
+        "phrase_text": "apple|apples"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12113,
+        "banned_token_text": "Apple",
+        "phrase_text": "apple|apples"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11460,
+        "banned_token_text": "bear",
+        "phrase_text": "bear|bears"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 23606,
+        "banned_token_text": "Bear",
+        "phrase_text": "bear|bears"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21282,
+        "banned_token_text": "cow",
+        "phrase_text": "cow|cows|bull"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21638,
+        "banned_token_text": "Cow",
+        "phrase_text": "cow|cows|bull"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20293,
+        "banned_token_text": "Bull",
+        "phrase_text": "cow|cows|bull"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14993,
+        "banned_token_text": "ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28551,
+        "banned_token_text": "Ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8287,
+        "banned_token_text": "ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13402,
+        "banned_token_text": "Ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22588,
+        "banned_token_text": "jet",
+        "phrase_text": "airplane|airplanes|jet"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 27804,
+        "banned_token_text": "Jet",
+        "phrase_text": "airplane|airplanes|jet"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13006,
+        "banned_token_text": "boat",
+        "phrase_text": "boat|boats|ships"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 25462,
+        "banned_token_text": "boats",
+        "phrase_text": "boat|boats|ships"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13968,
+        "banned_token_text": "ships",
+        "phrase_text": "boat|boats|ships"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12006,
+        "banned_token_text": "clock",
+        "phrase_text": "clock|clocks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 1591,
+        "banned_token_text": "table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 6137,
+        "banned_token_text": "Table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 3143,
+        "banned_token_text": "book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 6726,
+        "banned_token_text": "Book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 8277,
+        "banned_token_text": "books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 13730,
+        "banned_token_text": "Books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 12247,
+        "banned_token_text": "keyboard",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 22134,
+        "banned_token_text": "tie",
+        "phrase_text": "tie|ties"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 27207,
+        "banned_token_text": "Bowl",
+        "phrase_text": "bowl|bowls"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 27350,
+        "banned_token_text": "fork",
+        "phrase_text": "fork|forks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 24841,
+        "banned_token_text": "orange",
+        "phrase_text": "orange|oranges"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 26048,
+        "banned_token_text": "Orange",
+        "phrase_text": "orange|oranges"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 9495,
+        "banned_token_text": "mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 25992,
+        "banned_token_text": "Mouse",
+        "phrase_text": "mouse|mouses"
+      }
+    ]
+  }
+]

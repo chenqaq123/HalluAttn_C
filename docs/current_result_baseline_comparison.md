@@ -142,10 +142,14 @@ Reading:
 - The best current single-image tradeoff is `first_token_policy=single_token_only`:
   it avoids broad first-subtoken bans for multi-token object phrases. It removes
   `person/dining table`, keeps the supported `cup`, and the CHAIR audit reports
-  no introduced COCO object claim. Manual inspection still shows a non-COCO
-  phrase, `bottled drink`, so this is promising integration evidence rather than
-  a final quality result. The next step is to scale this policy and extend alias
-  auditing around object variants.
+  no introduced COCO object claim.
+- A new variant-leak audit shows why this is still not a final quality result.
+  The first single-token-first run contained `bottled drink`, which CHAIR missed
+  but the variant audit flags as a `bottle` leak. Adding bottle variants to the
+  gate blocks that form, but the model routes to `bottleneck`, then `bottling
+  machine`, then `bottletop`. This is strong evidence that static alias chasing
+  is brittle; the next useful method step is open-vocabulary object-like phrase
+  verification, not a larger hand-written alias list.
 
 ## Paper-Safe Claim
 
@@ -178,3 +182,7 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_top30_audit/closed_loop_example_audit.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/gated_generation_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_variant_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v2_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_audit/closed_loop_example_audit.json`

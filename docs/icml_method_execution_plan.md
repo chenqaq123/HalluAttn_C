@@ -236,12 +236,14 @@ failure to the constructive TDEV method.
    produces a train-only caption. The next step is therefore not another
    deterministic placeholder edit or a simple penalty/top-k sweep. A more local
    `first_token_policy=single_token_only` gate is now the best one-image
-   tradeoff: it removes `person/dining table`, keeps `cup`, and introduces no
-   new COCO object claim under CHAIR, although manual inspection still finds the
-   non-COCO phrase `bottled drink`. The next step is to turn this into the
-   paper-facing object-token verifier: evaluate it on a multi-image subset, add
-   alias/variant auditing for object-like paraphrases, and then report
-   CHAIR/length/fluency instead of relying on a single example.
+   tradeoff for reducing train-only behavior: it removes `person/dining table`
+   and keeps `cup`. However, the new variant-leak audit changes the claim scope:
+   `bottled drink`, `bottleneck`, `bottling machine`, and `bottletop` show that
+   static alias lists can be chased indefinitely. The next paper-facing method
+   step is therefore an open-vocabulary object-like phrase verifier: detect new
+   object candidates during decoding, map/paraphrase them to verifier targets,
+   apply TDEV target-vs-neighbor evidence, and evaluate on a multi-image subset
+   with CHAIR, variant leaks, length, and fluency.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

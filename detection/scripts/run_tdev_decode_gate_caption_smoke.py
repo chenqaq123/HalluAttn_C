@@ -60,6 +60,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--generate_vanilla", action="store_true", help="Also regenerate vanilla captions instead of using cached vanilla text.")
     p.add_argument("--load_strategy", choices=("device_map", "utils"), default="device_map")
     p.add_argument("--mention_matches_csv", default="detection/baselines/results/tdev_decode_gate_feasibility/mention_token_matches.csv")
+    p.add_argument("--variant_aliases_json", default="detection/config/object_variant_aliases.json")
     p.add_argument("--deny_phrase_source", choices=("surface", "synonyms", "closed_loop"), default="surface")
     p.add_argument("--gate_mode", choices=("hard", "soft"), default="hard")
     p.add_argument("--soft_penalty", type=float, default=4.0)
@@ -173,9 +174,24 @@ def observed_surface_aliases(path: Path, top_k: int) -> dict[str, list[str]]:
     return aliases
 
 
-def narrow_aliases(word: str, observed_aliases: dict[str, list[str]]) -> list[str]:
+def read_variant_aliases(path: Path) -> dict[str, list[str]]:
+    if not path.exists():
+        return {}
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return {
+        str(word).strip().lower(): [str(alias).strip().lower() for alias in aliases if str(alias).strip()]
+        for word, aliases in raw.items()
+    }
+
+
+def narrow_aliases(
+    word: str,
+    observed_aliases: dict[str, list[str]],
+    variant_aliases: dict[str, list[str]],
+) -> list[str]:
     phrases = [word, pluralize_last_token(word)]
     phrases.extend(observed_aliases.get(word, []))
+    phrases.extend(variant_aliases.get(word, []))
     return dedupe([phrase.lower() for phrase in phrases])
 
 
@@ -323,6 +339,7 @@ def main() -> None:
     image_ids = choose_image_ids(args, denied_by_image)
     synonyms = edit.load_synonyms(Path(args.chair_source))
     observed_aliases = observed_surface_aliases(Path(args.mention_matches_csv), args.alias_top_k)
+    variant_aliases = read_variant_aliases(Path(args.variant_aliases_json))
     neighbors = read_neighbors(Path(args.neighbors_json), args.top_neighbors)
     if args.deny_phrase_source == "closed_loop":
         denied_by_image = closed_loop_denied_words(args, image_ids, rows, neighbors)
@@ -347,7 +364,7 @@ def main() -> None:
         denied_texts: list[str] = []
         for item in denied_items:
             if args.deny_phrase_source == "closed_loop":
-                phrases = narrow_aliases(item["word"], observed_aliases)
+                phrases = narrow_aliases(item["word"], observed_aliases, variant_aliases)
             elif args.deny_phrase_source == "surface" and item.get("matched_surface"):
                 phrases = [item["matched_surface"]]
             else:
@@ -439,6 +456,7 @@ def main() -> None:
         "load_strategy": args.load_strategy,
         "generate_vanilla": args.generate_vanilla,
         "mention_matches_csv": args.mention_matches_csv,
+        "variant_aliases_json": args.variant_aliases_json,
         "deny_phrase_source": args.deny_phrase_source,
         "gate_mode": args.gate_mode,
         "soft_penalty": args.soft_penalty if args.gate_mode == "soft" else None,
