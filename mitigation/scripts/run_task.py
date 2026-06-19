@@ -21,14 +21,14 @@ from tqdm import tqdm
 from sinkdetect.sink_utils import find_vis_bounds
 from sinkdetect.utils import build_caption_prompt, load_model_and_processor
 from src.data import iter_pope_records, load_chair_manifest, load_pope_image
-from src.decoding import generate_damro_greedy, generate_opera_beam, generate_vcd_greedy
+from src.decoding import generate_damro_greedy, generate_nolan_greedy, generate_opera_beam, generate_vcd_greedy
 from src.interventions import install_intervention, set_visual_bounds
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Generate POPE answers or CHAIR captions with mitigation interventions")
     p.add_argument("--task", choices=["pope", "chair"], required=True)
-    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink", "vcd", "spin", "damro", "opera"], required=True)
+    p.add_argument("--method", choices=["vanilla", "pai", "clearsight", "visattnsink", "vcd", "spin", "damro", "opera", "nolan"], required=True)
     p.add_argument("--model_path", default="llava-hf/llava-1.5-7b-hf")
     p.add_argument("--cache_dir", default="")
     p.add_argument("--coco_path", required=True)
@@ -64,6 +64,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--opera_threshold", type=int, default=15)
     p.add_argument("--opera_num_attn_candidates", type=int, default=5)
     p.add_argument("--opera_penalty_weights", type=float, default=1.0)
+    p.add_argument("--nolan_alpha_scale", type=float, default=0.8)
     return p.parse_args()
 
 
@@ -82,6 +83,10 @@ def _prepare(model, processor, image: Image.Image, prompt: str, device: torch.de
     vis_start, vis_end = find_vis_bounds(inputs["input_ids"][0], image_token_id)
     set_visual_bounds(model, vis_start, vis_end)
     return inputs, vis_start, vis_end
+
+
+def _prepare_text_only(processor, prompt: str, device: torch.device):
+    return processor.tokenizer(prompt, return_tensors="pt").to(device)
 
 
 def _generate(model, processor, inputs, max_new_tokens: int) -> str:
@@ -152,13 +157,15 @@ def main() -> None:
                 image = load_pope_image(record)
                 question = record["question"] + " Please just answer yes or no."
                 prompt = f"<image>\nUSER: {question}\nASSISTANT:"
+                text_only_prompt = f"USER: {question}\nASSISTANT:"
             else:
                 image_path = Path(args.coco_path) / "val2014" / f"COCO_val2014_{record['image_id']:012d}.jpg"
                 image = Image.open(image_path).convert("RGB")
                 prompt = build_caption_prompt()
+                text_only_prompt = prompt.replace("<image>\n", "")
             inputs, vis_start, vis_end = _prepare(model, processor, image, prompt, device)
             image.close()
-            if args.method in {"vcd", "damro", "opera"}:
+            if args.method in {"vcd", "damro", "opera", "nolan"}:
                 try:
                     stable_id = int(record[id_key])
                 except (TypeError, ValueError):
@@ -175,6 +182,19 @@ def main() -> None:
                         noise_step=args.vcd_noise_step,
                     )
                     outlier_indices = None
+                    nolan_info = None
+                elif args.method == "nolan":
+                    text_only_inputs = _prepare_text_only(processor, text_only_prompt, device)
+                    text, nolan_info = generate_nolan_greedy(
+                        model,
+                        processor,
+                        inputs,
+                        text_only_inputs,
+                        args.max_new_tokens,
+                        alpha_scale=args.nolan_alpha_scale,
+                    )
+                    outlier_indices = None
+                    del text_only_inputs
                 elif args.method == "damro":
                     text, outlier_indices = generate_damro_greedy(
                         model,
@@ -200,9 +220,11 @@ def main() -> None:
                         penalty_weights=args.opera_penalty_weights,
                     )
                     outlier_indices = None
+                    nolan_info = None
             else:
                 text = _generate(model, processor, inputs, args.max_new_tokens)
                 outlier_indices = None
+                nolan_info = None
             payload = {
                 id_key: record[id_key],
                 "method": args.method,
@@ -217,6 +239,8 @@ def main() -> None:
                     "noise_step": args.vcd_noise_step,
                     "decode": "greedy",
                 }
+            if args.method == "nolan":
+                payload["nolan"] = nolan_info
             if args.method == "damro":
                 payload["damro"] = {
                     "alpha": args.damro_alpha,

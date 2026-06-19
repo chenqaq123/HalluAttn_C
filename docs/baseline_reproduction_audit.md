@@ -57,6 +57,7 @@ submission.
 |---|---|---|---|
 | VCD | arXiv:2311.16922 | canonical visual contrastive decoding baseline against language-prior reliance | controlled greedy port implemented; full POPE splits complete; official sampling parity only needed for direct paper-to-paper comparison |
 | OPERA | arXiv:2311.17911 | strong decoding baseline using over-trust penalty and rollback | guarded official-hook interface added; current environment must pass `mitigation/scripts/check_opera_support.py` before producing any OPERA numbers |
+| NoLan | arXiv:2602.22144 | dynamic suppression of language priors by contrasting multimodal and text-only logits | public code exists but targets older transformers; local deterministic compatible port implemented for POPE. Adversarial 120-row subset is positive but scoped: MCC 0.667 -> 0.700, FPR 0.183 -> 0.133, related-present FPR 0.204 -> 0.148, TPR 0.850 -> 0.833. Full all-split audit pending; do not claim official reproduction. |
 | DAMRO | arXiv:2410.04514 | CLS-selected ViT outlier-token contrastive decoding, close to our attention-shape audit | controlled greedy port implemented; adversarial 120-row subset is negative: TPR +0.033 but FPR +0.067, MCC 0.667 -> 0.639, related-present FPR 0.204 -> 0.278; full POPE/CHAIR audit pending |
 | LURE | arXiv:2310.00754 | uses co-occurrence, uncertainty, and position factors aligned with our mechanism | analysis baseline implemented for CHAIR detection; not a revisor reproduction |
 | Woodpecker | arXiv:2310.16045 | post-hoc visual validation/correction pipeline with external tools/open-set detection | not implemented locally; discuss as a detector/tool pipeline rather than a direct low-latency baseline |
@@ -209,7 +210,15 @@ still gives no target-discriminative gain: TPR rises from 0.850 to 0.883 while
 FPR rises from 0.183 to 0.217, so `Delta TPR - Delta FPR` is effectively zero;
 related-present negative FPR rises from 0.204 to 0.241. These subset checks are
 too small for paper tables, but they make full SPIN lower priority than DAMRO,
-OPERA, or a documented official-parity check. The DAMRO controlled port has
+OPERA, or a documented official-parity check. The NoLan-compatible deterministic
+port is the first recent decoding baseline in this refresh with a positive
+adversarial subset signal. On the same 120-row subset, it improves MCC from
+0.667 to 0.700, lowers FPR from 0.183 to 0.133, and lowers related-present
+negative FPR from 0.204 to 0.148, with TPR dropping from 0.850 to 0.833. This is
+useful evidence that language-prior suppression can help under the
+semantic-neighbor criterion, but it is a compatible port rather than the official
+monkey-patched NoLan stack and still needs an all-split audit before being
+promoted to the main baseline table. The DAMRO controlled port has
 now passed a 4-row POPE-random smoke run under `mitigation/results/pope_damro_smoke/`
 with `invalid=0`; each prediction records `alpha=2.0`, `beta=0.1`, `topk=10`,
 and the selected outlier token indices. This validates the local negative-branch

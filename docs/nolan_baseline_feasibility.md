@@ -62,6 +62,54 @@ semantic-neighbor subset:
 5. If the port diverges materially from official code, keep it as a diagnostic
    ablation and do not claim official NoLan reproduction.
 
+## Local Smoke Status
+
+A guarded NoLan-compatible greedy port is now wired into the existing mitigation
+runner as `--method nolan`. It keeps the main environment unchanged and computes
+multimodal and text-only logits side by side for the same LLaVA-HF checkpoint.
+
+Smoke command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python mitigation/scripts/run_task.py \
+  --task pope \
+  --method nolan \
+  --model_path /home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9 \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --pope_dir /home/chenguanxu/common_dataset/pope \
+  --pope_split adversarial \
+  --output_file mitigation/results/coco_llava_7b_nolan_smoke/pope/adversarial/nolan/predictions.jsonl \
+  --device 5 \
+  --limit 2 \
+  --max_new_tokens 16 \
+  --nolan_alpha_scale 0.8
+```
+
+Smoke result:
+
+- Generation succeeded on GPU 5.
+- Both outputs were strict yes/no parseable.
+- `evaluate_semantic_neighbor_subsets.py` accepted the output format.
+- The 2-row metric file is
+  `mitigation/results/semantic_neighbor_audit/nolan_smoke_subset_eval/semantic_neighbor_subset_metrics.csv`.
+
+This 2-row run is an execution smoke only, not a performance result. The same
+runner has now been evaluated on the first 120 POPE-adversarial rows used for the
+SPIN/DAMRO subset checks.
+
+120-row subset result:
+
+| Method | MCC | TPR | FPR | Yes Rate | Related FPR |
+|---|---:|---:|---:|---:|---:|
+| vanilla | 0.667 | 0.850 | 0.183 | 0.517 | 0.204 |
+| NoLan-compatible | 0.700 | 0.833 | 0.133 | 0.483 | 0.148 |
+
+The compatible port is a positive baseline on this subset: it reduces related-present
+FPR by 5.6 points while losing 1.7 points of TPR. This is stronger than the
+existing SPIN default and DAMRO subset checks, but it is still not a full official
+NoLan reproduction or a full all-split result. The comparison summary is stored at
+`mitigation/results/semantic_neighbor_audit/nolan_adversarial_120_subset_eval/nolan_adversarial_120_comparison.md`.
+
 ## First Success Gate
 
 Run only the POPE-adversarial semantic-neighbor subset first. The result is worth

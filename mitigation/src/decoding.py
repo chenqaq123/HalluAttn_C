@@ -133,6 +133,100 @@ def generate_vcd_greedy(
     return processor.decode(generated, skip_special_tokens=True).strip()
 
 
+def _symmetric_kl(logits_a: torch.Tensor, logits_b: torch.Tensor) -> torch.Tensor:
+    probs_a = torch.softmax(logits_a.float(), dim=-1).clamp_min(1e-10)
+    probs_b = torch.softmax(logits_b.float(), dim=-1).clamp_min(1e-10)
+    kl_ab = torch.sum(probs_a * (probs_a.log() - probs_b.log()), dim=-1)
+    kl_ba = torch.sum(probs_b * (probs_b.log() - probs_a.log()), dim=-1)
+    return 0.5 * (kl_ab + kl_ba)
+
+
+def generate_nolan_greedy(
+    model,
+    processor,
+    inputs: dict[str, torch.Tensor],
+    text_only_inputs: dict[str, torch.Tensor],
+    max_new_tokens: int,
+    alpha_scale: float = 0.8,
+) -> tuple[str, dict[str, Any]]:
+    """Generate with a deterministic NoLan-compatible decoding rule.
+
+    The official NoLan code monkey-patches ``GenerationMixin.sample`` and samples
+    from logits adjusted by a text-only branch. This guarded port keeps this
+    repository's deterministic POPE protocol by taking the greedy token after the
+    same adaptive contrast:
+
+        alpha = alpha_scale * (tanh(1 / symmetric_kl) + 1)
+        logits = (1 + alpha) * logits_mm - alpha * logits_text
+
+    It should be reported as a compatible port unless the official NoLan stack is
+    used directly.
+    """
+    input_ids = inputs["input_ids"]
+    attention_mask = inputs.get("attention_mask")
+    if attention_mask is None:
+        attention_mask = torch.ones_like(input_ids)
+    pixel_values = inputs["pixel_values"]
+
+    text_input_ids = text_only_inputs["input_ids"]
+    text_attention_mask = text_only_inputs.get("attention_mask")
+    if text_attention_mask is None:
+        text_attention_mask = torch.ones_like(text_input_ids)
+
+    eos_ids = _eos_ids(processor.tokenizer)
+    generated: list[int] = []
+    alpha_values: list[float] = []
+    kl_values: list[float] = []
+    past = None
+    past_text = None
+    current_input_ids = input_ids
+    current_text_input_ids = text_input_ids
+
+    with torch.inference_mode():
+        for _ in range(max_new_tokens):
+            logits, past = _forward_next_logits(
+                model,
+                current_input_ids,
+                attention_mask,
+                pixel_values=pixel_values if past is None else None,
+                past_key_values=past,
+            )
+            logits_text, past_text = _forward_next_logits(
+                model,
+                current_text_input_ids,
+                text_attention_mask,
+                pixel_values=None,
+                past_key_values=past_text,
+            )
+            kl = _symmetric_kl(logits, logits_text).clamp_min(1e-6)
+            alpha = (torch.tanh(1.0 / kl) + 1.0) * float(alpha_scale)
+            adjusted = (1.0 + alpha[:, None]) * logits - alpha[:, None] * logits_text
+            next_token = torch.argmax(adjusted, dim=-1)
+            token_id = int(next_token[0].detach().cpu())
+            alpha_values.append(float(alpha[0].detach().cpu()))
+            kl_values.append(float(kl[0].detach().cpu()))
+            if token_id in eos_ids:
+                break
+            generated.append(token_id)
+            current_input_ids = next_token[:, None]
+            current_text_input_ids = next_token[:, None]
+            attention_mask = torch.cat([attention_mask, torch.ones_like(current_input_ids)], dim=-1)
+            text_attention_mask = torch.cat(
+                [text_attention_mask, torch.ones_like(current_text_input_ids)],
+                dim=-1,
+            )
+
+    text = processor.decode(generated, skip_special_tokens=True).strip() if generated else ""
+    info = {
+        "decode": "greedy_compatible_port",
+        "alpha_scale": float(alpha_scale),
+        "mean_alpha": sum(alpha_values) / len(alpha_values) if alpha_values else 0.0,
+        "mean_symmetric_kl": sum(kl_values) / len(kl_values) if kl_values else 0.0,
+        "num_steps": len(alpha_values),
+    }
+    return text, info
+
+
 class _VisionHookStore:
     def __init__(self):
         self.query: torch.Tensor | None = None

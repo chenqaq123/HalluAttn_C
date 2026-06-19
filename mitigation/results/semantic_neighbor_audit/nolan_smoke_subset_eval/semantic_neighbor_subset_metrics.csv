@@ -1,0 +1,7 @@
+split,method,subset,samples,invalid,tp,fp,tn,fn,accuracy,precision,recall_tpr,fpr,tnr,f1,balanced_accuracy,mcc,yes_rate
+adversarial,nolan,all,2,0,1,0,1,0,1.0,1.0,1.0,0.0,1.0,1.0,1.0,1.0,0.5
+adversarial,nolan,positive,1,0,1,0,0,0,1.0,1.0,1.0,0.0,0.0,1.0,0.5,0.0,1.0
+adversarial,nolan,negative,1,0,0,0,1,0,1.0,0.0,0.0,0.0,1.0,0.0,0.5,0.0,0.0
+adversarial,nolan,negative_related_present,1,0,0,0,1,0,1.0,0.0,0.0,0.0,1.0,0.0,0.5,0.0,0.0
+adversarial,nolan,negative_absent_plain,0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+adversarial,nolan,negative_target_present_coco_label,0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

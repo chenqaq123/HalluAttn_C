@@ -1,0 +1,116 @@
+{
+  "audit_csv": "mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv",
+  "result_root": "mitigation/results/coco_llava_7b_nolan_smoke",
+  "splits": {
+    "adversarial": {
+      "nolan": {
+        "missing_audit_rows": 0,
+        "prediction_file": "mitigation/results/coco_llava_7b_nolan_smoke/pope/adversarial/nolan/predictions.jsonl",
+        "subsets": {
+          "all": {
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "fpr": 0.0,
+            "invalid": 0,
+            "mcc": 1.0,
+            "precision": 1.0,
+            "recall_tpr": 1.0,
+            "samples": 2,
+            "tn": 1,
+            "tnr": 1.0,
+            "tp": 1,
+            "yes_rate": 0.5
+          },
+          "negative": {
+            "accuracy": 1.0,
+            "balanced_accuracy": 0.5,
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 0,
+            "fpr": 0.0,
+            "invalid": 0,
+            "mcc": 0.0,
+            "precision": 0.0,
+            "recall_tpr": 0.0,
+            "samples": 1,
+            "tn": 1,
+            "tnr": 1.0,
+            "tp": 0,
+            "yes_rate": 0.0
+          },
+          "negative_absent_plain": {
+            "accuracy": 0.0,
+            "balanced_accuracy": 0.0,
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 0,
+            "fpr": 0.0,
+            "invalid": 0,
+            "mcc": 0.0,
+            "precision": 0.0,
+            "recall_tpr": 0.0,
+            "samples": 0,
+            "tn": 0,
+            "tnr": 0.0,
+            "tp": 0,
+            "yes_rate": 0.0
+          },
+          "negative_related_present": {
+            "accuracy": 1.0,
+            "balanced_accuracy": 0.5,
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 0,
+            "fpr": 0.0,
+            "invalid": 0,
+            "mcc": 0.0,
+            "precision": 0.0,
+            "recall_tpr": 0.0,
+            "samples": 1,
+            "tn": 1,
+            "tnr": 1.0,
+            "tp": 0,
+            "yes_rate": 0.0
+          },
+          "negative_target_present_coco_label": {
+            "accuracy": 0.0,
+            "balanced_accuracy": 0.0,
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 0,
+            "fpr": 0.0,
+            "invalid": 0,
+            "mcc": 0.0,
+            "precision": 0.0,
+            "recall_tpr": 0.0,
+            "samples": 0,
+            "tn": 0,
+            "tnr": 0.0,
+            "tp": 0,
+            "yes_rate": 0.0
+          },
+          "positive": {
+            "accuracy": 1.0,
+            "balanced_accuracy": 0.5,
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "fpr": 0.0,
+            "invalid": 0,
+            "mcc": 0.0,
+            "precision": 1.0,
+            "recall_tpr": 1.0,
+            "samples": 1,
+            "tn": 0,
+            "tnr": 0.0,
+            "tp": 1,
+            "yes_rate": 1.0
+          }
+        }
+      }
+    }
+  }
+}
