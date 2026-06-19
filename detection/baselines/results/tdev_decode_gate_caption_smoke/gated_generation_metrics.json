@@ -1,11 +1,13 @@
 {
   "captions_differing_from_reference": 1,
   "coco_path": "/home/chenguanxu/common_dataset/coco-2014-dataset",
+  "deny_phrase_source": "surface",
   "device": "cuda:5",
   "generate_vanilla": true,
   "images_with_gate_events": 1,
   "load_strategy": "device_map",
   "max_new_tokens": 160,
+  "mention_matches_csv": "detection/baselines/results/tdev_decode_gate_feasibility/mention_token_matches.csv",
   "model_path": "/home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
   "num_images": 1,
   "reference_comparison": "generated_vs_generated",

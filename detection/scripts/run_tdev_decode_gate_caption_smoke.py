@@ -54,6 +54,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device", type=int, default=5)
     p.add_argument("--generate_vanilla", action="store_true", help="Also regenerate vanilla captions instead of using cached vanilla text.")
     p.add_argument("--load_strategy", choices=("device_map", "utils"), default="device_map")
+    p.add_argument("--mention_matches_csv", default="detection/baselines/results/tdev_decode_gate_feasibility/mention_token_matches.csv")
+    p.add_argument("--deny_phrase_source", choices=("surface", "synonyms"), default="surface")
     p.add_argument("--hybrid_low", type=float, default=0.04)
     p.add_argument("--hybrid_high", type=float, default=0.12)
     p.add_argument("--hybrid_margin", type=float, default=-0.20)
@@ -114,7 +116,23 @@ def object_phrases(word: str, synonyms: dict[str, list[str]], edit: Any) -> list
     return dedupe(phrases)
 
 
-def select_denied_words(rows: list[dict[str, str]], scores: np.ndarray, selected_mask: np.ndarray) -> dict[int, list[dict[str, Any]]]:
+def matched_surface_forms(path: Path) -> dict[int, str]:
+    if not path.exists():
+        return {}
+    rows = read_rows(path)
+    out: dict[int, str] = {}
+    for row in rows:
+        if row.get("near_gen_pos_match") == "1" and row.get("matched_text", "").strip():
+            out[int(row["object_id"])] = row["matched_text"].strip().lower()
+    return out
+
+
+def select_denied_words(
+    rows: list[dict[str, str]],
+    scores: np.ndarray,
+    selected_mask: np.ndarray,
+    surface_by_object_id: dict[int, str],
+) -> dict[int, list[dict[str, Any]]]:
     denied: dict[int, list[dict[str, Any]]] = defaultdict(list)
     selected_indices = np.flatnonzero(selected_mask)
     selected_indices = selected_indices[np.argsort(-scores[selected_indices], kind="mergesort")]
@@ -127,12 +145,14 @@ def select_denied_words(rows: list[dict[str, str]], scores: np.ndarray, selected
         if key in seen:
             continue
         seen.add(key)
+        object_id = int(row["object_id"])
         denied[image_id].append(
             {
                 "word": word,
+                "matched_surface": surface_by_object_id.get(object_id, ""),
                 "score": float(scores[int(idx)]),
                 "label": int(row["label"]),
-                "object_id": int(row["object_id"]),
+                "object_id": object_id,
             }
         )
     return dict(denied)
@@ -170,7 +190,8 @@ def main() -> None:
     rows = read_rows(Path(args.scores_csv))
     scores = edit.build_scores(rows, args)[args.score]
     selected_mask = edit.top_fraction_mask(scores, args.top_frac)
-    denied_by_image = select_denied_words(rows, scores, selected_mask)
+    surface_by_object_id = matched_surface_forms(Path(args.mention_matches_csv))
+    denied_by_image = select_denied_words(rows, scores, selected_mask, surface_by_object_id)
     vanilla_by_image = cached_captions(rows)
     image_ids = choose_image_ids(args, denied_by_image)
     synonyms = edit.load_synonyms(Path(args.chair_source))
@@ -194,10 +215,13 @@ def main() -> None:
         denied_sequences: list[list[int]] = []
         denied_texts: list[str] = []
         for item in denied_items:
-            phrases = object_phrases(item["word"], synonyms, edit)
+            if args.deny_phrase_source == "surface" and item.get("matched_surface"):
+                phrases = [item["matched_surface"]]
+            else:
+                phrases = object_phrases(item["word"], synonyms, edit)
             seqs = build_object_phrase_sequences(processor.tokenizer, phrases)
             denied_sequences.extend(seqs)
-            denied_texts.extend([item["word"]] * len(seqs))
+            denied_texts.extend(["|".join(phrases)] * len(seqs))
 
         gate = ObjectPhraseGateLogitsProcessor(
             tokenizer=processor.tokenizer,
@@ -264,6 +288,8 @@ def main() -> None:
         "device": str(device),
         "load_strategy": args.load_strategy,
         "generate_vanilla": args.generate_vanilla,
+        "mention_matches_csv": args.mention_matches_csv,
+        "deny_phrase_source": args.deny_phrase_source,
         "max_new_tokens": args.max_new_tokens,
         "num_images": len(results),
         "captions_differing_from_reference": sum(row["caption_differs_from_reference"] for row in results),

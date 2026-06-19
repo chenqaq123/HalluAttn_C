@@ -116,7 +116,9 @@ Reading:
   TDEV-selected matched mentions and all `1,333` simulated phrase-generation
   steps.
 - A one-image generated-vs-generated LLaVA smoke test confirms the gate can
-  change decoding through `generate(logits_processor=...)`: it removes denied
+  change decoding through `generate(logits_processor=...)`. The current saved
+  run uses narrow surface forms (`people`, `table`) and reduces denied sequences
+  from 260 broad-synonym variants to 4 surface-form variants. It removes denied
   `people/table` claims, but the same sample introduces a new `bottle` claim.
   This verifies integration and exposes the next problem; it is not yet a
   caption-quality result.

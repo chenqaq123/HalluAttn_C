@@ -1119,12 +1119,16 @@ Key result: the one-image generated-vs-generated smoke test completed on GPU 5
 with `images_with_gate_events = 1` and `captions_differing_from_reference = 1`.
 For image `391158`, the TDEV-denied hallucinated claims were `person` and
 `dining table`; the actual matched surface forms in the feasibility audit were
-`people` and `table`. The gated caption removed the vanilla phrase about `two
-people` and avoided `table/counter`, replacing it with `two other objects`.
-However, it also introduced a new `bottle` claim. This is useful integration
-evidence, but it is not yet a quality result. The next version should use the
-matched surface phrases or a narrow decoding-alias table rather than all CHAIR
-synonyms, then run a multi-image CHAIR/length/fluency evaluation.
+`people` and `table`. The current saved run uses `--deny_phrase_source surface`,
+so the denied token sequence count drops from the broad-synonym prototype's 260
+sequences to 4 surface-form sequences (`people`, `People`, `table`, `Table`).
+The gated caption removed the vanilla phrase about `two people` and avoided
+`table/counter`, replacing it with `two other objects`. However, it still
+introduced a new `bottle` claim. This is useful integration evidence, but it is
+not yet a quality result. Narrow surface gating reduces over-broad suppression;
+it does not solve object-claim substitution. The next version needs a closed-loop
+claim gate that checks newly routed object claims, followed by multi-image
+CHAIR/length/fluency evaluation.
 
 ### SPIN Adversarial Subset Audit
 
