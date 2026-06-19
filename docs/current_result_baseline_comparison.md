@@ -200,10 +200,14 @@ Reading:
   An offline sentence-boundary repair on the iter2 5-image smoke removes
   incomplete trailing fragments in 4/5 captions, reduces CHAIRi from `0.1111` to
   `0.0588`, and reduces hallucinated mentions from 2 to 1, but shortens captions
-  by 5 words on average under the 64-token smoke budget. The next caption method
-  should move to decode-time sentence-level stop/repair or constrained rewrite
-  after replacement verification, then evaluate at a less truncated generation
-  budget.
+  by 5 words on average under the 64-token smoke budget. A 96-token rerun shows
+  that token budget alone is not the fix: hard gating now changes 5/5 captions
+  and routes denied claims into complete substitute/escape forms such as
+  `bottes`, `elephant`, `zebra`, `chickens`, and hallucinated `person`. Sentence
+  repair still improves CHAIRi (`0.2500` to `0.1786`) but cannot remove complete
+  substitute claims. The next caption method should move to verifier-guided
+  sentence stop plus constrained rewrite or candidate acceptance after replacement
+  verification.
 
 ## Paper-Safe Claim
 

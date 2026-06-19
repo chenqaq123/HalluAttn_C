@@ -279,8 +279,11 @@ failure to the constructive TDEV method.
    claim, while `p=4.0` still truncates to `two ch`. Offline sentence-boundary
    repair removes the incomplete fragments and improves 5-image CHAIRi from
    0.1111 to 0.0588, but it shortens captions under the 64-token smoke budget.
-   The next method step should combine dynamic replacement verification with
-   decode-time sentence stop/repair or constrained rewrite, not scale prefilter-
+   A 96-token rerun shows that longer generation turns the failure into complete
+   substitute/escape claims (`bottes`, `elephant`, `zebra`, `chickens`,
+   hallucinated `person`), so budget alone is not enough. The next method step
+   should combine dynamic replacement verification with verifier-guided sentence
+   stop plus constrained rewrite or candidate acceptance, not scale prefilter-
    only hard/soft token suppression.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region

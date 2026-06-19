@@ -207,15 +207,17 @@ keeps the original hallucination, while a stronger penalty behaves like hard
 blocking and harms completion.
 
 A follow-up offline sentence-boundary repair trims incomplete trailing fragments
-from the iter2 5-image smoke outputs. It repairs 4/5 captions, removes 5 words
-per caption on average, reduces CHAIRi from 0.1111 to 0.0588, and reduces total
-hallucinated mentions from 2 to 1. This supports sentence-level stop/repair as a
-next method component, but it is not a final quality result because the smoke run
-uses a 64-token cap and the repair only truncates; it does not generate a fluent
-replacement sentence. The next caption method should therefore combine dynamic
-replacement verification with decode-time sentence stop/repair or constrained
-rewrite, with explicit audits for CHAIR, variant/root/open-vocabulary leaks,
-length, and fluency.
+from the iter2 5-image smoke outputs. At the 64-token budget, it repairs 4/5
+captions, removes 5 words per caption on average, reduces CHAIRi from 0.1111 to
+0.0588, and reduces total hallucinated mentions from 2 to 1. A 96-token rerun
+shows that generation length alone is not the fix: the gate changes 5/5 captions
+and routes denied claims into complete substitute or lexical-escape forms such as
+`bottes`, `elephant`, `zebra`, `chickens`, and hallucinated `person`. Sentence
+repair still improves CHAIRi from 0.2500 to 0.1786 at 96 tokens, but it cannot
+remove complete substitute hallucinations. The next caption method should
+therefore combine dynamic replacement verification with verifier-guided sentence
+stop plus constrained rewrite or candidate acceptance, with explicit audits for
+CHAIR, variant/root/open-vocabulary leaks, length, and fluency.
 
 ## Detection Baselines
 

@@ -1,0 +1,2865 @@
+[
+  {
+    "image_id": 6213,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000006213.jpg",
+    "denied_items": [
+      {
+        "word": "bottle",
+        "matched_surface": "",
+        "score": 0.11385087005794048,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "bottle",
+          "bottles",
+          "bottled drink",
+          "bottled beverage",
+          "bottled water",
+          "drink bottle",
+          "water bottle",
+          "bottleneck",
+          "bottled",
+          "bottling machine",
+          "bottling"
+        ],
+        "prefilter_source_image_selected_mentions": 2,
+        "prefilter_source_hallucinated_mentions": 2,
+        "prefilter_source_grounded_mentions": 0
+      },
+      {
+        "word": "toothbrush",
+        "matched_surface": "",
+        "score": 0.11385087005794048,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "toothbrush",
+          "toothbrushes"
+        ],
+        "prefilter_source_image_selected_mentions": 2,
+        "prefilter_source_hallucinated_mentions": 2,
+        "prefilter_source_grounded_mentions": 0
+      }
+    ],
+    "num_denied_sequences": 26,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby. \n\nThere are two bottles placed on the countertop, one closer to the sink and the other further away. Additionally, there are two cups,",
+    "gated_caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby. \n\nThere are two bottes placed on the countertop, one closer to the sink and the other further away. Additionally, there are two cups,",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 1,
+        "banned_token_id": 720,
+        "banned_token_text": "oth",
+        "phrase_text": "toothbrush|toothbrushes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 1,
+        "banned_token_id": 720,
+        "banned_token_text": "oth",
+        "phrase_text": "toothbrush|toothbrushes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 58,
+        "prefix_len": 1,
+        "banned_token_id": 720,
+        "banned_token_text": "oth",
+        "phrase_text": "toothbrush|toothbrushes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 58,
+        "prefix_len": 1,
+        "banned_token_id": 720,
+        "banned_token_text": "oth",
+        "phrase_text": "toothbrush|toothbrushes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 280,
+        "banned_token_text": "le",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 793,
+        "banned_token_text": "les",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 839,
+        "banned_token_text": "led",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 839,
+        "banned_token_text": "led",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 839,
+        "banned_token_text": "led",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 29880,
+        "banned_token_text": "l",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 839,
+        "banned_token_text": "led",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 1847,
+        "banned_token_text": "ling",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 70,
+        "prefix_len": 1,
+        "banned_token_id": 1847,
+        "banned_token_text": "ling",
+        "phrase_text": "bottle|bottles|bottled drink|bottled beverage|bottled water|drink bottle|water bottle|bottleneck|bottled|bottling machine|bottling"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 80,
+        "prefix_len": 1,
+        "banned_token_id": 720,
+        "banned_token_text": "oth",
+        "phrase_text": "toothbrush|toothbrushes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 80,
+        "prefix_len": 1,
+        "banned_token_id": 720,
+        "banned_token_text": "oth",
+        "phrase_text": "toothbrush|toothbrushes"
+      }
+    ]
+  },
+  {
+    "image_id": 12319,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000012319.jpg",
+    "denied_items": [
+      {
+        "word": "bird",
+        "matched_surface": "",
+        "score": 0.09830849140882492,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "bird",
+          "birds"
+        ],
+        "prefilter_source_image_selected_mentions": 1,
+        "prefilter_source_hallucinated_mentions": 1,
+        "prefilter_source_grounded_mentions": 0
+      }
+    ],
+    "num_denied_sequences": 4,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraffes, there are several birds scattered throughout the scene, adding to the lively atmosphere. The birds are positioned at various heights and distances, some closer",
+    "gated_caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraffes, there are several other animals in the scene, including a zebra and a few elephants. The zebra is located towards the left",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 26,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 26,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      }
+    ]
+  },
+  {
+    "image_id": 15994,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000015994.jpg",
+    "denied_items": [
+      {
+        "word": "tv",
+        "matched_surface": "",
+        "score": 0.10024849779903888,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "tv",
+          "tvs",
+          "television"
+        ],
+        "prefilter_source_image_selected_mentions": 1,
+        "prefilter_source_hallucinated_mentions": 1,
+        "prefilter_source_grounded_mentions": 0
+      }
+    ],
+    "num_denied_sequences": 6,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene, there is also a remote control placed near the woman, possibly for controlling a television or other electronic devices. The overall atmosphere of the image suggests a cas",
+    "gated_caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene, there is also a remote control placed near the woman, possibly for controlling a nearby TV or other electronic device.",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 26,
+        "prefix_len": 0,
+        "banned_token_id": 9631,
+        "banned_token_text": "tv",
+        "phrase_text": "tv|tvs|television"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 26,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv|tvs|television"
+      }
+    ]
+  },
+  {
+    "image_id": 22596,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000022596.jpg",
+    "denied_items": [
+      {
+        "word": "bird",
+        "matched_surface": "",
+        "score": 0.10393759317696094,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "bird",
+          "birds"
+        ],
+        "prefilter_source_image_selected_mentions": 1,
+        "prefilter_source_hallucinated_mentions": 1,
+        "prefilter_source_grounded_mentions": 0
+      },
+      {
+        "word": "person",
+        "matched_surface": "",
+        "score": 0.10393759317696094,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "person",
+          "persons",
+          "people",
+          "drivers",
+          "human figure",
+          "individual",
+          "passerby"
+        ],
+        "prefilter_source_image_selected_mentions": 1,
+        "prefilter_source_hallucinated_mentions": 1,
+        "prefilter_source_grounded_mentions": 0
+      }
+    ],
+    "num_denied_sequences": 18,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds in the scene, one perched on a branch near the cow and the other flying above the water. The overall atmosphere of the image is serene and peace",
+    "gated_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two chickens in the scene, one near the main cow and the other closer to the background cow. The chickens seem to be exploring the area or",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      }
+    ]
+  },
+  {
+    "image_id": 23369,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000023369.jpg",
+    "denied_items": [
+      {
+        "word": "car",
+        "matched_surface": "",
+        "score": 0.09711643576622009,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "car",
+          "cars"
+        ],
+        "prefilter_source_image_selected_mentions": 1,
+        "prefilter_source_hallucinated_mentions": 1,
+        "prefilter_source_grounded_mentions": 0
+      }
+    ],
+    "num_denied_sequences": 4,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motorcycle and another further away.\n\nIn addition to the motorcycle, there is a car parked on the road, slightly behind the motorcycle. The",
+    "gated_caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motorcycle and another further away.\n\nIn addition to the motorcycle, there is a person standing in the background, possibly observing the scene or passing by",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 8,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 9,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 10,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 11,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 12,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 13,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 14,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 15,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 16,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 17,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 18,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 19,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 20,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 21,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 22,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 23,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 24,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 25,
+        "prefix_len": 0,
+        "banned_token_id": 18647,
+        "banned_token_text": "cars",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 26,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "car|cars"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 26,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "car|cars"
+      }
+    ]
+  }
+]
