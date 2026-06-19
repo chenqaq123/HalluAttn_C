@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +48,7 @@ def parse_args() -> argparse.Namespace:
         "--output_dir",
         default="detection/baselines/results/tdev_decode_gate_open_vocab_route_summary",
     )
+    p.add_argument("--mapping_threshold", type=float, default=0.80)
     return p.parse_args()
 
 
@@ -79,6 +81,96 @@ def denied_item(raw_example: dict[str, Any], word: str) -> dict[str, Any]:
     return {}
 
 
+def tokens(text: str) -> list[str]:
+    return re.findall(r"[a-z][a-z0-9]*", text.lower())
+
+
+def token_stem(token: str) -> str:
+    token = token.lower()
+    for suffix in ("ing", "ed", "es", "s"):
+        if len(token) > len(suffix) + 3 and token.endswith(suffix):
+            token = token[: -len(suffix)]
+            break
+    if len(token) > 4 and token.endswith("e"):
+        token = token[:-1]
+    return token
+
+
+def char_ngrams(text: str, n: int = 3) -> set[str]:
+    clean = "".join(tokens(text))
+    if len(clean) < n:
+        return {clean} if clean else set()
+    return {clean[idx : idx + n] for idx in range(len(clean) - n + 1)}
+
+
+def lexical_match_score(candidate: str, target: str) -> float:
+    cand_tokens = tokens(candidate)
+    target_tokens = tokens(target)
+    if not cand_tokens or not target_tokens:
+        return 0.0
+    cand_stems = [token_stem(token) for token in cand_tokens]
+    target_stems = [token_stem(token) for token in target_tokens]
+    cand_joined = "".join(cand_stems)
+    target_joined = "".join(target_stems)
+
+    scores: list[float] = []
+    for t_stem in target_stems:
+        token_scores = []
+        for c_stem in cand_stems:
+            if c_stem == t_stem:
+                token_scores.append(1.0)
+            elif len(t_stem) >= 4 and c_stem.startswith(t_stem):
+                token_scores.append(0.95)
+            elif len(c_stem) >= 4 and t_stem.startswith(c_stem):
+                token_scores.append(0.90)
+            else:
+                common = 0
+                for left, right in zip(c_stem, t_stem):
+                    if left != right:
+                        break
+                    common += 1
+                token_scores.append(common / max(len(t_stem), 1))
+        scores.append(max(token_scores) if token_scores else 0.0)
+
+    token_score = sum(scores) / len(scores)
+    if len(target_joined) >= 4 and target_joined in cand_joined:
+        token_score = max(token_score, 0.95)
+
+    cand_grams = char_ngrams(candidate)
+    target_grams = char_ngrams(target)
+    if cand_grams and target_grams:
+        ngram_score = len(cand_grams & target_grams) / len(target_grams)
+    else:
+        ngram_score = 0.0
+    return max(token_score, ngram_score)
+
+
+def auto_map_candidate(
+    candidate: str,
+    denied_items: list[dict[str, Any]],
+    threshold: float,
+) -> dict[str, Any]:
+    best_word = ""
+    best_score = 0.0
+    for item in denied_items:
+        word = str(item.get("word", "")).strip().lower()
+        score = lexical_match_score(candidate, word)
+        if score > best_score:
+            best_word = word
+            best_score = score
+    mapped = denied_item({"denied_items": denied_items}, best_word) if best_score >= threshold else {}
+    return {
+        "candidate": candidate,
+        "mapped_word": best_word if mapped else "",
+        "mapping_score": best_score,
+        "mapped_target_score": mapped.get("target_score"),
+        "mapped_best_neighbor": mapped.get("best_neighbor"),
+        "mapped_best_neighbor_score": mapped.get("best_neighbor_score"),
+        "mapped_tdev_margin": mapped.get("tdev_margin"),
+        "mapped_two_stage_present": mapped.get("two_stage_present"),
+    }
+
+
 def choose_route(example: dict[str, Any]) -> dict[str, str]:
     variant_leaks = example.get("introduced_variant_leaks", [])
     if variant_leaks:
@@ -98,16 +190,25 @@ def choose_route(example: dict[str, Any]) -> dict[str, str]:
     return {"source": "none", "route": "", "mapped_word": ""}
 
 
-def summarize_one(label: str, path: Path) -> list[dict[str, Any]]:
+def summarize_one(label: str, path: Path, mapping_threshold: float) -> list[dict[str, Any]]:
     payload = read_json(path)
     raw_by_image = raw_example_by_image(payload)
     rows = []
     for example in payload.get("examples", []):
         image_id = int(example["image_id"])
+        raw_example = raw_by_image.get(image_id, {})
         route = choose_route(example)
         raw_scores = example.get("introduced_open_vocab_claim_scores", {})
         route_score = raw_scores.get(route["route"], {})
-        mapped = denied_item(raw_by_image.get(image_id, {}), route["mapped_word"])
+        mapped = denied_item(raw_example, route["mapped_word"])
+        auto_mappings = [
+            auto_map_candidate(candidate, raw_example.get("denied_items", []), mapping_threshold)
+            for candidate in example.get("introduced_open_vocab_candidates", [])
+        ]
+        route_auto = next(
+            (item for item in auto_mappings if item["candidate"] == route["route"]),
+            auto_map_candidate(route["route"], raw_example.get("denied_items", []), mapping_threshold),
+        )
         rows.append(
             {
                 "run": label,
@@ -124,6 +225,13 @@ def summarize_one(label: str, path: Path) -> list[dict[str, Any]]:
                 "mapped_best_neighbor_score": mapped.get("best_neighbor_score"),
                 "mapped_tdev_margin": mapped.get("tdev_margin"),
                 "mapped_two_stage_present": mapped.get("two_stage_present"),
+                "auto_mapped_word": route_auto.get("mapped_word"),
+                "auto_mapping_score": route_auto.get("mapping_score"),
+                "auto_mapped_target_score": route_auto.get("mapped_target_score"),
+                "auto_mapped_best_neighbor": route_auto.get("mapped_best_neighbor"),
+                "auto_mapped_tdev_margin": route_auto.get("mapped_tdev_margin"),
+                "auto_mapped_two_stage_present": route_auto.get("mapped_two_stage_present"),
+                "auto_candidate_mappings": auto_mappings,
                 "introduced_words": example.get("introduced_words", []),
                 "introduced_variant_leaks": example.get("introduced_variant_leaks", []),
                 "introduced_root_leaks": example.get("introduced_root_leaks", []),
@@ -152,6 +260,9 @@ def write_markdown(rows: list[dict[str, Any]], path: Path) -> None:
         "Mapped target",
         "Mapped present",
         "Mapped score",
+        "Auto target",
+        "Auto map score",
+        "Auto present",
         "Best neighbor",
     ]
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
@@ -166,7 +277,10 @@ def write_markdown(rows: list[dict[str, Any]], path: Path) -> None:
             row["mapped_word"],
             row["mapped_two_stage_present"],
             row["mapped_target_score"],
-            row["mapped_best_neighbor"],
+            row["auto_mapped_word"],
+            row["auto_mapping_score"],
+            row["auto_mapped_two_stage_present"],
+            row["auto_mapped_best_neighbor"],
         ]
         lines.append("| " + " | ".join(fmt(value) for value in values) + " |")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -176,14 +290,16 @@ def main() -> None:
     args = parse_args()
     rows: list[dict[str, Any]] = []
     for label, path in audit_specs(args.audit):
-        rows.extend(summarize_one(label, path))
+        rows.extend(summarize_one(label, path, args.mapping_threshold))
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     payload = {
+        "mapping_threshold": args.mapping_threshold,
         "scope_note": (
             "Single-image alias-chasing audit summary. Raw phrase verification is reported separately "
             "from mapped canonical-target verification because open-vocabulary candidates can be real "
-            "object-like phrases while the original denied target is still absent."
+            "object-like phrases while the original denied target is still absent. The auto mapping "
+            "columns use a lexical candidate-to-denied-target matcher and do not read variant/root labels."
         ),
         "rows": rows,
     }

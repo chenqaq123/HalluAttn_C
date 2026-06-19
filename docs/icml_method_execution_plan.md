@@ -242,8 +242,9 @@ failure to the constructive TDEV method.
    static alias lists can be chased indefinitely. The open-vocabulary audit now
    finds all four routes, but it also shows why raw phrase verification is not
    enough: `bottled drink`, `bottleneck`, and `bottling machine` can score as
-   present when used as literal OWLv2 prompts. Mapping each route back to the
-   canonical denied target `bottle` rejects all four with the same
+   present when used as literal OWLv2 prompts. A first lexical mapper now maps
+   each route back to canonical denied target `bottle` without reading the
+   variant/root labels, and TDEV rejects all four with the same
    target-vs-neighbor evidence. The next paper-facing method step is therefore
    an open-vocabulary object-like phrase verifier with an explicit
    candidate-to-target mapping stage: detect new object candidates during

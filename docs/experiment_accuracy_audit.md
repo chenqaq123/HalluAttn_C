@@ -1467,12 +1467,12 @@ Re-running the same open-vocabulary audit on all four alias-chasing variants
 produces the following summary:
 
 ```text
-| Run | Route phrase | Open-vocab found | Raw phrase present | Raw score | Mapped target | Mapped present | Mapped score | Best neighbor |
+| Run | Route phrase | Open-vocab found | Raw phrase present | Raw score | Auto target | Auto map score | Auto present | Best neighbor |
 |---|---|---:|---:|---:|---|---:|---:|---|
-| single_token_first | bottled drink | 1 | 1 | 0.1457 | bottle | 0 | 0.0266 | cup |
-| variant_alias_v1 | bottleneck | 1 | 1 | 0.1081 | bottle | 0 | 0.0266 | cup |
-| variant_alias_v2 | bottling machine | 1 | 1 | 0.1596 | bottle | 0 | 0.0266 | cup |
-| variant_alias_v3 | bottletop | 1 | 0 | 0.0775 | bottle | 0 | 0.0266 | cup |
+| single_token_first | bottled drink | 1 | 1 | 0.1457 | bottle | 1.0000 | 0 | cup |
+| variant_alias_v1 | bottleneck | 1 | 1 | 0.1081 | bottle | 1.0000 | 0 | cup |
+| variant_alias_v2 | bottling machine | 1 | 1 | 0.1596 | bottle | 1.0000 | 0 | cup |
+| variant_alias_v3 | bottletop | 1 | 0 | 0.0775 | bottle | 1.0000 | 0 | cup |
 ```
 
 Artifacts:
@@ -1483,20 +1483,22 @@ detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_o
 detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v2_open_vocab_audit/
 detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_open_vocab_audit/
 detection/baselines/results/tdev_decode_gate_open_vocab_route_summary/
+detection/baselines/results/tdev_decode_gate_open_vocab_auto_map_summary/
 ```
 
 The important conclusion is sharper than the earlier one-image reading.
 Open-vocabulary candidate discovery catches each route, but raw phrase scoring is
 not sufficient: `bottled drink`, `bottleneck`, and `bottling machine` all look
-present if they are treated as literal detector prompts. Mapping the object-like
-route back to the canonical denied target `bottle` rejects all four variants with
-the same target-vs-neighbor evidence (`bottle` score `0.0266`, best neighbor
-`cup` score `0.3573`). Static alias expansion is not a robust method, and
-CHAIR-only caption evaluation is too weak for this setting. The paper-facing
-caption method should therefore use open-vocabulary object-like candidate
-discovery plus candidate-to-target mapping before applying TDEV target-vs-neighbor
-evidence, rather than relying on a growing hand-written deny list or raw phrase
-verification alone.
+present if they are treated as literal detector prompts. A lexical
+candidate-to-denied-target matcher, using threshold `0.80` and not reading the
+variant/root labels, maps all four route phrases to the canonical denied target
+`bottle`. TDEV then rejects all four variants with the same target-vs-neighbor
+evidence (`bottle` score `0.0266`, best neighbor `cup` score `0.3573`). Static
+alias expansion is not a robust method, and CHAIR-only caption evaluation is too
+weak for this setting. The paper-facing caption method should therefore use
+open-vocabulary object-like candidate discovery plus candidate-to-target mapping
+before applying TDEV target-vs-neighbor evidence, rather than relying on a
+growing hand-written deny list or raw phrase verification alone.
 
 ### SPIN Adversarial Subset Audit
 

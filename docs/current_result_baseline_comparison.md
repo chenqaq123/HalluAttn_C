@@ -150,12 +150,14 @@ Reading:
   `bottleneck`, then `bottling machine`, then `bottletop`. The open-vocabulary
   audit finds all four route phrases. However, raw phrase verification is not
   enough: `bottled drink`, `bottleneck`, and `bottling machine` are all judged
-  present as literal OWLv2 prompts. Mapping each route back to the canonical
-  denied target `bottle` rejects all four (`bottle` target score `0.0266`, best
-  neighbor `cup` score `0.3573`, two-stage present `0`). This is strong evidence
-  that the next useful method step is open-vocabulary object-like phrase
-  discovery plus candidate-to-target mapping and TDEV verification, not a larger
-  hand-written alias list or raw phrase scoring alone.
+  present as literal OWLv2 prompts. A lexical candidate-to-denied-target mapper
+  with threshold `0.80` maps each route to canonical target `bottle` without
+  reading variant/root labels, and TDEV rejects all four (`bottle` target score
+  `0.0266`, best neighbor `cup` score `0.3573`, two-stage present `0`). This is
+  strong evidence that the next useful method step is open-vocabulary
+  object-like phrase discovery plus candidate-to-target mapping and TDEV
+  verification, not a larger hand-written alias list or raw phrase scoring
+  alone.
 
 ## Paper-Safe Claim
 
@@ -198,3 +200,4 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v2_open_vocab_audit/closed_loop_example_audit.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_open_vocab_audit/closed_loop_example_audit.json`
 - `detection/baselines/results/tdev_decode_gate_open_vocab_route_summary/open_vocab_leak_summary.md`
+- `detection/baselines/results/tdev_decode_gate_open_vocab_auto_map_summary/open_vocab_leak_summary.md`
