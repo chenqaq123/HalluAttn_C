@@ -173,6 +173,15 @@ Reading:
   `teddy bear`. The lexical mapper is therefore a stronger route-leak prototype
   and scaling diagnostic, but still not a paper-ready open-vocabulary object
   detector.
+- A multi-image decode-gate prefilter audit now gives the next bounded GPU
+  target. On the 100 highest-risk images selected from cached caption-mention
+  TDEV scores, the prefilter selects 126 image-word deny candidates. CHAIR labels
+  mark 109/126 as hallucinated (`86.51%` precision) and the selected candidates
+  cover `66.46%` of hallucinated mentions on those images. The deny-list width
+  is small: mean `1.26` unique denied words per image, p95 `2`, and with the
+  LLaVA tokenizer mean `10.92` denied token sequences per image, p95 `24`. This
+  supports a bounded multi-image generation run, but it is still a mention-score
+  prefilter audit rather than generated-caption quality evidence.
 
 ## Paper-Safe Claim
 
@@ -219,3 +228,4 @@ The strongest safe claim is:
 - `detection/src/sinkdetect/open_vocab_claims.py`
 - `detection/baselines/results/tdev_decode_gate_open_vocab_mapping_thresholds/mapping_threshold_audit.md`
 - `detection/baselines/results/open_vocab_mapper_caption_cache_audit/open_vocab_mapper_caption_cache_audit.md`
+- `detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_summary.md`

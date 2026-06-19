@@ -104,6 +104,53 @@ open-vocabulary object-claim detector. The next method step must add better
 candidate phrase typing, target canonicalization, or verifier-backed validation
 before scaled caption-mitigation claims.
 
+## Multi-Image Decode-Gate Prefilter Audit
+
+Date: 2026-06-19
+
+`detection/scripts/audit_decode_gate_multi_image_prefilter.py` is a GPU-free
+preflight for the next caption-generation experiment. It does not run LLaVA or
+OWLv2. It uses cached caption-mention TDEV scores to estimate whether a bounded
+multi-image decode-gate run would have a manageable deny-list and whether the
+selected candidates are mostly CHAIR hallucinations.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_multi_image_prefilter.py \
+  --tokenizer_path /home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9
+```
+
+Result files:
+
+```text
+detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_metrics.json
+detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_examples.json
+detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_summary.md
+```
+
+Key results for the 100 highest-risk images selected from cached caption-mention
+scores:
+
+| Metric | Value |
+|---|---:|
+| selected image-word deny candidates | 126 |
+| selected hallucinated mentions | 109 |
+| selected grounded mentions | 17 |
+| hallucination precision among selected candidates | 0.8651 |
+| coverage of hallucinated mentions on chosen images | 0.6646 |
+| mean unique denied words per image | 1.26 |
+| p95 unique denied words per image | 2 |
+| mean denied token sequences per image | 10.92 |
+| p95 denied token sequences per image | 24 |
+
+Interpretation: the multi-image candidate set is narrow enough for a bounded GPU
+caption-generation run and is strongly enriched for hallucinated CHAIR mentions.
+This is useful feasibility evidence, not a mitigation result: it is derived from
+cached caption mentions and does not yet evaluate generated captions, newly
+introduced open-vocabulary routes, length, or fluency.
+
 ## Detection Baselines
 
 Result root:

@@ -264,7 +264,14 @@ failure to the constructive TDEV method.
    and 1.45% are extra mapped candidates. This is useful as a conservative
    overreach signal, not as a precision estimate. The next
    implementation should therefore improve candidate phrase typing and target
-   canonicalization before investing in a large decode-time run.
+   canonicalization before investing in a large decode-time run. The new
+   multi-image prefilter audit makes that next run bounded: on the 100
+   highest-risk cached-caption images, it selects 126 image-word deny candidates
+   with 86.51% CHAIR-hallucination precision, mean 1.26 denied words per image,
+   and mean 10.92 LLaVA token sequences per image. Use this as the first
+   multi-image generation target, while keeping the claim at feasibility until
+   generated captions are audited for CHAIR, variant/root/open-vocabulary leaks,
+   length, and fluency.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full
