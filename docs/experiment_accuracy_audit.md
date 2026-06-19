@@ -1488,7 +1488,30 @@ detection/baselines/results/tdev_decode_gate_open_vocab_auto_map_summary/
 
 The open-vocabulary candidate extraction and lexical target mapper now live in
 `detection/src/sinkdetect/open_vocab_claims.py`, and both the audit and summary
-scripts use that shared implementation.
+scripts use that shared implementation. A threshold sensitivity audit over the
+same four route positives and 18 reference-unmapped nonroute candidates gives:
+
+```text
+| Threshold | Route recall | Reference-unmapped nonroute maps |
+|---|---:|---:|
+| 0.50 | 1.0000 | 4/18 |
+| 0.60 | 1.0000 | 2/18 |
+| 0.70 | 1.0000 | 0/18 |
+| 0.80 | 1.0000 | 0/18 |
+| 0.90 | 1.0000 | 0/18 |
+| 0.95 | 1.0000 | 0/18 |
+| 1.00 | 1.0000 | 0/18 |
+```
+
+Artifact:
+
+```text
+detection/baselines/results/tdev_decode_gate_open_vocab_mapping_thresholds/
+```
+
+This is not a full human-labeled precision estimate, but it shows that the
+current `0.80` lexical mapping threshold is not a knife-edge choice on the
+alias-chasing examples.
 
 The important conclusion is sharper than the earlier one-image reading.
 Open-vocabulary candidate discovery catches each route, but raw phrase scoring is

@@ -253,7 +253,10 @@ failure to the constructive TDEV method.
    variant leaks, root leaks, open-vocabulary leaks, length, and fluency. The
    candidate extraction and first lexical mapper are factored into
    `sinkdetect.open_vocab_claims` so future decode-time and offline audits share
-   one implementation.
+   one implementation. A threshold audit keeps 4/4 known route leaks and maps
+   0/18 reference-unmapped nonroute candidates for thresholds `0.70` through
+   `1.00`; this supports `0.80` for the next multi-image prototype, while still
+   requiring a real human-labeled precision check before paper claims.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

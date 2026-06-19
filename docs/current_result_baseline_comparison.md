@@ -153,8 +153,11 @@ Reading:
   present as literal OWLv2 prompts. A lexical candidate-to-denied-target mapper
   with threshold `0.80` maps each route to canonical target `bottle` without
   reading variant/root labels, and TDEV rejects all four (`bottle` target score
-  `0.0266`, best neighbor `cup` score `0.3573`, two-stage present `0`). This is
-  strong evidence that the next useful method step is open-vocabulary
+  `0.0266`, best neighbor `cup` score `0.3573`, two-stage present `0`). A
+  threshold sweep keeps 4/4 route positives and maps 0/18 reference-unmapped
+  nonroute candidates for thresholds `0.70` through `1.00`, so `0.80` is not a
+  knife-edge setting on this diagnostic. This is strong evidence that the next
+  useful method step is open-vocabulary
   object-like phrase discovery plus candidate-to-target mapping and TDEV
   verification, not a larger hand-written alias list or raw phrase scoring
   alone.
@@ -202,3 +205,4 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_open_vocab_route_summary/open_vocab_leak_summary.md`
 - `detection/baselines/results/tdev_decode_gate_open_vocab_auto_map_summary/open_vocab_leak_summary.md`
 - `detection/src/sinkdetect/open_vocab_claims.py`
+- `detection/baselines/results/tdev_decode_gate_open_vocab_mapping_thresholds/mapping_threshold_audit.md`

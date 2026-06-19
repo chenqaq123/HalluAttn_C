@@ -1,0 +1,415 @@
+{
+  "num_reference_unmapped_nonroute_candidates": 18,
+  "num_route_positives": 4,
+  "reference_threshold": 0.8,
+  "reference_unmapped_nonroute_candidates": [
+    {
+      "best_score": 0.5,
+      "best_word": "sink",
+      "candidate": "drink",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 0.3333333333333333,
+      "best_word": "bench",
+      "candidate": "presence",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 0.25,
+      "best_word": "microwave",
+      "candidate": "might",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 0.5,
+      "best_word": "tv",
+      "candidate": "train might",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 0.225,
+      "best_word": "potted plant",
+      "candidate": "part",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 0.3333333333333333,
+      "best_word": "dog",
+      "candidate": "display",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 0.125,
+      "best_word": "elephant",
+      "candidate": "exhibit",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 0.25,
+      "best_word": "mouse",
+      "candidate": "main",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottleneck",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v1"
+    },
+    {
+      "best_score": 0.25,
+      "best_word": "apple",
+      "candidate": "attraction",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottleneck",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v1"
+    },
+    {
+      "best_score": 0.25,
+      "best_word": "mouse",
+      "candidate": "main attraction",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottleneck",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v1"
+    },
+    {
+      "best_score": 0.25,
+      "best_word": "mouse",
+      "candidate": "machine",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 0.6666666666666666,
+      "best_word": "cow",
+      "candidate": "combination",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 0.3333333333333333,
+      "best_word": "car",
+      "candidate": "creates",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 0.3333333333333333,
+      "best_word": "car",
+      "candidate": "machine creates",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 0.6,
+      "best_word": "remote",
+      "candidate": "reminiscent",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 0.3333333333333333,
+      "best_word": "bed",
+      "candidate": "bygone",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 0.125,
+      "best_word": "elephant",
+      "candidate": "era",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 0.3333333333333333,
+      "best_word": "bed",
+      "candidate": "bygone era",
+      "expected_word": "",
+      "image_id": 391158,
+      "is_route_positive": 0,
+      "mapped_at_reference": 0,
+      "mapped_word_at_reference": "",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    }
+  ],
+  "route_positive_candidates": [
+    {
+      "best_score": 1.0,
+      "best_word": "bottle",
+      "candidate": "bottled drink",
+      "expected_word": "bottle",
+      "image_id": 391158,
+      "is_route_positive": 1,
+      "mapped_at_reference": 1,
+      "mapped_word_at_reference": "bottle",
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first"
+    },
+    {
+      "best_score": 1.0,
+      "best_word": "bottle",
+      "candidate": "bottleneck",
+      "expected_word": "bottle",
+      "image_id": 391158,
+      "is_route_positive": 1,
+      "mapped_at_reference": 1,
+      "mapped_word_at_reference": "bottle",
+      "route_phrase": "bottleneck",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v1"
+    },
+    {
+      "best_score": 1.0,
+      "best_word": "bottle",
+      "candidate": "bottling machine",
+      "expected_word": "bottle",
+      "image_id": 391158,
+      "is_route_positive": 1,
+      "mapped_at_reference": 1,
+      "mapped_word_at_reference": "bottle",
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2"
+    },
+    {
+      "best_score": 1.0,
+      "best_word": "bottle",
+      "candidate": "bottletop",
+      "expected_word": "bottle",
+      "image_id": 391158,
+      "is_route_positive": 1,
+      "mapped_at_reference": 1,
+      "mapped_word_at_reference": "bottle",
+      "route_phrase": "bottletop",
+      "route_source": "root",
+      "run": "variant_alias_v3"
+    }
+  ],
+  "scope_note": "Single-image threshold sensitivity over existing alias-chasing audits. Route positives are known leak route phrases; reference-unmapped nonroute candidates are a conservative diagnostic set, not a full human-labeled negative set.",
+  "threshold_sweep": [
+    {
+      "nonroute_maps": [
+        {
+          "best_score": 0.5,
+          "best_word": "sink",
+          "candidate": "drink",
+          "run": "single_token_first"
+        },
+        {
+          "best_score": 0.5,
+          "best_word": "tv",
+          "candidate": "train might",
+          "run": "single_token_first"
+        },
+        {
+          "best_score": 0.6666666666666666,
+          "best_word": "cow",
+          "candidate": "combination",
+          "run": "variant_alias_v2"
+        },
+        {
+          "best_score": 0.6,
+          "best_word": "remote",
+          "candidate": "reminiscent",
+          "run": "variant_alias_v2"
+        }
+      ],
+      "reference_unmapped_nonroute_map_rate": 0.2222222222222222,
+      "reference_unmapped_nonroute_maps": 4,
+      "reference_unmapped_nonroute_total": 18,
+      "route_positive_hits": 4,
+      "route_positive_recall": 1.0,
+      "route_positive_total": 4,
+      "threshold": 0.5
+    },
+    {
+      "nonroute_maps": [
+        {
+          "best_score": 0.6666666666666666,
+          "best_word": "cow",
+          "candidate": "combination",
+          "run": "variant_alias_v2"
+        },
+        {
+          "best_score": 0.6,
+          "best_word": "remote",
+          "candidate": "reminiscent",
+          "run": "variant_alias_v2"
+        }
+      ],
+      "reference_unmapped_nonroute_map_rate": 0.1111111111111111,
+      "reference_unmapped_nonroute_maps": 2,
+      "reference_unmapped_nonroute_total": 18,
+      "route_positive_hits": 4,
+      "route_positive_recall": 1.0,
+      "route_positive_total": 4,
+      "threshold": 0.6
+    },
+    {
+      "nonroute_maps": [],
+      "reference_unmapped_nonroute_map_rate": 0.0,
+      "reference_unmapped_nonroute_maps": 0,
+      "reference_unmapped_nonroute_total": 18,
+      "route_positive_hits": 4,
+      "route_positive_recall": 1.0,
+      "route_positive_total": 4,
+      "threshold": 0.7
+    },
+    {
+      "nonroute_maps": [],
+      "reference_unmapped_nonroute_map_rate": 0.0,
+      "reference_unmapped_nonroute_maps": 0,
+      "reference_unmapped_nonroute_total": 18,
+      "route_positive_hits": 4,
+      "route_positive_recall": 1.0,
+      "route_positive_total": 4,
+      "threshold": 0.8
+    },
+    {
+      "nonroute_maps": [],
+      "reference_unmapped_nonroute_map_rate": 0.0,
+      "reference_unmapped_nonroute_maps": 0,
+      "reference_unmapped_nonroute_total": 18,
+      "route_positive_hits": 4,
+      "route_positive_recall": 1.0,
+      "route_positive_total": 4,
+      "threshold": 0.9
+    },
+    {
+      "nonroute_maps": [],
+      "reference_unmapped_nonroute_map_rate": 0.0,
+      "reference_unmapped_nonroute_maps": 0,
+      "reference_unmapped_nonroute_total": 18,
+      "route_positive_hits": 4,
+      "route_positive_recall": 1.0,
+      "route_positive_total": 4,
+      "threshold": 0.95
+    },
+    {
+      "nonroute_maps": [],
+      "reference_unmapped_nonroute_map_rate": 0.0,
+      "reference_unmapped_nonroute_maps": 0,
+      "reference_unmapped_nonroute_total": 18,
+      "route_positive_hits": 4,
+      "route_positive_recall": 1.0,
+      "route_positive_total": 4,
+      "threshold": 1.0
+    }
+  ],
+  "thresholds": [
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    0.95,
+    1.0
+  ]
+}
