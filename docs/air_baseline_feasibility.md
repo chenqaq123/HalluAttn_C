@@ -45,6 +45,17 @@ This means the safest route is an isolated env or container. Do not patch the
 current `latentGuard` environment in place unless the change is reversible and
 recorded.
 
+A dry-run in `latentGuard` confirms the mismatch:
+
+- Current env: Python 3.10.20, torch 2.10.0+cu128, transformers 4.57.6,
+  tokenizers 0.22.2.
+- AIR LLaVA requirements: torch 2.1.2, transformers 4.37.2, tokenizers 0.15.1.
+- `PYTHONPATH=/tmp/sinkdetect_air_check/LLaVA python -m eval_scripts.eval_pope_air --help`
+  fails before model loading with `ModuleNotFoundError: No module named 'shortuuid'`.
+
+This is not just a missing package; installing AIR requirements into
+`latentGuard` would downgrade core libraries used by the rest of the project.
+
 ## POPE Semantic-Neighbor Audit Plan
 
 AIR's `eval_pope_air.py` expects LLaVA-style question JSONL rows with:
@@ -89,11 +100,27 @@ Recommended first run:
    environment.
 2. Run official AIR with `max_new_tokens=16` or `32`, greedy decoding, batch size
    1 or 2, and LLaVA-1.5-7B.
-3. Convert AIR `answers.jsonl` to the existing prediction schema if needed.
+3. Convert AIR `answers.jsonl` to the existing prediction schema:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/convert_air_answers.py \
+  --answers_file <AIR_LLaVA>/results/.../pope/answers.jsonl \
+  --questions_file mitigation/results/air_official_inputs/pope/adversarial/air_adversarial_120_questions.jsonl \
+  --output_file mitigation/results/air_official_adversarial_120/pope/adversarial/air/predictions.jsonl \
+  --method air \
+  --strict
+```
+
 4. Evaluate with `mitigation/scripts/evaluate_semantic_neighbor_subsets.py` using
    the same audit CSV and strict invalid handling.
 5. Promote to full adversarial or all-split only if AIR lowers related-present
    FPR without merely collapsing TPR/yes rate.
+
+The conversion path has been structure-tested with a 120-row dummy AIR answers
+file: `convert_air_answers.py` writes the expected prediction schema, and
+`evaluate_semantic_neighbor_subsets.py --invalid_policy error` consumes it with
+`invalid=0` and the expected subset counts.
 
 ## Paper Positioning
 
