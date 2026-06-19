@@ -1,0 +1,147 @@
+{
+  "rows": [
+    {
+      "audit_json": "detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_open_vocab_audit/closed_loop_example_audit.json",
+      "image_id": 391158,
+      "introduced_root_leaks": [
+        {
+          "root": "bottl",
+          "token": "bottled",
+          "word": "bottle"
+        }
+      ],
+      "introduced_variant_leaks": [
+        {
+          "alias": "bottled drink",
+          "word": "bottle"
+        },
+        {
+          "alias": "bottled",
+          "word": "bottle"
+        }
+      ],
+      "introduced_words": [],
+      "mapped_best_neighbor": "cup",
+      "mapped_best_neighbor_score": 0.35725995898246765,
+      "mapped_target_score": 0.026559382677078247,
+      "mapped_tdev_margin": -0.3307005763053894,
+      "mapped_two_stage_present": 0,
+      "mapped_word": "bottle",
+      "open_vocab_detected_route": 1,
+      "raw_phrase_target_score": 0.14565154910087585,
+      "raw_phrase_two_stage_present": 1,
+      "route_phrase": "bottled drink",
+      "route_source": "variant_alias",
+      "run": "single_token_first",
+      "unsupported_open_vocab_claims": [
+        "bottled",
+        "presence",
+        "might",
+        "display"
+      ]
+    },
+    {
+      "audit_json": "detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_open_vocab_audit/closed_loop_example_audit.json",
+      "image_id": 391158,
+      "introduced_root_leaks": [
+        {
+          "root": "bottl",
+          "token": "bottleneck",
+          "word": "bottle"
+        }
+      ],
+      "introduced_variant_leaks": [
+        {
+          "alias": "bottleneck",
+          "word": "bottle"
+        }
+      ],
+      "introduced_words": [],
+      "mapped_best_neighbor": "cup",
+      "mapped_best_neighbor_score": 0.35725995898246765,
+      "mapped_target_score": 0.026559382677078247,
+      "mapped_tdev_margin": -0.3307005763053894,
+      "mapped_two_stage_present": 0,
+      "mapped_word": "bottle",
+      "open_vocab_detected_route": 1,
+      "raw_phrase_target_score": 0.10806906968355179,
+      "raw_phrase_two_stage_present": 1,
+      "route_phrase": "bottleneck",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v1",
+      "unsupported_open_vocab_claims": [
+        "main"
+      ]
+    },
+    {
+      "audit_json": "detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v2_open_vocab_audit/closed_loop_example_audit.json",
+      "image_id": 391158,
+      "introduced_root_leaks": [
+        {
+          "root": "bottl",
+          "token": "bottling",
+          "word": "bottle"
+        }
+      ],
+      "introduced_variant_leaks": [
+        {
+          "alias": "bottling machine",
+          "word": "bottle"
+        },
+        {
+          "alias": "bottling",
+          "word": "bottle"
+        }
+      ],
+      "introduced_words": [
+        "bottle"
+      ],
+      "mapped_best_neighbor": "cup",
+      "mapped_best_neighbor_score": 0.35725995898246765,
+      "mapped_target_score": 0.026559382677078247,
+      "mapped_tdev_margin": -0.3307005763053894,
+      "mapped_two_stage_present": 0,
+      "mapped_word": "bottle",
+      "open_vocab_detected_route": 1,
+      "raw_phrase_target_score": 0.15958529710769653,
+      "raw_phrase_two_stage_present": 1,
+      "route_phrase": "bottling machine",
+      "route_source": "variant_alias",
+      "run": "variant_alias_v2",
+      "unsupported_open_vocab_claims": [
+        "bottling",
+        "combination",
+        "creates"
+      ]
+    },
+    {
+      "audit_json": "detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_open_vocab_audit/closed_loop_example_audit.json",
+      "image_id": 391158,
+      "introduced_root_leaks": [
+        {
+          "root": "bottl",
+          "token": "bottletop",
+          "word": "bottle"
+        }
+      ],
+      "introduced_variant_leaks": [],
+      "introduced_words": [],
+      "mapped_best_neighbor": "cup",
+      "mapped_best_neighbor_score": 0.35725995898246765,
+      "mapped_target_score": 0.026559382677078247,
+      "mapped_tdev_margin": -0.3307005763053894,
+      "mapped_two_stage_present": 0,
+      "mapped_word": "bottle",
+      "open_vocab_detected_route": 1,
+      "raw_phrase_target_score": 0.07754113525152206,
+      "raw_phrase_two_stage_present": 0,
+      "route_phrase": "bottletop",
+      "route_source": "root",
+      "run": "variant_alias_v3",
+      "unsupported_open_vocab_claims": [
+        "bottletop"
+      ]
+    }
+  ],
+  "scope_note": "Single-image alias-chasing audit summary. Raw phrase verification is reported separately from mapped canonical-target verification because open-vocabulary candidates can be real object-like phrases while the original denied target is still absent."
+}

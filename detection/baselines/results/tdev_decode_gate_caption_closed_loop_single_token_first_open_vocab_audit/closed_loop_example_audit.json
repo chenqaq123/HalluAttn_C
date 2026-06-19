@@ -1,0 +1,295 @@
+{
+  "examples": [
+    {
+      "denied_words": [
+        "airplane",
+        "apple",
+        "backpack",
+        "banana",
+        "baseball bat",
+        "baseball glove",
+        "bear",
+        "bed",
+        "bench",
+        "bicycle",
+        "bird",
+        "boat",
+        "book",
+        "bottle",
+        "bowl",
+        "broccoli",
+        "cake",
+        "car",
+        "carrot",
+        "cat",
+        "cell phone",
+        "chair",
+        "clock",
+        "couch",
+        "cow",
+        "dining table",
+        "dog",
+        "donut",
+        "elephant",
+        "fork",
+        "frisbee",
+        "giraffe",
+        "hair drier",
+        "handbag",
+        "horse",
+        "hot dog",
+        "keyboard",
+        "kite",
+        "knife",
+        "laptop",
+        "microwave",
+        "motorcycle",
+        "mouse",
+        "orange",
+        "oven",
+        "person",
+        "pizza",
+        "potted plant",
+        "refrigerator",
+        "remote",
+        "sandwich",
+        "scissors",
+        "sheep",
+        "sink",
+        "skateboard",
+        "skis",
+        "snowboard",
+        "spoon",
+        "sports ball",
+        "stop sign",
+        "surfboard",
+        "teddy bear",
+        "tennis racket",
+        "tie",
+        "toaster",
+        "toilet",
+        "toothbrush",
+        "tv",
+        "umbrella",
+        "vase",
+        "wine glass",
+        "zebra"
+      ],
+      "gated_root_hits": [
+        {
+          "root": "bottl",
+          "token": "bottled",
+          "word": "bottle"
+        }
+      ],
+      "gated_variant_hits": [
+        {
+          "alias": "bottled drink",
+          "word": "bottle"
+        },
+        {
+          "alias": "bottled",
+          "word": "bottle"
+        }
+      ],
+      "gated_words": [
+        "train",
+        "train",
+        "train",
+        "train",
+        "train",
+        "cup",
+        "train",
+        "train"
+      ],
+      "image_id": 391158,
+      "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000391158.jpg",
+      "interpretation": "A closed-loop gate should verify introduced_words before allowing the rewritten caption path to continue.",
+      "introduced_claim_scores": {},
+      "introduced_hallucinated_words": [],
+      "introduced_open_vocab_candidates": [
+        "bottled",
+        "drink",
+        "bottled drink",
+        "presence",
+        "might",
+        "train might",
+        "part",
+        "display",
+        "exhibit"
+      ],
+      "introduced_open_vocab_claim_scores": {
+        "bottled": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.03957171365618706,
+          "tdev_margin": 0.03957171365618706,
+          "top_neighbors": [],
+          "two_stage_present": 0,
+          "two_stage_score": -0.06042828634381295
+        },
+        "bottled drink": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.14565154910087585,
+          "tdev_margin": 0.14565154910087585,
+          "top_neighbors": [],
+          "two_stage_present": 1,
+          "two_stage_score": 0.04565154910087585
+        },
+        "display": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.06009294092655182,
+          "tdev_margin": 0.06009294092655182,
+          "top_neighbors": [],
+          "two_stage_present": 0,
+          "two_stage_score": -0.03990705907344819
+        },
+        "drink": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.22635281085968018,
+          "tdev_margin": 0.22635281085968018,
+          "top_neighbors": [],
+          "two_stage_present": 1,
+          "two_stage_score": 0.12635281085968017
+        },
+        "exhibit": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.12747064232826233,
+          "tdev_margin": 0.12747064232826233,
+          "top_neighbors": [],
+          "two_stage_present": 1,
+          "two_stage_score": 0.027470642328262324
+        },
+        "might": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.0825924277305603,
+          "tdev_margin": 0.0825924277305603,
+          "top_neighbors": [],
+          "two_stage_present": 0,
+          "two_stage_score": -0.017407572269439703
+        },
+        "part": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.11849264055490494,
+          "tdev_margin": 0.11849264055490494,
+          "top_neighbors": [],
+          "two_stage_present": 1,
+          "two_stage_score": 0.018492640554904932
+        },
+        "presence": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.02606506086885929,
+          "tdev_margin": 0.02606506086885929,
+          "top_neighbors": [],
+          "two_stage_present": 0,
+          "two_stage_score": -0.07393493913114071
+        },
+        "train might": {
+          "best_neighbor": "",
+          "best_neighbor_score": 0.0,
+          "target_score": 0.4013281464576721,
+          "tdev_margin": 0.4013281464576721,
+          "top_neighbors": [],
+          "two_stage_present": 1,
+          "two_stage_score": 0.30132814645767214
+        }
+      },
+      "introduced_root_leaks": [
+        {
+          "root": "bottl",
+          "token": "bottled",
+          "word": "bottle"
+        }
+      ],
+      "introduced_variant_leaks": [
+        {
+          "alias": "bottled drink",
+          "word": "bottle"
+        },
+        {
+          "alias": "bottled",
+          "word": "bottle"
+        }
+      ],
+      "introduced_words": [],
+      "open_vocab_gated_candidates": [
+        "steam",
+        "engine",
+        "steam engine",
+        "train",
+        "engine train",
+        "steam engine train",
+        "station",
+        "train station",
+        "museum",
+        "displayed",
+        "extending",
+        "cup",
+        "bottled",
+        "drink",
+        "bottled drink",
+        "presence",
+        "might",
+        "train might",
+        "part",
+        "display",
+        "exhibit"
+      ],
+      "open_vocab_vanilla_candidates": [
+        "steam",
+        "engine",
+        "steam engine",
+        "train",
+        "engine train",
+        "steam engine train",
+        "station",
+        "train station",
+        "museum",
+        "displayed",
+        "extending",
+        "people",
+        "cup",
+        "table",
+        "counter"
+      ],
+      "removed_words": [
+        "dining table",
+        "person"
+      ],
+      "unsupported_open_vocab_claims": [
+        "bottled",
+        "presence",
+        "might",
+        "display"
+      ],
+      "vanilla_words": [
+        "train",
+        "train",
+        "train",
+        "train",
+        "train",
+        "person",
+        "cup",
+        "dining table"
+      ]
+    }
+  ],
+  "examples_json": "detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/gated_generation_examples.json",
+  "neighbors_json": "mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json",
+  "open_vocab_candidate_limit": 32,
+  "open_vocab_min_token_len": 3,
+  "owlv2_model_path": "/home/chenguanxu/common_model/huggingface/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d",
+  "top_neighbors": 10,
+  "two_stage_high": 0.16,
+  "two_stage_low": 0.1,
+  "two_stage_margin": -0.15,
+  "variant_aliases_json": "detection/config/object_variant_aliases.json",
+  "variant_roots_json": "detection/config/object_variant_roots.json"
+}
