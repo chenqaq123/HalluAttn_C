@@ -1,0 +1,26 @@
+token_id,token_text,num_words,words
+349,P,13,bear|bench|bird|boat|cake|dog|handbag|horse|knife|person|pizza|potted plant|toilet
+315,C,11,bird|boat|cake|car|cat|clock|couch|cow|dog|horse|person
+350,B,11,bear|bed|bicycle|bird|boat|bottle|bus|cow|person|sports ball|tie
+282,p,10,bear|bench|bird|boat|cake|dog|horse|pizza|potted plant|toilet
+323,T,10,bicycle|boat|bus|car|cat|dining table|person|tie|truck|tv
+274,c,9,bird|cake|car|cat|couch|cow|dog|horse|person
+289,b,6,bed|bicycle|boat|cow|person|tie
+360,D,6,bird|boat|dining table|dog|donut|person
+383,F,6,bird|cat|fork|frisbee|person|refrigerator
+286,m,5,bird|dog|motorcycle|mouse|person
+317,S,5,bird|boat|couch|motorcycle|sink
+365,L,5,bird|boat|car|suitcase|truck
+379,H,5,car|dog|fire hydrant|hair drier|horse
+390,R,5,bird|dog|person|sheep|tennis racket
+2071,sk,5,boat|person|skateboard|skis|surfboard
+4971,Sk,5,boat|person|skateboard|skis|surfboard
+260,t,4,boat|bus|tie|tv
+270,d,4,boat|dining table|dog|donut
+298,h,4,car|dog|person|sandwich
+301,l,4,bird|boat|sheep|truck
+341,M,4,dog|motorcycle|mouse|person
+413,k,4,boat|cat|kite|person
+478,V,4,bird|boat|car|vase
+521,ch,4,bird|chair|couch|dog
+678,Ch,4,bird|chair|couch|dog

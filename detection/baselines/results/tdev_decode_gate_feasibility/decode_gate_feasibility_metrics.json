@@ -1,0 +1,89 @@
+{
+  "action_token_collision_count": 122,
+  "interpretation": "Near-gen-pos matches estimate direct decode-time gateability. Action tokens skip tokenizer whitespace tokens, so multi-token phrases require a prefix-state gate.",
+  "max_action_token_collision_words": 13,
+  "model_path": "/home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+  "num_mentions": 16426,
+  "num_object_words": 80,
+  "num_unique_captions": 4976,
+  "score": "hybrid_positive_branch_absence",
+  "scores_csv": "detection/baselines/results/owlv2_region_detection/owlv2_region_detection_scores.csv",
+  "summaries": [
+    {
+      "caption_anywhere_match_rate": 0.9920248386704006,
+      "caption_anywhere_matches": 16295,
+      "grounded_mentions": 12417,
+      "grounded_near_gen_pos_match_rate": 0.990899573165821,
+      "hallucinated_mentions": 4009,
+      "hallucinated_near_gen_pos_match_rate": 0.9822898478423547,
+      "mentions": 16426,
+      "name": "all_mentions",
+      "near_gen_pos_match_rate": 0.9887982466820894,
+      "near_gen_pos_matches": 16242
+    },
+    {
+      "caption_anywhere_match_rate": 0.9842853579446246,
+      "caption_anywhere_matches": 3946,
+      "grounded_mentions": 0,
+      "grounded_near_gen_pos_match_rate": 0.0,
+      "hallucinated_mentions": 4009,
+      "hallucinated_near_gen_pos_match_rate": 0.9822898478423547,
+      "mentions": 4009,
+      "name": "hallucinated_mentions",
+      "near_gen_pos_match_rate": 0.9822898478423547,
+      "near_gen_pos_matches": 3938
+    },
+    {
+      "caption_anywhere_match_rate": 0.9945236369493436,
+      "caption_anywhere_matches": 12349,
+      "grounded_mentions": 12417,
+      "grounded_near_gen_pos_match_rate": 0.990899573165821,
+      "hallucinated_mentions": 0,
+      "hallucinated_near_gen_pos_match_rate": 0.0,
+      "mentions": 12417,
+      "name": "grounded_mentions",
+      "near_gen_pos_match_rate": 0.990899573165821,
+      "near_gen_pos_matches": 12304
+    },
+    {
+      "caption_anywhere_match_rate": 0.9853836784409257,
+      "caption_anywhere_matches": 809,
+      "grounded_mentions": 138,
+      "grounded_near_gen_pos_match_rate": 0.9927536231884058,
+      "hallucinated_mentions": 683,
+      "hallucinated_near_gen_pos_match_rate": 0.9765739385065886,
+      "mentions": 821,
+      "name": "tdev_selected_top_frac",
+      "near_gen_pos_match_rate": 0.9792935444579781,
+      "near_gen_pos_matches": 804
+    },
+    {
+      "caption_anywhere_match_rate": 0.9824304538799414,
+      "caption_anywhere_matches": 671,
+      "grounded_mentions": 0,
+      "grounded_near_gen_pos_match_rate": 0.0,
+      "hallucinated_mentions": 683,
+      "hallucinated_near_gen_pos_match_rate": 0.9765739385065886,
+      "mentions": 683,
+      "name": "tdev_selected_hallucinated",
+      "near_gen_pos_match_rate": 0.9765739385065886,
+      "near_gen_pos_matches": 667
+    },
+    {
+      "caption_anywhere_match_rate": 1.0,
+      "caption_anywhere_matches": 138,
+      "grounded_mentions": 138,
+      "grounded_near_gen_pos_match_rate": 0.9927536231884058,
+      "hallucinated_mentions": 0,
+      "hallucinated_near_gen_pos_match_rate": 0.0,
+      "mentions": 138,
+      "name": "tdev_selected_grounded",
+      "near_gen_pos_match_rate": 0.9927536231884058,
+      "near_gen_pos_matches": 137
+    }
+  ],
+  "top_frac": 0.05,
+  "vocab_all_words_have_action_token": true,
+  "vocab_single_token_word_fraction": 0.425,
+  "window": 4
+}

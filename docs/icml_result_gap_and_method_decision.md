@@ -95,6 +95,15 @@ than the failed clause heuristic but is too coarse (`-3.01` mean words for only
 object-token or object-phrase continuations during decoding, not delete completed
 sentences after generation.
 
+Token feasibility audit: this next step is technically plausible. On the saved
+16,426 CHAIR object mentions, tokenizer-span matching near `gen_pos` succeeds for
+`98.9%` overall and `98.2%` of hallucinated mentions. Among the TDEV top-5% high
+risk mentions, `97.9%` match near `gen_pos`, including `97.7%` of selected
+hallucinated mentions. The remaining risk is not coverage but decoding policy:
+LLaVA's tokenizer often represents object phrases as multi-token BPE sequences,
+so the gate must track short prefixes and suppress object-phrase continuations,
+not just ban a first token globally.
+
 Risk: it requires generation hooks and careful token/object mapping; if too
 slow, report it as a small-scale proof of concept on the 4,977 CHAIR scope.
 

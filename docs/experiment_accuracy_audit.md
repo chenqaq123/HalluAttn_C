@@ -1017,6 +1017,44 @@ deletion result still achieves lower CHAIR with a smaller length penalty. This
 means the target-discriminative gate should be implemented at decoding time or at
 object-phrase granularity, not by deleting completed sentences after generation.
 
+### TDEV Decode-Gate Token Feasibility
+
+`detection/scripts/audit_tdev_decode_gate_feasibility.py` checks whether the
+same TDEV-selected object mentions can be intercepted before text is finalized.
+It does not load the 7B model; it loads the LLaVA tokenizer, expands CHAIR object
+synonyms, and matches object token spans near each saved `gen_pos` in
+`owlv2_region_detection_scores.csv`.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_tdev_decode_gate_feasibility.py
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_decode_gate_feasibility/
+```
+
+Key result:
+
+| Scope | Mentions | Hallucinated | Near-`gen_pos` token-span match | Caption-anywhere match |
+|---|---:|---:|---:|---:|
+| all object mentions | 16,426 | 4,009 | 0.9888 | 0.9920 |
+| hallucinated mentions | 4,009 | 4,009 | 0.9823 | 0.9843 |
+| TDEV top-5% selected | 821 | 683 | 0.9793 | 0.9854 |
+| TDEV top-5% hallucinated | 683 | 683 | 0.9766 | 0.9824 |
+
+Interpretation: token coverage is not the bottleneck. The weak caption-side
+results above come from using post-hoc deletion/rewrite proxies, not from an
+inability to identify object claims in the decode stream. Because only 42.5% of
+COCO object words have a single-token realization under the LLaVA tokenizer and
+many synonyms share early BPE action tokens, the implementation should be a
+short prefix-state object-phrase `LogitsProcessor`, not a naive banned-first-token
+list.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The
