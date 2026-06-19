@@ -1,0 +1,1016 @@
+[
+  {
+    "image_id": 22596,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000022596.jpg",
+    "denied_items": [
+      {
+        "word": "bird",
+        "matched_surface": "",
+        "score": 0.1439377198368311,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.016062280163168907,
+        "best_neighbor": "cow",
+        "best_neighbor_score": 0.6388142108917236,
+        "tdev_margin": -0.6227519307285547,
+        "two_stage_present": 0
+      },
+      {
+        "word": "giraffe",
+        "matched_surface": "",
+        "score": 0.12820693090558052,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03179306909441948,
+        "best_neighbor": "cow",
+        "best_neighbor_score": 0.6388142108917236,
+        "tdev_margin": -0.6070211417973042,
+        "two_stage_present": 0
+      },
+      {
+        "word": "zebra",
+        "matched_surface": "",
+        "score": 0.12013245731592179,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03986754268407822,
+        "best_neighbor": "cow",
+        "best_neighbor_score": 0.6388142108917236,
+        "tdev_margin": -0.5989466682076454,
+        "two_stage_present": 0
+      },
+      {
+        "word": "tennis racket",
+        "matched_surface": "",
+        "score": 0.09951195332687349,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0004880466731265187,
+        "best_neighbor": "person",
+        "best_neighbor_score": 0.024463457986712456,
+        "tdev_margin": -0.023975411313585937,
+        "two_stage_present": 0
+      },
+      {
+        "word": "keyboard",
+        "matched_surface": "",
+        "score": 0.0994068667292595,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.000593133270740509,
+        "best_neighbor": "bottle",
+        "best_neighbor_score": 0.007206310983747244,
+        "tdev_margin": -0.006613177713006735,
+        "two_stage_present": 0
+      },
+      {
+        "word": "snowboard",
+        "matched_surface": "",
+        "score": 0.09915969575522468,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0008403042447753251,
+        "best_neighbor": "person",
+        "best_neighbor_score": 0.024463457986712456,
+        "tdev_margin": -0.02362315374193713,
+        "two_stage_present": 0
+      },
+      {
+        "word": "remote",
+        "matched_surface": "",
+        "score": 0.09904593301471323,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0009540669852867723,
+        "best_neighbor": "bottle",
+        "best_neighbor_score": 0.007206310983747244,
+        "tdev_margin": -0.006252243998460472,
+        "two_stage_present": 0
+      },
+      {
+        "word": "toothbrush",
+        "matched_surface": "",
+        "score": 0.09897527636494488,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0010247236350551248,
+        "best_neighbor": "person",
+        "best_neighbor_score": 0.024463457986712456,
+        "tdev_margin": -0.02343873435165733,
+        "two_stage_present": 0
+      },
+      {
+        "word": "mouse",
+        "matched_surface": "",
+        "score": 0.09896805512253196,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0010319448774680495,
+        "best_neighbor": "bottle",
+        "best_neighbor_score": 0.007206310983747244,
+        "tdev_margin": -0.006174366106279194,
+        "two_stage_present": 0
+      },
+      {
+        "word": "hair drier",
+        "matched_surface": "",
+        "score": 0.09878257990349085,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0012174200965091586,
+        "best_neighbor": "person",
+        "best_neighbor_score": 0.024463457986712456,
+        "tdev_margin": -0.023246037890203297,
+        "two_stage_present": 0
+      },
+      {
+        "word": "microwave",
+        "matched_surface": "",
+        "score": 0.0987127889180556,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.001287211081944406,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.011360422358848155,
+        "two_stage_present": 0
+      },
+      {
+        "word": "toilet",
+        "matched_surface": "",
+        "score": 0.09859451525844634,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0014054847415536642,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.011242148699238896,
+        "two_stage_present": 0
+      },
+      {
+        "word": "skis",
+        "matched_surface": "",
+        "score": 0.09858177115675062,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0014182288432493806,
+        "best_neighbor": "dog",
+        "best_neighbor_score": 0.0316065214574337,
+        "tdev_margin": -0.03018829261418432,
+        "two_stage_present": 0
+      },
+      {
+        "word": "dining table",
+        "matched_surface": "",
+        "score": 0.09845821782946587,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.001541782170534134,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.011105851270258427,
+        "two_stage_present": 0
+      },
+      {
+        "word": "skateboard",
+        "matched_surface": "",
+        "score": 0.09832505860831589,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.001674941391684115,
+        "best_neighbor": "dog",
+        "best_neighbor_score": 0.0316065214574337,
+        "tdev_margin": -0.029931580065749586,
+        "two_stage_present": 0
+      },
+      {
+        "word": "refrigerator",
+        "matched_surface": "",
+        "score": 0.09830020021181554,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.001699799788184464,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.010947833652608097,
+        "two_stage_present": 0
+      },
+      {
+        "word": "wine glass",
+        "matched_surface": "",
+        "score": 0.09829353438690305,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0017064656130969524,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.010941167827695608,
+        "two_stage_present": 0
+      },
+      {
+        "word": "pizza",
+        "matched_surface": "",
+        "score": 0.09828848172910512,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.001711518270894885,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.010936115169897676,
+        "two_stage_present": 0
+      },
+      {
+        "word": "spoon",
+        "matched_surface": "",
+        "score": 0.09819204933010042,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0018079506698995829,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.010839682770892978,
+        "two_stage_present": 0
+      },
+      {
+        "word": "couch",
+        "matched_surface": "",
+        "score": 0.09809679866302759,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0019032013369724154,
+        "best_neighbor": "dog",
+        "best_neighbor_score": 0.0316065214574337,
+        "tdev_margin": -0.029703320120461285,
+        "two_stage_present": 0
+      },
+      {
+        "word": "fork",
+        "matched_surface": "",
+        "score": 0.09801214528270066,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.001987854717299342,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.010659778723493218,
+        "two_stage_present": 0
+      },
+      {
+        "word": "laptop",
+        "matched_surface": "",
+        "score": 0.09792906898073853,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0020709310192614794,
+        "best_neighbor": "cat",
+        "best_neighbor_score": 0.006455049384385347,
+        "tdev_margin": -0.004384118365123868,
+        "two_stage_present": 0
+      },
+      {
+        "word": "cell phone",
+        "matched_surface": "",
+        "score": 0.09785791174508632,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0021420882549136877,
+        "best_neighbor": "person",
+        "best_neighbor_score": 0.024463457986712456,
+        "tdev_margin": -0.022321369731798768,
+        "two_stage_present": 0
+      },
+      {
+        "word": "oven",
+        "matched_surface": "",
+        "score": 0.09780719913542271,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0021928008645772934,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.010454832576215267,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bed",
+        "matched_surface": "",
+        "score": 0.09775796430185438,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.002242035698145628,
+        "best_neighbor": "dog",
+        "best_neighbor_score": 0.0316065214574337,
+        "tdev_margin": -0.029364485759288073,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bicycle",
+        "matched_surface": "",
+        "score": 0.09761625728569925,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0023837427143007517,
+        "best_neighbor": "backpack",
+        "best_neighbor_score": 0.013465849682688713,
+        "tdev_margin": -0.011082106968387961,
+        "two_stage_present": 0
+      },
+      {
+        "word": "book",
+        "matched_surface": "",
+        "score": 0.09755079625174404,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.002449203748255968,
+        "best_neighbor": "tv",
+        "best_neighbor_score": 0.0034812684170901775,
+        "tdev_margin": -0.0010320646688342094,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sink",
+        "matched_surface": "",
+        "score": 0.09744229414500297,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.002557705854997039,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.010089927585795522,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sports ball",
+        "matched_surface": "",
+        "score": 0.0974158201366663,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.002584179863333702,
+        "best_neighbor": "dog",
+        "best_neighbor_score": 0.0316065214574337,
+        "tdev_margin": -0.0290223415941,
+        "two_stage_present": 0
+      },
+      {
+        "word": "knife",
+        "matched_surface": "",
+        "score": 0.09734238162636757,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.002657618373632431,
+        "best_neighbor": "bowl",
+        "best_neighbor_score": 0.01264763344079256,
+        "tdev_margin": -0.00999001506716013,
+        "two_stage_present": 0
+      }
+    ],
+    "num_denied_sequences": 144,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds",
+    "gated_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two people",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12247,
+        "banned_token_text": "keyboard",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 7592,
+        "banned_token_text": "remote",
+        "phrase_text": "remote|remotes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9495,
+        "banned_token_text": "mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 25992,
+        "banned_token_text": "Mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14993,
+        "banned_token_text": "ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28551,
+        "banned_token_text": "Ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1591,
+        "banned_token_text": "table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6137,
+        "banned_token_text": "Table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 27350,
+        "banned_token_text": "fork",
+        "phrase_text": "fork|forks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 19022,
+        "banned_token_text": "laptop",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6601,
+        "banned_token_text": "computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20972,
+        "banned_token_text": "Computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6592,
+        "banned_token_text": "bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14195,
+        "banned_token_text": "Bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3143,
+        "banned_token_text": "book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6726,
+        "banned_token_text": "Book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8277,
+        "banned_token_text": "books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13730,
+        "banned_token_text": "Books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8287,
+        "banned_token_text": "ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13402,
+        "banned_token_text": "Ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 12247,
+        "banned_token_text": "keyboard",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 7592,
+        "banned_token_text": "remote",
+        "phrase_text": "remote|remotes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 9495,
+        "banned_token_text": "mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 25992,
+        "banned_token_text": "Mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 14993,
+        "banned_token_text": "ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 28551,
+        "banned_token_text": "Ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 1591,
+        "banned_token_text": "table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 6137,
+        "banned_token_text": "Table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 27350,
+        "banned_token_text": "fork",
+        "phrase_text": "fork|forks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 19022,
+        "banned_token_text": "laptop",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 6601,
+        "banned_token_text": "computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 20972,
+        "banned_token_text": "Computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 6592,
+        "banned_token_text": "bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 14195,
+        "banned_token_text": "Bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 3143,
+        "banned_token_text": "book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 6726,
+        "banned_token_text": "Book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 8277,
+        "banned_token_text": "books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 13730,
+        "banned_token_text": "Books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 8287,
+        "banned_token_text": "ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 13402,
+        "banned_token_text": "Ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 12247,
+        "banned_token_text": "keyboard",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 7592,
+        "banned_token_text": "remote",
+        "phrase_text": "remote|remotes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 9495,
+        "banned_token_text": "mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 25992,
+        "banned_token_text": "Mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 14993,
+        "banned_token_text": "ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 28551,
+        "banned_token_text": "Ski",
+        "phrase_text": "skis|skises|ski"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 1591,
+        "banned_token_text": "table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 6137,
+        "banned_token_text": "Table",
+        "phrase_text": "dining table|dining tables|desk|table|counter top|countertop|tabletop"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 27350,
+        "banned_token_text": "fork",
+        "phrase_text": "fork|forks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 19022,
+        "banned_token_text": "laptop",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 6601,
+        "banned_token_text": "computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 20972,
+        "banned_token_text": "Computer",
+        "phrase_text": "laptop|laptops|computer|notebook"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 6592,
+        "banned_token_text": "bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 14195,
+        "banned_token_text": "Bed",
+        "phrase_text": "bed|beds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 3143,
+        "banned_token_text": "book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 6726,
+        "banned_token_text": "Book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 8277,
+        "banned_token_text": "books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 13730,
+        "banned_token_text": "Books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 8287,
+        "banned_token_text": "ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 13402,
+        "banned_token_text": "Ball",
+        "phrase_text": "sports ball|sports balls|ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 12247,
+        "banned_token_text": "keyboard",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 7592,
+        "banned_token_text": "remote",
+        "phrase_text": "remote|remotes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 9495,
+        "banned_token_text": "mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 25992,
+        "banned_token_text": "Mouse",
+        "phrase_text": "mouse|mouses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 14993,
+        "banned_token_text": "ski",
+        "phrase_text": "skis|skises|ski"
+      }
+    ]
+  }
+]

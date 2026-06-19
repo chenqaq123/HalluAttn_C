@@ -268,10 +268,13 @@ failure to the constructive TDEV method.
    multi-image prefilter audit makes that next run bounded: on the 100
    highest-risk cached-caption images, it selects 126 image-word deny candidates
    with 86.51% CHAIR-hallucination precision, mean 1.26 denied words per image,
-   and mean 10.92 LLaVA token sequences per image. Use this as the first
-   multi-image generation target, while keeping the claim at feasibility until
-   generated captions are audited for CHAIR, variant/root/open-vocabulary leaks,
-   length, and fluency.
+   and mean 10.92 LLaVA token sequences per image. A five-image generated smoke
+   test now shows why the claim must stay at feasibility: prefilter-only hard
+   blocking removes the denied `bird` claim on image 22596 but routes to a new
+   unsupported `person` claim; closed-loop top30 also misses that substitute,
+   while all-unsupported-COCO blocking includes it but truncates the caption. The
+   next method step should be dynamic replacement verification or bounded
+   iterative deny-list expansion, not scaling prefilter-only hard blocking.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

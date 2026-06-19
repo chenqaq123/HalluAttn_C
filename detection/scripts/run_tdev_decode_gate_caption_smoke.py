@@ -61,7 +61,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--load_strategy", choices=("device_map", "utils"), default="device_map")
     p.add_argument("--mention_matches_csv", default="detection/baselines/results/tdev_decode_gate_feasibility/mention_token_matches.csv")
     p.add_argument("--variant_aliases_json", default="detection/config/object_variant_aliases.json")
-    p.add_argument("--deny_phrase_source", choices=("surface", "synonyms", "closed_loop"), default="surface")
+    p.add_argument("--prefilter_examples_json", default="detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_examples.json")
+    p.add_argument("--deny_phrase_source", choices=("surface", "synonyms", "closed_loop", "prefilter"), default="surface")
     p.add_argument("--gate_mode", choices=("hard", "soft"), default="hard")
     p.add_argument("--soft_penalty", type=float, default=4.0)
     p.add_argument("--min_prefix_len_to_block", type=int, default=0)
@@ -182,6 +183,35 @@ def read_variant_aliases(path: Path) -> dict[str, list[str]]:
         str(word).strip().lower(): [str(alias).strip().lower() for alias in aliases if str(alias).strip()]
         for word, aliases in raw.items()
     }
+
+
+def read_prefilter_denied(path: Path) -> tuple[list[int], dict[int, list[dict[str, Any]]]]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    image_ids: list[int] = []
+    denied: dict[int, list[dict[str, Any]]] = {}
+    for example in raw:
+        image_id = int(example["image_id"])
+        image_ids.append(image_id)
+        aliases_by_word = example.get("aliases_by_word", {})
+        items = []
+        for word in example.get("denied_words", []):
+            norm_word = str(word).strip().lower()
+            aliases = [str(alias).strip().lower() for alias in aliases_by_word.get(norm_word, []) if str(alias).strip()]
+            items.append(
+                {
+                    "word": norm_word,
+                    "matched_surface": "",
+                    "score": float(example.get("max_risk_score", 0.0)),
+                    "label": -1,
+                    "object_id": -1,
+                    "prefilter_aliases": aliases,
+                    "prefilter_source_image_selected_mentions": int(example.get("num_selected_mentions", 0)),
+                    "prefilter_source_hallucinated_mentions": int(example.get("num_selected_hallucinated_mentions", 0)),
+                    "prefilter_source_grounded_mentions": int(example.get("num_selected_grounded_mentions", 0)),
+                }
+            )
+        denied[image_id] = items
+    return image_ids, denied
 
 
 def narrow_aliases(
@@ -308,15 +338,22 @@ def cached_captions(rows: list[dict[str, str]]) -> dict[int, str]:
     return captions
 
 
-def choose_image_ids(args: argparse.Namespace, denied: dict[int, list[dict[str, Any]]]) -> list[int]:
+def choose_image_ids(
+    args: argparse.Namespace,
+    denied: dict[int, list[dict[str, Any]]],
+    preferred_order: list[int] | None = None,
+) -> list[int]:
     if args.image_ids.strip():
         return [int(item) for item in args.image_ids.split(",") if item.strip()]
+    if preferred_order is not None:
+        ordered = [image_id for image_id in preferred_order if image_id in denied]
+        return ordered if args.max_images <= 0 else ordered[: args.max_images]
     ranked = sorted(
         denied,
         key=lambda image_id: max(item["score"] for item in denied[image_id]),
         reverse=True,
     )
-    return ranked[: args.max_images]
+    return ranked if args.max_images <= 0 else ranked[: args.max_images]
 
 
 def image_path(coco_path: str, image_id: int) -> Path:
@@ -336,7 +373,10 @@ def main() -> None:
     surface_by_object_id = matched_surface_forms(Path(args.mention_matches_csv))
     denied_by_image = select_denied_words(rows, scores, selected_mask, surface_by_object_id)
     vanilla_by_image = cached_captions(rows)
-    image_ids = choose_image_ids(args, denied_by_image)
+    prefilter_order: list[int] | None = None
+    if args.deny_phrase_source == "prefilter":
+        prefilter_order, denied_by_image = read_prefilter_denied(Path(args.prefilter_examples_json))
+    image_ids = choose_image_ids(args, denied_by_image, prefilter_order)
     synonyms = edit.load_synonyms(Path(args.chair_source))
     observed_aliases = observed_surface_aliases(Path(args.mention_matches_csv), args.alias_top_k)
     variant_aliases = read_variant_aliases(Path(args.variant_aliases_json))
@@ -363,7 +403,9 @@ def main() -> None:
         denied_sequences: list[list[int]] = []
         denied_texts: list[str] = []
         for item in denied_items:
-            if args.deny_phrase_source == "closed_loop":
+            if args.deny_phrase_source == "prefilter" and item.get("prefilter_aliases"):
+                phrases = item["prefilter_aliases"]
+            elif args.deny_phrase_source == "closed_loop":
                 phrases = narrow_aliases(item["word"], observed_aliases, variant_aliases)
             elif args.deny_phrase_source == "surface" and item.get("matched_surface"):
                 phrases = [item["matched_surface"]]
@@ -439,6 +481,12 @@ def main() -> None:
             "whether unsupported object continuations can be blocked or "
             "down-weighted, not final caption quality."
         )
+    elif args.deny_phrase_source == "prefilter":
+        scope_note = (
+            "Prefilter smoke test: denied objects come from the cached multi-image "
+            "TDEV prefilter audit, using its narrow aliases. This is bounded "
+            "generated-caption integration evidence, not final mitigation quality."
+        )
     else:
         scope_note = (
             "Oracle smoke test: denied objects are selected from cached TDEV "
@@ -457,6 +505,7 @@ def main() -> None:
         "generate_vanilla": args.generate_vanilla,
         "mention_matches_csv": args.mention_matches_csv,
         "variant_aliases_json": args.variant_aliases_json,
+        "prefilter_examples_json": args.prefilter_examples_json if args.deny_phrase_source == "prefilter" else None,
         "deny_phrase_source": args.deny_phrase_source,
         "gate_mode": args.gate_mode,
         "soft_penalty": args.soft_penalty if args.gate_mode == "soft" else None,

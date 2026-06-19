@@ -182,6 +182,18 @@ Reading:
   LLaVA tokenizer mean `10.92` denied token sequences per image, p95 `24`. This
   supports a bounded multi-image generation run, but it is still a mention-score
   prefilter audit rather than generated-caption quality evidence.
+- A five-image generated-caption smoke test confirms that the prefilter can be
+  connected to real LLaVA decoding, but it also exposes the next failure mode.
+  With `first_token_policy=single_token_only`, 1/5 captions changed: image
+  `22596` removed the denied `bird` claim but routed to a new `person` claim,
+  which CHAIR marks hallucinated and TDEV verifies as absent (`target_score`
+  `0.0245`, `two_stage_present=0`). Allowing first-token blocking changes 2/5
+  captions but keeps the same `bird -> person` substitution. A closed-loop top30
+  deny-list also misses `person`; an all-unsupported-COCO deny-list includes it
+  but leaves the caption truncated (`"two ch"`). The conclusion is negative but
+  useful: the next method must verify replacement candidates dynamically or use
+  bounded iterative deny-list expansion, not simply scale prefilter-only hard
+  blocking.
 
 ## Paper-Safe Claim
 
@@ -229,3 +241,4 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_open_vocab_mapping_thresholds/mapping_threshold_audit.md`
 - `detection/baselines/results/open_vocab_mapper_caption_cache_audit/open_vocab_mapper_caption_cache_audit.md`
 - `detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_summary.md`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_comparison/prefilter_smoke_5_comparison.md`

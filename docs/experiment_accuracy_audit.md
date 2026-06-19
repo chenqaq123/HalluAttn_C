@@ -151,6 +151,58 @@ This is useful feasibility evidence, not a mitigation result: it is derived from
 cached caption mentions and does not yet evaluate generated captions, newly
 introduced open-vocabulary routes, length, or fluency.
 
+## Prefilter Decode-Gate Generated Smoke
+
+Date: 2026-06-19
+
+`run_tdev_decode_gate_caption_smoke.py` now supports
+`--deny_phrase_source prefilter`, which reads the multi-image prefilter
+examples and uses their narrow aliases as the decode-time deny-list. A five-image generated-vs-generated smoke
+run was executed on GPU 5 with LLaVA-1.5-7B.
+
+Main commands:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --deny_phrase_source prefilter \
+  --first_token_policy single_token_only \
+  --generate_vanilla \
+  --max_images 5 \
+  --max_new_tokens 64 \
+  --device 5 \
+  --output_dir detection/baselines/results/tdev_decode_gate_prefilter_smoke_5
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_prefilter_smoke_5/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_audit \
+  --device cuda:5
+```
+
+Comparison artifact:
+
+```text
+detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_comparison/prefilter_smoke_5_comparison.md
+```
+
+Key comparison:
+
+| Run | Images | Changed | Removed | Introduced hallucinated | Interpretation |
+|---|---:|---:|---|---|---|
+| prefilter, single-token-first | 5 | 1 | bird | person | removes a denied claim but routes to unsupported `person` on image 22596 |
+| prefilter, all-first | 5 | 2 | bird | person | stronger first-token blocking does not fix the substitution |
+| closed-loop top30 on 22596 | 1 | 1 | bird | person | top30 absent-object deny-list misses `person` |
+| closed-loop all unsupported COCO on 22596 | 1 | 1 | bird | - | includes `person` but produces an incomplete caption ending in `two ch` |
+
+The important result is negative: prefilter-only hard blocking is not ready to
+scale to the 100-image set. It can remove a selected hallucinated object, but the
+model can route to another unsupported COCO object. Full absent-object blocking
+can suppress that substitute but is too broad and can harm fluency/completion.
+The next caption method should therefore add dynamic replacement verification or
+bounded iterative expansion of the deny-list, with explicit audits for CHAIR,
+variant/root/open-vocabulary leaks, length, and fluency.
+
 ## Detection Baselines
 
 Result root:
