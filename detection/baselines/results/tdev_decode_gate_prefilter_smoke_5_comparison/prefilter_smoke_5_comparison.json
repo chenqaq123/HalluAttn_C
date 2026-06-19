@@ -1,5 +1,5 @@
 {
-  "interpretation": "Five-image generated-caption smoke test. Prefilter-only blocking is easy to integrate but can route a denied object to a new unsupported COCO object. Bounded iterative expansion adds that substitute and removes the new hallucinated object route, but the hard gate still leaves an incomplete caption on the stress image. The next method should use soft verification or sentence-level stop/repair after dynamic replacement verification rather than scaling prefilter-only hard blocking.",
+  "interpretation": "Five-image generated-caption smoke test. Prefilter-only blocking is easy to integrate but can route a denied object to a new unsupported COCO object. Bounded iterative expansion adds that substitute and removes the new hallucinated object route, but hard blocking and soft penalty 4 still leave an incomplete caption on the stress image. Soft penalty 1 is too weak and leaves the original bird hallucination unchanged. The next method should use sentence-level stop/repair or constrained rewrite after dynamic replacement verification rather than relying on fixed hard/soft token suppression.",
   "runs": [
     {
       "captions_changed": 1,
@@ -364,6 +364,99 @@
       ],
       "run": "prefilter_iter2_single_token_only",
       "total_gate_events_saved": 324,
+      "unsupported_open_vocab_claims": []
+    },
+    {
+      "captions_changed": 1,
+      "closed_loop_max_denied": 0,
+      "deny_phrase_source": "prefilter",
+      "example_outputs": [
+        {
+          "denied_words": [
+            "bottle",
+            "toothbrush"
+          ],
+          "gated_caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby.",
+          "image_id": 6213,
+          "vanilla_caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby."
+        },
+        {
+          "denied_words": [
+            "bird"
+          ],
+          "gated_caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraff",
+          "image_id": 12319,
+          "vanilla_caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraff"
+        },
+        {
+          "denied_words": [
+            "tv"
+          ],
+          "gated_caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene",
+          "image_id": 15994,
+          "vanilla_caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene"
+        },
+        {
+          "denied_words": [
+            "bird",
+            "person"
+          ],
+          "gated_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two ch",
+          "image_id": 22596,
+          "vanilla_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds"
+        },
+        {
+          "denied_words": [
+            "car"
+          ],
+          "gated_caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motor",
+          "image_id": 23369,
+          "vanilla_caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motor"
+        }
+      ],
+      "first_token_policy": "single_token_only",
+      "gate_mode": "soft",
+      "images_with_gate_events": 5,
+      "introduced_hallucinated_words": [],
+      "introduced_root_leaks": [],
+      "introduced_variant_leaks": [],
+      "introduced_words": [],
+      "num_images": 5,
+      "removed_words": [
+        "bird"
+      ],
+      "run": "prefilter_iter2_soft_p4",
+      "soft_penalty": 4.0,
+      "total_gate_events_saved": 324,
+      "unsupported_open_vocab_claims": []
+    },
+    {
+      "captions_changed": 0,
+      "closed_loop_max_denied": 0,
+      "deny_phrase_source": "prefilter",
+      "example_outputs": [
+        {
+          "denied_words": [
+            "bird",
+            "person"
+          ],
+          "gated_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds",
+          "image_id": 22596,
+          "vanilla_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds"
+        }
+      ],
+      "first_token_policy": "single_token_only",
+      "gate_mode": "soft",
+      "images_with_gate_events": 1,
+      "introduced_hallucinated_words": [],
+      "introduced_root_leaks": [],
+      "introduced_variant_leaks": [],
+      "introduced_words": [],
+      "num_images": 1,
+      "removed_words": [],
+      "run": "prefilter_iter2_soft_p1_22596",
+      "soft_penalty": 1.0,
+      "total_gate_events_saved": 80,
       "unsupported_open_vocab_claims": []
     }
   ]

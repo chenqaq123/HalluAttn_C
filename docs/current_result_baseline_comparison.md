@@ -194,8 +194,11 @@ Reading:
   that adds only the TDEV-absent `person` substitute also removes the new COCO
   hallucination, but still ends with the same incomplete `"two ch"` fragment. The
   conclusion is negative but useful: dynamic replacement verification helps with
-  substitution, but hard blocking still needs soft penalties or sentence-level
-  stop/repair before it can scale as caption mitigation.
+  substitution, but fixed token suppression is not enough. Soft penalty `1.0` is
+  too weak and leaves the original `bird` claim unchanged on the stress image;
+  soft penalty `4.0` behaves like hard blocking and still ends with `"two ch"`.
+  The next caption method should move to sentence-level stop/repair or
+  constrained rewrite after replacement verification.
 
 ## Paper-Safe Claim
 

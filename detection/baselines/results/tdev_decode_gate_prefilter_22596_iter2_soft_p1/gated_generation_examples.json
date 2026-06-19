@@ -1,0 +1,689 @@
+[
+  {
+    "image_id": 22596,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000022596.jpg",
+    "denied_items": [
+      {
+        "word": "bird",
+        "matched_surface": "",
+        "score": 0.10393759317696094,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "bird",
+          "birds"
+        ],
+        "prefilter_source_image_selected_mentions": 1,
+        "prefilter_source_hallucinated_mentions": 1,
+        "prefilter_source_grounded_mentions": 0
+      },
+      {
+        "word": "person",
+        "matched_surface": "",
+        "score": 0.10393759317696094,
+        "label": -1,
+        "object_id": -1,
+        "prefilter_aliases": [
+          "person",
+          "persons",
+          "people",
+          "drivers",
+          "human figure",
+          "individual",
+          "passerby"
+        ],
+        "prefilter_source_image_selected_mentions": 1,
+        "prefilter_source_hallucinated_mentions": 1,
+        "prefilter_source_grounded_mentions": 0
+      }
+    ],
+    "num_denied_sequences": 18,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds",
+    "gated_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds",
+    "caption_differs_from_reference": 0,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 1,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 2,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 3,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 4,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 5,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 6,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 11199,
+        "banned_token_text": "bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 17777,
+        "banned_token_text": "Bird",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 17952,
+        "banned_token_text": "birds",
+        "phrase_text": "bird|birds"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 2022,
+        "banned_token_text": "person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 5196,
+        "banned_token_text": "Person",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 12407,
+        "banned_token_text": "persons",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 2305,
+        "banned_token_text": "people",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 11647,
+        "banned_token_text": "People",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 18563,
+        "banned_token_text": "drivers",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 7,
+        "prefix_len": 0,
+        "banned_token_id": 5375,
+        "banned_token_text": "individual",
+        "phrase_text": "person|persons|people|drivers|human figure|individual|passerby"
+      }
+    ]
+  }
+]
