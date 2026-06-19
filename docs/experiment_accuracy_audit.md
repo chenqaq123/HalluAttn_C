@@ -214,10 +214,15 @@ shows that generation length alone is not the fix: the gate changes 5/5 captions
 and routes denied claims into complete substitute or lexical-escape forms such as
 `bottes`, `elephant`, `zebra`, `chickens`, and hallucinated `person`. Sentence
 repair still improves CHAIRi from 0.2500 to 0.1786 at 96 tokens, but it cannot
-remove complete substitute hallucinations. The next caption method should
-therefore combine dynamic replacement verification with verifier-guided sentence
-stop plus constrained rewrite or candidate acceptance, with explicit audits for
-CHAIR, variant/root/open-vocabulary leaks, length, and fluency.
+remove complete substitute hallucinations. Increasing the open-vocabulary audit
+limit from 32 to 96 catches later substitutes such as `chickens`, and an offline
+sentence-level candidate-acceptance proxy reduces 96-token gated CHAIRi from
+0.2500 to 0.1053 and hallucinated mentions from 8 to 2. The cost is large: it
+removes 24.6 words per caption on average and does not generate replacements.
+The next caption method should therefore combine dynamic replacement verification
+with verifier-guided sentence acceptance plus constrained rewrite/completion,
+with explicit audits for CHAIR, variant/root/open-vocabulary leaks, length, and
+fluency.
 
 ## Detection Baselines
 

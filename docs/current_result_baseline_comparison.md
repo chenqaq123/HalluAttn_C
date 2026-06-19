@@ -205,9 +205,13 @@ Reading:
   and routes denied claims into complete substitute/escape forms such as
   `bottes`, `elephant`, `zebra`, `chickens`, and hallucinated `person`. Sentence
   repair still improves CHAIRi (`0.2500` to `0.1786`) but cannot remove complete
-  substitute claims. The next caption method should move to verifier-guided
-  sentence stop plus constrained rewrite or candidate acceptance after replacement
-  verification.
+  substitute claims. Expanding the open-vocabulary audit limit from 32 to 96
+  catches later substitutes such as `chickens`. An offline sentence-level
+  candidate-acceptance proxy then reduces 96-token gated CHAIRi from `0.2500`
+  to `0.1053` and hallucinated mentions from 8 to 2, but removes 24.6 words
+  per caption on average. The next caption method should therefore use
+  verifier-guided sentence acceptance with constrained rewrite or completion,
+  not fixed token suppression or pure deletion.
 
 ## Paper-Safe Claim
 

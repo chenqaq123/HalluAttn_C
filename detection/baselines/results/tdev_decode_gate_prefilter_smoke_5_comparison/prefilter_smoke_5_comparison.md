@@ -17,3 +17,11 @@
 | iter2 t96 | 4/5 | 8.20 | 0.2500 | 0.1786 | 8 | 5 |
 
 Scope: offline sentence-boundary truncation of incomplete trailing fragments; no new text is generated.
+
+## Sentence Acceptance
+
+| Setting | Changed | Removed Chunks | Mean Removed Words | Gated CHAIRi | Accepted CHAIRi | Gated Hall. | Accepted Hall. |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| iter2 t96 + ov96 audit | 5/5 | 8 | 24.60 | 0.2500 | 0.1053 | 8 | 2 |
+
+Scope: offline candidate acceptance rejects complete sentences or unfinished tails that contain residual denied claims or unsupported introduced claims from the expanded open-vocabulary audit. It is a method-direction diagnostic, not final caption rewriting, because it removes too much text without generating replacements.

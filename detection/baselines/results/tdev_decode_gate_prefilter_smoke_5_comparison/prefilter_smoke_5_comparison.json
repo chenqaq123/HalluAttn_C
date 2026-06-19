@@ -1,5 +1,15 @@
 {
-  "interpretation": "Five-image generated-caption smoke test. Prefilter-only blocking routes denied objects to new unsupported claims. Bounded iterative expansion can block a first substitute, but hard/soft token suppression still either leaves the original claim or creates incomplete/alternative object claims. Increasing max_new_tokens from 64 to 96 does not solve the issue; it turns some fragments into complete substitute claims such as chickens, elephant/zebra, person, and a lexical bottle escape (bottes). Sentence repair trims incomplete tails and improves CHAIR on the smoke set, but it cannot remove complete substitute hallucinations. The next method should use verifier-guided sentence stop plus constrained rewrite or candidate acceptance, not fixed token suppression.",
+  "interpretation": "Five-image generated-caption smoke test. Prefilter-only blocking routes denied objects to new unsupported claims. Bounded iterative expansion can block a first substitute, but hard/soft token suppression still either leaves the original claim or creates incomplete/alternative object claims. Increasing max_new_tokens from 64 to 96 does not solve the issue; it turns some fragments into complete substitute claims such as chickens, elephant/zebra, person, and a lexical bottle escape (bottes). Sentence repair trims incomplete tails and improves CHAIR on the smoke set, but it cannot remove complete substitute hallucinations. A verifier-guided sentence-acceptance proxy handles those complete substitute claims better, reducing 96-token gated CHAIRi from 0.2500 to 0.1053 and hallucinated mentions from 8 to 2, but removes 24.6 words per caption on average. The next method should use sentence-level candidate acceptance with constrained rewrite/completion, not fixed token suppression or pure deletion.",
+  "open_vocab_audit_96": {
+    "audit_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_audit_ov96/closed_loop_example_audit.json",
+    "newly_caught_claims": [
+      "chickens",
+      "elephants",
+      "person standing"
+    ],
+    "open_vocab_candidate_limit": 96,
+    "scope_note": "Expanded open-vocabulary candidate limit catches later substitute claims that the limit-32 audit missed, including chickens on image 22596."
+  },
   "runs": [
     {
       "captions_changed": 1,
@@ -537,6 +547,17 @@
       ]
     }
   ],
+  "sentence_acceptance_96": {
+    "accepted_chairi": 0.10526315789473684,
+    "accepted_hallucinated_mentions": 2,
+    "gated_chairi": 0.25,
+    "gated_hallucinated_mentions": 8,
+    "mean_removed_words_by_acceptance": 24.6,
+    "metrics": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json",
+    "num_changed": 5,
+    "num_removed_chunks": 8,
+    "scope_note": "Offline sentence-level candidate acceptance rejects unsupported claim sentences/tails without generating replacement text; useful diagnostic, too deletion-heavy as a final method."
+  },
   "sentence_repair": {
     "gated_chairi": 0.1111111111111111,
     "gated_hallucinated_mentions": 2,

@@ -281,10 +281,13 @@ failure to the constructive TDEV method.
    0.1111 to 0.0588, but it shortens captions under the 64-token smoke budget.
    A 96-token rerun shows that longer generation turns the failure into complete
    substitute/escape claims (`bottes`, `elephant`, `zebra`, `chickens`,
-   hallucinated `person`), so budget alone is not enough. The next method step
-   should combine dynamic replacement verification with verifier-guided sentence
-   stop plus constrained rewrite or candidate acceptance, not scale prefilter-
-   only hard/soft token suppression.
+   hallucinated `person`), so budget alone is not enough. An expanded ov96 audit
+   catches the late `chickens` substitute, and an offline sentence-acceptance
+   proxy reduces 96-token gated CHAIRi from 0.2500 to 0.1053, but by deleting
+   24.6 words per caption on average. The next method step should combine
+   dynamic replacement verification with verifier-guided sentence acceptance
+   plus constrained rewrite/completion, not scale prefilter-only hard/soft token
+   suppression or pure deletion.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full
