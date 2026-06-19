@@ -1,0 +1,23 @@
+{
+  "audit_csv": "mitigation/results/semantic_neighbor_audit/semantic_neighbor_rows.csv",
+  "coco_path": "/home/chenguanxu/common_dataset/coco-2014-dataset",
+  "first_question_id": "1",
+  "label_counts": {
+    "no": 60,
+    "yes": 60
+  },
+  "last_question_id": "120",
+  "limit": 120,
+  "missing_audit_rows_seen_before_limit": 0,
+  "negative_type_counts": {
+    "negative_absent_plain": 6,
+    "negative_related_present": 54,
+    "positive_missing_coco_label": 5,
+    "positive_present": 55
+  },
+  "output_file": "mitigation/results/air_official_inputs/pope/adversarial/air_adversarial_120_questions.jsonl",
+  "pope_dir": "/home/chenguanxu/common_dataset/pope",
+  "row_filter": "all",
+  "rows_exported": 120,
+  "split": "adversarial"
+}

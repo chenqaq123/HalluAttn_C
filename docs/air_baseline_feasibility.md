@@ -61,10 +61,32 @@ next step is to export a LLaVA-style adversarial JSONL subset from the existing
 POPE rows, run AIR official generation against the COCO val2014 image folder,
 and evaluate the output with the existing semantic-neighbor audit script.
 
+Current export status:
+
+- Export script: `mitigation/scripts/export_air_pope_subset.py`. Regenerate with:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  mitigation/scripts/export_air_pope_subset.py \
+  --pope_dir /home/chenguanxu/common_dataset/pope \
+  --coco_path /home/chenguanxu/common_dataset/coco-2014-dataset \
+  --split adversarial \
+  --limit 120 \
+  --output_file mitigation/results/air_official_inputs/pope/adversarial/air_adversarial_120_questions.jsonl
+```
+
+- Exported input: `mitigation/results/air_official_inputs/pope/adversarial/air_adversarial_120_questions.jsonl`.
+- Manifest: `mitigation/results/air_official_inputs/pope/adversarial/air_adversarial_120_questions.jsonl.manifest.json`.
+- The exported rows are the same `question_id` sequence as the NoLan adversarial
+  120-row run: `1..120`.
+- Counts: 120 rows, 60 yes / 60 no; negative rows contain 54 related-present and
+  6 plain-absent examples. All image names are normalized to
+  `COCO_val2014_*.jpg` and passed existence checks against COCO val2014.
+
 Recommended first run:
 
-1. Export the 120-row adversarial semantic-neighbor subset to AIR/LLaVA JSONL
-   format.
+1. Use the exported 120-row adversarial input above inside the isolated AIR/LLaVA
+   environment.
 2. Run official AIR with `max_new_tokens=16` or `32`, greedy decoding, batch size
    1 or 2, and LLaVA-1.5-7B.
 3. Convert AIR `answers.jsonl` to the existing prediction schema if needed.
