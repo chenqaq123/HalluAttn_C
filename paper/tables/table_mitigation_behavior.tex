@@ -10,8 +10,9 @@ PAI-attn-only & -0.001 & -0.002 & -0.004 & -0.005 & -0.003 & +0.000 & +0.14 & +0
 ClearSight    & -0.001 & -0.006 & +0.036 & +0.035 & +0.038 & +0.001 & -0.11 & -0.01 \\
 VisAttnSink   & -0.004 & -0.008 & +0.006 & +0.002 & +0.009 & +0.009 & +0.24 & +0.10 \\
 VCD-greedy    & -0.005 & -0.012 & +0.008 & +0.003 & +0.013 & -- & -- & -- \\
+NoLan-compatible & -0.003 & +0.001 & -0.032 & -0.034 & -0.029 & -- & -- & -- \\
 \bottomrule
 \end{tabular}
-\caption{Mitigation behavior relative to vanilla. POPE deltas are macro-averaged over random/popular/adversarial splits; CHAIR deltas are over $5{,}000$ captions where available. ClearSight and VCD-greedy raise recall only by increasing false positives more, while VisAttnSink increases hallucinated object mentions.}
+\caption{Mitigation behavior relative to vanilla. POPE deltas are macro-averaged over random/popular/adversarial splits; CHAIR deltas are over $5{,}000$ captions where available. ClearSight and VCD-greedy raise recall only by increasing false positives more, while VisAttnSink increases hallucinated object mentions. NoLan-compatible lowers false positives but also lowers recall and the yes rate.}
 \label{tab:pope-mitigation}
 \end{table*}

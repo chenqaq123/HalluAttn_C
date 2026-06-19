@@ -191,7 +191,7 @@ Recommended main tables:
 | Table | Role | Key current numbers |
 |---|---|---|
 | Table 1: CHAIR controlled detection | Establish position confound and attention proxy failure | position-only `0.830`; PAS within-bin `0.593`; IC within-bin `0.686`; TDEV CHAIR within-bin `0.852`. |
-| Table 2: Semantic-neighbor POPE controls | Main mitigation stress test | vanilla related FPR `0.114`; PAI `0.110`; ClearSight `0.160`; VisAttnSink `0.123`; VCD `0.127`; hybrid TDEV `0.069`. |
+| Table 2: Semantic-neighbor POPE controls | Main mitigation stress test | vanilla related FPR `0.114`; PAI `0.110`; ClearSight `0.160`; VisAttnSink `0.123`; VCD `0.127`; NoLan-compatible `0.076` with lower TPR; hybrid TDEV `0.069`. |
 | Table 3: TDEV ablations | Show target score, margin, two-stage, hybrid tradeoffs | target direct MCC `0.777` but related FPR `0.184`; strict margin FPR low but TPR `0.359`; hybrid MCC `0.763`. |
 | Table 4: TDEV-lite routing | Practicality | LH-alone MCC `0.495`; LH-routed TDEV `2,025/9,000` calls, MCC `0.754`, related FPR `0.075`. |
 | Table 5: Cross-model Qwen | Scoped transfer | vanilla MCC `0.765`; fixed TDEV MCC `0.769`; related FPR `0.041 -> 0.034`. |

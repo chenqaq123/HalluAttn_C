@@ -21,7 +21,7 @@ detector to an LVLM", which is already a crowded and less interesting space.
 | Caption/head steering | CAI/CAST, arXiv:2506.23590 and arXiv:2605.04641 | Uses caption-query attention patterns or steering directions to reduce hallucination with low inference cost. | These are important head-specific baselines or inspirations; TDEV should require target margin for any steered visual evidence. |
 | Region-aware attention recalibration | Region-Aware Attention Recalibration, arXiv:2605.24957 | Uses inter-head disagreement across regions for training-free attention correction. | Closest recent mitigation direction; we need to compare conceptually and, if possible, test whether it passes related-present negatives. |
 | Phase-aware visual-token suppression | Focus Matters, arXiv:2604.03556 | Uses a three-phase vision-encoder attention analysis and suppresses low-attention tokens during the focus phase with low latency. | Another practical internal-routing baseline; our semantic-neighbor audit should test whether such suppression distinguishes targets from related objects. |
-| Internal decoding/attention methods | VCD, OPERA, SPIN, DAMRO | Try to reduce language priors, over-trust, or attention/head failures without external detectors. | These are the right behavioral baselines for showing semantic-neighbor failures. |
+| Internal decoding/attention methods | VCD, NoLan, OPERA, SPIN, DAMRO | Try to reduce language priors, over-trust, or attention/head failures without external detectors. | These are the right behavioral baselines for testing whether prior suppression or steering fixes semantic-neighbor failures; NoLan helps but remains conservative. |
 
 ## Differentiation That Still Looks Publishable
 

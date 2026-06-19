@@ -185,8 +185,10 @@ Metrics:
 
 Expected contribution:
 
-> Attention methods fail hardest when related evidence is present, proving that
-> the key missing ingredient is target discrimination rather than visual routing.
+> Attention-only and VCD-style controls fail hardest when related evidence is
+> present. NoLan-style prior suppression helps but is conservative, so the key
+> missing ingredient is target discrimination rather than visual routing or prior
+> suppression alone.
 
 Current implementation status: `mitigation/scripts/build_semantic_neighbor_audit.py`
 now builds this split from COCO val2014 annotations and POPE questions. On the
@@ -343,6 +345,7 @@ need at least one replication to show the phenomenon is not LLaVA-specific.
 | Baseline | Why it matters | Feasibility |
 |---|---|---|
 | VCD | classic visual contrastive decoding; attacks language-prior reliance | controlled greedy port complete; official sampling parity optional |
+| NoLan | dynamic suppression of language priors via multimodal/text-only contrast | deterministic compatible port complete on all POPE splits; positive on FPR/related FPR but lower TPR, not official reproduction |
 | OPERA | attention over-trust penalty and rollback | interface wired through the official beam-search hook; current environment lacks OPERA-modified transformers, so subset result is pending |
 | DAMRO | CLS-selected outlier-token contrastive decoding | controlled adversarial subset negative; full audit lower priority unless official parity is needed |
 | SPIN | image-guided dynamic head suppression; direct positive counterexample | controlled HF port implemented; default subset collapses to yes prior and mild subset ties vanilla without target-selective gains |

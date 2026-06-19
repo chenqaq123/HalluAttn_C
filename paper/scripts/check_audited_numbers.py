@@ -26,6 +26,18 @@ def _assert_rounded(actual: list[float], expected: list[float], digits: int, lab
         raise AssertionError(f"{label}: table={actual} expected={rounded}")
 
 
+def _macro_all_from_subset_csv(metrics_path: str, method: str) -> dict[str, float]:
+    rows = [
+        row
+        for row in csv.DictReader((PROJECT_ROOT / metrics_path).open())
+        if row["method"] == method and row["subset"] == "all"
+    ]
+    if len(rows) != 3:
+        raise AssertionError(f"Expected three all-split rows for {method} in {metrics_path}, found {len(rows)}")
+    keys = ["accuracy", "mcc", "yes_rate", "recall_tpr", "fpr"]
+    return {key: sum(float(row[key]) for row in rows) / len(rows) for key in keys}
+
+
 def check_detection_main() -> None:
     metrics = json.loads((PROJECT_ROOT / "detection/baselines/results/coco_llava_7b_baselines/metrics.json").read_text())
     table = (PAPER_ROOT / "tables/table_detection_main.tex").read_text()
@@ -97,6 +109,21 @@ def check_mitigation_behavior() -> None:
         if row["split"] == "macro"
     }
     pope_rows.update({"vcd": vcd_rows["vcd"]})
+    vanilla_macro = _macro_all_from_subset_csv(
+        "mitigation/results/semantic_neighbor_audit/attention_only_subset_eval/semantic_neighbor_subset_metrics.csv",
+        "vanilla",
+    )
+    nolan_macro = _macro_all_from_subset_csv(
+        "mitigation/results/semantic_neighbor_audit/nolan_full_subset_eval/semantic_neighbor_subset_metrics.csv",
+        "nolan",
+    )
+    pope_rows["nolan"] = {
+        "delta_accuracy": nolan_macro["accuracy"] - vanilla_macro["accuracy"],
+        "delta_mcc": nolan_macro["mcc"] - vanilla_macro["mcc"],
+        "delta_yes_rate": nolan_macro["yes_rate"] - vanilla_macro["yes_rate"],
+        "delta_recall_tpr": nolan_macro["recall_tpr"] - vanilla_macro["recall_tpr"],
+        "delta_fpr": nolan_macro["fpr"] - vanilla_macro["fpr"],
+    }
     chair_rows = {
         row["method"]: row
         for row in csv.DictReader((PROJECT_ROOT / "mitigation/results/coco_llava_7b_attention_only/audit_chair.csv").open())
@@ -107,6 +134,7 @@ def check_mitigation_behavior() -> None:
         "ClearSight": "clearsight",
         "VisAttnSink": "visattnsink",
         "VCD-greedy": "vcd",
+        "NoLan-compatible": "nolan",
     }
     for row_label, method in mapping.items():
         pope = pope_rows[method]
@@ -170,21 +198,31 @@ def check_semantic_neighbor_fpr() -> None:
         )
         if row["method"] == "vcd"
     )
+    rows.extend(
+        row
+        for row in csv.DictReader(
+            (PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/nolan_full_subset_eval/semantic_neighbor_subset_metrics.csv").open()
+        )
+        if row["method"] == "nolan"
+    )
     lookup = {(row["split"], row["method"], row["subset"]): float(row["fpr"]) * 100 for row in rows}
     table = (PAPER_ROOT / "tables/table_semantic_neighbor_fpr.tex").read_text()
     row_labels = {
         ("random", "vanilla"): "random & vanilla",
         ("random", "vcd"): "random & VCD-greedy",
+        ("random", "nolan"): "random & NoLan-compatible",
         ("random", "pai"): "random & PAI-attn-only",
         ("random", "clearsight"): "random & ClearSight",
         ("random", "visattnsink"): "random & VisAttnSink",
         ("popular", "vanilla"): "popular & vanilla",
         ("popular", "vcd"): "popular & VCD-greedy",
+        ("popular", "nolan"): "popular & NoLan-compatible",
         ("popular", "pai"): "popular & PAI-attn-only",
         ("popular", "clearsight"): "popular & ClearSight",
         ("popular", "visattnsink"): "popular & VisAttnSink",
         ("adversarial", "vanilla"): "adversarial & vanilla",
         ("adversarial", "vcd"): "adversarial & VCD-greedy",
+        ("adversarial", "nolan"): "adversarial & NoLan-compatible",
         ("adversarial", "pai"): "adversarial & PAI-attn-only",
         ("adversarial", "clearsight"): "adversarial & ClearSight",
         ("adversarial", "visattnsink"): "adversarial & VisAttnSink",
