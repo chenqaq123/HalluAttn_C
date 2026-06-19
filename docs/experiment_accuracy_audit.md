@@ -1397,7 +1397,10 @@ Rechecking the single-token-first output with the variant audit flags the known
 leak automatically:
 
 ```bash
-/home/chenguanxu/miniconda3/envs/latentGuard/bin/python   detection/scripts/audit_decode_gate_closed_loop_example.py   --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/gated_generation_examples.json   --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_variant_audit
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_variant_audit
 ```
 
 Result: `introduced_variant_leaks = [{"word": "bottle", "alias": "bottled drink"}]`.
@@ -1408,9 +1411,21 @@ The same alias file was then fed back into the single-token-first gate. This
 blocks `bottled drink`, but exposes the brittleness of static alias chasing:
 
 ```bash
-/home/chenguanxu/miniconda3/envs/latentGuard/bin/python   detection/scripts/run_tdev_decode_gate_caption_smoke.py   --image_ids 391158   --max_new_tokens 160   --device 5   --generate_vanilla   --deny_phrase_source closed_loop   --gate_mode hard   --first_token_policy single_token_only   --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_smoke
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla \
+  --deny_phrase_source closed_loop \
+  --gate_mode hard \
+  --first_token_policy single_token_only \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_smoke
 
-/home/chenguanxu/miniconda3/envs/latentGuard/bin/python   detection/scripts/audit_decode_gate_closed_loop_example.py   --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_smoke/gated_generation_examples.json   --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_audit
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_audit
 ```
 
 After adding `bottleneck`, the model routes to `bottling machine`; CHAIR maps this
