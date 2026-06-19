@@ -138,9 +138,14 @@ Reading:
   unchanged, including `person/cup/dining table`. A top-risk closed-loop gate
   (`closed_loop_max_denied=30`) reduces denied sequences from 320 to 136 and
   still removes `person/cup/dining table` without new COCO claims, but remains
-  train-only. This suggests that the useful next change is object-candidate
-  verification with an allow/deny policy, not simply reducing penalty strength,
-  delaying every block, or trimming the deny set.
+  train-only.
+- The best current single-image tradeoff is `first_token_policy=single_token_only`:
+  it avoids broad first-subtoken bans for multi-token object phrases. It removes
+  `person/dining table`, keeps the supported `cup`, and the CHAIR audit reports
+  no introduced COCO object claim. Manual inspection still shows a non-COCO
+  phrase, `bottled drink`, so this is promising integration evidence rather than
+  a final quality result. The next step is to scale this policy and extend alias
+  auditing around object variants.
 
 ## Paper-Safe Claim
 
@@ -171,3 +176,5 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_candidate_audit/closed_loop_example_audit.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_top30_smoke/gated_generation_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_top30_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/gated_generation_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_audit/closed_loop_example_audit.json`

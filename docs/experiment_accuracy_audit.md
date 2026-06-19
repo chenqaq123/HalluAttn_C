@@ -1342,6 +1342,52 @@ at the point where object continuations compete, then allow visually supported
 objects and suppress unsupported ones. That is closer to a deployable
 closed-loop verifier than a static precomputed deny list.
 
+### TDEV Single-Token-First Closed-Loop Gate
+
+The next ablation targets the concrete source of over-conservatism seen in the
+full closed-loop gate: first-token blocking often suppresses broad tokenizer
+subwords such as `d`, `des`, or `c` for multi-token object aliases. The
+`first_token_policy=single_token_only` setting keeps first-token blocking only
+for object aliases whose tokenized surface is already a single token; multi-token
+object phrases are blocked only at phrase-completion steps.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla \
+  --deny_phrase_source closed_loop \
+  --gate_mode hard \
+  --first_token_policy single_token_only \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_audit
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_smoke/
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_single_token_first_audit/
+```
+
+Key result: this is the best current one-image tradeoff. The gated caption is no
+longer train-only: it removes the vanilla `person` and `dining table` CHAIR
+objects, keeps the supported `cup`, and the CHAIR audit reports
+`introduced_words = []` and `introduced_hallucinated_words = []`. Manual
+inspection still finds the phrase `bottled drink`, which CHAIR does not map to
+COCO `bottle`; therefore this should be treated as promising integration
+evidence, not a final quality claim. The next scaling experiment should add
+alias/variant auditing for such object-like paraphrases and then evaluate this
+policy on a multi-image subset.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The

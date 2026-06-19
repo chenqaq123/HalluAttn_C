@@ -64,6 +64,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--gate_mode", choices=("hard", "soft"), default="hard")
     p.add_argument("--soft_penalty", type=float, default=4.0)
     p.add_argument("--min_prefix_len_to_block", type=int, default=0)
+    p.add_argument("--first_token_policy", choices=("all", "single_token_only"), default="all")
     p.add_argument("--neighbors_json", default="mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json")
     p.add_argument("--owlv2_model_path", default="/home/chenguanxu/common_model/huggingface/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d")
     p.add_argument("--owlv2_device", default="cuda:5")
@@ -362,6 +363,7 @@ def main() -> None:
             denied_phrase_texts=[denied_texts],
             penalty=args.soft_penalty if args.gate_mode == "soft" else None,
             min_prefix_len_to_block=args.min_prefix_len_to_block,
+            block_first_token_for_multi_token=args.first_token_policy == "all",
             audit_limit=80,
         )
 
@@ -441,6 +443,7 @@ def main() -> None:
         "gate_mode": args.gate_mode,
         "soft_penalty": args.soft_penalty if args.gate_mode == "soft" else None,
         "min_prefix_len_to_block": args.min_prefix_len_to_block,
+        "first_token_policy": args.first_token_policy,
         "neighbors_json": args.neighbors_json,
         "top_neighbors": args.top_neighbors,
         "alias_top_k": args.alias_top_k,

@@ -234,10 +234,14 @@ failure to the constructive TDEV method.
    `min_prefix_len_to_block=1` is too late and leaves the vanilla hallucinations
    unchanged, while `closed_loop_max_denied=30` reduces the deny set but still
    produces a train-only caption. The next step is therefore not another
-   deterministic placeholder edit or a simple penalty/top-k sweep, but an
-   object-token candidate verifier: detect when object continuations compete,
-   apply TDEV allow/deny evidence at that point, and then run multi-image
-   CHAIR/length/fluency evaluation.
+   deterministic placeholder edit or a simple penalty/top-k sweep. A more local
+   `first_token_policy=single_token_only` gate is now the best one-image
+   tradeoff: it removes `person/dining table`, keeps `cup`, and introduces no
+   new COCO object claim under CHAIR, although manual inspection still finds the
+   non-COCO phrase `bottled drink`. The next step is to turn this into the
+   paper-facing object-token verifier: evaluate it on a multi-image subset, add
+   alias/variant auditing for object-like paraphrases, and then report
+   CHAIR/length/fluency instead of relying on a single example.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

@@ -101,6 +101,7 @@ class ObjectPhraseGateLogitsProcessor(LogitsProcessor):
     denied_phrase_texts: list[list[str]] | None = None
     penalty: float | None = None
     min_prefix_len_to_block: int = 0
+    block_first_token_for_multi_token: bool = True
     audit_limit: int = 200
     events: list[GateEvent] = field(default_factory=list)
 
@@ -132,6 +133,11 @@ class ObjectPhraseGateLogitsProcessor(LogitsProcessor):
                     prefix_len is None
                     or prefix_len >= len(seq)
                     or prefix_len < self.min_prefix_len_to_block
+                    or (
+                        prefix_len == 0
+                        and len(seq) > 1
+                        and not self.block_first_token_for_multi_token
+                    )
                 ):
                     continue
                 banned_token = int(seq[prefix_len])
