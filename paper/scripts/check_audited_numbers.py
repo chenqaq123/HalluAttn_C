@@ -34,6 +34,32 @@ def _assert_rounded(actual: list[float], expected: list[float], digits: int, lab
         raise AssertionError(f"{label}: table={actual} expected={rounded}")
 
 
+def _assert_contains(text: str, snippet: str, label: str) -> None:
+    if snippet not in text:
+        raise AssertionError(f"{label}: missing snippet {snippet!r}")
+
+
+def _fmt(value: float, digits: int = 3) -> str:
+    return f"{value:.{digits}f}"
+
+
+def _fmt_pct(value: float, digits: int = 1) -> str:
+    return f"{value * 100:.{digits}f}"
+
+
+def _control_rows_by_method() -> dict[str, dict[str, str]]:
+    return {
+        row["method"]: row
+        for row in csv.DictReader(
+            (PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.csv").open()
+        )
+    }
+
+
+def _control_value(rows: dict[str, dict[str, str]], method: str, key: str) -> float:
+    return float(rows[method][key])
+
+
 def _macro_all_from_subset_csv(metrics_path: str, method: str) -> dict[str, float]:
     rows = [
         row
@@ -340,6 +366,115 @@ def check_semantic_neighbor_control_table() -> None:
         )
 
 
+def check_key_prose_claims() -> None:
+    rows = _control_rows_by_method()
+    intro = (PAPER_ROOT / "sections/01_introduction.tex").read_text()
+    mitigation = (PAPER_ROOT / "sections/05_mitigation_findings.tex").read_text()
+    associated = (PAPER_ROOT / "sections/06_associated_evidence_audit.tex").read_text()
+    evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
+    mechanism = json.loads(
+        (PROJECT_ROOT / "mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_summary.json").read_text()
+    )
+
+    vanilla_related = _control_value(rows, "Vanilla", "macro_related_fpr")
+    vanilla_mcc = _control_value(rows, "Vanilla", "macro_mcc")
+    hybrid_related = _control_value(rows, "Hybrid gate+rescue", "macro_related_fpr")
+    hybrid_mcc = _control_value(rows, "Hybrid gate+rescue", "macro_mcc")
+
+    _assert_contains(
+        intro,
+        f"from ${_fmt(vanilla_related)}$ to ${_fmt(hybrid_related)}$",
+        "intro:TDEV-related-FPR",
+    )
+    _assert_contains(
+        intro,
+        f"from ${_fmt(vanilla_mcc)}$ to ${_fmt(hybrid_mcc)}$",
+        "intro:TDEV-MCC",
+    )
+
+    nolan_related = _control_value(rows, "NoLan-compatible", "macro_related_fpr")
+    nolan_tpr = _control_value(rows, "NoLan-compatible", "macro_tpr")
+    nolan_yes = _control_value(rows, "NoLan-compatible", "macro_yes_rate")
+    nolan_fpr = _control_value(rows, "NoLan-compatible", "macro_fpr")
+    vanilla_fpr = _control_value(rows, "Vanilla", "macro_fpr")
+    vanilla_tpr = _control_value(rows, "Vanilla", "macro_tpr")
+    vanilla_yes = _control_value(rows, "Vanilla", "macro_yes_rate")
+    vanilla_adv_related = _control_value(rows, "Vanilla", "adversarial_related_fpr")
+    nolan_adv_related = _control_value(rows, "NoLan-compatible", "adversarial_related_fpr")
+
+    _assert_contains(
+        associated,
+        f"from ${_fmt_pct(vanilla_adv_related)}\\%$ to ${_fmt_pct(nolan_adv_related)}\\%$",
+        "associated:NoLan-adversarial-related-FPR",
+    )
+    _assert_contains(
+        associated,
+        f"from ${_fmt_pct(vanilla_related)}\\%$ to ${_fmt_pct(nolan_related)}\\%$",
+        "associated:NoLan-macro-related-FPR",
+    )
+
+    _assert_contains(
+        evidence,
+        f"NoLan-compatible lowers related FPR to `{_fmt(nolan_related)}` but drops TPR to `{_fmt(nolan_tpr)}` and yes rate to `{_fmt(nolan_yes)}`",
+        "evidence:NoLan-tradeoff",
+    )
+    _assert_contains(
+        evidence,
+        f"neighbor evidence exceeds target evidence in `{mechanism['summary_rates']['neighbor_dominance_rate_vanilla_related_fp'] * 100:.1f}%` of vanilla related FPs",
+        "evidence:mechanism-rate",
+    )
+
+    # Mitigation prose uses point deltas, so compare against the same macro deltas
+    # rounded to one decimal percentage points.
+    _assert_contains(
+        mitigation,
+        f"lowers FPR by ${_fmt_pct(vanilla_fpr - nolan_fpr)}$ points",
+        "mitigation:NoLan-FPR-delta",
+    )
+    _assert_contains(
+        mitigation,
+        f"lowers TPR by ${_fmt_pct(vanilla_tpr - nolan_tpr)}$ points",
+        "mitigation:NoLan-TPR-delta",
+    )
+    _assert_contains(
+        mitigation,
+        f"yes rate by ${_fmt_pct(vanilla_yes - nolan_yes)}$ points",
+        "mitigation:NoLan-yes-rate-delta",
+    )
+
+    direct_mcc = _control_value(rows, "OWLv2 target direct", "macro_mcc")
+    direct_related = _control_value(rows, "OWLv2 target direct", "macro_related_fpr")
+    direct_adv_related = _control_value(rows, "OWLv2 target direct", "adversarial_related_fpr")
+    margin_related = _control_value(rows, "OWLv2 margin direct", "macro_related_fpr")
+    margin_tpr = _control_value(rows, "OWLv2 margin direct", "macro_tpr")
+    gate_related = _control_value(rows, "Two-stage gate", "macro_related_fpr")
+    gate_adv_related = _control_value(rows, "Two-stage gate", "adversarial_related_fpr")
+    gate_mcc = _control_value(rows, "Two-stage gate", "macro_mcc")
+    hybrid_tpr = _control_value(rows, "Hybrid gate+rescue", "macro_tpr")
+
+    _assert_contains(associated, f"macro MCC ${_fmt(direct_mcc)}$", "associated:direct-target-MCC")
+    _assert_contains(
+        associated,
+        f"high related-present FPR (${_fmt(direct_related)}$ macro, ${_fmt(direct_adv_related)}$ on adversarial",
+        "associated:direct-target-related-FPR",
+    )
+    _assert_contains(
+        associated,
+        f"nearly eliminates related-present false positives (${_fmt(margin_related)}$ macro) but loses most recall (TPR ${_fmt(margin_tpr)}$)",
+        "associated:margin-tradeoff",
+    )
+    _assert_contains(
+        associated,
+        f"reduces related-present FPR to ${_fmt(gate_related)}$ macro and ${_fmt(gate_adv_related)}$ on adversarial related-present negatives while keeping macro MCC ${_fmt(gate_mcc)}$",
+        "associated:gate-tradeoff",
+    )
+    _assert_contains(
+        associated,
+        f"recovers recall to ${_fmt(hybrid_tpr)}$, and improves macro MCC to ${_fmt(hybrid_mcc)}$",
+        "associated:hybrid-tradeoff",
+    )
+
+
 def check_appendix_qwen() -> None:
     audit = json.loads((PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/qwen25vl_replication_audit.json").read_text())
     table = (PAPER_ROOT / "tables/table_appendix_qwen.tex").read_text()
@@ -428,6 +563,7 @@ def main() -> None:
     check_region_verifier_detection()
     check_region_verifier_pope()
     check_semantic_neighbor_control_table()
+    check_key_prose_claims()
     check_appendix_qwen()
     check_appendix_tdev_lite()
     check_appendix_caption_proxy()
