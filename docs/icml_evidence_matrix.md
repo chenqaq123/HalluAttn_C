@@ -5,9 +5,11 @@ Date: 2026-06-18
 This matrix is the current writing and experiment gate for the ICML version of
 **Looking Is Not Verifying**. It links each paper claim to the strongest saved
 evidence, the exact paper artifact that should carry it, and the remaining risk.
-The goal is to keep the paper aligned with the reproduced baseline conclusion:
-`looking is not grounding` because visual routing can lock onto related evidence
-without verifying the queried target object.
+For a compact reader-facing baseline comparison, use
+`docs/current_result_baseline_comparison.md`. The goal is to keep the paper
+aligned with the reproduced baseline conclusion: `looking is not grounding`
+because visual routing can lock onto related evidence without verifying the
+queried target object.
 
 ## Claim-to-Evidence Matrix
 
