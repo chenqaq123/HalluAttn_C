@@ -156,19 +156,24 @@ whether a recent method is runnable, a required baseline, or only related work.
 
 | Priority | Baseline | Action |
 |---|---|---|
+| P0 | NoLan | Public-code decoding baseline for dynamic language-prior suppression. Clone/inspect in `ref/`, then run the adversarial semantic-neighbor subset before any full rerun. Required metrics are MCC, yes rate, related-present FPR, plain FPR, and gap. |
 | P0 | OPERA | Keep guarded integration; only report numbers if the environment passes `check_opera_support.py`. |
-| P0 | CAI/CAST | Closest caption-query/head-steering baselines. As of the June 18, 2026 refresh, no direct official code link was found. Do not implement an unofficial surrogate; run a bounded semantic-neighbor audit only if official code appears. |
+| P0 | AIR | ArXiv v2 says code is available, but the stable repository URL was not recovered in the June 19 refresh. Find official repo; do not implement a surrogate. |
+| P0 | CAI/CAST | Closest caption-query/head-steering baselines. As of the June 19, 2026 refresh, no direct official code link was found. Do not implement an unofficial surrogate; run a bounded semantic-neighbor audit only if official code appears. |
 | P0 | Region-Aware Attention Recalibration | Closest region/head recalibration baseline. The arXiv page says code will be public, but no runnable code was found in the refresh. Monitor and audit related-present negatives when available. |
+| P1 | BRACS | Recent adaptive closed-form steering baseline with CHAIR/POPE claims but no direct code found in the refresh. Treat as related work unless official code appears. |
 | P1 | Focus Matters | Recent phase-aware visual-token/attention suppression method with low-latency mitigation claims. Treat as related work unless official code appears, then run the same semantic-neighbor audit gate. |
 | P1 | Dynamic Multimodal Activation Steering | Relevant activation/head steering baseline; treat as related work unless official code appears and is easy to adapt to the POPE semantic-neighbor split. |
 | P1 | HALP-style probe | If official code is unavailable, implement a local late-query probe as TDEV-lite rather than as a direct paper-to-paper reproduction. |
 | P1 | Official VCD/GLSim parity | Optional parity checks; current controlled versions are enough for mechanism claims if wording stays scoped. |
 | P2 | Woodpecker/UNIHD/Volcano | Discuss as high-latency tool/revision systems unless the paper needs a broad post-hoc correction comparison. |
 
-If any P0 code appears, first run the adversarial semantic-neighbor subset and
-report MCC, TPR, FPR, yes rate, related-present FPR, plain-absent FPR, and the
-related-minus-plain gap. Full all-split reruns are only justified if the subset
-result changes the paper conclusion.
+For NoLan, code is already public, so the next baseline action is a guarded
+adversarial semantic-neighbor subset run. For other P0 methods, first confirm an
+official runnable repository. In all cases, report MCC, TPR, FPR, yes rate,
+related-present FPR, plain-absent FPR, and the related-minus-plain gap. Full
+all-split reruns are only justified if the subset result changes the paper
+conclusion.
 
 ## Paper Table Source Update
 
@@ -295,9 +300,12 @@ failure to the constructive TDEV method.
    defensible use remains suppress-only TDEV triage, not replacing the verifier.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
-4. **Baseline availability check.** Re-check CAI/CAST/Focus Matters/region-aware code before
-   freezing experiments. If unavailable, explicitly mark them as closest
-   concurrent related work and compare conceptually.
+4. **Baseline availability check.** Run a guarded NoLan adversarial semantic-neighbor
+   subset first, because public code is available and it is the closest decoding
+   baseline for language-prior suppression. Re-check AIR/CAI/CAST/Focus
+   Matters/BRACS/region-aware code before paper freeze. If official code appears,
+   run only the semantic-neighbor subset audit first; do not implement unofficial
+   surrogates.
 
 ## Writing Position
 
