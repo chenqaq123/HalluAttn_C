@@ -1212,9 +1212,68 @@ Audit result: `introduced_words = []` and `introduced_hallucinated_words = []`.
 This is the first end-to-end evidence that closed-loop target-vs-neighbor object
 verification can block the substitution failure exposed by the surface gate.
 However, the generated caption becomes conservative and train-only, so the method
-is still a feasibility prototype. The next implementation should make the gate
-dynamic or soft enough to preserve supported details instead of pre-blocking most
-absent COCO objects.
+is still a feasibility prototype.
+
+### TDEV Soft Closed-Loop Decode-Gate Smoke Test
+
+`ObjectPhraseGateLogitsProcessor` now supports a soft mode that subtracts a
+finite logits penalty from unsupported object-phrase continuations instead of
+setting them to `-inf`. The smoke script exposes this as `--gate_mode soft` and
+`--soft_penalty` while preserving hard blocking as the default.
+
+Reproducibility commands:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla \
+  --deny_phrase_source closed_loop \
+  --gate_mode soft \
+  --soft_penalty 4.0 \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_smoke
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla \
+  --deny_phrase_source closed_loop \
+  --gate_mode soft \
+  --soft_penalty 1.0 \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_p1_smoke
+```
+
+Audit command for the saved `soft_penalty=1.0` result:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_p1_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_p1_audit
+```
+
+Result roots:
+
+```text
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_smoke/
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_audit/
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_p1_smoke/
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_soft_p1_audit/
+```
+
+Key result: both soft penalties (`4.0` and `1.0`) complete with
+`images_with_gate_events = 1`, 320 unsupported-object token sequences, and no
+new COCO object claim in the CHAIR audit. But both generations remain
+train-only, close to the hard closed-loop output. This is useful negative
+evidence: the conservative behavior is not fixed by a simple finite penalty.
+The next implementation should narrow when object claims enter the gate, for
+example by triggering verification only on candidate object continuations or by
+building an allow/deny policy around supported objects, rather than pre-penalizing
+nearly every absent COCO object from the first decoding step.
 
 ### SPIN Adversarial Subset Audit
 

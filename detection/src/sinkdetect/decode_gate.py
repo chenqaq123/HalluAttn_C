@@ -99,6 +99,7 @@ class ObjectPhraseGateLogitsProcessor(LogitsProcessor):
     denied_token_sequences: list[list[list[int]]]
     prompt_lengths: list[int] | int
     denied_phrase_texts: list[list[str]] | None = None
+    penalty: float | None = None
     audit_limit: int = 200
     events: list[GateEvent] = field(default_factory=list)
 
@@ -127,7 +128,10 @@ class ObjectPhraseGateLogitsProcessor(LogitsProcessor):
                 if prefix_len is None or prefix_len >= len(seq):
                     continue
                 banned_token = int(seq[prefix_len])
-                scores[batch_idx, banned_token] = -float("inf")
+                if self.penalty is None:
+                    scores[batch_idx, banned_token] = -float("inf")
+                else:
+                    scores[batch_idx, banned_token] -= float(self.penalty)
                 if len(self.events) < self.audit_limit:
                     text = self.tokenizer.decode([banned_token])
                     phrase_text = self.denied_phrase_texts[batch_idx][seq_idx]

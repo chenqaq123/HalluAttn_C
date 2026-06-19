@@ -227,10 +227,13 @@ failure to the constructive TDEV method.
    COCO objects with OWLv2 target-vs-neighbor evidence, blocks 320 narrow alias
    token sequences, and removes the substitution failure on the same image:
    CHAIR audit reports no newly introduced COCO object claim. The cost is that
-   the caption becomes conservative and train-only. The next step is therefore
-   not another deterministic placeholder edit, but a dynamic or soft
-   closed-loop object-claim gate followed by multi-image CHAIR/length/fluency
-   evaluation.
+   the caption becomes conservative and train-only. A soft logits-penalty
+   variant is now implemented, but one-image penalties `1.0` and `4.0` still
+   produce train-only captions while avoiding new COCO claims. The next step is
+   therefore not another deterministic placeholder edit or a simple penalty
+   sweep, but a candidate-triggered closed-loop object-claim gate: verify object
+   continuations when they become likely, then apply an allow/deny or soft
+   reranking policy before multi-image CHAIR/length/fluency evaluation.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

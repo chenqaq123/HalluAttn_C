@@ -61,6 +61,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--load_strategy", choices=("device_map", "utils"), default="device_map")
     p.add_argument("--mention_matches_csv", default="detection/baselines/results/tdev_decode_gate_feasibility/mention_token_matches.csv")
     p.add_argument("--deny_phrase_source", choices=("surface", "synonyms", "closed_loop"), default="surface")
+    p.add_argument("--gate_mode", choices=("hard", "soft"), default="hard")
+    p.add_argument("--soft_penalty", type=float, default=4.0)
     p.add_argument("--neighbors_json", default="mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json")
     p.add_argument("--owlv2_model_path", default="/home/chenguanxu/common_model/huggingface/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d")
     p.add_argument("--owlv2_device", default="cuda:5")
@@ -353,6 +355,7 @@ def main() -> None:
             denied_token_sequences=[denied_sequences],
             prompt_lengths=prompt_len,
             denied_phrase_texts=[denied_texts],
+            penalty=args.soft_penalty if args.gate_mode == "soft" else None,
             audit_limit=80,
         )
 
@@ -408,8 +411,8 @@ def main() -> None:
         scope_note = (
             "Closed-loop smoke test: denied objects are precomputed from "
             "OWLv2 target-vs-neighbor evidence for the image. This checks "
-            "whether unsupported object continuations can be blocked, not "
-            "final caption quality."
+            "whether unsupported object continuations can be blocked or "
+            "down-weighted, not final caption quality."
         )
     else:
         scope_note = (
@@ -429,6 +432,8 @@ def main() -> None:
         "generate_vanilla": args.generate_vanilla,
         "mention_matches_csv": args.mention_matches_csv,
         "deny_phrase_source": args.deny_phrase_source,
+        "gate_mode": args.gate_mode,
+        "soft_penalty": args.soft_penalty if args.gate_mode == "soft" else None,
         "neighbors_json": args.neighbors_json,
         "top_neighbors": args.top_neighbors,
         "alias_top_k": args.alias_top_k,
