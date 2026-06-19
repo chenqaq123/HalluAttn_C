@@ -20,6 +20,14 @@ def _numbers_from_row(table_text: str, row_label: str) -> list[float]:
     return [float(value) for value in re.findall(r"[+-]?(?:\d+\.\d+|\.\d+|\d+)", match.group(1))]
 
 
+def _numbers_from_markdown_row(table_text: str, row_label: str) -> list[float]:
+    pattern = re.compile(rf"^\|\s*{re.escape(row_label)}\s*\|(.+)$", re.MULTILINE)
+    match = pattern.search(table_text)
+    if not match:
+        raise AssertionError(f"Missing markdown table row: {row_label}")
+    return [float(value) for value in re.findall(r"[+-]?(?:\d+\.\d+|\.\d+|\d+)", match.group(1))]
+
+
 def _assert_rounded(actual: list[float], expected: list[float], digits: int, label: str) -> None:
     rounded = [round(value, digits) for value in expected]
     if actual != rounded:
@@ -295,6 +303,43 @@ def check_region_verifier_pope() -> None:
         _assert_rounded(actual, expected, 3, f"region-pope:{row_label}")
 
 
+def check_semantic_neighbor_control_table() -> None:
+    rows = list(
+        csv.DictReader(
+            (PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.csv").open()
+        )
+    )
+    control_table = (
+        PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md"
+    ).read_text()
+    status_note = (PROJECT_ROOT / "docs/current_result_baseline_comparison.md").read_text()
+    keys = [
+        "macro_mcc",
+        "macro_tpr",
+        "macro_fpr",
+        "macro_yes_rate",
+        "macro_related_fpr",
+        "macro_plain_fpr",
+        "macro_related_minus_plain_fpr",
+        "adversarial_related_fpr",
+    ]
+    for row in rows:
+        label = row["method"]
+        expected = [float(row[key]) for key in keys]
+        _assert_rounded(
+            _numbers_from_markdown_row(control_table, label),
+            expected,
+            3,
+            f"semantic-control-table:{label}",
+        )
+        _assert_rounded(
+            _numbers_from_markdown_row(status_note, label),
+            expected,
+            3,
+            f"current-result-baseline-table:{label}",
+        )
+
+
 def check_appendix_qwen() -> None:
     audit = json.loads((PROJECT_ROOT / "mitigation/results/semantic_neighbor_audit/qwen25vl_replication_audit.json").read_text())
     table = (PAPER_ROOT / "tables/table_appendix_qwen.tex").read_text()
@@ -382,6 +427,7 @@ def main() -> None:
     check_semantic_neighbor_fpr()
     check_region_verifier_detection()
     check_region_verifier_pope()
+    check_semantic_neighbor_control_table()
     check_appendix_qwen()
     check_appendix_tdev_lite()
     check_appendix_caption_proxy()
