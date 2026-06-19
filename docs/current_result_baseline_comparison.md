@@ -15,6 +15,9 @@ It does not yet support a strong standalone caption-mitigation paper.
 - Attention-only baselines and VCD-greedy do not close the semantic-neighbor
   false-positive gap. NoLan-compatible is a useful decoding exception: it lowers
   FPR and related FPR, but mainly by becoming more conservative and losing recall.
+- AIR official code is now located and partially wired for the 120-row
+  adversarial semantic-neighbor audit, but it is not yet a comparable result row;
+  it still needs an isolated original-LLaVA AIR run.
 - Raw object-region evidence is not enough: it improves aggregate MCC but
   over-fires when related objects are present.
 - Target-vs-neighbor verification gives the best current POPE tradeoff and is
@@ -67,7 +70,8 @@ Reading:
 
 This keeps the original conclusion but makes it sharper: language-prior
 suppression can help, yet the unresolved failure is still target verification
-under related visual evidence.
+under related visual evidence. AIR should be treated as the next official-code
+stress test, not as an already measured row in this table.
 
 ## CHAIR Object-Mention Detection
 
@@ -241,6 +245,7 @@ The strongest safe claim is:
 - `mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md`
 - `mitigation/results/semantic_neighbor_audit/nolan_adversarial_full_subset_eval/nolan_adversarial_full_comparison.md`
 - `mitigation/results/semantic_neighbor_audit/nolan_full_subset_eval/semantic_neighbor_subset_metrics.csv`
+- `docs/air_baseline_feasibility.md`
 - `docs/tdev_ablation_summary.md`
 - `paper/tables/table_semantic_neighbor_fpr.tex`
 - `paper/tables/table_region_verifier_pope.tex`

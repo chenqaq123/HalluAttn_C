@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import Counter
 from pathlib import Path
 
 
@@ -14,13 +15,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--questions_file", required=True, help="Question JSONL exported by export_air_pope_subset.py")
     parser.add_argument("--output_file", required=True)
     parser.add_argument("--method", default="air")
-    parser.add_argument("--strict", action="store_true", help="Fail if answer/question ids differ")
+    parser.add_argument("--strict", action="store_true", help="Fail on unknown, duplicate, or missing question ids")
     return parser.parse_args()
 
 
 def read_jsonl(path: Path) -> list[dict]:
     with path.open("r", encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
+
+
+def sortable_question_id(value: str) -> tuple[int, int | str]:
+    return (0, int(value)) if value.isdigit() else (1, value)
 
 
 def main() -> None:
@@ -30,13 +35,20 @@ def main() -> None:
     output_file = Path(args.output_file)
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
-    missing = []
+    answer_ids = [str(answer["question_id"]) for answer in answers]
+    duplicate_answer_ids = sorted(
+        [qid for qid, count in Counter(answer_ids).items() if count > 1],
+        key=sortable_question_id,
+    )
+    missing_answer_ids = sorted(set(questions) - set(answer_ids), key=sortable_question_id)
+
+    unknown = []
     converted = []
     for answer in answers:
         question_id = str(answer["question_id"])
         question = questions.get(question_id)
         if question is None:
-            missing.append(question_id)
+            unknown.append(question_id)
             if args.strict:
                 continue
             question = {}
@@ -56,8 +68,16 @@ def main() -> None:
             }
         )
 
-    if missing and args.strict:
-        raise KeyError(f"{len(missing)} AIR answers missing question metadata, first={missing[:5]}")
+    if args.strict:
+        errors = []
+        if unknown:
+            errors.append(f"{len(unknown)} AIR answers missing question metadata, first={unknown[:5]}")
+        if duplicate_answer_ids:
+            errors.append(f"{len(duplicate_answer_ids)} duplicate AIR answer ids, first={duplicate_answer_ids[:5]}")
+        if missing_answer_ids:
+            errors.append(f"{len(missing_answer_ids)} questions missing AIR answers, first={missing_answer_ids[:5]}")
+        if errors:
+            raise ValueError("; ".join(errors))
 
     with output_file.open("w", encoding="utf-8") as f:
         for row in converted:
@@ -65,8 +85,12 @@ def main() -> None:
 
     print(f"Read {len(answers)} AIR answers")
     print(f"Wrote {len(converted)} predictions to {output_file}")
-    if missing:
-        print(f"Warning: {len(missing)} answers missing question metadata, first={missing[:5]}")
+    if unknown:
+        print(f"Warning: {len(unknown)} answers missing question metadata, first={unknown[:5]}")
+    if duplicate_answer_ids:
+        print(f"Warning: {len(duplicate_answer_ids)} duplicate AIR answer ids, first={duplicate_answer_ids[:5]}")
+    if missing_answer_ids:
+        print(f"Warning: {len(missing_answer_ids)} questions missing AIR answers, first={missing_answer_ids[:5]}")
 
 
 if __name__ == "__main__":

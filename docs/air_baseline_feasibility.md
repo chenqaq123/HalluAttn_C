@@ -45,6 +45,14 @@ This means the safest route is an isolated env or container. Do not patch the
 current `latentGuard` environment in place unless the change is reversible and
 recorded.
 
+There is also a checkpoint-format risk. The AIR LLaVA loader uses the original
+LLaVA model classes, while the locally used main checkpoint is a HuggingFace
+`llava-hf` snapshot with `LlavaForConditionalGeneration`. No local original-LLaVA
+`mm_projector.bin` checkpoint was found under `/home/chenguanxu/common_model` in
+the current audit. The official AIR run may therefore need an original-LLaVA
+checkpoint such as `liuhaotian/llava-v1.5-7b`, or an explicit compatibility test
+inside the isolated AIR environment.
+
 A dry-run in `latentGuard` confirms the mismatch:
 
 - Current env: Python 3.10.20, torch 2.10.0+cu128, transformers 4.57.6,
@@ -100,7 +108,17 @@ Recommended first run:
    environment.
 2. Run official AIR with `max_new_tokens=16` or `32`, greedy decoding, batch size
    1 or 2, and LLaVA-1.5-7B.
-3. Convert AIR `answers.jsonl` to the existing prediction schema:
+3. Prefer the project wrapper once `AIR_LLAVA_ROOT` and `AIR_MODEL_PATH` point to
+   a working official AIR/LLaVA environment:
+
+```bash
+AIR_LLAVA_ROOT=/path/to/AIR/LLaVA \
+AIR_MODEL_PATH=/path/to/original-llava-v1.5-7b \
+CUDA_VISIBLE_DEVICES=0 \
+mitigation/scripts/run_air_official_adversarial_120.sh
+```
+
+4. Or convert AIR `answers.jsonl` to the existing prediction schema manually:
 
 ```bash
 /home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
@@ -112,15 +130,18 @@ Recommended first run:
   --strict
 ```
 
-4. Evaluate with `mitigation/scripts/evaluate_semantic_neighbor_subsets.py` using
+5. Evaluate with `mitigation/scripts/evaluate_semantic_neighbor_subsets.py` using
    the same audit CSV and strict invalid handling.
-5. Promote to full adversarial or all-split only if AIR lowers related-present
+6. Promote to full adversarial or all-split only if AIR lowers related-present
    FPR without merely collapsing TPR/yes rate.
 
 The conversion path has been structure-tested with a 120-row dummy AIR answers
 file: `convert_air_answers.py` writes the expected prediction schema, and
 `evaluate_semantic_neighbor_subsets.py --invalid_policy error` consumes it with
-`invalid=0` and the expected subset counts.
+`invalid=0` and the expected subset counts. In `--strict` mode the converter now
+fails on unknown AIR answer ids, duplicate answer ids, or missing answers for the
+exported questions, so an incomplete official run cannot silently enter the
+baseline table.
 
 ## Paper Positioning
 
