@@ -194,13 +194,15 @@ Key comparison:
 | prefilter, all-first | 5 | 2 | bird | person | stronger first-token blocking does not fix the substitution |
 | closed-loop top30 on 22596 | 1 | 1 | bird | person | top30 absent-object deny-list misses `person` |
 | closed-loop all unsupported COCO on 22596 | 1 | 1 | bird | - | includes `person` but produces an incomplete caption ending in `two ch` |
+| prefilter iter2, single-token-first | 5 | 1 | bird | - | adds only the TDEV-absent `person` substitute; no new COCO claim, but still ends in `two ch` |
 
 The important result is negative: prefilter-only hard blocking is not ready to
 scale to the 100-image set. It can remove a selected hallucinated object, but the
-model can route to another unsupported COCO object. Full absent-object blocking
-can suppress that substitute but is too broad and can harm fluency/completion.
-The next caption method should therefore add dynamic replacement verification or
-bounded iterative expansion of the deny-list, with explicit audits for CHAIR,
+model can route to another unsupported COCO object. Bounded iterative expansion
+can suppress that substitute without the breadth of full absent-object blocking,
+but hard blocking still harms completion on the stress image. The next caption
+method should therefore combine dynamic replacement verification with soft
+penalties or sentence-level stop/repair, with explicit audits for CHAIR,
 variant/root/open-vocabulary leaks, length, and fluency.
 
 ## Detection Baselines

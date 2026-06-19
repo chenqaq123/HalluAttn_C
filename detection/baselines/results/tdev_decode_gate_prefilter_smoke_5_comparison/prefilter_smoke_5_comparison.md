@@ -4,3 +4,4 @@
 | prefilter_all_first | 5 | 2 | bird | person | above, accompanied, brown, brown wooden, wooden | same person route; extra open-vocab flags on image 6213 are mostly non-object words |
 | closed_loop_top30_22596 | 1 | 1 | bird | person | - | top30 absent-object list still misses person |
 | closed_loop_all_22596 | 1 | 1 | bird | - | - | person is denied, but caption ends with incomplete "two ch" |
+| prefilter_iter2_single_token_only | 5 | 1 | bird | - | - | adds person after first audit; no new COCO claim, but caption still ends with incomplete "two ch" |

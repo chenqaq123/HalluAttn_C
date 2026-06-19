@@ -272,9 +272,12 @@ failure to the constructive TDEV method.
    test now shows why the claim must stay at feasibility: prefilter-only hard
    blocking removes the denied `bird` claim on image 22596 but routes to a new
    unsupported `person` claim; closed-loop top30 also misses that substitute,
-   while all-unsupported-COCO blocking includes it but truncates the caption. The
-   next method step should be dynamic replacement verification or bounded
-   iterative deny-list expansion, not scaling prefilter-only hard blocking.
+   while all-unsupported-COCO blocking includes it but truncates the caption. A
+   bounded second pass that adds only the TDEV-absent `person` substitute removes
+   the new COCO hallucination but still leaves an incomplete caption. The next
+   method step should combine dynamic replacement verification with soft
+   penalties or sentence-level stop/repair, not scale prefilter-only hard
+   blocking.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

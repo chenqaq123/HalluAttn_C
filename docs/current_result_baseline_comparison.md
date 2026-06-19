@@ -190,10 +190,12 @@ Reading:
   `0.0245`, `two_stage_present=0`). Allowing first-token blocking changes 2/5
   captions but keeps the same `bird -> person` substitution. A closed-loop top30
   deny-list also misses `person`; an all-unsupported-COCO deny-list includes it
-  but leaves the caption truncated (`"two ch"`). The conclusion is negative but
-  useful: the next method must verify replacement candidates dynamically or use
-  bounded iterative deny-list expansion, not simply scale prefilter-only hard
-  blocking.
+  but leaves the caption truncated (`"two ch"`). A bounded second-pass expansion
+  that adds only the TDEV-absent `person` substitute also removes the new COCO
+  hallucination, but still ends with the same incomplete `"two ch"` fragment. The
+  conclusion is negative but useful: dynamic replacement verification helps with
+  substitution, but hard blocking still needs soft penalties or sentence-level
+  stop/repair before it can scale as caption mitigation.
 
 ## Paper-Safe Claim
 

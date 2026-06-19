@@ -1,0 +1,25 @@
+{
+  "added_words": [
+    {
+      "aliases": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ],
+      "image_id": 22596,
+      "word": "person"
+    }
+  ],
+  "audit_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_audit/closed_loop_example_audit.json",
+  "base_examples_json": "detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_examples.json",
+  "num_added_words": 1,
+  "num_images": 40,
+  "num_images_with_additions": 1,
+  "output_examples_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_prefilter/iterative_prefilter_examples.json",
+  "scope_note": "Bounded second-pass deny-list expansion from generated-caption audits. Only introduced COCO words with TDEV two_stage_present=0 are added.",
+  "tokenizer_path": "/home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9"
+}
