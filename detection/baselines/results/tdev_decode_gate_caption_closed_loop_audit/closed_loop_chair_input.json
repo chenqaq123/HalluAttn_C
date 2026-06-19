@@ -1,0 +1,12 @@
+[
+  {
+    "image_id": 391158,
+    "caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station or a museum. The train is prominently displayed, taking up a significant portion of the scene. The train's engine is visible, with its front end extending from the left side of the image to the right.\n\nIn addition to the train, there are two people in the scene, one located near the left side and the other closer to the right side. A cup can be seen placed on a surface, possibly a table or a counter, near the left side of the image.",
+    "variant": "vanilla"
+  },
+  {
+    "image_id": 391158,
+    "caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station. The train occupies a significant portion of the scene, extending from the left side almost all the way across the image. The train's engine is prominently visible, with its front end extending towards the right side of the image.\n\nIn addition, there are two smaller trains visible in the background, one on the left side and the other on the right side of the image. The presence of these trains suggests that the building may serve as a hub of train activity, with multiple trains passing through the station.",
+    "variant": "gated"
+  }
+]

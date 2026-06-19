@@ -18,8 +18,9 @@ It does not yet support a strong standalone caption-mitigation paper.
   over-fires when related objects are present.
 - Target-vs-neighbor verification gives the best current POPE tradeoff and is
   much stronger on controlled CHAIR object-mention detection.
-- Caption-side correction remains proxy-level. The next required method step is
-  a decoding-time object-phrase gate, not more post-hoc deletion or generic noun
+- Caption-side correction is now beyond pure text-edit proxy, but still only at
+  smoke-test scale. The next required method step is a softer/dynamic
+  closed-loop object-claim gate, not more post-hoc deletion or generic noun
   replacement.
 
 ## POPE Mitigation and Semantic-Neighbor Controls
@@ -115,15 +116,20 @@ Reading:
 - A prefix-state `LogitsProcessor` smoke test now blocks all `804` tested
   TDEV-selected matched mentions and all `1,333` simulated phrase-generation
   steps.
-- A one-image generated-vs-generated LLaVA smoke test confirms the gate can
-  change decoding through `generate(logits_processor=...)`. The current saved
-  run uses narrow surface forms (`people`, `table`) and reduces denied sequences
-  from 260 broad-synonym variants to 4 surface-form variants. It removes denied
+- A surface-form generated-vs-generated LLaVA smoke test confirms the gate can
+  change decoding through `generate(logits_processor=...)`. It removes denied
   `people/table` claims, but the same sample introduces a new `bottle` claim.
 - A closed-loop audit shows that the new `bottle` claim is also unsupported:
   target score `0.0266`, best neighbor `cup` score `0.3573`, margin `-0.3307`,
-  and two-stage TDEV predicts absent. This verifies integration and exposes the
-  next method requirement; it is not yet a caption-quality result.
+  and two-stage TDEV predicts absent. This verifies integration and exposes why
+  original-phrase suppression is insufficient.
+- A follow-up one-image closed-loop smoke test precomputes unsupported COCO
+  objects with OWLv2 target-vs-neighbor evidence and blocks 320 narrow alias
+  token sequences. On image `391158`, it removes the `person`, `dining table`,
+  and `cup` CHAIR objects from the generated caption and does not introduce any
+  new COCO object claim in the audit. The cost is clear: the caption becomes
+  conservative and train-only, so this is feasibility evidence for closed-loop
+  object verification, not a final caption-quality result.
 
 ## Paper-Safe Claim
 
@@ -134,7 +140,8 @@ The strongest safe claim is:
 > target-vs-neighbor verification criterion and gives a modest but more aligned
 > reduction in semantic-neighbor false positives, with strong controlled
 > object-mention detection evidence. Caption mitigation remains a prototype until
-> the decoding-time object-phrase gate is implemented.
+> the closed-loop object-claim gate is scaled and softened enough to preserve
+> useful detail.
 
 ## Authoritative Artifacts
 
@@ -144,3 +151,6 @@ The strongest safe claim is:
 - `paper/tables/table_region_verifier_pope.tex`
 - `paper/tables/table_appendix_caption_proxy.tex`
 - `detection/baselines/results/tdev_decode_gate_feasibility/decode_gate_feasibility_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_caption_smoke/gated_generation_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_smoke/gated_generation_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_audit/closed_loop_example_audit.json`

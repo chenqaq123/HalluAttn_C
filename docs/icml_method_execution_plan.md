@@ -223,9 +223,14 @@ failure to the constructive TDEV method.
    such as `bottle`. A closed-loop audit confirms that this new `bottle` claim is
    exactly the same target-vs-neighbor failure: target score `0.0266`, best
    neighbor `cup` score `0.3573`, margin `-0.3307`, and two-stage TDEV predicts
-   absent. The next step is a closed-loop object-claim gate that verifies newly
-   routed object continuations, followed by multi-image CHAIR/length/fluency
-   evaluation, not more deterministic placeholder or sentence-deletion variants.
+   absent. A first closed-loop decode-gate smoke now precomputes unsupported
+   COCO objects with OWLv2 target-vs-neighbor evidence, blocks 320 narrow alias
+   token sequences, and removes the substitution failure on the same image:
+   CHAIR audit reports no newly introduced COCO object claim. The cost is that
+   the caption becomes conservative and train-only. The next step is therefore
+   not another deterministic placeholder edit, but a dynamic or soft
+   closed-loop object-claim gate followed by multi-image CHAIR/length/fluency
+   evaluation.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

@@ -1091,14 +1091,19 @@ next experiment must run actual gated generation on a small COCO subset.
 
 ### TDEV Decode-Gate Caption Smoke Test
 
-`detection/scripts/run_tdev_decode_gate_caption_smoke.py` runs a bounded oracle
-integration test with LLaVA generation. It selects high-risk object claims from
-cached TDEV scores, builds denied object-phrase token sequences, and passes the
-processor through HuggingFace `generate(logits_processor=...)`. The default uses
-`device_map` loading and reuses cached vanilla captions unless
-`--generate_vanilla` is set.
+`detection/scripts/run_tdev_decode_gate_caption_smoke.py` runs bounded LLaVA
+generation smoke tests. It supports three phrase sources:
 
-Reproducibility command for the current saved smoke result:
+- `surface`: oracle-input integration, using high-risk TDEV-scored vanilla
+  caption mentions and their matched generated surface forms.
+- `synonyms`: broader CHAIR synonym variants for the same denied vanilla claims.
+- `closed_loop`: image-level unsupported COCO objects are precomputed from OWLv2
+  target-vs-neighbor evidence, then narrow aliases are blocked during decoding.
+
+The smoke tests verify generation integration with HuggingFace
+`generate(logits_processor=...)`. They are not final caption-quality results.
+
+Reproducibility command for the saved surface-form smoke:
 
 ```bash
 /home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
@@ -1106,7 +1111,8 @@ Reproducibility command for the current saved smoke result:
   --image_ids 391158 \
   --max_new_tokens 160 \
   --device 5 \
-  --generate_vanilla
+  --generate_vanilla \
+  --deny_phrase_source surface
 ```
 
 Result root:
@@ -1115,30 +1121,23 @@ Result root:
 detection/baselines/results/tdev_decode_gate_caption_smoke/
 ```
 
-Key result: the one-image generated-vs-generated smoke test completed on GPU 5
-with `images_with_gate_events = 1` and `captions_differing_from_reference = 1`.
-For image `391158`, the TDEV-denied hallucinated claims were `person` and
-`dining table`; the actual matched surface forms in the feasibility audit were
-`people` and `table`. The current saved run uses `--deny_phrase_source surface`,
-so the denied token sequence count drops from the broad-synonym prototype's 260
-sequences to 4 surface-form sequences (`people`, `People`, `table`, `Table`).
-The gated caption removed the vanilla phrase about `two people` and avoided
-`table/counter`, replacing it with `two other objects`. However, it still
-introduced a new `bottle` claim. This is useful integration evidence, but it is
-not yet a quality result. Narrow surface gating reduces over-broad suppression;
-it does not solve object-claim substitution. The next version needs a closed-loop
-claim gate that checks newly routed object claims, followed by multi-image
-CHAIR/length/fluency evaluation.
+Key result: the one-image generated-vs-generated surface smoke completed on GPU
+5 with `images_with_gate_events = 1` and `captions_differing_from_reference =
+1`. For image `391158`, the TDEV-denied hallucinated claims were `person` and
+`dining table`; the matched surface forms were `people` and `table`, producing 4
+surface-form token sequences. The gated caption removed `two people` and avoided
+`table/counter`, but introduced a new `bottle` claim. This proves the decode hook
+can change generation, but it also shows that original-phrase suppression alone
+can route the model into another unsupported object.
 
 ### TDEV Closed-Loop Claim Audit
 
-`detection/scripts/audit_decode_gate_closed_loop_example.py` audits the new
-object claims introduced by the one-image gated caption smoke test. It reruns
-CHAIR on the generated vanilla and gated captions, identifies object words that
-appear only in the gated caption, and scores those introduced claims with OWLv2
-TDEV evidence against semantic neighbors.
+`detection/scripts/audit_decode_gate_closed_loop_example.py` audits object claims
+introduced by a gated caption smoke run. It reruns CHAIR on generated vanilla and
+gated captions, identifies object words that appear only in the gated caption,
+and scores those introduced claims with OWLv2 target-vs-neighbor evidence.
 
-Reproducibility command:
+Reproducibility command for the surface-gate failure audit:
 
 ```bash
 /home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
@@ -1152,14 +1151,70 @@ Result root:
 detection/baselines/results/tdev_decode_gate_closed_loop_example/
 ```
 
-Key result: the gated caption removed the denied CHAIR objects `person` and
-`dining table`, but introduced a new hallucinated CHAIR object `bottle`. The
+Key result: the surface-gated caption removed denied CHAIR objects `person` and
+`dining table`, but introduced a hallucinated CHAIR object `bottle`. The
 closed-loop TDEV check would reject this new claim: OWLv2 target score for
 `bottle` is `0.0266`, the best semantic neighbor is `cup` at `0.3573`, the margin
 is `-0.3307`, and the two-stage verifier predicts absent (`two_stage_present =
-0`). This supports the next method design: a generation-time gate cannot only
-suppress the original denied phrase. It must verify newly routed object
-continuations before allowing them.
+0`). This directly supports the next method design: a generation-time gate must
+verify newly routed object continuations, not only suppress the original denied
+phrase.
+
+### TDEV Closed-Loop Decode-Gate Smoke Test
+
+The first closed-loop smoke test uses the same script with
+`--deny_phrase_source closed_loop`. Before LLaVA generation, it scores the image
+against the COCO object universe plus semantic neighbors with OWLv2, applies the
+same two-stage target-vs-neighbor present rule, and blocks narrow aliases for
+objects predicted absent.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla \
+  --deny_phrase_source closed_loop \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_smoke
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_smoke/
+```
+
+Key result: the run completed on GPU 5 with `images_with_gate_events = 1`,
+`captions_differing_from_reference = 1`, and 320 blocked token sequences. The
+same vanilla caption mentions `person`, `cup`, and `dining table`; the
+closed-loop gated caption contains only `train` CHAIR objects and no new COCO
+object claim.
+
+Follow-up audit command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_audit
+```
+
+Audit root:
+
+```text
+detection/baselines/results/tdev_decode_gate_caption_closed_loop_audit/
+```
+
+Audit result: `introduced_words = []` and `introduced_hallucinated_words = []`.
+This is the first end-to-end evidence that closed-loop target-vs-neighbor object
+verification can block the substitution failure exposed by the surface gate.
+However, the generated caption becomes conservative and train-only, so the method
+is still a feasibility prototype. The next implementation should make the gate
+dynamic or soft enough to preserve supported details instead of pre-blocking most
+absent COCO objects.
 
 ### SPIN Adversarial Subset Audit
 

@@ -21,7 +21,7 @@ import numpy as np
 import torch
 from PIL import Image
 from tqdm import tqdm
-from transformers import LlavaForConditionalGeneration, LlavaProcessor, LogitsProcessorList
+from transformers import LlavaForConditionalGeneration, LlavaProcessor, LogitsProcessorList, Owlv2ForObjectDetection, Owlv2Processor
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DETECTION_SRC = REPO_ROOT / "detection" / "src"
@@ -31,6 +31,11 @@ if str(DETECTION_SRC) not in sys.path:
 
 from sinkdetect.decode_gate import ObjectPhraseGateLogitsProcessor, build_object_phrase_sequences
 from sinkdetect.utils import build_caption_prompt, load_model_and_processor
+
+OWL_CACHE_UTILS = REPO_ROOT / "mitigation" / "scripts"
+if str(OWL_CACHE_UTILS) not in sys.path:
+    sys.path.insert(0, str(OWL_CACHE_UTILS))
+from owlv2_cache_utils import encode_image_object_scores
 
 
 def parse_args() -> argparse.Namespace:
@@ -55,7 +60,15 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--generate_vanilla", action="store_true", help="Also regenerate vanilla captions instead of using cached vanilla text.")
     p.add_argument("--load_strategy", choices=("device_map", "utils"), default="device_map")
     p.add_argument("--mention_matches_csv", default="detection/baselines/results/tdev_decode_gate_feasibility/mention_token_matches.csv")
-    p.add_argument("--deny_phrase_source", choices=("surface", "synonyms"), default="surface")
+    p.add_argument("--deny_phrase_source", choices=("surface", "synonyms", "closed_loop"), default="surface")
+    p.add_argument("--neighbors_json", default="mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json")
+    p.add_argument("--owlv2_model_path", default="/home/chenguanxu/common_model/huggingface/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d")
+    p.add_argument("--owlv2_device", default="cuda:5")
+    p.add_argument("--top_neighbors", type=int, default=10)
+    p.add_argument("--alias_top_k", type=int, default=3)
+    p.add_argument("--closed_loop_low", type=float, default=0.10)
+    p.add_argument("--closed_loop_high", type=float, default=0.16)
+    p.add_argument("--closed_loop_margin", type=float, default=-0.15)
     p.add_argument("--hybrid_low", type=float, default=0.04)
     p.add_argument("--hybrid_high", type=float, default=0.12)
     p.add_argument("--hybrid_margin", type=float, default=-0.20)
@@ -108,6 +121,20 @@ def dedupe(items: list[str]) -> list[str]:
     return list(OrderedDict.fromkeys(item for item in items if item))
 
 
+def pluralize_last_token(phrase: str) -> str:
+    parts = phrase.split()
+    if not parts:
+        return phrase
+    last = parts[-1]
+    if last.endswith(("s", "x", "ch", "sh")):
+        parts[-1] = f"{last}es"
+    elif last.endswith("y") and len(last) > 1 and last[-2] not in "aeiou":
+        parts[-1] = f"{last[:-1]}ies"
+    else:
+        parts[-1] = f"{last}s"
+    return " ".join(parts)
+
+
 def object_phrases(word: str, synonyms: dict[str, list[str]], edit: Any) -> list[str]:
     phrases: list[str] = []
     for phrase in synonyms.get(word, [word]):
@@ -125,6 +152,98 @@ def matched_surface_forms(path: Path) -> dict[int, str]:
         if row.get("near_gen_pos_match") == "1" and row.get("matched_text", "").strip():
             out[int(row["object_id"])] = row["matched_text"].strip().lower()
     return out
+
+
+def observed_surface_aliases(path: Path, top_k: int) -> dict[str, list[str]]:
+    if not path.exists():
+        return {}
+    rows = read_rows(path)
+    counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for row in rows:
+        if row.get("near_gen_pos_match") == "1" and row.get("matched_text", "").strip():
+            counts[row["word"].strip().lower()][row["matched_text"].strip().lower()] += 1
+    aliases: dict[str, list[str]] = {}
+    for word, counter in counts.items():
+        aliases[word] = [item for item, _ in sorted(counter.items(), key=lambda kv: (-kv[1], kv[0]))[:top_k]]
+    return aliases
+
+
+def narrow_aliases(word: str, observed_aliases: dict[str, list[str]]) -> list[str]:
+    phrases = [word, pluralize_last_token(word)]
+    phrases.extend(observed_aliases.get(word, []))
+    return dedupe([phrase.lower() for phrase in phrases])
+
+
+def read_neighbors(path: Path, top_k: int) -> dict[str, list[str]]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return {obj: [item["object"] for item in items[:top_k]] for obj, items in raw.items()}
+
+
+def two_stage_present(target_score: float, margin: float, low: float, high: float, margin_threshold: float) -> bool:
+    return target_score > high or (target_score > low and margin > margin_threshold)
+
+
+def coco_image_path(coco_path: str, image_id: int) -> Path:
+    return Path(coco_path) / "val2014" / f"COCO_val2014_{image_id:012d}.jpg"
+
+
+def closed_loop_denied_words(
+    args: argparse.Namespace,
+    image_ids: list[int],
+    rows: list[dict[str, str]],
+    neighbors: dict[str, list[str]],
+) -> dict[int, list[dict[str, Any]]]:
+    object_names = {row["word"].strip().lower() for row in rows}
+    for obj in list(object_names):
+        object_names.update(neighbors.get(obj, []))
+    object_list = sorted(object_names)
+    prompts = [f"a photo of a {obj}" for obj in object_list]
+    device = torch.device(args.owlv2_device if torch.cuda.is_available() or not args.owlv2_device.startswith("cuda") else "cpu")
+    processor = Owlv2Processor.from_pretrained(args.owlv2_model_path, local_files_only=True)
+    model = Owlv2ForObjectDetection.from_pretrained(args.owlv2_model_path, local_files_only=True).to(device)
+    model.eval()
+    images = [Image.open(coco_image_path(args.coco_path, image_id)).convert("RGB") for image_id in image_ids]
+    score_batch = encode_image_object_scores(model, processor, images, prompts, object_list, device)
+    for image in images:
+        image.close()
+    denied: dict[int, list[dict[str, Any]]] = {}
+    for image_id, scores in zip(image_ids, score_batch):
+        items = []
+        for word in object_list:
+            neighbor_scores = [(name, scores[name]) for name in neighbors.get(word, []) if name in scores]
+            if neighbor_scores:
+                best_neighbor, best_neighbor_score = max(neighbor_scores, key=lambda item: item[1])
+                margin = scores[word] - best_neighbor_score
+            else:
+                best_neighbor, best_neighbor_score = "", 0.0
+                margin = scores[word]
+            present = two_stage_present(
+                scores[word],
+                margin,
+                args.closed_loop_low,
+                args.closed_loop_high,
+                args.closed_loop_margin,
+            )
+            if not present:
+                items.append(
+                    {
+                        "word": word,
+                        "matched_surface": "",
+                        "score": float(-max(scores[word] - args.closed_loop_high, min(scores[word] - args.closed_loop_low, margin - args.closed_loop_margin))),
+                        "label": -1,
+                        "object_id": -1,
+                        "target_score": float(scores[word]),
+                        "best_neighbor": best_neighbor,
+                        "best_neighbor_score": float(best_neighbor_score),
+                        "tdev_margin": float(margin),
+                        "two_stage_present": 0,
+                    }
+                )
+        denied[image_id] = items
+    del model
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    return denied
 
 
 def select_denied_words(
@@ -195,6 +314,10 @@ def main() -> None:
     vanilla_by_image = cached_captions(rows)
     image_ids = choose_image_ids(args, denied_by_image)
     synonyms = edit.load_synonyms(Path(args.chair_source))
+    observed_aliases = observed_surface_aliases(Path(args.mention_matches_csv), args.alias_top_k)
+    neighbors = read_neighbors(Path(args.neighbors_json), args.top_neighbors)
+    if args.deny_phrase_source == "closed_loop":
+        denied_by_image = closed_loop_denied_words(args, image_ids, rows, neighbors)
 
     device = torch.device(f"cuda:{args.device}" if torch.cuda.is_available() else "cpu")
     model, processor = load_generation_stack(args, device)
@@ -215,7 +338,9 @@ def main() -> None:
         denied_sequences: list[list[int]] = []
         denied_texts: list[str] = []
         for item in denied_items:
-            if args.deny_phrase_source == "surface" and item.get("matched_surface"):
+            if args.deny_phrase_source == "closed_loop":
+                phrases = narrow_aliases(item["word"], observed_aliases)
+            elif args.deny_phrase_source == "surface" and item.get("matched_surface"):
                 phrases = [item["matched_surface"]]
             else:
                 phrases = object_phrases(item["word"], synonyms, edit)
@@ -279,6 +404,20 @@ def main() -> None:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
+    if args.deny_phrase_source == "closed_loop":
+        scope_note = (
+            "Closed-loop smoke test: denied objects are precomputed from "
+            "OWLv2 target-vs-neighbor evidence for the image. This checks "
+            "whether unsupported object continuations can be blocked, not "
+            "final caption quality."
+        )
+    else:
+        scope_note = (
+            "Oracle smoke test: denied objects are selected from cached TDEV "
+            "scores over vanilla captions. This proves generation integration, "
+            "not final method quality."
+        )
+
     metrics = {
         "scores_csv": args.scores_csv,
         "score": args.score,
@@ -290,6 +429,12 @@ def main() -> None:
         "generate_vanilla": args.generate_vanilla,
         "mention_matches_csv": args.mention_matches_csv,
         "deny_phrase_source": args.deny_phrase_source,
+        "neighbors_json": args.neighbors_json,
+        "top_neighbors": args.top_neighbors,
+        "alias_top_k": args.alias_top_k,
+        "closed_loop_low": args.closed_loop_low,
+        "closed_loop_high": args.closed_loop_high,
+        "closed_loop_margin": args.closed_loop_margin,
         "max_new_tokens": args.max_new_tokens,
         "num_images": len(results),
         "captions_differing_from_reference": sum(row["caption_differs_from_reference"] for row in results),
@@ -298,10 +443,7 @@ def main() -> None:
         ),
         "images_with_gate_events": sum(int(bool(row["gate_events"])) for row in results),
         "total_gate_events_saved": sum(len(row["gate_events"]) for row in results),
-        "scope_note": (
-            "Oracle smoke test: denied objects are selected from cached TDEV scores "
-            "over vanilla captions. This proves generation integration, not final method quality."
-        ),
+        "scope_note": scope_note,
     }
     with (output_dir / "gated_generation_metrics.json").open("w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, sort_keys=True)
