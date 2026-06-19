@@ -17,15 +17,15 @@ aggregate POPE or CHAIR improvement is insufficient unless the method reduces
 related-present false positives without simply shifting answer priors, shortening
 captions, or replacing specific claims with vague text.
 
-**Run NoLan next as a bounded P0 baseline if its public code integrates cleanly.**
-It is a public-code decoding baseline and directly tests whether dynamic
-language-prior suppression fixes the same failure mode. The first run should be
-the adversarial semantic-neighbor subset; full all-split POPE/CHAIR reruns are
-justified only if the subset lowers related-present FPR without a yes-rate or
-caption-length shortcut. The compatibility caveat is recorded in
-`docs/nolan_baseline_feasibility.md`: the official code targets an older
-transformers/torch stack and monkey-patches sampling, so it needs a guarded port
-or isolated environment before use.
+**NoLan-compatible is now complete for POPE random/popular/adversarial.**
+It is the closest public-code decoding baseline found in this refresh and directly
+tests whether dynamic language-prior suppression fixes the same failure mode. The
+local deterministic compatibility port lowers all-split related-present FPR
+(`0.114 -> 0.076`) and FPR (`0.087 -> 0.058`), but TPR also drops
+(`0.813 -> 0.778`) and macro MCC stays tied with vanilla (`0.731` vs. `0.730`).
+The compatibility caveat remains: the official code targets an older
+transformers/torch stack and monkey-patches sampling, so report this as
+`NoLan-compatible`, not official NoLan.
 
 Do not spend the next phase implementing unofficial approximations of CAI, CAST,
 Focus Matters, BRACS, AIR, or Region-Aware Attention Recalibration. If official
@@ -38,7 +38,7 @@ verification criterion, not superiority over unreleased implementations.
 
 | Method | Source status on 2026-06-19 | Why it matters | Current action |
 |---|---|---|---|
-| NoLan: No-Language-Hallucination Decoding | Public GitHub repository found: `https://github.com/lingfengren/NoLan`; README says code released and supports LLaVA-1.5/InstructBLIP/Qwen-VL integration. | Closest runnable decoding baseline: suppresses language priors by comparing multimodal and text-only distributions. This directly tests whether language-prior suppression fixes related-object false positives. | P0 runnable candidate. Clone/inspect in `ref/`, then run adversarial semantic-neighbor subset before any full rerun. |
+| NoLan: No-Language-Hallucination Decoding | Public GitHub repository found: `https://github.com/lingfengren/NoLan`; README says code released and supports LLaVA-1.5/InstructBLIP/Qwen-VL integration. | Closest runnable decoding baseline: suppresses language priors by comparing multimodal and text-only distributions. This directly tests whether language-prior suppression fixes related-object false positives. | Completed as a deterministic local compatibility port on all POPE splits; positive on FPR/related FPR, but lower TPR and not official NoLan. |
 | AIR: Attention Imbalance Rectification | arXiv v2, 2026-06-14, says CVPR 2026 Findings and that code is available via a GitHub link, but a stable repo URL was not recovered from search in this refresh. | Strong attention-reallocation baseline across CHAIR, POPE, and MM-Vet; conceptually close to our attention-proxy critique. | P0 monitor. Do not implement a surrogate; find official repo and run subset audit if available. |
 | BRACS: Barrier-Regulated Adaptive Closed-form Steering | arXiv page exists; no direct official code link found in the checked page. | Strong recent steering baseline; explicitly claims adaptive intervention when grounding deteriorates and reports CHAIR/POPE gains. | P1 related work unless code appears. Audit with semantic-neighbor FPR if runnable. |
 | CAI: Caption-Sensitive Attention Intervention | arXiv page exists; no direct official code link found in the current arXiv/search check. | Very close conceptually: uses caption-query attention patterns to enhance visual attention. | P0 related work; audit only if official code appears. |

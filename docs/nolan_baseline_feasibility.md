@@ -111,18 +111,29 @@ Full POPE-adversarial result:
 | vanilla | 3000 | 0.666 | 0.812 | 0.147 | 0.479 | 0.164 | 0.053 |
 | NoLan-compatible | 3000 | 0.688 | 0.779 | 0.097 | 0.438 | 0.107 | 0.039 |
 
-The compatible port remains positive on full adversarial: related-present FPR
-drops by 5.7 points and overall FPR drops by 5.0 points, while TPR drops by 3.3
-points. This is a useful decoding baseline result, but it should be reported as
-`NoLan-compatible` rather than official NoLan. It also changes the paper claim:
-decoding-time language-prior suppression can help under the semantic-neighbor
-criterion, but the improvement is still conservative and does not replace
-explicit target-vs-neighbor verification. The full comparison summary is stored
-at `mitigation/results/semantic_neighbor_audit/nolan_adversarial_full_subset_eval/nolan_adversarial_full_comparison.md`.
+All-split macro result:
+
+| Method | Macro MCC | TPR | FPR | Yes Rate | Related FPR | Plain FPR | Gap |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| vanilla | 0.730 | 0.813 | 0.087 | 0.450 | 0.114 | 0.028 | 0.086 |
+| NoLan-compatible | 0.731 | 0.778 | 0.058 | 0.418 | 0.076 | 0.018 | 0.058 |
+| Hybrid gate+rescue | 0.763 | 0.806 | 0.051 | 0.429 | 0.069 | 0.012 | 0.057 |
+
+The compatible port remains positive after scaling to all three POPE splits:
+related-present FPR drops by 3.8 points and overall FPR drops by 2.9 points
+relative to vanilla. The tradeoff is recall and answer prior: TPR drops by 3.5
+points and yes rate drops by 3.2 points, while macro MCC is essentially tied
+with vanilla. This is a useful decoding baseline result, but it should be
+reported as `NoLan-compatible` rather than official NoLan. It changes the paper
+claim: decoding-time language-prior suppression can help under the
+semantic-neighbor criterion, but the improvement is conservative and does not
+replace explicit target-vs-neighbor verification. The all-split metrics are
+stored at `mitigation/results/semantic_neighbor_audit/nolan_full_subset_eval/semantic_neighbor_subset_metrics.csv`, and the main regenerated table is
+`mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md`.
 
 ## First Success Gate
 
-The first gate is passed for the full adversarial split: NoLan-compatible reduces
-related-present FPR without collapsing TPR, but it does so with a lower yes rate
-and a recall tradeoff. The next decision is whether to run random/popular for a
-macro table or keep it as an adversarial-only positive decoding baseline.
+The gate is complete for POPE random/popular/adversarial. NoLan-compatible is now
+promoted from a subset check to a paper-table baseline with a compatibility
+caveat. It is positive but limited: useful against FPR, weaker on TPR and MCC
+than the target-vs-neighbor verifier.

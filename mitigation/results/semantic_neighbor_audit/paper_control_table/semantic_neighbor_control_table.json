@@ -1,6 +1,6 @@
 {
   "description": "Paper-facing semantic-neighbor control table from saved POPE metrics.",
-  "interpretation": "Attention and contrastive-decoding controls do not close the related-present false-positive gap. Raw target-region evidence improves aggregate MCC but over-fires on related-present negatives. Target-vs-neighbor verification reduces that failure mode, with hybrid gate+rescue retaining the best current tradeoff.",
+  "interpretation": "Attention-only and VCD-greedy controls do not close the related-present false-positive gap. NoLan-compatible lowers FPR and related FPR through language-prior suppression, but with lower TPR and yes rate. Raw target-region evidence improves aggregate MCC but over-fires on related-present negatives. Target-vs-neighbor verification gives the best current tradeoff.",
   "rows": [
     {
       "adversarial_mcc": 0.6659024051264104,
@@ -91,6 +91,24 @@
       "note": "Controlled greedy VCD port.",
       "source_csv": "mitigation/results/semantic_neighbor_audit/vcd_greedy_subset_eval/semantic_neighbor_subset_metrics.csv",
       "source_method": "vcd"
+    },
+    {
+      "adversarial_mcc": 0.6879763179650026,
+      "adversarial_plain_fpr": 0.039473684210526314,
+      "adversarial_related_fpr": 0.1069182389937107,
+      "adversarial_related_minus_plain_fpr": 0.06744455478318438,
+      "family": "contrastive decoding",
+      "macro_fpr": 0.057555555555555554,
+      "macro_mcc": 0.7307834492111881,
+      "macro_plain_fpr": 0.01775568181818182,
+      "macro_related_fpr": 0.07567917205692108,
+      "macro_related_minus_plain_fpr": 0.05792349023873926,
+      "macro_tpr": 0.7784444444444445,
+      "macro_yes_rate": 0.418,
+      "method": "NoLan-compatible",
+      "note": "Deterministic local compatibility port; not official NoLan.",
+      "source_csv": "mitigation/results/semantic_neighbor_audit/nolan_full_subset_eval/semantic_neighbor_subset_metrics.csv",
+      "source_method": "nolan"
     },
     {
       "adversarial_mcc": 0.6729768980078341,

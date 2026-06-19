@@ -12,9 +12,9 @@ section.
 The current evidence supports a **diagnostic plus target-verification paper**.
 It does not yet support a strong standalone caption-mitigation paper.
 
-- The reproduced attention/decoding baselines mostly do not close the semantic-neighbor
-  false-positive gap. The new NoLan-compatible full adversarial run is a useful
-  exception on FPR, but its gain is modest and comes with lower recall.
+- Attention-only baselines and VCD-greedy do not close the semantic-neighbor
+  false-positive gap. NoLan-compatible is a useful decoding exception: it lowers
+  FPR and related FPR, but mainly by becoming more conservative and losing recall.
 - Raw object-region evidence is not enough: it improves aggregate MCC but
   over-fires when related objects are present.
 - Target-vs-neighbor verification gives the best current POPE tradeoff and is
@@ -32,56 +32,42 @@ Main comparison source:
 mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md
 ```
 
-Full adversarial baseline comparison with the newly added NoLan-compatible run:
+The regenerated all-split control table now includes NoLan-compatible:
 
-```text
-mitigation/results/semantic_neighbor_audit/nolan_adversarial_full_subset_eval/nolan_adversarial_full_comparison.md
-```
-
-| Method | Samples | MCC | TPR | FPR | Yes Rate | Related FPR | Plain FPR | Gap | Delta MCC | Delta Related FPR |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Vanilla | 3000 | 0.666 | 0.812 | 0.147 | 0.479 | 0.164 | 0.053 | 0.111 | 0.000 | 0.000 |
-| PAI attention-only | 3000 | 0.665 | 0.807 | 0.143 | 0.475 | 0.159 | 0.053 | 0.106 | -0.001 | -0.005 |
-| ClearSight VAF | 3000 | 0.646 | 0.847 | 0.202 | 0.525 | 0.223 | 0.083 | 0.140 | -0.020 | 0.060 |
-| VisAttnSink | 3000 | 0.656 | 0.814 | 0.158 | 0.486 | 0.173 | 0.075 | 0.098 | -0.010 | 0.009 |
-| VCD-greedy | 3000 | 0.654 | 0.815 | 0.162 | 0.489 | 0.178 | 0.075 | 0.103 | -0.012 | 0.014 |
-| NoLan-compatible | 3000 | 0.688 | 0.779 | 0.097 | 0.438 | 0.107 | 0.039 | 0.067 | 0.022 | -0.057 |
-
-Reading: NoLan-compatible lowers full adversarial related-present FPR from
-`0.164` to `0.107` and overall FPR from `0.147` to `0.097`, but TPR drops from
-`0.812` to `0.779`. This makes it a useful decoding baseline and weakens any
-over-broad claim that decoding methods cannot help at all. It still does not
-remove the core need for target-vs-neighbor verification, because the gain is
-mostly a conservative yes-rate shift and remains below the verifier direction on
-the paper's macro controlled metrics.
-
-| Method | Family | Macro MCC | TPR | FPR | Related FPR | Plain FPR | Gap |
-|---|---|---:|---:|---:|---:|---:|---:|
-| Vanilla | base | 0.730 | 0.813 | 0.087 | 0.114 | 0.028 | 0.086 |
-| PAI attention-only | attention intervention | 0.728 | 0.808 | 0.084 | 0.110 | 0.028 | 0.082 |
-| ClearSight VAF | attention intervention | 0.723 | 0.848 | 0.125 | 0.160 | 0.047 | 0.113 |
-| VisAttnSink | attention intervention | 0.722 | 0.815 | 0.096 | 0.123 | 0.038 | 0.085 |
-| VCD-greedy | contrastive decoding | 0.719 | 0.816 | 0.100 | 0.127 | 0.039 | 0.088 |
-| OWLv2 target direct | region evidence | 0.777 | 0.911 | 0.134 | 0.184 | 0.025 | 0.159 |
-| OWLv2 margin direct | target-vs-neighbor verifier | 0.445 | 0.359 | 0.013 | 0.010 | 0.019 | -0.009 |
-| Two-stage gate | target-vs-neighbor verifier | 0.751 | 0.793 | 0.051 | 0.069 | 0.012 | 0.056 |
-| Hybrid gate+rescue | target-vs-neighbor verifier | 0.763 | 0.806 | 0.051 | 0.069 | 0.012 | 0.057 |
+| Method | Family | Macro MCC | TPR | FPR | Yes rate | Related FPR | Plain FPR | Gap | Adv. related FPR |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla | base | 0.730 | 0.813 | 0.087 | 0.450 | 0.114 | 0.028 | 0.086 | 0.164 |
+| PAI attention-only | attention intervention | 0.728 | 0.808 | 0.084 | 0.446 | 0.110 | 0.028 | 0.082 | 0.159 |
+| ClearSight VAF | attention intervention | 0.723 | 0.848 | 0.125 | 0.486 | 0.160 | 0.047 | 0.113 | 0.223 |
+| VisAttnSink | attention intervention | 0.722 | 0.815 | 0.096 | 0.455 | 0.123 | 0.038 | 0.085 | 0.173 |
+| VCD-greedy | contrastive decoding | 0.719 | 0.816 | 0.100 | 0.458 | 0.127 | 0.039 | 0.088 | 0.178 |
+| NoLan-compatible | contrastive decoding | 0.731 | 0.778 | 0.058 | 0.418 | 0.076 | 0.018 | 0.058 | 0.107 |
+| OWLv2 target direct | region evidence | 0.777 | 0.911 | 0.134 | 0.522 | 0.184 | 0.025 | 0.159 | 0.281 |
+| OWLv2 margin direct | target-vs-neighbor verifier | 0.445 | 0.359 | 0.013 | 0.186 | 0.010 | 0.019 | -0.009 | 0.010 |
+| Two-stage direct | target-vs-neighbor verifier | 0.769 | 0.850 | 0.083 | 0.466 | 0.111 | 0.021 | 0.090 | 0.167 |
+| Two-stage gate | target-vs-neighbor verifier | 0.751 | 0.793 | 0.051 | 0.422 | 0.069 | 0.012 | 0.056 | 0.104 |
+| Hybrid gate+rescue | target-vs-neighbor verifier | 0.763 | 0.806 | 0.051 | 0.429 | 0.069 | 0.012 | 0.057 | 0.105 |
 
 Reading:
 
-- Attention and contrastive-decoding baselines stay close to vanilla or worsen
-  the related-present false-positive rate.
+- Attention-only baselines and VCD-greedy stay close to vanilla or worsen the
+  related-present false-positive rate.
+- NoLan-compatible is the first positive decoding baseline in this refresh:
+  related FPR drops from `0.114` to `0.076`, and FPR drops from `0.087` to
+  `0.058`. The tradeoff is recall and answer prior: TPR drops from `0.813` to
+  `0.778`, yes rate drops from `0.450` to `0.418`, and macro MCC is essentially
+  tied with vanilla (`0.731` vs. `0.730`). It should be reported as a compatible
+  local port, not official NoLan.
 - Raw OWLv2 target evidence has the highest direct aggregate MCC, but it is not
   target-discriminative enough: related FPR rises to `0.184`.
 - The strict margin rule shows the desired behavior on related negatives
   (`0.010` related FPR) but loses too much recall (`0.359` TPR).
-- The hybrid gate+rescue rule is the current best tradeoff: vanilla `0.730`
-  macro MCC becomes `0.763`, overall FPR drops from `0.087` to `0.051`, and
-  related FPR drops from `0.114` to `0.069`.
+- The hybrid gate+rescue rule remains the best current tradeoff: macro MCC is
+  `0.763`, TPR is `0.806`, overall FPR is `0.051`, and related FPR is `0.069`.
 
-This is a modest but aligned improvement: it specifically targets the original
-failure where related visual evidence makes the model answer `yes` for an absent
-target.
+This keeps the original conclusion but makes it sharper: language-prior
+suppression can help, yet the unresolved failure is still target verification
+under related visual evidence.
 
 ## CHAIR Object-Mention Detection
 
@@ -241,18 +227,20 @@ Reading:
 
 The strongest safe claim is:
 
-> Existing attention/decoding baselines do not reliably distinguish target
-> evidence from related-object evidence. TDEV operationalizes this missing
-> target-vs-neighbor verification criterion and gives a modest but more aligned
-> reduction in semantic-neighbor false positives, with strong controlled
-> object-mention detection evidence. Caption mitigation remains a prototype until
-> the closed-loop object-claim gate is scaled and softened enough to preserve
-> useful detail.
+> Attention-only baselines and VCD-greedy do not reliably distinguish target
+> evidence from related-object evidence. NoLan-compatible shows that
+> language-prior suppression can reduce semantic-neighbor false positives, but it
+> does so with a recall/yes-rate tradeoff and without explicit target-vs-neighbor
+> verification. TDEV operationalizes that missing criterion and gives the best
+> current POPE tradeoff, with strong controlled object-mention detection
+> evidence. Caption mitigation remains a prototype until the closed-loop
+> object-claim gate is scaled and softened enough to preserve useful detail.
 
 ## Authoritative Artifacts
 
 - `mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md`
 - `mitigation/results/semantic_neighbor_audit/nolan_adversarial_full_subset_eval/nolan_adversarial_full_comparison.md`
+- `mitigation/results/semantic_neighbor_audit/nolan_full_subset_eval/semantic_neighbor_subset_metrics.csv`
 - `docs/tdev_ablation_summary.md`
 - `paper/tables/table_semantic_neighbor_fpr.tex`
 - `paper/tables/table_region_verifier_pope.tex`

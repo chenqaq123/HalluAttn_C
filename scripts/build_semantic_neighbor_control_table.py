@@ -54,6 +54,13 @@ METHOD_SPECS = [
         "note": "Controlled greedy VCD port.",
     },
     {
+        "label": "NoLan-compatible",
+        "family": "contrastive decoding",
+        "path": "mitigation/results/semantic_neighbor_audit/nolan_full_subset_eval/semantic_neighbor_subset_metrics.csv",
+        "method": "nolan",
+        "note": "Deterministic local compatibility port; not official NoLan.",
+    },
+    {
         "label": "OWLv2 target direct",
         "family": "region evidence",
         "path": "mitigation/results/semantic_neighbor_audit/owlv2_target_score_direct/direct_score_metrics.csv",
@@ -253,9 +260,10 @@ def main() -> None:
         "description": "Paper-facing semantic-neighbor control table from saved POPE metrics.",
         "rows": rows,
         "interpretation": (
-            "Attention and contrastive-decoding controls do not close the related-present false-positive gap. "
+            "Attention-only and VCD-greedy controls do not close the related-present false-positive gap. "
+            "NoLan-compatible lowers FPR and related FPR through language-prior suppression, but with lower TPR and yes rate. "
             "Raw target-region evidence improves aggregate MCC but over-fires on related-present negatives. "
-            "Target-vs-neighbor verification reduces that failure mode, with hybrid gate+rescue retaining the best current tradeoff."
+            "Target-vs-neighbor verification gives the best current tradeoff."
         ),
     }
     json_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -263,7 +271,7 @@ def main() -> None:
         "# Semantic-Neighbor Control Table\n\n"
         "This table is built from saved POPE metric CSVs. It keeps aggregate behavior next to the semantic-neighbor stress test: related-present negative FPR versus plain-absent negative FPR.\n\n"
         + markdown_table(rows)
-        + "\nInterpretation: attention and contrastive-decoding controls do not close the related-present false-positive gap. Raw target-region evidence improves aggregate MCC but over-fires on related-present negatives. Target-vs-neighbor verification reduces that failure mode, with hybrid gate+rescue retaining the best current tradeoff.\n",
+        + "\nInterpretation: attention-only and VCD-greedy controls do not close the related-present false-positive gap. NoLan-compatible lowers FPR and related FPR through language-prior suppression, but with lower TPR and yes rate. Raw target-region evidence improves aggregate MCC but over-fires on related-present negatives. Target-vs-neighbor verification gives the best current tradeoff.\n",
         encoding="utf-8",
     )
     print(f"Wrote {csv_path}")

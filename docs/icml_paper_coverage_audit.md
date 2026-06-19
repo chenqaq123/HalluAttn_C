@@ -14,7 +14,7 @@ practicality/caption results kept scoped.
 |---|---|---|
 | C1. Attention scores are position-confounded | Covered in detection protocol, detection tables, and figures. | Main text ready. |
 | C2. Semantic-neighbor negatives expose the failure mode | Covered with associated-evidence audit and mechanism contact-sheet figure. | Main text ready. |
-| C3. Attention/decoding controls do not close related-present gap | Covered for PAI-attn-only, ClearSight, VisAttnSink, and VCD-greedy. | Main text ready; do not imply CAI/CAST are reproduced. |
+| C3. Attention/VCD controls do not close related-present gap; NoLan helps conservatively | Covered for PAI-attn-only, ClearSight, VisAttnSink, VCD-greedy, and NoLan-compatible. | Main text must be updated to avoid saying all decoding methods fail; NoLan lowers FPR with recall/yes-rate tradeoff. |
 | C4. Generic region/object evidence is not enough | Covered in region-verifier POPE table: raw target score over-fires on related negatives. | Main text ready. |
 | C5. TDEV target-vs-neighbor verification is constructive | Covered with hybrid gate-plus-rescue and scoped method text. | Main text ready. |
 | C6. TDEV transfers to CHAIR object-mention detection | Partly covered through OWLv2 region-verifier detection table. | Main text ready, but make clear this is scoring/post-hoc detection. |
