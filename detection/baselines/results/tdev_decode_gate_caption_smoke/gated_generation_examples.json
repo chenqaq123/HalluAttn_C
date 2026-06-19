@@ -1,0 +1,668 @@
+[
+  {
+    "image_id": 391158,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000391158.jpg",
+    "denied_items": [
+      {
+        "word": "dining table",
+        "score": 0.11624800961464643,
+        "label": 1,
+        "object_id": 6900
+      },
+      {
+        "word": "person",
+        "score": 0.09245341353118419,
+        "label": 1,
+        "object_id": 6898
+      }
+    ],
+    "num_denied_sequences": 260,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station or a museum. The train is prominently displayed, taking up a significant portion of the scene. The train's engine is visible, with its front end extending from the left side of the image to the right.\n\nIn addition to the train, there are two people in the scene, one located near the left side and the other closer to the right side. A cup can be seen placed on a surface, possibly a table or a counter, near the left side of the image.",
+    "gated_caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station or a museum. The train is prominently displayed, taking up a significant portion of the scene. The train's engine is visible, with its front end extending from the left side of the image to the right.\n\nIn addition to the train, there are two other objects in the scene. One is a cup placed near the left side of the train, and the other is a bottle located closer to the center of the image. The overall atmosphere of the scene suggests a historical or nostalgic setting, with the train as the main attraction.",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1591,
+        "banned_token_text": "table",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6137,
+        "banned_token_text": "Table",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6131,
+        "banned_token_text": "tables",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 323,
+        "banned_token_text": "T",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 553,
+        "banned_token_text": "des",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2726,
+        "banned_token_text": "Des",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 553,
+        "banned_token_text": "des",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2726,
+        "banned_token_text": "Des",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2071,
+        "banned_token_text": "sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4971,
+        "banned_token_text": "Sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2071,
+        "banned_token_text": "sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4971,
+        "banned_token_text": "Sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15007,
+        "banned_token_text": "snow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24392,
+        "banned_token_text": "Snow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15007,
+        "banned_token_text": "snow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24392,
+        "banned_token_text": "Snow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4595,
+        "banned_token_text": "grand",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6265,
+        "banned_token_text": "Grand",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4595,
+        "banned_token_text": "grand",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6265,
+        "banned_token_text": "Grand",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14099,
+        "banned_token_text": "politician",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6934,
+        "banned_token_text": "Polit",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2832,
+        "banned_token_text": "polit",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6934,
+        "banned_token_text": "Polit",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3348,
+        "banned_token_text": "serv",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9635,
+        "banned_token_text": "Serv",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3348,
+        "banned_token_text": "serv",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9635,
+        "banned_token_text": "Serv",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9941,
+        "banned_token_text": "tres",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 323,
+        "banned_token_text": "T",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9941,
+        "banned_token_text": "tres",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 323,
+        "banned_token_text": "T",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 289,
+        "banned_token_text": "b",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 350,
+        "banned_token_text": "B",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 289,
+        "banned_token_text": "b",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 350,
+        "banned_token_text": "B",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9117,
+        "banned_token_text": "foreign",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 19358,
+        "banned_token_text": "Foreign",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9117,
+        "banned_token_text": "foreign",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 19358,
+        "banned_token_text": "Foreign",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 16615,
+        "banned_token_text": "gentleman",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20655,
+        "banned_token_text": "Gent",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8116,
+        "banned_token_text": "gent",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20655,
+        "banned_token_text": "Gent",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28507,
+        "banned_token_text": "passenger",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6978,
+        "banned_token_text": "Pass",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28134,
+        "banned_token_text": "passengers",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6978,
+        "banned_token_text": "Pass",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13665,
+        "banned_token_text": "polic",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2043,
+        "banned_token_text": "Pol",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13665,
+        "banned_token_text": "polic",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2043,
+        "banned_token_text": "Pol",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4344,
+        "banned_token_text": "children",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20986,
+        "banned_token_text": "Children",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2278,
+        "banned_token_text": "child",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10517,
+        "banned_token_text": "Child",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21282,
+        "banned_token_text": "cow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21638,
+        "banned_token_text": "Cow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21282,
+        "banned_token_text": "cow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21638,
+        "banned_token_text": "Cow",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1283,
+        "banned_token_text": "off",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5947,
+        "banned_token_text": "Off",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1283,
+        "banned_token_text": "off",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5947,
+        "banned_token_text": "Off",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 734,
+        "banned_token_text": "te",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1920,
+        "banned_token_text": "Te",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 734,
+        "banned_token_text": "te",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1920,
+        "banned_token_text": "Te",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9850,
+        "banned_token_text": "travel",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3201,
+        "banned_token_text": "Tra",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9850,
+        "banned_token_text": "travel",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3201,
+        "banned_token_text": "Tra",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4213,
+        "banned_token_text": "vill",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9887,
+        "banned_token_text": "Vill",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4213,
+        "banned_token_text": "vill",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9887,
+        "banned_token_text": "Vill",
+        "phrase_text": "person"
+      }
+    ]
+  }
+]

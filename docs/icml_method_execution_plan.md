@@ -215,9 +215,12 @@ failure to the constructive TDEV method.
    top-5% selected hallucinated mentions match near the saved generation
    position. A first `ObjectPhraseGateLogitsProcessor` smoke test now verifies
    the decode hook itself: all 804 TDEV-selected matched mentions and all 1,333
-   simulated phrase-generation steps are suppressed. The next step is actual
-   bounded gated LLaVA generation on a small COCO subset, not more deterministic
-   placeholder or sentence-deletion variants.
+   simulated phrase-generation steps are suppressed. A one-image LLaVA smoke
+   test also confirms end-to-end `generate(logits_processor=...)` integration:
+   the gate removes denied `people/table` claims, but the model may route into a
+   new object claim such as `bottle`. The next step is a narrow surface-phrase or
+   decoding-alias gate followed by multi-image CHAIR/length/fluency evaluation,
+   not more deterministic placeholder or sentence-deletion variants.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

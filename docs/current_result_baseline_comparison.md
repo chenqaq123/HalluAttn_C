@@ -114,8 +114,12 @@ Reading:
   position.
 - A prefix-state `LogitsProcessor` smoke test now blocks all `804` tested
   TDEV-selected matched mentions and all `1,333` simulated phrase-generation
-  steps. This verifies the decode hook, not caption quality. The next required
-  result is actual gated LLaVA generation.
+  steps.
+- A one-image generated-vs-generated LLaVA smoke test confirms the gate can
+  change decoding through `generate(logits_processor=...)`: it removes denied
+  `people/table` claims, but the same sample introduces a new `bottle` claim.
+  This verifies integration and exposes the next problem; it is not yet a
+  caption-quality result.
 
 ## Paper-Safe Claim
 

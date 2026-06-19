@@ -1089,6 +1089,43 @@ are functional for the selected token spans. It does **not** yet measure caption
 quality, fluency, or whether rerunning LLaVA with the gate improves CHAIR. The
 next experiment must run actual gated generation on a small COCO subset.
 
+### TDEV Decode-Gate Caption Smoke Test
+
+`detection/scripts/run_tdev_decode_gate_caption_smoke.py` runs a bounded oracle
+integration test with LLaVA generation. It selects high-risk object claims from
+cached TDEV scores, builds denied object-phrase token sequences, and passes the
+processor through HuggingFace `generate(logits_processor=...)`. The default uses
+`device_map` loading and reuses cached vanilla captions unless
+`--generate_vanilla` is set.
+
+Reproducibility command for the current saved smoke result:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_decode_gate_caption_smoke/
+```
+
+Key result: the one-image generated-vs-generated smoke test completed on GPU 5
+with `images_with_gate_events = 1` and `captions_differing_from_reference = 1`.
+For image `391158`, the TDEV-denied hallucinated claims were `person` and
+`dining table`; the actual matched surface forms in the feasibility audit were
+`people` and `table`. The gated caption removed the vanilla phrase about `two
+people` and avoided `table/counter`, replacing it with `two other objects`.
+However, it also introduced a new `bottle` claim. This is useful integration
+evidence, but it is not yet a quality result. The next version should use the
+matched surface phrases or a narrow decoding-alias table rather than all CHAIR
+synonyms, then run a multi-image CHAIR/length/fluency evaluation.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The
