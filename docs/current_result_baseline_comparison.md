@@ -12,8 +12,9 @@ section.
 The current evidence supports a **diagnostic plus target-verification paper**.
 It does not yet support a strong standalone caption-mitigation paper.
 
-- The reproduced attention/decoding baselines do not close the semantic-neighbor
-  false-positive gap.
+- The reproduced attention/decoding baselines mostly do not close the semantic-neighbor
+  false-positive gap. The new NoLan-compatible full adversarial run is a useful
+  exception on FPR, but its gain is modest and comes with lower recall.
 - Raw object-region evidence is not enough: it improves aggregate MCC but
   over-fires when related objects are present.
 - Target-vs-neighbor verification gives the best current POPE tradeoff and is
@@ -30,6 +31,29 @@ Main comparison source:
 ```text
 mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md
 ```
+
+Full adversarial baseline comparison with the newly added NoLan-compatible run:
+
+```text
+mitigation/results/semantic_neighbor_audit/nolan_adversarial_full_subset_eval/nolan_adversarial_full_comparison.md
+```
+
+| Method | Samples | MCC | TPR | FPR | Yes Rate | Related FPR | Plain FPR | Gap | Delta MCC | Delta Related FPR |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla | 3000 | 0.666 | 0.812 | 0.147 | 0.479 | 0.164 | 0.053 | 0.111 | 0.000 | 0.000 |
+| PAI attention-only | 3000 | 0.665 | 0.807 | 0.143 | 0.475 | 0.159 | 0.053 | 0.106 | -0.001 | -0.005 |
+| ClearSight VAF | 3000 | 0.646 | 0.847 | 0.202 | 0.525 | 0.223 | 0.083 | 0.140 | -0.020 | 0.060 |
+| VisAttnSink | 3000 | 0.656 | 0.814 | 0.158 | 0.486 | 0.173 | 0.075 | 0.098 | -0.010 | 0.009 |
+| VCD-greedy | 3000 | 0.654 | 0.815 | 0.162 | 0.489 | 0.178 | 0.075 | 0.103 | -0.012 | 0.014 |
+| NoLan-compatible | 3000 | 0.688 | 0.779 | 0.097 | 0.438 | 0.107 | 0.039 | 0.067 | 0.022 | -0.057 |
+
+Reading: NoLan-compatible lowers full adversarial related-present FPR from
+`0.164` to `0.107` and overall FPR from `0.147` to `0.097`, but TPR drops from
+`0.812` to `0.779`. This makes it a useful decoding baseline and weakens any
+over-broad claim that decoding methods cannot help at all. It still does not
+remove the core need for target-vs-neighbor verification, because the gain is
+mostly a conservative yes-rate shift and remains below the verifier direction on
+the paper's macro controlled metrics.
 
 | Method | Family | Macro MCC | TPR | FPR | Related FPR | Plain FPR | Gap |
 |---|---|---:|---:|---:|---:|---:|---:|
@@ -228,6 +252,7 @@ The strongest safe claim is:
 ## Authoritative Artifacts
 
 - `mitigation/results/semantic_neighbor_audit/paper_control_table/semantic_neighbor_control_table.md`
+- `mitigation/results/semantic_neighbor_audit/nolan_adversarial_full_subset_eval/nolan_adversarial_full_comparison.md`
 - `docs/tdev_ablation_summary.md`
 - `paper/tables/table_semantic_neighbor_fpr.tex`
 - `paper/tables/table_region_verifier_pope.tex`

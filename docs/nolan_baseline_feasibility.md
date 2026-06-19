@@ -94,8 +94,8 @@ Smoke result:
   `mitigation/results/semantic_neighbor_audit/nolan_smoke_subset_eval/semantic_neighbor_subset_metrics.csv`.
 
 This 2-row run is an execution smoke only, not a performance result. The same
-runner has now been evaluated on the first 120 POPE-adversarial rows used for the
-SPIN/DAMRO subset checks.
+runner was first evaluated on the 120-row POPE-adversarial subset used for the
+SPIN/DAMRO checks, then scaled to the full 3,000-row adversarial split.
 
 120-row subset result:
 
@@ -104,15 +104,25 @@ SPIN/DAMRO subset checks.
 | vanilla | 0.667 | 0.850 | 0.183 | 0.517 | 0.204 |
 | NoLan-compatible | 0.700 | 0.833 | 0.133 | 0.483 | 0.148 |
 
-The compatible port is a positive baseline on this subset: it reduces related-present
-FPR by 5.6 points while losing 1.7 points of TPR. This is stronger than the
-existing SPIN default and DAMRO subset checks, but it is still not a full official
-NoLan reproduction or a full all-split result. The comparison summary is stored at
-`mitigation/results/semantic_neighbor_audit/nolan_adversarial_120_subset_eval/nolan_adversarial_120_comparison.md`.
+Full POPE-adversarial result:
+
+| Method | Samples | MCC | TPR | FPR | Yes Rate | Related FPR | Plain FPR |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| vanilla | 3000 | 0.666 | 0.812 | 0.147 | 0.479 | 0.164 | 0.053 |
+| NoLan-compatible | 3000 | 0.688 | 0.779 | 0.097 | 0.438 | 0.107 | 0.039 |
+
+The compatible port remains positive on full adversarial: related-present FPR
+drops by 5.7 points and overall FPR drops by 5.0 points, while TPR drops by 3.3
+points. This is a useful decoding baseline result, but it should be reported as
+`NoLan-compatible` rather than official NoLan. It also changes the paper claim:
+decoding-time language-prior suppression can help under the semantic-neighbor
+criterion, but the improvement is still conservative and does not replace
+explicit target-vs-neighbor verification. The full comparison summary is stored
+at `mitigation/results/semantic_neighbor_audit/nolan_adversarial_full_subset_eval/nolan_adversarial_full_comparison.md`.
 
 ## First Success Gate
 
-Run only the POPE-adversarial semantic-neighbor subset first. The result is worth
-scaling only if it reduces related-present FPR without a yes-rate shortcut and
-without collapsing TPR. This matches the paper's core claim that better decoding
-or stronger visual influence is not enough unless the target itself is verified.
+The first gate is passed for the full adversarial split: NoLan-compatible reduces
+related-present FPR without collapsing TPR, but it does so with a lower yes rate
+and a recall tradeoff. The next decision is whether to run random/popular for a
+macro table or keep it as an adversarial-only positive decoding baseline.

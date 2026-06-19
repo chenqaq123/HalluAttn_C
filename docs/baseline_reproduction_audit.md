@@ -57,7 +57,7 @@ submission.
 |---|---|---|---|
 | VCD | arXiv:2311.16922 | canonical visual contrastive decoding baseline against language-prior reliance | controlled greedy port implemented; full POPE splits complete; official sampling parity only needed for direct paper-to-paper comparison |
 | OPERA | arXiv:2311.17911 | strong decoding baseline using over-trust penalty and rollback | guarded official-hook interface added; current environment must pass `mitigation/scripts/check_opera_support.py` before producing any OPERA numbers |
-| NoLan | arXiv:2602.22144 | dynamic suppression of language priors by contrasting multimodal and text-only logits | public code exists but targets older transformers; local deterministic compatible port implemented for POPE. Adversarial 120-row subset is positive but scoped: MCC 0.667 -> 0.700, FPR 0.183 -> 0.133, related-present FPR 0.204 -> 0.148, TPR 0.850 -> 0.833. Full all-split audit pending; do not claim official reproduction. |
+| NoLan | arXiv:2602.22144 | dynamic suppression of language priors by contrasting multimodal and text-only logits | public code exists but targets older transformers; local deterministic compatible port implemented for POPE. Full adversarial split is positive but conservative: MCC 0.666 -> 0.688, FPR 0.147 -> 0.097, related-present FPR 0.164 -> 0.107, TPR 0.812 -> 0.779. Random/popular all-split audit pending; do not claim official reproduction. |
 | DAMRO | arXiv:2410.04514 | CLS-selected ViT outlier-token contrastive decoding, close to our attention-shape audit | controlled greedy port implemented; adversarial 120-row subset is negative: TPR +0.033 but FPR +0.067, MCC 0.667 -> 0.639, related-present FPR 0.204 -> 0.278; full POPE/CHAIR audit pending |
 | LURE | arXiv:2310.00754 | uses co-occurrence, uncertainty, and position factors aligned with our mechanism | analysis baseline implemented for CHAIR detection; not a revisor reproduction |
 | Woodpecker | arXiv:2310.16045 | post-hoc visual validation/correction pipeline with external tools/open-set detection | not implemented locally; discuss as a detector/tool pipeline rather than a direct low-latency baseline |
@@ -160,7 +160,7 @@ Current status for a credible ICML submission:
 | Paper-facing TDEV ablation | complete for LLaVA-1.5 | `docs/tdev_ablation_summary.md` |
 | External-detector positioning | complete for current draft | `docs/tdev_detector_positioning.md`; do not pitch OWLv2 as the method |
 | Cheap co-occurrence/position baseline | complete as analysis baseline | `detection/scripts/evaluate_lure_style_detection.py`; LURE-style factors remain far below TDEV under controls |
-| Strong decoding baseline beyond VCD | partial | OPERA official-hook interface is wired; still need an environment with the OPERA transformers fork and an adversarial subset result |
+| Strong decoding baseline beyond VCD | partial | NoLan-compatible full adversarial is complete and positive-but-limited; OPERA official-hook interface is wired but still needs an environment with the OPERA transformers fork and an adversarial subset result |
 | Caption-style mitigation evidence | proxy/text-edit and official CHAIR rerun complete on object-mention scope | CHAIR detection is strong; object-mention filtering proxy removes 17.0% of hallucinated mentions at 1.1% grounded loss for the top-5% hybrid branch. Official PAS CHAIR on the 4,977-image object-mention scope drops from CHAIRi 0.1340/CHAIRs 0.4921 to 0.1186/0.4505 for top-5%, and to 0.1048/0.4047 for top-10% hybrid MCC. LH-Shape cascade triage can save 25% of OWLv2 calls while retaining 99.6% of full top-5 hallucination deletions, but this remains a cache-only triage simulation, not a fluent rewriter or decoding-time result |
 | Multi-model replication | full all-splits evidence | Qwen2.5-VL full POPE vanilla has macro MCC 0.765/FPR 0.033; fixed LLaVA-selected TDEV hybrid improves to macro MCC 0.769/FPR 0.027 with TPR 0.782 vs. 0.786. Macro related-present FPR drops from 0.041 to 0.034 (`docs/multimodel_replication_audit.md`). |
 
@@ -212,12 +212,12 @@ related-present negative FPR rises from 0.204 to 0.241. These subset checks are
 too small for paper tables, but they make full SPIN lower priority than DAMRO,
 OPERA, or a documented official-parity check. The NoLan-compatible deterministic
 port is the first recent decoding baseline in this refresh with a positive
-adversarial subset signal. On the same 120-row subset, it improves MCC from
-0.667 to 0.700, lowers FPR from 0.183 to 0.133, and lowers related-present
-negative FPR from 0.204 to 0.148, with TPR dropping from 0.850 to 0.833. This is
+adversarial signal. On the full 3,000-row adversarial split, it improves MCC from
+0.666 to 0.688, lowers FPR from 0.147 to 0.097, and lowers related-present
+negative FPR from 0.164 to 0.107, with TPR dropping from 0.812 to 0.779. This is
 useful evidence that language-prior suppression can help under the
 semantic-neighbor criterion, but it is a compatible port rather than the official
-monkey-patched NoLan stack and still needs an all-split audit before being
+monkey-patched NoLan stack and still needs random/popular runs before being
 promoted to the main baseline table. The DAMRO controlled port has
 now passed a 4-row POPE-random smoke run under `mitigation/results/pope_damro_smoke/`
 with `invalid=0`; each prediction records `alpha=2.0`, `beta=0.1`, `topk=10`,
