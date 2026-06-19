@@ -1,0 +1,2624 @@
+[
+  {
+    "object_id": "107",
+    "image_id": "14635",
+    "word": "potted plant",
+    "label": 1,
+    "matched_text": "potted plant",
+    "matched_tokens": [
+      282,
+      15048,
+      8024
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant"
+      }
+    ]
+  },
+  {
+    "object_id": "112",
+    "image_id": "15345",
+    "word": "bowl",
+    "label": 1,
+    "matched_text": "bowl",
+    "matched_tokens": [
+      12580,
+      29880
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5639,
+        "banned_token_text": "container",
+        "phrase_text": "bowl"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21679,
+        "banned_token_text": "Container",
+        "phrase_text": "bowl"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22637,
+        "banned_token_text": "containers",
+        "phrase_text": "bowl"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2866,
+        "banned_token_text": "Cont",
+        "phrase_text": "bowl"
+      }
+    ]
+  },
+  {
+    "object_id": "207",
+    "image_id": "30895",
+    "word": "tv",
+    "label": 1,
+    "matched_text": "television",
+    "matched_tokens": [
+      11456
+    ],
+    "num_denied_sequences": 16,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11784,
+        "banned_token_text": "televis",
+        "phrase_text": "tv"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9699,
+        "banned_token_text": "Tele",
+        "phrase_text": "tv"
+      }
+    ]
+  },
+  {
+    "object_id": "210",
+    "image_id": "31043",
+    "word": "dining table",
+    "label": 0,
+    "matched_text": "dining table",
+    "matched_tokens": [
+      270,
+      2827,
+      1591
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      }
+    ]
+  },
+  {
+    "object_id": "212",
+    "image_id": "31043",
+    "word": "potted plant",
+    "label": 1,
+    "matched_text": "potted plant",
+    "matched_tokens": [
+      282,
+      15048,
+      8024
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant"
+      }
+    ]
+  },
+  {
+    "object_id": "213",
+    "image_id": "31043",
+    "word": "vase",
+    "label": 1,
+    "matched_text": "vase",
+    "matched_tokens": [
+      325,
+      559
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase"
+      }
+    ]
+  },
+  {
+    "object_id": "215",
+    "image_id": "31043",
+    "word": "clock",
+    "label": 1,
+    "matched_text": "clock",
+    "matched_tokens": [
+      12006
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12006,
+        "banned_token_text": "clock",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12006,
+        "banned_token_text": "clock",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "clock"
+      }
+    ]
+  },
+  {
+    "object_id": "216",
+    "image_id": "31043",
+    "word": "book",
+    "label": 1,
+    "matched_text": "book",
+    "matched_tokens": [
+      3143
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3143,
+        "banned_token_text": "book",
+        "phrase_text": "book"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6726,
+        "banned_token_text": "Book",
+        "phrase_text": "book"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8277,
+        "banned_token_text": "books",
+        "phrase_text": "book"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13730,
+        "banned_token_text": "Books",
+        "phrase_text": "book"
+      }
+    ]
+  },
+  {
+    "object_id": "246",
+    "image_id": "34445",
+    "word": "potted plant",
+    "label": 0,
+    "matched_text": "potted plant",
+    "matched_tokens": [
+      282,
+      15048,
+      8024
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant"
+      }
+    ]
+  },
+  {
+    "object_id": "260",
+    "image_id": "35738",
+    "word": "couch",
+    "label": 1,
+    "matched_text": "couch",
+    "matched_tokens": [
+      274,
+      3222
+    ],
+    "num_denied_sequences": 28,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "couch"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "couch"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "couch"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "couch"
+      }
+    ]
+  },
+  {
+    "object_id": "266",
+    "image_id": "36962",
+    "word": "dining table",
+    "label": 1,
+    "matched_text": "table",
+    "matched_tokens": [
+      1591
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      }
+    ]
+  },
+  {
+    "object_id": "278",
+    "image_id": "38449",
+    "word": "tie",
+    "label": 1,
+    "matched_text": "tie",
+    "matched_tokens": [
+      22134
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12580,
+        "banned_token_text": "bow",
+        "phrase_text": "tie"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13432,
+        "banned_token_text": "Bow",
+        "phrase_text": "tie"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12580,
+        "banned_token_text": "bow",
+        "phrase_text": "tie"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13432,
+        "banned_token_text": "Bow",
+        "phrase_text": "tie"
+      }
+    ]
+  },
+  {
+    "object_id": "313",
+    "image_id": "43670",
+    "word": "sports ball",
+    "label": 1,
+    "matched_text": "ball",
+    "matched_tokens": [
+      8287
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      }
+    ]
+  },
+  {
+    "object_id": "320",
+    "image_id": "43961",
+    "word": "chair",
+    "label": 0,
+    "matched_text": "chairs",
+    "matched_tokens": [
+      521,
+      7121
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11774,
+        "banned_token_text": "chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24193,
+        "banned_token_text": "Chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "chair"
+      }
+    ]
+  },
+  {
+    "object_id": "323",
+    "image_id": "44294",
+    "word": "microwave",
+    "label": 1,
+    "matched_text": "microwave",
+    "matched_tokens": [
+      20710,
+      798,
+      1351
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20710,
+        "banned_token_text": "mic",
+        "phrase_text": "microwave"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20279,
+        "banned_token_text": "Mic",
+        "phrase_text": "microwave"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20710,
+        "banned_token_text": "mic",
+        "phrase_text": "microwave"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20279,
+        "banned_token_text": "Mic",
+        "phrase_text": "microwave"
+      }
+    ]
+  },
+  {
+    "object_id": "328",
+    "image_id": "44294",
+    "word": "vase",
+    "label": 1,
+    "matched_text": "vase",
+    "matched_tokens": [
+      325,
+      559
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase"
+      }
+    ]
+  },
+  {
+    "object_id": "343",
+    "image_id": "46433",
+    "word": "vase",
+    "label": 1,
+    "matched_text": "vase",
+    "matched_tokens": [
+      325,
+      559
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase"
+      }
+    ]
+  },
+  {
+    "object_id": "345",
+    "image_id": "47204",
+    "word": "stop sign",
+    "label": 1,
+    "matched_text": "stop sign",
+    "matched_tokens": [
+      5040,
+      1804
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5040,
+        "banned_token_text": "stop",
+        "phrase_text": "stop sign"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22303,
+        "banned_token_text": "Stop",
+        "phrase_text": "stop sign"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5040,
+        "banned_token_text": "stop",
+        "phrase_text": "stop sign"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22303,
+        "banned_token_text": "Stop",
+        "phrase_text": "stop sign"
+      }
+    ]
+  },
+  {
+    "object_id": "348",
+    "image_id": "47524",
+    "word": "sink",
+    "label": 1,
+    "matched_text": "sink",
+    "matched_tokens": [
+      28169
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 317,
+        "banned_token_text": "S",
+        "phrase_text": "sink"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 269,
+        "banned_token_text": "s",
+        "phrase_text": "sink"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 317,
+        "banned_token_text": "S",
+        "phrase_text": "sink"
+      }
+    ]
+  },
+  {
+    "object_id": "354",
+    "image_id": "48281",
+    "word": "dining table",
+    "label": 1,
+    "matched_text": "table",
+    "matched_tokens": [
+      1591
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      }
+    ]
+  },
+  {
+    "object_id": "358",
+    "image_id": "48281",
+    "word": "tv",
+    "label": 1,
+    "matched_text": "television",
+    "matched_tokens": [
+      11456
+    ],
+    "num_denied_sequences": 16,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11456,
+        "banned_token_text": "television",
+        "phrase_text": "tv"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22417,
+        "banned_token_text": "Television",
+        "phrase_text": "tv"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11784,
+        "banned_token_text": "televis",
+        "phrase_text": "tv"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9699,
+        "banned_token_text": "Tele",
+        "phrase_text": "tv"
+      }
+    ]
+  },
+  {
+    "object_id": "401",
+    "image_id": "54133",
+    "word": "microwave",
+    "label": 1,
+    "matched_text": "microwave",
+    "matched_tokens": [
+      20710,
+      798,
+      1351
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20710,
+        "banned_token_text": "mic",
+        "phrase_text": "microwave"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20279,
+        "banned_token_text": "Mic",
+        "phrase_text": "microwave"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20710,
+        "banned_token_text": "mic",
+        "phrase_text": "microwave"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20279,
+        "banned_token_text": "Mic",
+        "phrase_text": "microwave"
+      }
+    ]
+  },
+  {
+    "object_id": "402",
+    "image_id": "54133",
+    "word": "toaster",
+    "label": 1,
+    "matched_text": "toaster",
+    "matched_tokens": [
+      304,
+      1901
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 304,
+        "banned_token_text": "to",
+        "phrase_text": "toaster"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1763,
+        "banned_token_text": "To",
+        "phrase_text": "toaster"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 304,
+        "banned_token_text": "to",
+        "phrase_text": "toaster"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1763,
+        "banned_token_text": "To",
+        "phrase_text": "toaster"
+      }
+    ]
+  },
+  {
+    "object_id": "404",
+    "image_id": "54133",
+    "word": "dining table",
+    "label": 0,
+    "matched_text": "dining table",
+    "matched_tokens": [
+      270,
+      2827,
+      1591
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      }
+    ]
+  },
+  {
+    "object_id": "406",
+    "image_id": "54133",
+    "word": "person",
+    "label": 1,
+    "matched_text": "person",
+    "matched_tokens": [
+      2022
+    ],
+    "num_denied_sequences": 248,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2071,
+        "banned_token_text": "sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4971,
+        "banned_token_text": "Sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2071,
+        "banned_token_text": "sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4971,
+        "banned_token_text": "Sk",
+        "phrase_text": "person"
+      }
+    ]
+  },
+  {
+    "object_id": "428",
+    "image_id": "57238",
+    "word": "cup",
+    "label": 1,
+    "matched_text": "cup",
+    "matched_tokens": [
+      18002
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18002,
+        "banned_token_text": "cup",
+        "phrase_text": "cup"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6536,
+        "banned_token_text": "Cup",
+        "phrase_text": "cup"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2723,
+        "banned_token_text": "cu",
+        "phrase_text": "cup"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10406,
+        "banned_token_text": "Cu",
+        "phrase_text": "cup"
+      }
+    ]
+  },
+  {
+    "object_id": "429",
+    "image_id": "57238",
+    "word": "bowl",
+    "label": 1,
+    "matched_text": "bowl",
+    "matched_tokens": [
+      12580,
+      29880
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 5639,
+        "banned_token_text": "container",
+        "phrase_text": "bowl"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 21679,
+        "banned_token_text": "Container",
+        "phrase_text": "bowl"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22637,
+        "banned_token_text": "containers",
+        "phrase_text": "bowl"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2866,
+        "banned_token_text": "Cont",
+        "phrase_text": "bowl"
+      }
+    ]
+  },
+  {
+    "object_id": "430",
+    "image_id": "57238",
+    "word": "sink",
+    "label": 1,
+    "matched_text": "sink",
+    "matched_tokens": [
+      28169
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 317,
+        "banned_token_text": "S",
+        "phrase_text": "sink"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 269,
+        "banned_token_text": "s",
+        "phrase_text": "sink"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 317,
+        "banned_token_text": "S",
+        "phrase_text": "sink"
+      }
+    ]
+  },
+  {
+    "object_id": "459",
+    "image_id": "63521",
+    "word": "chair",
+    "label": 1,
+    "matched_text": "chair",
+    "matched_tokens": [
+      11774
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11774,
+        "banned_token_text": "chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24193,
+        "banned_token_text": "Chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "chair"
+      }
+    ]
+  },
+  {
+    "object_id": "460",
+    "image_id": "63521",
+    "word": "clock",
+    "label": 1,
+    "matched_text": "clock",
+    "matched_tokens": [
+      12006
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12006,
+        "banned_token_text": "clock",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12006,
+        "banned_token_text": "clock",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "clock"
+      }
+    ]
+  },
+  {
+    "object_id": "542",
+    "image_id": "76138",
+    "word": "dining table",
+    "label": 1,
+    "matched_text": "dining table",
+    "matched_tokens": [
+      270,
+      2827,
+      1591
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      }
+    ]
+  },
+  {
+    "object_id": "553",
+    "image_id": "78823",
+    "word": "bicycle",
+    "label": 1,
+    "matched_text": "bicycle",
+    "matched_tokens": [
+      289,
+      4245,
+      2841
+    ],
+    "num_denied_sequences": 20,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1375,
+        "banned_token_text": "min",
+        "phrase_text": "bicycle"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3080,
+        "banned_token_text": "Min",
+        "phrase_text": "bicycle"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1375,
+        "banned_token_text": "min",
+        "phrase_text": "bicycle"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3080,
+        "banned_token_text": "Min",
+        "phrase_text": "bicycle"
+      }
+    ]
+  },
+  {
+    "object_id": "592",
+    "image_id": "84968",
+    "word": "handbag",
+    "label": 1,
+    "matched_text": "handbag",
+    "matched_tokens": [
+      1361,
+      23156
+    ],
+    "num_denied_sequences": 16,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11473,
+        "banned_token_text": "brief",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1771,
+        "banned_token_text": "Br",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11473,
+        "banned_token_text": "brief",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1771,
+        "banned_token_text": "Br",
+        "phrase_text": "handbag"
+      }
+    ]
+  },
+  {
+    "object_id": "676",
+    "image_id": "96832",
+    "word": "dining table",
+    "label": 0,
+    "matched_text": "desk",
+    "matched_tokens": [
+      553,
+      29895
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      }
+    ]
+  },
+  {
+    "object_id": "698",
+    "image_id": "99567",
+    "word": "car",
+    "label": 1,
+    "matched_text": "car",
+    "matched_tokens": [
+      1559
+    ],
+    "num_denied_sequences": 52,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3345,
+        "banned_token_text": "autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15854,
+        "banned_token_text": "Autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3345,
+        "banned_token_text": "autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15854,
+        "banned_token_text": "Autom",
+        "phrase_text": "car"
+      }
+    ]
+  },
+  {
+    "object_id": "716",
+    "image_id": "101031",
+    "word": "handbag",
+    "label": 1,
+    "matched_text": "handbags",
+    "matched_tokens": [
+      1361,
+      29890,
+      810
+    ],
+    "num_denied_sequences": 16,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11473,
+        "banned_token_text": "brief",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1771,
+        "banned_token_text": "Br",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11473,
+        "banned_token_text": "brief",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1771,
+        "banned_token_text": "Br",
+        "phrase_text": "handbag"
+      }
+    ]
+  },
+  {
+    "object_id": "764",
+    "image_id": "108193",
+    "word": "cup",
+    "label": 1,
+    "matched_text": "cup",
+    "matched_tokens": [
+      18002
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 18002,
+        "banned_token_text": "cup",
+        "phrase_text": "cup"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6536,
+        "banned_token_text": "Cup",
+        "phrase_text": "cup"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2723,
+        "banned_token_text": "cu",
+        "phrase_text": "cup"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10406,
+        "banned_token_text": "Cu",
+        "phrase_text": "cup"
+      }
+    ]
+  },
+  {
+    "object_id": "765",
+    "image_id": "108193",
+    "word": "person",
+    "label": 1,
+    "matched_text": "people",
+    "matched_tokens": [
+      2305
+    ],
+    "num_denied_sequences": 248,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2071,
+        "banned_token_text": "sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4971,
+        "banned_token_text": "Sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2071,
+        "banned_token_text": "sk",
+        "phrase_text": "person"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4971,
+        "banned_token_text": "Sk",
+        "phrase_text": "person"
+      }
+    ]
+  },
+  {
+    "object_id": "777",
+    "image_id": "109937",
+    "word": "banana",
+    "label": 1,
+    "matched_text": "bananas",
+    "matched_tokens": [
+      9892,
+      16397
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9892,
+        "banned_token_text": "ban",
+        "phrase_text": "banana"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10765,
+        "banned_token_text": "Ban",
+        "phrase_text": "banana"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9892,
+        "banned_token_text": "ban",
+        "phrase_text": "banana"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10765,
+        "banned_token_text": "Ban",
+        "phrase_text": "banana"
+      }
+    ]
+  },
+  {
+    "object_id": "840",
+    "image_id": "120745",
+    "word": "couch",
+    "label": 1,
+    "matched_text": "couch",
+    "matched_tokens": [
+      274,
+      3222
+    ],
+    "num_denied_sequences": 28,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "couch"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "couch"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "couch"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "couch"
+      }
+    ]
+  },
+  {
+    "object_id": "861",
+    "image_id": "122745",
+    "word": "car",
+    "label": 1,
+    "matched_text": "cars",
+    "matched_tokens": [
+      18647
+    ],
+    "num_denied_sequences": 52,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3345,
+        "banned_token_text": "autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15854,
+        "banned_token_text": "Autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3345,
+        "banned_token_text": "autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15854,
+        "banned_token_text": "Autom",
+        "phrase_text": "car"
+      }
+    ]
+  },
+  {
+    "object_id": "866",
+    "image_id": "123321",
+    "word": "dining table",
+    "label": 0,
+    "matched_text": "dining table",
+    "matched_tokens": [
+      270,
+      2827,
+      1591
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table"
+      }
+    ]
+  },
+  {
+    "object_id": "920",
+    "image_id": "130043",
+    "word": "chair",
+    "label": 1,
+    "matched_text": "chair",
+    "matched_tokens": [
+      11774
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11774,
+        "banned_token_text": "chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24193,
+        "banned_token_text": "Chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "chair"
+      }
+    ]
+  },
+  {
+    "object_id": "925",
+    "image_id": "130645",
+    "word": "handbag",
+    "label": 1,
+    "matched_text": "handbag",
+    "matched_tokens": [
+      1361,
+      23156
+    ],
+    "num_denied_sequences": 16,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1,
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11473,
+        "banned_token_text": "brief",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1771,
+        "banned_token_text": "Br",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11473,
+        "banned_token_text": "brief",
+        "phrase_text": "handbag"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1771,
+        "banned_token_text": "Br",
+        "phrase_text": "handbag"
+      }
+    ]
+  },
+  {
+    "object_id": "928",
+    "image_id": "131203",
+    "word": "chair",
+    "label": 1,
+    "matched_text": "chair",
+    "matched_tokens": [
+      11774
+    ],
+    "num_denied_sequences": 12,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11774,
+        "banned_token_text": "chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 24193,
+        "banned_token_text": "Chair",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 521,
+        "banned_token_text": "ch",
+        "phrase_text": "chair"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 678,
+        "banned_token_text": "Ch",
+        "phrase_text": "chair"
+      }
+    ]
+  },
+  {
+    "object_id": "976",
+    "image_id": "138553",
+    "word": "sports ball",
+    "label": 1,
+    "matched_text": "ball",
+    "matched_tokens": [
+      8287
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      }
+    ]
+  },
+  {
+    "object_id": "980",
+    "image_id": "139072",
+    "word": "sports ball",
+    "label": 1,
+    "matched_text": "ball",
+    "matched_tokens": [
+      8287
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      }
+    ]
+  },
+  {
+    "object_id": "985",
+    "image_id": "139530",
+    "word": "clock",
+    "label": 1,
+    "matched_text": "clock",
+    "matched_tokens": [
+      12006
+    ],
+    "num_denied_sequences": 4,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12006,
+        "banned_token_text": "clock",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12006,
+        "banned_token_text": "clock",
+        "phrase_text": "clock"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "clock"
+      }
+    ]
+  },
+  {
+    "object_id": "1009",
+    "image_id": "143333",
+    "word": "sports ball",
+    "label": 1,
+    "matched_text": "ball",
+    "matched_tokens": [
+      8287
+    ],
+    "num_denied_sequences": 8,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 14717,
+        "banned_token_text": "sports",
+        "phrase_text": "sports ball"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12453,
+        "banned_token_text": "Sports",
+        "phrase_text": "sports ball"
+      }
+    ]
+  },
+  {
+    "object_id": "1045",
+    "image_id": "150091",
+    "word": "car",
+    "label": 1,
+    "matched_text": "cars",
+    "matched_tokens": [
+      18647
+    ],
+    "num_denied_sequences": 52,
+    "first_token_blocked": 1,
+    "any_step_blocked": 1,
+    "all_steps_blocked": 1,
+    "step_blocked": [
+      1
+    ],
+    "audit_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3345,
+        "banned_token_text": "autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15854,
+        "banned_token_text": "Autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3345,
+        "banned_token_text": "autom",
+        "phrase_text": "car"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 15854,
+        "banned_token_text": "Autom",
+        "phrase_text": "car"
+      }
+    ]
+  }
+]

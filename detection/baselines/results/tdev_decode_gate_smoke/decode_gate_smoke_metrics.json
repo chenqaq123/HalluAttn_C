@@ -1,0 +1,17 @@
+{
+  "all_steps_block_rate": 1.0,
+  "all_steps_blocked": 804,
+  "all_steps_passed": true,
+  "any_step_block_rate": 1.0,
+  "any_step_blocked": 804,
+  "blocked_generation_steps": 1333,
+  "first_token_block_rate": 1.0,
+  "first_token_blocked": 804,
+  "interpretation": "This smoke test does not evaluate caption quality. It verifies that the prefix-state LogitsProcessor can suppress token sequences that were selected by the TDEV caption feasibility audit.",
+  "mention_matches_csv": "detection/baselines/results/tdev_decode_gate_feasibility/mention_token_matches.csv",
+  "model_path": "/home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+  "selected_only": true,
+  "step_block_rate": 1.0,
+  "tested_generation_steps": 1333,
+  "tested_mentions": 804
+}

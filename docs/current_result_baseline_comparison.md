@@ -111,8 +111,11 @@ Reading:
 - The decode-gate feasibility audit removes one implementation concern:
   `98.9%` of all object mentions and `97.7%` of TDEV top-5 selected
   hallucinated mentions match a tokenizer span near the saved generation
-  position. The next implementation should therefore be a prefix-state
-  object-phrase decoding gate.
+  position.
+- A prefix-state `LogitsProcessor` smoke test now blocks all `804` tested
+  TDEV-selected matched mentions and all `1,333` simulated phrase-generation
+  steps. This verifies the decode hook, not caption quality. The next required
+  result is actual gated LLaVA generation.
 
 ## Paper-Safe Claim
 

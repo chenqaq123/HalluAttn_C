@@ -213,9 +213,11 @@ failure to the constructive TDEV method.
    feasibility audit confirms that this is not blocked by object-span coverage:
    98.9% of all mentions, 98.2% of hallucinated mentions, and 97.7% of TDEV
    top-5% selected hallucinated mentions match near the saved generation
-   position. The next step is bounded target-discriminative decoding with a
-   short prefix-state object-phrase gate, not more deterministic placeholder or
-   sentence-deletion variants.
+   position. A first `ObjectPhraseGateLogitsProcessor` smoke test now verifies
+   the decode hook itself: all 804 TDEV-selected matched mentions and all 1,333
+   simulated phrase-generation steps are suppressed. The next step is actual
+   bounded gated LLaVA generation on a small COCO subset, not more deterministic
+   placeholder or sentence-deletion variants.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

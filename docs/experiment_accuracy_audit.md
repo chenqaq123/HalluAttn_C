@@ -1055,6 +1055,40 @@ many synonyms share early BPE action tokens, the implementation should be a
 short prefix-state object-phrase `LogitsProcessor`, not a naive banned-first-token
 list.
 
+### TDEV Decode-Gate Processor Smoke Test
+
+`detection/src/sinkdetect/decode_gate.py` implements a reusable prefix-state
+`ObjectPhraseGateLogitsProcessor`. The processor does not score vision evidence;
+it receives per-image denied object phrase token sequences from an upstream TDEV
+decision and suppresses the next token that would start or continue one of those
+phrases.
+
+`detection/scripts/smoke_tdev_decode_gate.py` validates this logic without
+loading the 7B model. It takes the TDEV-selected matched rows from
+`mention_token_matches.csv`, simulates the model trying to emit each matched
+object token sequence, and verifies that the processor sets each next token to
+`-inf`.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/smoke_tdev_decode_gate.py
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_decode_gate_smoke/
+```
+
+Key result: all `804` tested TDEV-selected matched mentions pass the smoke test;
+all `1,333` simulated phrase-generation steps are blocked (`step_block_rate =
+1.0`). This proves the generation hook and prefix-state object-phrase mechanism
+are functional for the selected token spans. It does **not** yet measure caption
+quality, fluency, or whether rerunning LLaVA with the gate improves CHAIR. The
+next experiment must run actual gated generation on a small COCO subset.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The
