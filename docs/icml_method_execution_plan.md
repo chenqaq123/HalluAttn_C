@@ -254,14 +254,15 @@ failure to the constructive TDEV method.
    candidate extraction and first lexical mapper are factored into
    `sinkdetect.open_vocab_claims` so future decode-time and offline audits share
    one implementation. A threshold audit keeps 4/4 known route leaks and maps
-   0/18 reference-unmapped nonroute candidates for thresholds `0.70` through
-   `1.00`; this supports `0.80` for the next multi-image prototype, while still
-   requiring a real human-labeled precision check before paper claims. A
-   full-cache mapper audit over 4,977 generated captions sharpens this caveat:
-   24,618/157,476 open-vocabulary candidates map to canonical CHAIR/COCO
-   targets, 89.59% of those mapped candidates align with CHAIR-recognized words
-   in the same caption, and 10.41% are extra mapped candidates. This is useful
-   as a conservative overreach signal, not as a precision estimate. The next
+   0/18 reference-unmapped nonroute candidates for thresholds `0.60` through
+   `0.90`; stricter thresholds lose the `bottled/bottling` routes. This supports
+   `0.80` for the next multi-image prototype, while still requiring a real
+   human-labeled precision check before paper claims. A full-cache mapper audit
+   over 4,977 generated captions sharpens this caveat: 21,453/157,476
+   open-vocabulary candidates map to canonical CHAIR/COCO targets, 98.55% of
+   those mapped candidates align with CHAIR-recognized words in the same caption,
+   and 1.45% are extra mapped candidates. This is useful as a conservative
+   overreach signal, not as a precision estimate. The next
    implementation should therefore improve candidate phrase typing and target
    canonicalization before investing in a large decode-time run.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on

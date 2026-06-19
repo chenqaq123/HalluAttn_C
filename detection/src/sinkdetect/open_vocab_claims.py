@@ -135,8 +135,6 @@ def token_stem(token: str) -> str:
         if len(token) > len(suffix) + 3 and token.endswith(suffix):
             token = token[: -len(suffix)]
             break
-    if len(token) > 4 and token.endswith("e"):
-        token = token[:-1]
     return token
 
 
@@ -166,7 +164,11 @@ def lexical_match_score(candidate: str, target: str) -> float:
                 token_scores.append(1.0)
             elif len(t_stem) >= 4 and c_stem.startswith(t_stem):
                 token_scores.append(0.95)
-            elif len(c_stem) >= 4 and t_stem.startswith(c_stem):
+            elif (
+                len(c_stem) >= 5
+                and t_stem.startswith(c_stem)
+                and len(c_stem) / max(len(t_stem), 1) >= 0.8
+            ):
                 token_scores.append(0.90)
             else:
                 common = 0
@@ -174,19 +176,22 @@ def lexical_match_score(candidate: str, target: str) -> float:
                     if left != right:
                         break
                     common += 1
-                if common == len(t_stem) and len(t_stem) <= 3 and c_stem != t_stem:
-                    token_scores.append(0.5)
+                raw_score = common / max(len(t_stem), 1)
+                if len(t_stem) <= 3 and c_stem != t_stem:
+                    token_scores.append(min(raw_score, 0.5))
+                elif common < len(t_stem):
+                    token_scores.append(min(raw_score, 0.75))
                 else:
-                    token_scores.append(common / max(len(t_stem), 1))
+                    token_scores.append(raw_score)
         scores.append(max(token_scores) if token_scores else 0.0)
 
     token_score = sum(scores) / len(scores)
-    if len(target_joined) >= 4 and target_joined in cand_joined:
+    if len(target_joined) >= 4 and cand_joined.startswith(target_joined):
         token_score = max(token_score, 0.95)
 
     cand_grams = char_ngrams(candidate)
     target_grams = char_ngrams(target)
-    if cand_grams and target_grams and target_joined in cand_joined:
+    if cand_grams and target_grams and cand_joined.startswith(target_joined):
         ngram_score = len(cand_grams & target_grams) / len(target_grams)
         if len(target_joined) <= 3 and cand_joined != target_joined:
             ngram_score = min(ngram_score, 0.5)

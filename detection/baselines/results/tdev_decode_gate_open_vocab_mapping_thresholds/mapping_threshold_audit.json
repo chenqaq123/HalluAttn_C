@@ -30,7 +30,7 @@
       "run": "single_token_first"
     },
     {
-      "best_score": 0.25,
+      "best_score": 0.2222222222222222,
       "best_word": "microwave",
       "candidate": "might",
       "expected_word": "",
@@ -95,7 +95,7 @@
       "run": "single_token_first"
     },
     {
-      "best_score": 0.25,
+      "best_score": 0.2,
       "best_word": "mouse",
       "candidate": "main",
       "expected_word": "",
@@ -108,7 +108,7 @@
       "run": "variant_alias_v1"
     },
     {
-      "best_score": 0.25,
+      "best_score": 0.2,
       "best_word": "apple",
       "candidate": "attraction",
       "expected_word": "",
@@ -121,7 +121,7 @@
       "run": "variant_alias_v1"
     },
     {
-      "best_score": 0.25,
+      "best_score": 0.2,
       "best_word": "mouse",
       "candidate": "main attraction",
       "expected_word": "",
@@ -134,7 +134,7 @@
       "run": "variant_alias_v1"
     },
     {
-      "best_score": 0.25,
+      "best_score": 0.2,
       "best_word": "mouse",
       "candidate": "machine",
       "expected_word": "",
@@ -147,7 +147,7 @@
       "run": "variant_alias_v2"
     },
     {
-      "best_score": 0.6666666666666666,
+      "best_score": 0.5,
       "best_word": "cow",
       "candidate": "combination",
       "expected_word": "",
@@ -186,7 +186,7 @@
       "run": "variant_alias_v2"
     },
     {
-      "best_score": 0.6,
+      "best_score": 0.5,
       "best_word": "remote",
       "candidate": "reminiscent",
       "expected_word": "",
@@ -240,7 +240,7 @@
   ],
   "route_positive_candidates": [
     {
-      "best_score": 1.0,
+      "best_score": 0.9,
       "best_word": "bottle",
       "candidate": "bottled drink",
       "expected_word": "bottle",
@@ -266,7 +266,7 @@
       "run": "variant_alias_v1"
     },
     {
-      "best_score": 1.0,
+      "best_score": 0.9,
       "best_word": "bottle",
       "candidate": "bottling machine",
       "expected_word": "bottle",
@@ -303,13 +303,13 @@
           "run": "single_token_first"
         },
         {
-          "best_score": 0.6666666666666666,
+          "best_score": 0.5,
           "best_word": "cow",
           "candidate": "combination",
           "run": "variant_alias_v2"
         },
         {
-          "best_score": 0.6,
+          "best_score": 0.5,
           "best_word": "remote",
           "candidate": "reminiscent",
           "run": "variant_alias_v2"
@@ -324,22 +324,9 @@
       "threshold": 0.5
     },
     {
-      "nonroute_maps": [
-        {
-          "best_score": 0.6666666666666666,
-          "best_word": "cow",
-          "candidate": "combination",
-          "run": "variant_alias_v2"
-        },
-        {
-          "best_score": 0.6,
-          "best_word": "remote",
-          "candidate": "reminiscent",
-          "run": "variant_alias_v2"
-        }
-      ],
-      "reference_unmapped_nonroute_map_rate": 0.1111111111111111,
-      "reference_unmapped_nonroute_maps": 2,
+      "nonroute_maps": [],
+      "reference_unmapped_nonroute_map_rate": 0.0,
+      "reference_unmapped_nonroute_maps": 0,
       "reference_unmapped_nonroute_total": 18,
       "route_positive_hits": 4,
       "route_positive_recall": 1.0,
@@ -381,8 +368,8 @@
       "reference_unmapped_nonroute_map_rate": 0.0,
       "reference_unmapped_nonroute_maps": 0,
       "reference_unmapped_nonroute_total": 18,
-      "route_positive_hits": 4,
-      "route_positive_recall": 1.0,
+      "route_positive_hits": 2,
+      "route_positive_recall": 0.5,
       "route_positive_total": 4,
       "threshold": 0.95
     },
@@ -391,8 +378,8 @@
       "reference_unmapped_nonroute_map_rate": 0.0,
       "reference_unmapped_nonroute_maps": 0,
       "reference_unmapped_nonroute_total": 18,
-      "route_positive_hits": 4,
-      "route_positive_recall": 1.0,
+      "route_positive_hits": 2,
+      "route_positive_recall": 0.5,
       "route_positive_total": 4,
       "threshold": 1.0
     }

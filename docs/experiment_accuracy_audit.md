@@ -83,21 +83,23 @@ Key results on the 4,977-caption cached LLaVA generation scope:
 | Metric | Value |
 |---|---:|
 | open-vocabulary candidates | 157,476 |
-| mapped candidates at threshold 0.80 | 24,618 |
-| mapping rate | 0.1563 |
-| CHAIR-aligned mapped candidates | 22,056 |
-| CHAIR-aligned rate among mapped | 0.8959 |
-| extra mapped candidates | 2,562 |
-| extra map rate among mapped | 0.1041 |
+| mapped candidates at threshold 0.80 | 21,453 |
+| mapping rate | 0.1362 |
+| CHAIR-aligned mapped candidates | 21,142 |
+| CHAIR-aligned rate among mapped | 0.9855 |
+| extra mapped candidates | 311 |
+| extra map rate among mapped | 0.0145 |
 
 Interpretation: the mapper still catches the four known bottle route leaks in
 the single-image alias-chasing audits, and the threshold sweep keeps 4/4 route
-positives with 0/18 reference-unmapped nonroute maps for thresholds `0.70`
-through `1.00`. The full caption-cache audit is broader and exposes remaining
-lexical overreach against CHAIR's fixed vocabulary and granularity. Extra
-mapped candidates are conservative overreach signals rather than human-labeled
-false positives, but they are strong enough to downgrade the claim: the current
-lexical mapper is a useful diagnostic and prototype component, not the final
+positives with 0/18 reference-unmapped nonroute maps for thresholds `0.60`
+through `0.90`; stricter `0.95` and `1.00` settings lose the
+`bottled/bottling` routes. The full caption-cache audit is broader and shows
+that the previous short-prefix overreach has largely been removed. Extra mapped
+candidates are conservative overreach signals rather than human-labeled false
+positives, and the remaining examples are dominated by fixed-vocabulary
+granularity cases such as `bear` versus `teddy bear`. The current lexical mapper
+is therefore a useful diagnostic and prototype component, but not the final
 open-vocabulary object-claim detector. The next method step must add better
 candidate phrase typing, target canonicalization, or verifier-backed validation
 before scaled caption-mitigation claims.
@@ -1540,13 +1542,13 @@ same four route positives and 18 reference-unmapped nonroute candidates gives:
 ```text
 | Threshold | Route recall | Reference-unmapped nonroute maps |
 |---|---:|---:|
-| 0.50 | 1.0000 | 4/18 |
-| 0.60 | 1.0000 | 2/18 |
+| 0.50 | 1.0000 | 3/18 |
+| 0.60 | 1.0000 | 0/18 |
 | 0.70 | 1.0000 | 0/18 |
 | 0.80 | 1.0000 | 0/18 |
 | 0.90 | 1.0000 | 0/18 |
-| 0.95 | 1.0000 | 0/18 |
-| 1.00 | 1.0000 | 0/18 |
+| 0.95 | 0.5000 | 0/18 |
+| 1.00 | 0.5000 | 0/18 |
 ```
 
 Artifact:

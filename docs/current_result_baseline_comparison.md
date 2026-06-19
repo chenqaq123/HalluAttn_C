@@ -155,21 +155,24 @@ Reading:
   reading variant/root labels, and TDEV rejects all four (`bottle` target score
   `0.0266`, best neighbor `cup` score `0.3573`, two-stage present `0`). A
   threshold sweep keeps 4/4 route positives and maps 0/18 reference-unmapped
-  nonroute candidates for thresholds `0.70` through `1.00`, so `0.80` is not a
-  knife-edge setting on this diagnostic. This is strong evidence that the next
-  useful method step is open-vocabulary
+  nonroute candidates for thresholds `0.60` through `0.90`; stricter `0.95`
+  and `1.00` settings lose the `bottled/bottling` routes. Thus `0.80` is a
+  reasonable operating point rather than a knife-edge setting on this
+  diagnostic. This is strong evidence that the next useful method step is
+  open-vocabulary
   object-like phrase discovery plus candidate-to-target mapping and TDEV
   verification, not a larger hand-written alias list or raw phrase scoring
   alone.
 - A full cached-caption mapper audit is a necessary caveat on that direction.
   Over 4,977 generated captions, the lightweight open-vocabulary extractor
-  produced 157,476 candidates; 24,618 mapped to a canonical CHAIR/COCO object
-  at threshold `0.80`. Of those mapped candidates, 22,056 were aligned with a
-  CHAIR-recognized word in the same caption (`89.59%`), while 2,562 were extra
-  mapped candidates (`10.41%`). This is not a human precision estimate, but it
-  does expose remaining lexical overreach. The lexical mapper is therefore a
-  route-leak prototype and scaling diagnostic, not a paper-ready open-vocabulary
-  object detector.
+  produced 157,476 candidates; 21,453 mapped to a canonical CHAIR/COCO object
+  at threshold `0.80`. Of those mapped candidates, 21,142 were aligned with a
+  CHAIR-recognized word in the same caption (`98.55%`), while 311 were extra
+  mapped candidates (`1.45%`). This is not a human precision estimate; remaining
+  extras are now dominated by vocabulary granularity cases such as `bear` versus
+  `teddy bear`. The lexical mapper is therefore a stronger route-leak prototype
+  and scaling diagnostic, but still not a paper-ready open-vocabulary object
+  detector.
 
 ## Paper-Safe Claim
 

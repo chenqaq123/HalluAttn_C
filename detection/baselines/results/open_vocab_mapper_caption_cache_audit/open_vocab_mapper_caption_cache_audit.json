@@ -561,92 +561,9 @@
       "mapping_score": 1.0
     }
   ],
-  "chair_aligned_mapped_candidates": 22056,
-  "chair_aligned_rate_among_mapped": 0.8959298074579576,
+  "chair_aligned_mapped_candidates": 21142,
+  "chair_aligned_rate_among_mapped": 0.9855031930266164,
   "extra_map_examples": [
-    {
-      "candidate": "appliances including multiple",
-      "caption": "The image depicts a man standing in a large, well-equipped kitchen. He is wearing a white shirt and appears to be a chef, possibly preparing a meal. The kitchen is filled with various cooking utensils and appliances, including multiple knives, spoons, and bowls.\n\nThere are several bottles placed around the kitchen, possibly containing ingredients or cooking oils. A refrigerator is visible in the background, and an oven can be seen on the right side of the kitchen. The chef seems to be focused on his task, creating a professional atmosphere in the kitchen.",
-      "chair_words": [
-        "person",
-        "knife",
-        "spoon",
-        "bottle",
-        "refrigerator",
-        "oven"
-      ],
-      "image_id": 35525,
-      "is_chair_aligned": 0,
-      "is_grounded_chair_word": 0,
-      "is_hallucinated_chair_word": 0,
-      "mapped_word": "apple",
-      "mapping_score": 1.0
-    },
-    {
-      "candidate": "pineapple",
-      "caption": "The image features a dining table with a large pizza placed on a wooden tray. The pizza is topped with ham and pineapple, making it a delicious and appetizing meal. A person is present in the scene, likely enjoying the pizza or preparing to eat it.\n\nThere are also a couple of knives on the table, one near the pizza and another further away. The table setting creates a cozy and inviting atmosphere for a meal shared with friends or family.",
-      "chair_words": [
-        "dining table",
-        "pizza",
-        "person",
-        "knife"
-      ],
-      "image_id": 115793,
-      "is_chair_aligned": 0,
-      "is_grounded_chair_word": 0,
-      "is_hallucinated_chair_word": 0,
-      "mapped_word": "apple",
-      "mapping_score": 1.0
-    },
-    {
-      "candidate": "pineapple",
-      "caption": "The image features a dining table with a pineapple and a banana placed on it. The pineapple is situated towards the left side of the table, while the banana is positioned on the right side. The table appears to be a granite countertop, adding a touch of elegance to the scene.\n\nIn the background, there are two bottles, one located near the top left corner and the other towards the top right corner of the image. Additionally, there is a knife placed on the table, positioned near the center of the scene.",
-      "chair_words": [
-        "dining table",
-        "banana",
-        "bottle",
-        "knife"
-      ],
-      "image_id": 321973,
-      "is_chair_aligned": 0,
-      "is_grounded_chair_word": 0,
-      "is_hallucinated_chair_word": 0,
-      "mapped_word": "apple",
-      "mapping_score": 1.0
-    },
-    {
-      "candidate": "pineapple",
-      "caption": "The image features a dining table with a plate of food, including a dessert, placed on it. The dessert is a piece of cake, and it is accompanied by a slice of pineapple. There is also a cup of coffee on the table, adding to the meal. \n\nIn addition to the main dish, there are two wine glasses on the table, one closer to the dessert and the other further away. A bowl can be seen on the table as well, possibly containing a side dish or additional food. The table setting creates a pleasant and inviting atmosphere for a meal.",
-      "chair_words": [
-        "dining table",
-        "cake",
-        "cup",
-        "wine glass",
-        "bowl"
-      ],
-      "image_id": 497593,
-      "is_chair_aligned": 0,
-      "is_grounded_chair_word": 0,
-      "is_hallucinated_chair_word": 0,
-      "mapped_word": "apple",
-      "mapping_score": 1.0
-    },
-    {
-      "candidate": "pineapple making",
-      "caption": "The image features a dining table with a large pizza placed on a wooden tray. The pizza is topped with ham and pineapple, making it a delicious and appetizing meal. A person is present in the scene, likely enjoying the pizza or preparing to eat it.\n\nThere are also a couple of knives on the table, one near the pizza and another further away. The table setting creates a cozy and inviting atmosphere for a meal shared with friends or family.",
-      "chair_words": [
-        "dining table",
-        "pizza",
-        "person",
-        "knife"
-      ],
-      "image_id": 115793,
-      "is_chair_aligned": 0,
-      "is_grounded_chair_word": 0,
-      "is_hallucinated_chair_word": 0,
-      "mapped_word": "apple",
-      "mapping_score": 1.0
-    },
     {
       "candidate": "bear",
       "caption": "The image features a dining table filled with a variety of food and desserts, creating an inviting atmosphere for a teddy bear picnic. There are several teddy bears placed around the table, with some sitting on chairs and others standing. The teddy bears are positioned in different areas of the table, adding a playful touch to the scene.\n\nThe table is adorned with a variety of food items, including cakes, sandwiches, and carrots. There are multiple cups and bowls placed around the table, possibly containing drinks or additional food items. The table is set up to accommodate the teddy bears and their guests, making it an ideal setting for a fun and imaginative picnic.",
@@ -1193,14 +1110,90 @@
       "is_hallucinated_chair_word": 0,
       "mapped_word": "bear",
       "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a young girl sitting in a chair, holding a brown teddy bear in her arms. She appears to be posing for a picture, possibly for a special occasion. The chair she is sitting on is positioned in the foreground, while the teddy bear is placed in front of her. The girl's focus is on the teddy bear, making it the main subject of the scene.",
+      "chair_words": [
+        "person",
+        "chair",
+        "teddy bear"
+      ],
+      "image_id": 381051,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a large, brown teddy bear sitting on a wooden chair outside a building. The teddy bear appears to be quite large, occupying a significant portion of the chair. The chair is positioned near a doorway, and the teddy bear seems to be leaning against the door.\n\nIn the background, there are several cars parked, with one car on the left side of the image and two cars on the right side. Additionally, there are two people visible in the scene, one standing near the center of the image and another person closer to the right side.",
+      "chair_words": [
+        "teddy bear",
+        "chair",
+        "car",
+        "person"
+      ],
+      "image_id": 410880,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a man riding a motorcycle with a large teddy bear strapped to the back of it. The teddy bear is positioned behind the man, covering a significant portion of the motorcycle's back. The man appears to be wearing a helmet, ensuring his safety while riding.\n\nThe scene takes place on a street, with the motorcycle and the teddy bear being the main focus of the image. The man seems to be enjoying his ride with the unique and playful addition of the teddy bear.",
+      "chair_words": [
+        "person",
+        "motorcycle",
+        "teddy bear"
+      ],
+      "image_id": 423173,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a cozy bedroom scene with a bed that has a colorful comforter and a stuffed animal sitting on it. The stuffed animal is a teddy bear, and it is placed on the bed next to a pillow. The bed is positioned against a wall, which has a colorful mural painted on it. \n\nIn addition to the bed and the stuffed animal, there are two other teddy bears in the room, one located near the left side of the bed and the other on the right side. The room also has a chair situated near the bed, and a clock can be seen hanging on the wall.",
+      "chair_words": [
+        "bed",
+        "teddy bear",
+        "chair",
+        "clock"
+      ],
+      "image_id": 436413,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a young girl standing next to a brown teddy bear. She is holding the teddy bear in her arms, and they appear to be posing for a picture. The girl is wearing a black shirt, and the teddy bear is positioned close to her, creating a warm and friendly atmosphere.",
+      "chair_words": [
+        "person",
+        "teddy bear"
+      ],
+      "image_id": 438258,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
     }
   ],
-  "extra_map_rate_among_mapped": 0.1040701925420424,
-  "extra_mapped_candidates": 2562,
-  "grounded_chair_aligned_mapped_candidates": 19618,
-  "hallucinated_chair_aligned_mapped_candidates": 2438,
-  "mapped_candidates": 24618,
-  "mapping_rate": 0.15632858340318526,
+  "extra_map_rate_among_mapped": 0.014496806973383677,
+  "extra_mapped_candidates": 311,
+  "grounded_chair_aligned_mapped_candidates": 18822,
+  "hallucinated_chair_aligned_mapped_candidates": 2320,
+  "mapped_candidates": 21453,
+  "mapping_rate": 0.13623028270974624,
   "max_captions": 0,
   "num_canonical_words": 80,
   "num_captions": 4977,
@@ -1227,19 +1220,11 @@
     ],
     [
       "chair",
-      671
-    ],
-    [
-      "skateboard",
-      535
+      668
     ],
     [
       "bus",
       532
-    ],
-    [
-      "horse",
-      488
     ],
     [
       "bench",
@@ -1247,7 +1232,7 @@
     ],
     [
       "book",
-      472
+      468
     ],
     [
       "toilet",
@@ -1258,15 +1243,15 @@
       466
     ],
     [
-      "surfboard",
-      462
-    ],
-    [
-      "truck",
-      460
+      "skateboard",
+      466
     ],
     [
       "clock",
+      461
+    ],
+    [
+      "truck",
       460
     ],
     [
@@ -1275,7 +1260,7 @@
     ],
     [
       "bottle",
-      410
+      399
     ],
     [
       "giraffe",
@@ -1286,108 +1271,92 @@
       388
     ],
     [
-      "motorcycle",
-      362
+      "bowl",
+      355
+    ],
+    [
+      "surfboard",
+      353
+    ],
+    [
+      "horse",
+      353
     ]
   ],
   "top_extra_mapped_words": [
-    [
-      "handbag",
-      752
-    ],
-    [
-      "backpack",
-      490
-    ],
-    [
-      "snowboard",
-      329
-    ],
-    [
-      "baseball bat",
-      179
-    ],
     [
       "bear",
       165
     ],
     [
-      "suitcase",
-      145
-    ],
-    [
-      "apple",
-      128
-    ],
-    [
-      "train",
-      71
-    ],
-    [
       "person",
-      42
-    ],
-    [
-      "bottle",
-      38
-    ],
-    [
-      "sandwich",
-      34
-    ],
-    [
-      "sheep",
-      25
+      41
     ],
     [
       "dog",
       25
     ],
     [
-      "toaster",
-      24
-    ],
-    [
-      "remote",
-      22
-    ],
-    [
-      "chair",
-      18
-    ],
-    [
       "vase",
       17
     ],
     [
-      "skateboard",
-      12
+      "snowboard",
+      14
     ],
     [
-      "fork",
+      "train",
+      8
+    ],
+    [
+      "skateboard",
       7
     ],
     [
       "bowl",
       7
+    ],
+    [
+      "fork",
+      6
+    ],
+    [
+      "toilet",
+      6
+    ],
+    [
+      "umbrella",
+      5
+    ],
+    [
+      "wine glass",
+      3
+    ],
+    [
+      "car",
+      2
+    ],
+    [
+      "kite",
+      2
+    ],
+    [
+      "bird",
+      2
+    ],
+    [
+      "potted plant",
+      1
     ]
   ],
   "top_mapped_words": [
     [
       "person",
-      1326
-    ],
-    [
-      "handbag",
-      973
+      1325
     ],
     [
       "train",
-      851
-    ],
-    [
-      "backpack",
-      710
+      788
     ],
     [
       "dining table",
@@ -1399,15 +1368,7 @@
     ],
     [
       "chair",
-      689
-    ],
-    [
-      "snowboard",
-      588
-    ],
-    [
-      "skateboard",
-      547
+      668
     ],
     [
       "bus",
@@ -1418,42 +1379,58 @@
       491
     ],
     [
-      "horse",
-      489
-    ],
-    [
-      "book",
-      477
-    ],
-    [
       "bench",
       477
     ],
     [
-      "baseball bat",
-      474
+      "skateboard",
+      473
     ],
     [
       "toilet",
       473
     ],
     [
-      "surfboard",
-      463
+      "book",
+      468
+    ],
+    [
+      "clock",
+      461
     ],
     [
       "truck",
       460
     ],
     [
-      "clock",
-      460
+      "elephant",
+      412
+    ],
+    [
+      "bear",
+      404
     ],
     [
       "bottle",
-      448
+      399
+    ],
+    [
+      "umbrella",
+      393
+    ],
+    [
+      "giraffe",
+      391
+    ],
+    [
+      "bowl",
+      362
+    ],
+    [
+      "surfboard",
+      353
     ]
   ],
   "total_open_vocab_candidates": 157476,
-  "unmapped_candidates": 132858
+  "unmapped_candidates": 136023
 }
