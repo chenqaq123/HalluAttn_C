@@ -1,6 +1,6 @@
 # ICML Result Gap and Method Decision
 
-Date: 2026-06-18
+Date: 2026-06-19
 
 This note answers the current concern directly: the latest numbers are not
 strong enough for a headline mitigation paper, and the caption-rewrite proxy does
@@ -18,6 +18,7 @@ The result profile is mixed, not weak everywhere.
 | Do the reproduced baselines expose the original defect? | Yes. PAS/SVAR have strong overall CHAIR AUROC but collapse under position and same-object controls; position-only reaches `0.830`. POPE related-present negatives have much higher FPR than plain-absent negatives. | Keep as the main diagnostic contribution. |
 | Is the semantic-neighbor failure real? | Yes. In full POPE related-present negatives, neighbor evidence exceeds target evidence in `98.6%` of rows and in `96.0%` of vanilla related FPs. | This is the strongest bridge from motivation to method. |
 | Does TDEV repair the exact failure? | Partly. Hybrid TDEV lowers macro related FPR from `0.114` to `0.069` and MCC from `0.730` to `0.763`; it corrects `39.8%` of vanilla related-present FPs. | Claim "reduces semantic-neighbor false positives", not "solves hallucination". |
+| Does NoLan change the conclusion? | Yes, by narrowing it. NoLan-compatible lowers related FPR to `0.076` and FPR to `0.058`, but TPR drops to `0.778` and yes rate to `0.418`, with MCC tied to vanilla. | Do not claim decoding cannot help; claim prior suppression helps conservatively but still lacks explicit target-vs-neighbor verification. |
 | Is raw detector evidence enough? | No. Direct OWLv2 target evidence has high aggregate MCC but related FPR `0.184` and adversarial related FPR `0.281`. | This supports target-vs-neighbor verification as the novelty, not external detection. |
 | Is current caption correction a real solution? | No. Neutral/generic rewrites lower CHAIRi/CHAIRs, but generic noun replacement shows that CHAIR can improve by replacing claims with broad nouns. A sentence-gate prototype is more grammatical but too coarse: CHAIRi `0.1165`, CHAIRs `0.4396`, mean words `86.53`. | Keep caption correction in appendix/prototype evidence only. |
 | Is LH-Shape a standalone practical method? | No. LH-alone suppress collapses TPR to `0.432`; LH-routed TDEV is useful only as triage. | Present as supervised routing into TDEV, not mitigation. |
@@ -31,7 +32,8 @@ make a false target claim. This appears in three places:
 1. **Detection:** global attention scores partly rank hallucinations by generation
    position rather than visual support.
 2. **Mitigation:** attention interventions change visual routing or yes rate but
-   do not selectively reduce related-present false positives.
+   do not selectively reduce related-present false positives; NoLan reduces them
+   by becoming more conservative, not by verifying the target against neighbors.
 3. **Semantic neighbors:** the image often contains plausible associated objects;
    the model can be visually engaged but non-discriminative.
 
@@ -148,12 +150,13 @@ is call reduction / triage, not detector replacement.
 
 The paper should state:
 
-> Attention and generic grounding can make a false object claim visually
-> plausible, but they do not establish that the image supports the queried
-> target rather than a semantic neighbor. TDEV operationalizes this missing
-> target-discriminative verification criterion. Current results show a modest but
-> consistent reduction in semantic-neighbor false positives and a practical
-> triage path, while caption correction remains an open implementation step.
+> Attention, generic grounding, and language-prior suppression can make a false
+> object claim visually plausible or less frequent, but they do not establish
+> that the image supports the queried target rather than a semantic neighbor.
+> TDEV operationalizes this missing target-discriminative verification criterion.
+> Current results show a modest but consistent reduction in semantic-neighbor
+> false positives and a practical triage path, while caption correction remains
+> an open implementation step.
 
 This is a publishable diagnostic-plus-verification paper if the writing keeps the
 claim narrow. It is not yet a strong end-to-end hallucination mitigation paper.

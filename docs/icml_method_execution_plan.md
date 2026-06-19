@@ -1,6 +1,6 @@
 # ICML Method Execution Plan
 
-Date: 2026-06-18
+Date: 2026-06-19
 
 This note turns the current audits into an execution plan for a complete ICML
 submission. It should be read together with `docs/claims_alignment_audit.md`,
@@ -41,7 +41,8 @@ modest. This changes the execution emphasis:
    already covers high-latency tool validation and correction.
 3. Prioritize experiments and figures that expose the target-vs-neighbor
    failure: related-present examples, target evidence versus best-neighbor
-   evidence, and attention/decoding baselines that still answer `yes`.
+   evidence, attention/VCD baselines that still answer `yes`, and NoLan as the
+   positive-but-conservative prior-suppression control.
 4. Treat TDEV as a verifier that partially repairs this failure, plus LH-Shape
    as a cost-saving router into that verifier.
 5. The next publishability bottleneck is not another aggregate POPE point; it is
@@ -55,9 +56,11 @@ modest. This changes the execution emphasis:
 2. **Looking is not grounding.** Attention-mass and hand-crafted attention-shape
    scores can track generation position, visual routing, or associated evidence
    without verifying the target object.
-3. **Attention/decoding shortcuts are insufficient.** Mean attention, attention
-   redistribution, VCD-greedy, local SPIN settings, and local DAMRO settings do
-   not pass semantic-neighbor controls.
+3. **Attention/decoding shortcuts are insufficient as target verification.**
+   Mean attention, attention redistribution, VCD-greedy, local SPIN settings,
+   and local DAMRO settings do not pass semantic-neighbor controls. NoLan-
+   compatible is a useful exception on FPR, but it mainly shifts the answer prior
+   conservatively and lowers TPR.
 4. **Target-discriminative region evidence works better than generic grounding.**
    Raw OWLv2 target evidence is strong but over-fires on related-present
    negatives; target-vs-neighbor verification reduces those errors.
@@ -156,7 +159,7 @@ whether a recent method is runnable, a required baseline, or only related work.
 
 | Priority | Baseline | Action |
 |---|---|---|
-| P0 | NoLan | Public-code decoding baseline for dynamic language-prior suppression. Clone/inspect in `ref/`, then run the adversarial semantic-neighbor subset before any full rerun. Required metrics are MCC, yes rate, related-present FPR, plain FPR, and gap. |
+| Done | NoLan | Deterministic compatible port complete on POPE random/popular/adversarial. It lowers FPR and related-present FPR but lowers TPR/yes rate and should not be claimed as official NoLan. |
 | P0 | OPERA | Keep guarded integration; only report numbers if the environment passes `check_opera_support.py`. |
 | P0 | AIR | ArXiv v2 says code is available, but the stable repository URL was not recovered in the June 19 refresh. Find official repo; do not implement a surrogate. |
 | P0 | CAI/CAST | Closest caption-query/head-steering baselines. As of the June 19, 2026 refresh, no direct official code link was found. Do not implement an unofficial surrogate; run a bounded semantic-neighbor audit only if official code appears. |
@@ -168,12 +171,11 @@ whether a recent method is runnable, a required baseline, or only related work.
 | P1 | Official VCD/GLSim parity | Optional parity checks; current controlled versions are enough for mechanism claims if wording stays scoped. |
 | P2 | Woodpecker/UNIHD/Volcano | Discuss as high-latency tool/revision systems unless the paper needs a broad post-hoc correction comparison. |
 
-For NoLan, code is already public, so the next baseline action is a guarded
-adversarial semantic-neighbor subset run after the compatibility checks in
-`docs/nolan_baseline_feasibility.md`. For other P0 methods, first confirm an
-official runnable repository. In all cases, report MCC, TPR, FPR, yes rate,
-related-present FPR, plain-absent FPR, and the related-minus-plain gap. Full
-all-split reruns are only justified if the subset result changes the paper
+NoLan is no longer a pending baseline action: the compatible all-split run is
+complete and is now part of the main paper table. For remaining P0 methods, first
+confirm an official runnable repository. In all cases, report MCC, TPR, FPR, yes
+rate, related-present FPR, plain-absent FPR, and the related-minus-plain gap.
+Full all-split reruns are only justified if the subset result changes the paper
 conclusion.
 
 ## Paper Table Source Update
@@ -301,23 +303,22 @@ failure to the constructive TDEV method.
    defensible use remains suppress-only TDEV triage, not replacing the verifier.
 3. **Third-model sanity check.** If compute allows, run only vanilla plus fixed
    TDEV on InternVL or LLaVA-NeXT; do not rerun every baseline.
-4. **Baseline availability check.** Run a guarded NoLan adversarial semantic-neighbor
-   subset first, because public code is available and it is the closest decoding
-   baseline for language-prior suppression. Re-check AIR/CAI/CAST/Focus
-   Matters/BRACS/region-aware code before paper freeze. If official code appears,
-   run only the semantic-neighbor subset audit first; do not implement unofficial
-   surrogates.
+4. **Baseline availability check.** NoLan-compatible is complete and already
+   changes the paper claim. Re-check OPERA/AIR/CAI/CAST/Focus Matters/BRACS/
+   region-aware code before paper freeze. If official code appears, run only the
+   semantic-neighbor subset audit first; do not implement unofficial surrogates.
 
 ## Writing Position
 
 The paper should not claim "external detection solves hallucination." A stronger
 and more defensible ICML framing is:
 
-> Hallucination mitigation fails when it optimizes visual attention, grounding,
-> or language-prior reduction without checking whether the evidence uniquely
-> supports the target object. TDEV operationalizes this missing target-vs-
-> neighbor verification criterion and shows that it improves both yes/no
-> mitigation and object-mention detection under semantic-neighbor controls.
+> Hallucination mitigation remains incomplete when it optimizes visual
+> attention, generic grounding, or language-prior reduction without checking
+> whether the evidence uniquely supports the target object. TDEV operationalizes
+> this missing target-vs-neighbor verification criterion and shows that it
+> improves both yes/no mitigation and object-mention detection under
+> semantic-neighbor controls.
 
 ## Novelty Decision After Latest Check
 
