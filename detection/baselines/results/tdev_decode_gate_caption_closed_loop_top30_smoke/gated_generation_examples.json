@@ -1,0 +1,1016 @@
+[
+  {
+    "image_id": 391158,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000391158.jpg",
+    "denied_items": [
+      {
+        "word": "dining table",
+        "matched_surface": "",
+        "score": 0.1562477283552289,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.003752271644771099,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.35350768733769655,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sandwich",
+        "matched_surface": "",
+        "score": 0.15550769943743945,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.004492300562560558,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3527676584199071,
+        "two_stage_present": 0
+      },
+      {
+        "word": "broccoli",
+        "matched_surface": "",
+        "score": 0.15467639159411192,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.005323608405888081,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.35193635057657957,
+        "two_stage_present": 0
+      },
+      {
+        "word": "book",
+        "matched_surface": "",
+        "score": 0.15110148195177317,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.008898518048226833,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3483614409342408,
+        "two_stage_present": 0
+      },
+      {
+        "word": "hot dog",
+        "matched_surface": "",
+        "score": 0.15105347134172917,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.008946528658270836,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3483134303241968,
+        "two_stage_present": 0
+      },
+      {
+        "word": "cake",
+        "matched_surface": "",
+        "score": 0.15091041553765536,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009089584462344646,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.348170374520123,
+        "two_stage_present": 0
+      },
+      {
+        "word": "pizza",
+        "matched_surface": "",
+        "score": 0.1507673317939043,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009232668206095695,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34802729077637196,
+        "two_stage_present": 0
+      },
+      {
+        "word": "potted plant",
+        "matched_surface": "",
+        "score": 0.1502266226708889,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0097733773291111,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34748658165335655,
+        "two_stage_present": 0
+      },
+      {
+        "word": "banana",
+        "matched_surface": "",
+        "score": 0.15017267767339945,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009827322326600552,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3474326366558671,
+        "two_stage_present": 0
+      },
+      {
+        "word": "carrot",
+        "matched_surface": "",
+        "score": 0.15014483578503132,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.009855164214968681,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34740479476749897,
+        "two_stage_present": 0
+      },
+      {
+        "word": "microwave",
+        "matched_surface": "",
+        "score": 0.1485024568066001,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.011497543193399906,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34576241578906775,
+        "two_stage_present": 0
+      },
+      {
+        "word": "keyboard",
+        "matched_surface": "",
+        "score": 0.14766171466559172,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.012338285334408283,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34492167364805937,
+        "two_stage_present": 0
+      },
+      {
+        "word": "wine glass",
+        "matched_surface": "",
+        "score": 0.14743045330047608,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.012569546699523926,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3446904122829437,
+        "two_stage_present": 0
+      },
+      {
+        "word": "refrigerator",
+        "matched_surface": "",
+        "score": 0.14691626079380513,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.013083739206194878,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3441762197762728,
+        "two_stage_present": 0
+      },
+      {
+        "word": "tie",
+        "matched_surface": "",
+        "score": 0.1460201021656394,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.0139798978343606,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.34328006114810705,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bowl",
+        "matched_surface": "",
+        "score": 0.14583856131881476,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.014161438681185246,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3430985203012824,
+        "two_stage_present": 0
+      },
+      {
+        "word": "donut",
+        "matched_surface": "",
+        "score": 0.14278772458434105,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01721227541565895,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3400476835668087,
+        "two_stage_present": 0
+      },
+      {
+        "word": "vase",
+        "matched_surface": "",
+        "score": 0.14267197981476784,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.017328020185232162,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3399319387972355,
+        "two_stage_present": 0
+      },
+      {
+        "word": "sink",
+        "matched_surface": "",
+        "score": 0.14207063600420952,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01792936399579048,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.33933059498667717,
+        "two_stage_present": 0
+      },
+      {
+        "word": "fork",
+        "matched_surface": "",
+        "score": 0.14200332187116146,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.01799667812883854,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3392632808536291,
+        "two_stage_present": 0
+      },
+      {
+        "word": "orange",
+        "matched_surface": "",
+        "score": 0.13881854511797428,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02118145488202572,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.33607850410044193,
+        "two_stage_present": 0
+      },
+      {
+        "word": "mouse",
+        "matched_surface": "",
+        "score": 0.13827838733792305,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02172161266207695,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3355383463203907,
+        "two_stage_present": 0
+      },
+      {
+        "word": "laptop",
+        "matched_surface": "",
+        "score": 0.13763463482260704,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02236536517739296,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3348945938050747,
+        "two_stage_present": 0
+      },
+      {
+        "word": "knife",
+        "matched_surface": "",
+        "score": 0.1342964878678322,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.025703512132167816,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.33155644685029984,
+        "two_stage_present": 0
+      },
+      {
+        "word": "toothbrush",
+        "matched_surface": "",
+        "score": 0.13370540350675583,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02629459649324417,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3309653624892235,
+        "two_stage_present": 0
+      },
+      {
+        "word": "bottle",
+        "matched_surface": "",
+        "score": 0.13344061732292176,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.026559382677078247,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3307005763053894,
+        "two_stage_present": 0
+      },
+      {
+        "word": "person",
+        "matched_surface": "",
+        "score": 0.1324539965391159,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.027546003460884094,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.32971395552158356,
+        "two_stage_present": 0
+      },
+      {
+        "word": "spoon",
+        "matched_surface": "",
+        "score": 0.13085699625313282,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.02914300374686718,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.32811695523560047,
+        "two_stage_present": 0
+      },
+      {
+        "word": "oven",
+        "matched_surface": "",
+        "score": 0.12883349120616913,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03116650879383087,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3260934501886368,
+        "two_stage_present": 0
+      },
+      {
+        "word": "chair",
+        "matched_surface": "",
+        "score": 0.12433262899518013,
+        "label": -1,
+        "object_id": -1,
+        "target_score": 0.03566737100481987,
+        "best_neighbor": "cup",
+        "best_neighbor_score": 0.35725995898246765,
+        "tdev_margin": -0.3215925879776478,
+        "two_stage_present": 0
+      }
+    ],
+    "num_denied_sequences": 136,
+    "vanilla_source": "generated",
+    "vanilla_caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station or a museum. The train is prominently displayed, taking up a significant portion of the scene. The train's engine is visible, with its front end extending from the left side of the image to the right.\n\nIn addition to the train, there are two people in the scene, one located near the left side and the other closer to the right side. A cup can be seen placed on a surface, possibly a table or a counter, near the left side of the image.",
+    "gated_caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station. The train occupies a significant portion of the scene, extending from the left side almost all the way across the image. The train's engine is prominently visible, with its front end extending towards the right side of the image.\n\nIn addition, there are two smaller trains visible in the background, one on the left side and the other on the right side of the image. The presence of these trains suggests that the building may be a train station where multiple trains are stored and maintained.",
+    "caption_differs_from_reference": 1,
+    "reference_comparison_note": "Generated-vs-generated",
+    "gate_events": [
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 270,
+        "banned_token_text": "d",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 360,
+        "banned_token_text": "D",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 553,
+        "banned_token_text": "des",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2726,
+        "banned_token_text": "Des",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1591,
+        "banned_token_text": "table",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6137,
+        "banned_token_text": "Table",
+        "phrase_text": "dining table|dining tables|desk|table"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11982,
+        "banned_token_text": "sand",
+        "phrase_text": "sandwich|sandwiches"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8564,
+        "banned_token_text": "Sand",
+        "phrase_text": "sandwich|sandwiches"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 11982,
+        "banned_token_text": "sand",
+        "phrase_text": "sandwich|sandwiches"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8564,
+        "banned_token_text": "Sand",
+        "phrase_text": "sandwich|sandwiches"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2545,
+        "banned_token_text": "bro",
+        "phrase_text": "broccoli|broccolis"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4358,
+        "banned_token_text": "Bro",
+        "phrase_text": "broccoli|broccolis"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 2545,
+        "banned_token_text": "bro",
+        "phrase_text": "broccoli|broccolis"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 4358,
+        "banned_token_text": "Bro",
+        "phrase_text": "broccoli|broccolis"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3143,
+        "banned_token_text": "book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 6726,
+        "banned_token_text": "Book",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8277,
+        "banned_token_text": "books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13730,
+        "banned_token_text": "Books",
+        "phrase_text": "book|books"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 7375,
+        "banned_token_text": "hot",
+        "phrase_text": "hot dog|hot dogs"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8843,
+        "banned_token_text": "Hot",
+        "phrase_text": "hot dog|hot dogs"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 7375,
+        "banned_token_text": "hot",
+        "phrase_text": "hot dog|hot dogs"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 8843,
+        "banned_token_text": "Hot",
+        "phrase_text": "hot dog|hot dogs"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 274,
+        "banned_token_text": "c",
+        "phrase_text": "cake|cakes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "cake|cakes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 274,
+        "banned_token_text": "c",
+        "phrase_text": "cake|cakes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 315,
+        "banned_token_text": "C",
+        "phrase_text": "cake|cakes"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "pizza|pizzas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "pizza|pizzas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "pizza|pizzas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "pizza|pizzas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant|potted plants"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant|potted plants"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 282,
+        "banned_token_text": "p",
+        "phrase_text": "potted plant|potted plants"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 349,
+        "banned_token_text": "P",
+        "phrase_text": "potted plant|potted plants"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9892,
+        "banned_token_text": "ban",
+        "phrase_text": "banana|bananas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10765,
+        "banned_token_text": "Ban",
+        "phrase_text": "banana|bananas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 9892,
+        "banned_token_text": "ban",
+        "phrase_text": "banana|bananas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 10765,
+        "banned_token_text": "Ban",
+        "phrase_text": "banana|bananas"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "carrot|carrots"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "carrot|carrots"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1559,
+        "banned_token_text": "car",
+        "phrase_text": "carrot|carrots"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1704,
+        "banned_token_text": "Car",
+        "phrase_text": "carrot|carrots"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20710,
+        "banned_token_text": "mic",
+        "phrase_text": "microwave|microwaves"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20279,
+        "banned_token_text": "Mic",
+        "phrase_text": "microwave|microwaves"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20710,
+        "banned_token_text": "mic",
+        "phrase_text": "microwave|microwaves"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 20279,
+        "banned_token_text": "Mic",
+        "phrase_text": "microwave|microwaves"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12247,
+        "banned_token_text": "keyboard",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 7670,
+        "banned_token_text": "Key",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1820,
+        "banned_token_text": "key",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 7670,
+        "banned_token_text": "Key",
+        "phrase_text": "keyboard|keyboards"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 19006,
+        "banned_token_text": "wine",
+        "phrase_text": "wine glass|wine glasses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 399,
+        "banned_token_text": "W",
+        "phrase_text": "wine glass|wine glasses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 19006,
+        "banned_token_text": "wine",
+        "phrase_text": "wine glass|wine glasses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 399,
+        "banned_token_text": "W",
+        "phrase_text": "wine glass|wine glasses"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 337,
+        "banned_token_text": "re",
+        "phrase_text": "refrigerator|refrigerators"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 830,
+        "banned_token_text": "Re",
+        "phrase_text": "refrigerator|refrigerators"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 337,
+        "banned_token_text": "re",
+        "phrase_text": "refrigerator|refrigerators"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 830,
+        "banned_token_text": "Re",
+        "phrase_text": "refrigerator|refrigerators"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 22134,
+        "banned_token_text": "tie",
+        "phrase_text": "tie|ties"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 323,
+        "banned_token_text": "T",
+        "phrase_text": "tie|ties"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 260,
+        "banned_token_text": "t",
+        "phrase_text": "tie|ties"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 323,
+        "banned_token_text": "T",
+        "phrase_text": "tie|ties"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12580,
+        "banned_token_text": "bow",
+        "phrase_text": "bowl|bowls"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 27207,
+        "banned_token_text": "Bowl",
+        "phrase_text": "bowl|bowls"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 12580,
+        "banned_token_text": "bow",
+        "phrase_text": "bowl|bowls"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 13432,
+        "banned_token_text": "Bow",
+        "phrase_text": "bowl|bowls"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1016,
+        "banned_token_text": "don",
+        "phrase_text": "donut|donuts"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3872,
+        "banned_token_text": "Don",
+        "phrase_text": "donut|donuts"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 1016,
+        "banned_token_text": "don",
+        "phrase_text": "donut|donuts"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 3872,
+        "banned_token_text": "Don",
+        "phrase_text": "donut|donuts"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase|vases"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase|vases"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 325,
+        "banned_token_text": "v",
+        "phrase_text": "vase|vases"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 478,
+        "banned_token_text": "V",
+        "phrase_text": "vase|vases"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 28169,
+        "banned_token_text": "sink",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 317,
+        "banned_token_text": "S",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 269,
+        "banned_token_text": "s",
+        "phrase_text": "sink|sinks"
+      },
+      {
+        "batch_index": 0,
+        "generated_step": 0,
+        "prefix_len": 0,
+        "banned_token_id": 317,
+        "banned_token_text": "S",
+        "phrase_text": "sink|sinks"
+      }
+    ]
+  }
+]

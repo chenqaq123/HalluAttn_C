@@ -1,0 +1,76 @@
+{
+  "examples": [
+    {
+      "denied_words": [
+        "banana",
+        "book",
+        "bottle",
+        "bowl",
+        "broccoli",
+        "cake",
+        "carrot",
+        "chair",
+        "dining table",
+        "donut",
+        "fork",
+        "hot dog",
+        "keyboard",
+        "knife",
+        "laptop",
+        "microwave",
+        "mouse",
+        "orange",
+        "oven",
+        "person",
+        "pizza",
+        "potted plant",
+        "refrigerator",
+        "sandwich",
+        "sink",
+        "spoon",
+        "tie",
+        "toothbrush",
+        "vase",
+        "wine glass"
+      ],
+      "gated_words": [
+        "train",
+        "train",
+        "train",
+        "train",
+        "train",
+        "train",
+        "train",
+        "train"
+      ],
+      "image_id": 391158,
+      "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000391158.jpg",
+      "interpretation": "A closed-loop gate should verify introduced_words before allowing the rewritten caption path to continue.",
+      "introduced_claim_scores": {},
+      "introduced_hallucinated_words": [],
+      "introduced_words": [],
+      "removed_words": [
+        "cup",
+        "dining table",
+        "person"
+      ],
+      "vanilla_words": [
+        "train",
+        "train",
+        "train",
+        "train",
+        "train",
+        "person",
+        "cup",
+        "dining table"
+      ]
+    }
+  ],
+  "examples_json": "detection/baselines/results/tdev_decode_gate_caption_closed_loop_top30_smoke/gated_generation_examples.json",
+  "neighbors_json": "mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json",
+  "owlv2_model_path": "/home/chenguanxu/common_model/huggingface/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d",
+  "top_neighbors": 10,
+  "two_stage_high": 0.16,
+  "two_stage_low": 0.1,
+  "two_stage_margin": -0.15
+}

@@ -1275,6 +1275,73 @@ example by triggering verification only on candidate object continuations or by
 building an allow/deny policy around supported objects, rather than pre-penalizing
 nearly every absent COCO object from the first decoding step.
 
+### TDEV Candidate and Top-Risk Closed-Loop Gate Ablations
+
+Two narrower closed-loop ablations test whether the train-only behavior can be
+fixed without changing the object-claim policy.
+
+The first ablation delays blocking until the generated suffix already matches at
+least one token of a denied phrase. This is exposed as
+`--min_prefix_len_to_block 1`; the default remains `0`, which preserves the prior
+hard and soft runs.
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla \
+  --deny_phrase_source closed_loop \
+  --gate_mode hard \
+  --min_prefix_len_to_block 1 \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_candidate_smoke
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_candidate_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_candidate_audit
+```
+
+Result: the candidate-prefix gate records 21 gate events, but
+`captions_differing_from_reference = 0`. It leaves the vanilla caption unchanged,
+including the `person`, `cup`, and `dining table` CHAIR objects. This means pure
+prefix-triggering is too late for this failure: many object claims are either
+single-token or decided by the first content token.
+
+The second ablation keeps first-token blocking but limits each image to the top
+30 absent objects by TDEV closed-loop score.
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/run_tdev_decode_gate_caption_smoke.py \
+  --image_ids 391158 \
+  --max_new_tokens 160 \
+  --device 5 \
+  --generate_vanilla \
+  --deny_phrase_source closed_loop \
+  --gate_mode hard \
+  --closed_loop_max_denied 30 \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_top30_smoke
+
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_top30_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_top30_audit
+```
+
+Result: the top-risk gate reduces denied token sequences from 320 to 136 and the
+denied object list to 30, including `dining table`, `person`, and `bottle`. The
+CHAIR audit again reports no introduced COCO object claim and removes `person`,
+`cup`, and `dining table`, but the caption remains train-only. This is a better
+cost profile than the full deny set, but still not a natural captioning method.
+
+Combined interpretation: simple softening, delaying, or top-k trimming does not
+solve the quality tradeoff. The next method should verify object-token candidates
+at the point where object continuations compete, then allow visually supported
+objects and suppress unsupported ones. That is closer to a deployable
+closed-loop verifier than a static precomputed deny list.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The

@@ -229,11 +229,15 @@ failure to the constructive TDEV method.
    CHAIR audit reports no newly introduced COCO object claim. The cost is that
    the caption becomes conservative and train-only. A soft logits-penalty
    variant is now implemented, but one-image penalties `1.0` and `4.0` still
-   produce train-only captions while avoiding new COCO claims. The next step is
-   therefore not another deterministic placeholder edit or a simple penalty
-   sweep, but a candidate-triggered closed-loop object-claim gate: verify object
-   continuations when they become likely, then apply an allow/deny or soft
-   reranking policy before multi-image CHAIR/length/fluency evaluation.
+   produce train-only captions while avoiding new COCO claims. Two narrower
+   ablations sharpen the design: prefix-triggered blocking with
+   `min_prefix_len_to_block=1` is too late and leaves the vanilla hallucinations
+   unchanged, while `closed_loop_max_denied=30` reduces the deny set but still
+   produces a train-only caption. The next step is therefore not another
+   deterministic placeholder edit or a simple penalty/top-k sweep, but an
+   object-token candidate verifier: detect when object continuations compete,
+   apply TDEV allow/deny evidence at that point, and then run multi-image
+   CHAIR/length/fluency evaluation.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

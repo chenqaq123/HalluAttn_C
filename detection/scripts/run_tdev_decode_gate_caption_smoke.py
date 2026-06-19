@@ -63,6 +63,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--deny_phrase_source", choices=("surface", "synonyms", "closed_loop"), default="surface")
     p.add_argument("--gate_mode", choices=("hard", "soft"), default="hard")
     p.add_argument("--soft_penalty", type=float, default=4.0)
+    p.add_argument("--min_prefix_len_to_block", type=int, default=0)
     p.add_argument("--neighbors_json", default="mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json")
     p.add_argument("--owlv2_model_path", default="/home/chenguanxu/common_model/huggingface/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d")
     p.add_argument("--owlv2_device", default="cuda:5")
@@ -71,6 +72,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--closed_loop_low", type=float, default=0.10)
     p.add_argument("--closed_loop_high", type=float, default=0.16)
     p.add_argument("--closed_loop_margin", type=float, default=-0.15)
+    p.add_argument("--closed_loop_max_denied", type=int, default=0)
     p.add_argument("--hybrid_low", type=float, default=0.04)
     p.add_argument("--hybrid_high", type=float, default=0.12)
     p.add_argument("--hybrid_margin", type=float, default=-0.20)
@@ -241,6 +243,9 @@ def closed_loop_denied_words(
                         "two_stage_present": 0,
                     }
                 )
+        items = sorted(items, key=lambda item: item["score"], reverse=True)
+        if args.closed_loop_max_denied > 0:
+            items = items[: args.closed_loop_max_denied]
         denied[image_id] = items
     del model
     if torch.cuda.is_available():
@@ -356,6 +361,7 @@ def main() -> None:
             prompt_lengths=prompt_len,
             denied_phrase_texts=[denied_texts],
             penalty=args.soft_penalty if args.gate_mode == "soft" else None,
+            min_prefix_len_to_block=args.min_prefix_len_to_block,
             audit_limit=80,
         )
 
@@ -434,12 +440,14 @@ def main() -> None:
         "deny_phrase_source": args.deny_phrase_source,
         "gate_mode": args.gate_mode,
         "soft_penalty": args.soft_penalty if args.gate_mode == "soft" else None,
+        "min_prefix_len_to_block": args.min_prefix_len_to_block,
         "neighbors_json": args.neighbors_json,
         "top_neighbors": args.top_neighbors,
         "alias_top_k": args.alias_top_k,
         "closed_loop_low": args.closed_loop_low,
         "closed_loop_high": args.closed_loop_high,
         "closed_loop_margin": args.closed_loop_margin,
+        "closed_loop_max_denied": args.closed_loop_max_denied,
         "max_new_tokens": args.max_new_tokens,
         "num_images": len(results),
         "captions_differing_from_reference": sum(row["caption_differs_from_reference"] for row in results),

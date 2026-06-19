@@ -100,6 +100,7 @@ class ObjectPhraseGateLogitsProcessor(LogitsProcessor):
     prompt_lengths: list[int] | int
     denied_phrase_texts: list[list[str]] | None = None
     penalty: float | None = None
+    min_prefix_len_to_block: int = 0
     audit_limit: int = 200
     events: list[GateEvent] = field(default_factory=list)
 
@@ -112,6 +113,8 @@ class ObjectPhraseGateLogitsProcessor(LogitsProcessor):
             self.denied_phrase_texts = [[""] * len(seqs) for seqs in self.denied_token_sequences]
         if len(self.denied_phrase_texts) != len(self.denied_token_sequences):
             raise ValueError("denied_phrase_texts must match the batch size")
+        if self.min_prefix_len_to_block < 0:
+            raise ValueError("min_prefix_len_to_block must be non-negative")
 
     def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
         batch_size = input_ids.shape[0]
@@ -125,7 +128,11 @@ class ObjectPhraseGateLogitsProcessor(LogitsProcessor):
             generated = input_ids[batch_idx, start:].tolist()
             for seq_idx, seq in enumerate(self.denied_token_sequences[batch_idx]):
                 prefix_len = self._matched_prefix_len(generated, seq)
-                if prefix_len is None or prefix_len >= len(seq):
+                if (
+                    prefix_len is None
+                    or prefix_len >= len(seq)
+                    or prefix_len < self.min_prefix_len_to_block
+                ):
                     continue
                 banned_token = int(seq[prefix_len])
                 if self.penalty is None:
