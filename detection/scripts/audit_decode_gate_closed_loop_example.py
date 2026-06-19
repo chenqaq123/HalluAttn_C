@@ -48,6 +48,8 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--device", default="cuda:5")
     p.add_argument("--top_neighbors", type=int, default=10)
+    p.add_argument("--open_vocab_min_token_len", type=int, default=3)
+    p.add_argument("--open_vocab_candidate_limit", type=int, default=32)
     p.add_argument("--two_stage_low", type=float, default=0.10)
     p.add_argument("--two_stage_high", type=float, default=0.16)
     p.add_argument("--two_stage_margin", type=float, default=-0.15)
@@ -111,6 +113,125 @@ def root_hits(caption: str, denied_words: set[str], roots_by_word: dict[str, lis
                         hits.append({"word": word, "root": root, "token": token})
                         seen.add(key)
     return hits
+
+
+OPEN_VOCAB_STOPWORDS = {
+    "a",
+    "an",
+    "and",
+    "are",
+    "as",
+    "at",
+    "be",
+    "been",
+    "being",
+    "by",
+    "can",
+    "closer",
+    "could",
+    "each",
+    "from",
+    "front",
+    "has",
+    "have",
+    "having",
+    "in",
+    "inside",
+    "into",
+    "is",
+    "its",
+    "likely",
+    "located",
+    "near",
+    "of",
+    "on",
+    "one",
+    "or",
+    "other",
+    "overall",
+    "possibly",
+    "prominently",
+    "seen",
+    "side",
+    "suggests",
+    "taking",
+    "that",
+    "the",
+    "there",
+    "these",
+    "this",
+    "to",
+    "two",
+    "up",
+    "visible",
+    "with",
+}
+
+OPEN_VOCAB_NONCLAIMS = {
+    "addition",
+    "atmosphere",
+    "building",
+    "caption",
+    "center",
+    "end",
+    "features",
+    "historical",
+    "image",
+    "large",
+    "left",
+    "nostalgic",
+    "objects",
+    "old-fashioned",
+    "parked",
+    "placed",
+    "portion",
+    "right",
+    "scene",
+    "setting",
+    "significant",
+    "surface",
+}
+
+
+def content_tokens(caption: str) -> list[str]:
+    return re.findall(r"[a-z][a-z0-9-]*", caption.lower())
+
+
+def open_vocab_candidates(caption: str, min_len: int = 3, limit: int = 32) -> list[str]:
+    """Heuristic object-like candidate discovery outside CHAIR/alias vocabularies.
+
+    This is intentionally conservative and dependency-free. It is an audit aid:
+    candidates still need visual verification before becoming paper-facing
+    mitigation decisions.
+    """
+    tokens = content_tokens(caption)
+    candidates: list[str] = []
+    seen: set[str] = set()
+
+    def keep(token: str) -> bool:
+        return (
+            len(token) >= min_len
+            and token not in OPEN_VOCAB_STOPWORDS
+            and token not in OPEN_VOCAB_NONCLAIMS
+            and not token.isdigit()
+        )
+
+    def add(phrase: str) -> None:
+        if phrase and phrase not in seen:
+            candidates.append(phrase)
+            seen.add(phrase)
+
+    for idx, token in enumerate(tokens):
+        if not keep(token):
+            continue
+        add(token)
+        if idx > 0 and keep(tokens[idx - 1]):
+            add(f"{tokens[idx - 1]} {token}")
+        if idx > 1 and keep(tokens[idx - 2]) and keep(tokens[idx - 1]):
+            add(f"{tokens[idx - 2]} {tokens[idx - 1]} {token}")
+        if len(candidates) >= limit:
+            break
+    return candidates[:limit]
 
 
 def two_stage_score(target_score: float, margin: float, low: float, high: float, margin_threshold: float) -> float:
@@ -250,7 +371,30 @@ def main() -> None:
             hit for hit in gated_root_hits
             if (hit["word"], hit["root"], hit["token"]) not in vanilla_root_keys
         ]
-        claim_scores = score_claims(Path(example["image_path"]), introduced, neighbors, args)
+        vanilla_open_vocab = open_vocab_candidates(
+            example["vanilla_caption"],
+            min_len=args.open_vocab_min_token_len,
+            limit=args.open_vocab_candidate_limit,
+        )
+        gated_open_vocab = open_vocab_candidates(
+            example["gated_caption"],
+            min_len=args.open_vocab_min_token_len,
+            limit=args.open_vocab_candidate_limit,
+        )
+        vanilla_open_vocab_set = set(vanilla_open_vocab)
+        introduced_open_vocab = [claim for claim in gated_open_vocab if claim not in vanilla_open_vocab_set]
+        all_claims = sorted(set(introduced) | set(introduced_open_vocab))
+        all_claim_scores = score_claims(Path(example["image_path"]), all_claims, neighbors, args)
+        claim_scores = {claim: all_claim_scores[claim] for claim in introduced if claim in all_claim_scores}
+        open_vocab_claim_scores = {
+            claim: all_claim_scores[claim]
+            for claim in introduced_open_vocab
+            if claim in all_claim_scores
+        }
+        unsupported_open_vocab_claims = [
+            claim for claim, score in open_vocab_claim_scores.items()
+            if int(score.get("two_stage_present", 0)) == 0
+        ]
         audited.append(
             {
                 "image_id": image_id,
@@ -265,6 +409,11 @@ def main() -> None:
                 "introduced_variant_leaks": introduced_variant_leaks,
                 "gated_root_hits": gated_root_hits,
                 "introduced_root_leaks": introduced_root_leaks,
+                "open_vocab_vanilla_candidates": vanilla_open_vocab,
+                "open_vocab_gated_candidates": gated_open_vocab,
+                "introduced_open_vocab_candidates": introduced_open_vocab,
+                "introduced_open_vocab_claim_scores": open_vocab_claim_scores,
+                "unsupported_open_vocab_claims": unsupported_open_vocab_claims,
                 "introduced_claim_scores": claim_scores,
                 "interpretation": (
                     "A closed-loop gate should verify introduced_words before allowing "
@@ -280,6 +429,8 @@ def main() -> None:
         "variant_roots_json": args.variant_roots_json,
         "owlv2_model_path": args.owlv2_model_path,
         "top_neighbors": args.top_neighbors,
+        "open_vocab_min_token_len": args.open_vocab_min_token_len,
+        "open_vocab_candidate_limit": args.open_vocab_candidate_limit,
         "two_stage_low": args.two_stage_low,
         "two_stage_high": args.two_stage_high,
         "two_stage_margin": args.two_stage_margin,

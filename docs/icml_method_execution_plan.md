@@ -239,11 +239,14 @@ failure to the constructive TDEV method.
    tradeoff for reducing train-only behavior: it removes `person/dining table`
    and keeps `cup`. However, the new variant-leak audit changes the claim scope:
    `bottled drink`, `bottleneck`, `bottling machine`, and `bottletop` show that
-   static alias lists can be chased indefinitely. The next paper-facing method
-   step is therefore an open-vocabulary object-like phrase verifier: detect new
-   object candidates during decoding, map/paraphrase them to verifier targets,
-   apply TDEV target-vs-neighbor evidence, and evaluate on a multi-image subset
-   with CHAIR, variant leaks, root leaks, length, and fluency.
+   static alias lists can be chased indefinitely. A first open-vocabulary audit
+   now catches `bottletop` as a new candidate without the hand-written `bottl`
+   root and rejects it with OWLv2/TDEV (`target_score=0.0775`,
+   `two_stage_present=0`). The next paper-facing method step is therefore an
+   open-vocabulary object-like phrase verifier: detect new object candidates
+   during decoding, map/paraphrase them to verifier targets, apply TDEV
+   target-vs-neighbor evidence, and evaluate on a multi-image subset with CHAIR,
+   variant leaks, root leaks, open-vocabulary leaks, length, and fluency.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

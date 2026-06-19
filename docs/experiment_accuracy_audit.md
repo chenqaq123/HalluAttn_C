@@ -1444,11 +1444,29 @@ that coverage gap:
 ```
 
 Result: `introduced_root_leaks = [{"word": "bottle", "root": "bottl", "token": "bottletop"}]`.
-The important conclusion is negative and useful: static alias expansion is not a
-robust method, and CHAIR-only caption evaluation is too weak for this setting.
-The paper-facing caption method should use an open-vocabulary object-like phrase
-candidate verifier, then apply TDEV target-vs-neighbor evidence to those
-candidates, rather than relying on a growing hand-written deny list.
+
+The audit script now also includes an open-vocabulary candidate pass that does
+not depend on CHAIR categories, the alias list, or the root table. It extracts
+new object-like content candidates from the gated caption and verifies them with
+the same OWLv2/TDEV thresholds:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_open_vocab_audit \
+  --device cuda:5
+```
+
+Result: `introduced_open_vocab_candidates = ["bottletop"]`, with target score
+`0.0775` and `two_stage_present = 0`, so `unsupported_open_vocab_claims =
+["bottletop"]`. This catches the same leak without using the hand-written
+`bottl` root. The important conclusion is negative and useful: static alias
+expansion is not a robust method, and CHAIR-only caption evaluation is too weak
+for this setting. The paper-facing caption method should use an open-vocabulary
+object-like phrase candidate verifier, then apply TDEV target-vs-neighbor
+evidence to those candidates, rather than relying on a growing hand-written deny
+list.
 
 ### SPIN Adversarial Subset Audit
 

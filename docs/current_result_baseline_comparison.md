@@ -147,11 +147,13 @@ Reading:
   The first single-token-first run contained `bottled drink`, which CHAIR missed
   but the variant audit flags as a `bottle` leak. Adding bottle variants to the
   gate blocks that form, but the model routes to `bottleneck`, then `bottling
-  machine`, then `bottletop`. A root-based audit now automatically flags
-  `bottletop` as `introduced_root_leaks = [{word: bottle, root: bottl, token:
-  bottletop}]`. This is strong evidence that static alias chasing is brittle;
-  the next useful method step is open-vocabulary object-like phrase verification,
-  not a larger hand-written alias list.
+  machine`, then `bottletop`. A root-based audit flags `bottletop` as
+  `introduced_root_leaks = [{word: bottle, root: bottl, token: bottletop}]`. The
+  newer open-vocabulary audit catches the same leak without that hand-written
+  root: `introduced_open_vocab_candidates = [bottletop]`, target score `0.0775`,
+  `two_stage_present = 0`. This is strong evidence that static alias chasing is
+  brittle; the next useful method step is open-vocabulary object-like phrase
+  verification, not a larger hand-written alias list.
 
 ## Paper-Safe Claim
 
@@ -189,3 +191,4 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v2_audit/closed_loop_example_audit.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_audit/closed_loop_example_audit.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_root_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_open_vocab_audit/closed_loop_example_audit.json`
