@@ -1130,6 +1130,37 @@ it does not solve object-claim substitution. The next version needs a closed-loo
 claim gate that checks newly routed object claims, followed by multi-image
 CHAIR/length/fluency evaluation.
 
+### TDEV Closed-Loop Claim Audit
+
+`detection/scripts/audit_decode_gate_closed_loop_example.py` audits the new
+object claims introduced by the one-image gated caption smoke test. It reruns
+CHAIR on the generated vanilla and gated captions, identifies object words that
+appear only in the gated caption, and scores those introduced claims with OWLv2
+TDEV evidence against semantic neighbors.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --device cuda:5
+```
+
+Result root:
+
+```text
+detection/baselines/results/tdev_decode_gate_closed_loop_example/
+```
+
+Key result: the gated caption removed the denied CHAIR objects `person` and
+`dining table`, but introduced a new hallucinated CHAIR object `bottle`. The
+closed-loop TDEV check would reject this new claim: OWLv2 target score for
+`bottle` is `0.0266`, the best semantic neighbor is `cup` at `0.3573`, the margin
+is `-0.3307`, and the two-stage verifier predicts absent (`two_stage_present =
+0`). This supports the next method design: a generation-time gate cannot only
+suppress the original denied phrase. It must verify newly routed object
+continuations before allowing them.
+
 ### SPIN Adversarial Subset Audit
 
 `spin` is a controlled HuggingFace port of Image-Guided Head Suppression. The

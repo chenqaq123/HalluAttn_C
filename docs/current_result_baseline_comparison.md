@@ -120,8 +120,10 @@ Reading:
   run uses narrow surface forms (`people`, `table`) and reduces denied sequences
   from 260 broad-synonym variants to 4 surface-form variants. It removes denied
   `people/table` claims, but the same sample introduces a new `bottle` claim.
-  This verifies integration and exposes the next problem; it is not yet a
-  caption-quality result.
+- A closed-loop audit shows that the new `bottle` claim is also unsupported:
+  target score `0.0266`, best neighbor `cup` score `0.3573`, margin `-0.3307`,
+  and two-stage TDEV predicts absent. This verifies integration and exposes the
+  next method requirement; it is not yet a caption-quality result.
 
 ## Paper-Safe Claim
 

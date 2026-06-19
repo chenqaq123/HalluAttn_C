@@ -220,10 +220,12 @@ failure to the constructive TDEV method.
    The current surface-phrase gate suppresses only 4 surface-form sequences for
    the sample, rather than 260 broad synonym sequences, and removes denied
    `people/table` claims. But the model still routes into a new object claim
-   such as `bottle`. The next step is a closed-loop object-claim gate that
-   verifies newly routed object continuations, followed by multi-image
-   CHAIR/length/fluency evaluation, not more deterministic placeholder or
-   sentence-deletion variants.
+   such as `bottle`. A closed-loop audit confirms that this new `bottle` claim is
+   exactly the same target-vs-neighbor failure: target score `0.0266`, best
+   neighbor `cup` score `0.3573`, margin `-0.3307`, and two-stage TDEV predicts
+   absent. The next step is a closed-loop object-claim gate that verifies newly
+   routed object continuations, followed by multi-image CHAIR/length/fluency
+   evaluation, not more deterministic placeholder or sentence-deletion variants.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full
