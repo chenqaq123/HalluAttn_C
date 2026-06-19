@@ -1433,9 +1433,19 @@ to an introduced hallucinated `bottle` and OWLv2/TDEV rejects it with target
 score `0.0266`, best neighbor `cup` score `0.3573`, and margin `-0.3307`.
 
 After adding `bottling machine` and `bottling`, the model routes again, this time
-to `bottletop`. CHAIR and the current variant list do not catch it, but manual
-inspection shows it is still an object-like bottle paraphrase. The important
-conclusion is negative and useful: static alias expansion is not a robust method.
+to `bottletop`. CHAIR and the alias list do not catch it. A root-based audit fixes
+that coverage gap:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_decode_gate_closed_loop_example.py \
+  --examples_json detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_smoke/gated_generation_examples.json \
+  --output_dir detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_root_audit
+```
+
+Result: `introduced_root_leaks = [{"word": "bottle", "root": "bottl", "token": "bottletop"}]`.
+The important conclusion is negative and useful: static alias expansion is not a
+robust method, and CHAIR-only caption evaluation is too weak for this setting.
 The paper-facing caption method should use an open-vocabulary object-like phrase
 candidate verifier, then apply TDEV target-vs-neighbor evidence to those
 candidates, rather than relying on a growing hand-written deny list.

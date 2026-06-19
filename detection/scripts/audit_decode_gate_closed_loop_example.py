@@ -40,6 +40,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--neighbors_json", default="mitigation/results/semantic_neighbor_audit/cooccurrence_neighbors.json")
     p.add_argument("--chair_pkl", default="../pas/data/chair_coco.pkl")
     p.add_argument("--variant_aliases_json", default="detection/config/object_variant_aliases.json")
+    p.add_argument("--variant_roots_json", default="detection/config/object_variant_roots.json")
     p.add_argument("--output_dir", default="detection/baselines/results/tdev_decode_gate_closed_loop_example")
     p.add_argument(
         "--owlv2_model_path",
@@ -84,6 +85,31 @@ def variant_hits(caption: str, denied_words: set[str], aliases: dict[str, list[s
         for alias in aliases.get(word, []):
             if phrase_pattern(alias).search(text):
                 hits.append({"word": word, "alias": alias})
+    return hits
+
+
+def read_variant_roots(path: Path) -> dict[str, list[str]]:
+    if not path.exists():
+        return {}
+    raw = read_json(path)
+    return {
+        str(obj).strip().lower(): [str(root).strip().lower() for root in roots if str(root).strip()]
+        for obj, roots in raw.items()
+    }
+
+
+def root_hits(caption: str, denied_words: set[str], roots_by_word: dict[str, list[str]]) -> list[dict[str, str]]:
+    tokens = re.findall(r"[a-z0-9][a-z0-9-]*", caption.lower())
+    hits: list[dict[str, str]] = []
+    seen: set[tuple[str, str, str]] = set()
+    for word in sorted(denied_words):
+        for root in roots_by_word.get(word, []):
+            for token in tokens:
+                if root in token:
+                    key = (word, root, token)
+                    if key not in seen:
+                        hits.append({"word": word, "root": root, "token": token})
+                        seen.add(key)
     return hits
 
 
@@ -182,6 +208,7 @@ def main() -> None:
     examples = read_json(Path(args.examples_json))
     neighbors = read_neighbors(Path(args.neighbors_json), args.top_neighbors)
     variant_aliases = read_variant_aliases(Path(args.variant_aliases_json))
+    variant_roots = read_variant_roots(Path(args.variant_roots_json))
 
     caption_rows: list[dict[str, Any]] = []
     for example in examples:
@@ -216,6 +243,13 @@ def main() -> None:
             hit for hit in gated_variant_hits
             if (hit["word"], hit["alias"]) not in vanilla_hit_keys
         ]
+        vanilla_root_hits = root_hits(example["vanilla_caption"], denied, variant_roots)
+        gated_root_hits = root_hits(example["gated_caption"], denied, variant_roots)
+        vanilla_root_keys = {(hit["word"], hit["root"], hit["token"]) for hit in vanilla_root_hits}
+        introduced_root_leaks = [
+            hit for hit in gated_root_hits
+            if (hit["word"], hit["root"], hit["token"]) not in vanilla_root_keys
+        ]
         claim_scores = score_claims(Path(example["image_path"]), introduced, neighbors, args)
         audited.append(
             {
@@ -229,6 +263,8 @@ def main() -> None:
                 "introduced_hallucinated_words": introduced_hallucinated,
                 "gated_variant_hits": gated_variant_hits,
                 "introduced_variant_leaks": introduced_variant_leaks,
+                "gated_root_hits": gated_root_hits,
+                "introduced_root_leaks": introduced_root_leaks,
                 "introduced_claim_scores": claim_scores,
                 "interpretation": (
                     "A closed-loop gate should verify introduced_words before allowing "
@@ -241,6 +277,7 @@ def main() -> None:
         "examples_json": args.examples_json,
         "neighbors_json": args.neighbors_json,
         "variant_aliases_json": args.variant_aliases_json,
+        "variant_roots_json": args.variant_roots_json,
         "owlv2_model_path": args.owlv2_model_path,
         "top_neighbors": args.top_neighbors,
         "two_stage_low": args.two_stage_low,
