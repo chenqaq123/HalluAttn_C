@@ -29,6 +29,7 @@ for path in (DETECTION_SRC, MITIGATION_SCRIPTS, PAS_SRC):
 
 from owlv2_cache_utils import encode_image_object_scores
 from sinkdetect.chair import evaluate_chair, load_chair_evaluator
+from sinkdetect.open_vocab_claims import open_vocab_candidates
 
 
 def parse_args() -> argparse.Namespace:
@@ -113,125 +114,6 @@ def root_hits(caption: str, denied_words: set[str], roots_by_word: dict[str, lis
                         hits.append({"word": word, "root": root, "token": token})
                         seen.add(key)
     return hits
-
-
-OPEN_VOCAB_STOPWORDS = {
-    "a",
-    "an",
-    "and",
-    "are",
-    "as",
-    "at",
-    "be",
-    "been",
-    "being",
-    "by",
-    "can",
-    "closer",
-    "could",
-    "each",
-    "from",
-    "front",
-    "has",
-    "have",
-    "having",
-    "in",
-    "inside",
-    "into",
-    "is",
-    "its",
-    "likely",
-    "located",
-    "near",
-    "of",
-    "on",
-    "one",
-    "or",
-    "other",
-    "overall",
-    "possibly",
-    "prominently",
-    "seen",
-    "side",
-    "suggests",
-    "taking",
-    "that",
-    "the",
-    "there",
-    "these",
-    "this",
-    "to",
-    "two",
-    "up",
-    "visible",
-    "with",
-}
-
-OPEN_VOCAB_NONCLAIMS = {
-    "addition",
-    "atmosphere",
-    "building",
-    "caption",
-    "center",
-    "end",
-    "features",
-    "historical",
-    "image",
-    "large",
-    "left",
-    "nostalgic",
-    "objects",
-    "old-fashioned",
-    "parked",
-    "placed",
-    "portion",
-    "right",
-    "scene",
-    "setting",
-    "significant",
-    "surface",
-}
-
-
-def content_tokens(caption: str) -> list[str]:
-    return re.findall(r"[a-z][a-z0-9-]*", caption.lower())
-
-
-def open_vocab_candidates(caption: str, min_len: int = 3, limit: int = 32) -> list[str]:
-    """Heuristic object-like candidate discovery outside CHAIR/alias vocabularies.
-
-    This is intentionally conservative and dependency-free. It is an audit aid:
-    candidates still need visual verification before becoming paper-facing
-    mitigation decisions.
-    """
-    tokens = content_tokens(caption)
-    candidates: list[str] = []
-    seen: set[str] = set()
-
-    def keep(token: str) -> bool:
-        return (
-            len(token) >= min_len
-            and token not in OPEN_VOCAB_STOPWORDS
-            and token not in OPEN_VOCAB_NONCLAIMS
-            and not token.isdigit()
-        )
-
-    def add(phrase: str) -> None:
-        if phrase and phrase not in seen:
-            candidates.append(phrase)
-            seen.add(phrase)
-
-    for idx, token in enumerate(tokens):
-        if not keep(token):
-            continue
-        add(token)
-        if idx > 0 and keep(tokens[idx - 1]):
-            add(f"{tokens[idx - 1]} {token}")
-        if idx > 1 and keep(tokens[idx - 2]) and keep(tokens[idx - 1]):
-            add(f"{tokens[idx - 2]} {tokens[idx - 1]} {token}")
-        if len(candidates) >= limit:
-            break
-    return candidates[:limit]
 
 
 def two_stage_score(target_score: float, margin: float, low: float, high: float, margin_threshold: float) -> float:

@@ -201,3 +201,4 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_variant_alias_v3_open_vocab_audit/closed_loop_example_audit.json`
 - `detection/baselines/results/tdev_decode_gate_open_vocab_route_summary/open_vocab_leak_summary.md`
 - `detection/baselines/results/tdev_decode_gate_open_vocab_auto_map_summary/open_vocab_leak_summary.md`
+- `detection/src/sinkdetect/open_vocab_claims.py`

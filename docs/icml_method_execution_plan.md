@@ -250,7 +250,10 @@ failure to the constructive TDEV method.
    candidate-to-target mapping stage: detect new object candidates during
    decoding, map/paraphrase them to verifier targets, apply TDEV
    target-vs-neighbor evidence, and evaluate on a multi-image subset with CHAIR,
-   variant leaks, root leaks, open-vocabulary leaks, length, and fluency.
+   variant leaks, root leaks, open-vocabulary leaks, length, and fluency. The
+   candidate extraction and first lexical mapper are factored into
+   `sinkdetect.open_vocab_claims` so future decode-time and offline audits share
+   one implementation.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full

@@ -12,9 +12,17 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
+import sys
 from pathlib import Path
 from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DETECTION_SRC = REPO_ROOT / "detection" / "src"
+if str(DETECTION_SRC) not in sys.path:
+    sys.path.insert(0, str(DETECTION_SRC))
+
+from sinkdetect.open_vocab_claims import auto_map_candidate, denied_item
+
 
 DEFAULT_AUDITS = [
     (
@@ -74,103 +82,6 @@ def raw_example_by_image(payload: dict[str, Any]) -> dict[int, dict[str, Any]]:
     return {int(row["image_id"]): row for row in raw_examples}
 
 
-def denied_item(raw_example: dict[str, Any], word: str) -> dict[str, Any]:
-    for item in raw_example.get("denied_items", []):
-        if str(item.get("word", "")).strip().lower() == word:
-            return item
-    return {}
-
-
-def tokens(text: str) -> list[str]:
-    return re.findall(r"[a-z][a-z0-9]*", text.lower())
-
-
-def token_stem(token: str) -> str:
-    token = token.lower()
-    for suffix in ("ing", "ed", "es", "s"):
-        if len(token) > len(suffix) + 3 and token.endswith(suffix):
-            token = token[: -len(suffix)]
-            break
-    if len(token) > 4 and token.endswith("e"):
-        token = token[:-1]
-    return token
-
-
-def char_ngrams(text: str, n: int = 3) -> set[str]:
-    clean = "".join(tokens(text))
-    if len(clean) < n:
-        return {clean} if clean else set()
-    return {clean[idx : idx + n] for idx in range(len(clean) - n + 1)}
-
-
-def lexical_match_score(candidate: str, target: str) -> float:
-    cand_tokens = tokens(candidate)
-    target_tokens = tokens(target)
-    if not cand_tokens or not target_tokens:
-        return 0.0
-    cand_stems = [token_stem(token) for token in cand_tokens]
-    target_stems = [token_stem(token) for token in target_tokens]
-    cand_joined = "".join(cand_stems)
-    target_joined = "".join(target_stems)
-
-    scores: list[float] = []
-    for t_stem in target_stems:
-        token_scores = []
-        for c_stem in cand_stems:
-            if c_stem == t_stem:
-                token_scores.append(1.0)
-            elif len(t_stem) >= 4 and c_stem.startswith(t_stem):
-                token_scores.append(0.95)
-            elif len(c_stem) >= 4 and t_stem.startswith(c_stem):
-                token_scores.append(0.90)
-            else:
-                common = 0
-                for left, right in zip(c_stem, t_stem):
-                    if left != right:
-                        break
-                    common += 1
-                token_scores.append(common / max(len(t_stem), 1))
-        scores.append(max(token_scores) if token_scores else 0.0)
-
-    token_score = sum(scores) / len(scores)
-    if len(target_joined) >= 4 and target_joined in cand_joined:
-        token_score = max(token_score, 0.95)
-
-    cand_grams = char_ngrams(candidate)
-    target_grams = char_ngrams(target)
-    if cand_grams and target_grams:
-        ngram_score = len(cand_grams & target_grams) / len(target_grams)
-    else:
-        ngram_score = 0.0
-    return max(token_score, ngram_score)
-
-
-def auto_map_candidate(
-    candidate: str,
-    denied_items: list[dict[str, Any]],
-    threshold: float,
-) -> dict[str, Any]:
-    best_word = ""
-    best_score = 0.0
-    for item in denied_items:
-        word = str(item.get("word", "")).strip().lower()
-        score = lexical_match_score(candidate, word)
-        if score > best_score:
-            best_word = word
-            best_score = score
-    mapped = denied_item({"denied_items": denied_items}, best_word) if best_score >= threshold else {}
-    return {
-        "candidate": candidate,
-        "mapped_word": best_word if mapped else "",
-        "mapping_score": best_score,
-        "mapped_target_score": mapped.get("target_score"),
-        "mapped_best_neighbor": mapped.get("best_neighbor"),
-        "mapped_best_neighbor_score": mapped.get("best_neighbor_score"),
-        "mapped_tdev_margin": mapped.get("tdev_margin"),
-        "mapped_two_stage_present": mapped.get("two_stage_present"),
-    }
-
-
 def choose_route(example: dict[str, Any]) -> dict[str, str]:
     variant_leaks = example.get("introduced_variant_leaks", [])
     if variant_leaks:
@@ -200,7 +111,7 @@ def summarize_one(label: str, path: Path, mapping_threshold: float) -> list[dict
         route = choose_route(example)
         raw_scores = example.get("introduced_open_vocab_claim_scores", {})
         route_score = raw_scores.get(route["route"], {})
-        mapped = denied_item(raw_example, route["mapped_word"])
+        mapped = denied_item(raw_example.get("denied_items", []), route["mapped_word"])
         auto_mappings = [
             auto_map_candidate(candidate, raw_example.get("denied_items", []), mapping_threshold)
             for candidate in example.get("introduced_open_vocab_candidates", [])

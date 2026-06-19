@@ -1486,6 +1486,10 @@ detection/baselines/results/tdev_decode_gate_open_vocab_route_summary/
 detection/baselines/results/tdev_decode_gate_open_vocab_auto_map_summary/
 ```
 
+The open-vocabulary candidate extraction and lexical target mapper now live in
+`detection/src/sinkdetect/open_vocab_claims.py`, and both the audit and summary
+scripts use that shared implementation.
+
 The important conclusion is sharper than the earlier one-image reading.
 Open-vocabulary candidate discovery catches each route, but raw phrase scoring is
 not sufficient: `bottled drink`, `bottleneck`, and `bottling machine` all look
