@@ -110,7 +110,7 @@ def best_word_and_score(candidate: str, denied_items: list[dict[str, Any]]) -> t
     for item in denied_items:
         word = str(item.get("word", "")).strip().lower()
         score = lexical_match_score(candidate, word)
-        if score > best_score:
+        if score > best_score or (score == best_score and len(word) > len(best_word)):
             best_word = word
             best_score = score
     return best_word, best_score

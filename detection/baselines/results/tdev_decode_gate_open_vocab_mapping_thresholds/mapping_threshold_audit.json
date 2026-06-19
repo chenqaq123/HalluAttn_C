@@ -4,8 +4,8 @@
   "reference_threshold": 0.8,
   "reference_unmapped_nonroute_candidates": [
     {
-      "best_score": 0.5,
-      "best_word": "sink",
+      "best_score": 0.3333333333333333,
+      "best_word": "dog",
       "candidate": "drink",
       "expected_word": "",
       "image_id": 391158,
@@ -17,8 +17,8 @@
       "run": "single_token_first"
     },
     {
-      "best_score": 0.3333333333333333,
-      "best_word": "bench",
+      "best_score": 0.225,
+      "best_word": "potted plant",
       "candidate": "presence",
       "expected_word": "",
       "image_id": 391158,
@@ -298,12 +298,6 @@
       "nonroute_maps": [
         {
           "best_score": 0.5,
-          "best_word": "sink",
-          "candidate": "drink",
-          "run": "single_token_first"
-        },
-        {
-          "best_score": 0.5,
           "best_word": "tv",
           "candidate": "train might",
           "run": "single_token_first"
@@ -321,8 +315,8 @@
           "run": "variant_alias_v2"
         }
       ],
-      "reference_unmapped_nonroute_map_rate": 0.2222222222222222,
-      "reference_unmapped_nonroute_maps": 4,
+      "reference_unmapped_nonroute_map_rate": 0.16666666666666666,
+      "reference_unmapped_nonroute_maps": 3,
       "reference_unmapped_nonroute_total": 18,
       "route_positive_hits": 4,
       "route_positive_recall": 1.0,

@@ -174,7 +174,10 @@ def lexical_match_score(candidate: str, target: str) -> float:
                     if left != right:
                         break
                     common += 1
-                token_scores.append(common / max(len(t_stem), 1))
+                if common == len(t_stem) and len(t_stem) <= 3 and c_stem != t_stem:
+                    token_scores.append(0.5)
+                else:
+                    token_scores.append(common / max(len(t_stem), 1))
         scores.append(max(token_scores) if token_scores else 0.0)
 
     token_score = sum(scores) / len(scores)
@@ -183,8 +186,10 @@ def lexical_match_score(candidate: str, target: str) -> float:
 
     cand_grams = char_ngrams(candidate)
     target_grams = char_ngrams(target)
-    if cand_grams and target_grams:
+    if cand_grams and target_grams and target_joined in cand_joined:
         ngram_score = len(cand_grams & target_grams) / len(target_grams)
+        if len(target_joined) <= 3 and cand_joined != target_joined:
+            ngram_score = min(ngram_score, 0.5)
     else:
         ngram_score = 0.0
     return max(token_score, ngram_score)
@@ -208,7 +213,7 @@ def auto_map_candidate(
     for item in denied_items:
         word = str(item.get("word", "")).strip().lower()
         score = lexical_match_score(candidate, word)
-        if score > best_score:
+        if score > best_score or (score == best_score and len(word) > len(best_word)):
             best_word = word
             best_score = score
     mapped = denied_item(denied_items, best_word) if best_score >= threshold else {}

@@ -56,6 +56,52 @@ written as "we found a strong detector." The defensible claim is that semantic-
 neighbor target verification diagnoses and partially repairs the precise proxy
 failure exposed by `looking is not grounding`.
 
+## Open-Vocabulary Mapper Scope Audit
+
+Date: 2026-06-19
+
+The open-vocabulary route-leak audits support the decode-gate design direction,
+but a full cached-caption audit shows that the current lexical mapper is not yet
+a paper-ready detector.
+
+Reproducibility command:
+
+```bash
+/home/chenguanxu/miniconda3/envs/latentGuard/bin/python \
+  detection/scripts/audit_open_vocab_mapper_on_captions.py
+```
+
+Result files:
+
+```text
+detection/baselines/results/open_vocab_mapper_caption_cache_audit/open_vocab_mapper_caption_cache_audit.json
+detection/baselines/results/open_vocab_mapper_caption_cache_audit/open_vocab_mapper_caption_cache_audit.md
+```
+
+Key results on the 4,977-caption cached LLaVA generation scope:
+
+| Metric | Value |
+|---|---:|
+| open-vocabulary candidates | 157,476 |
+| mapped candidates at threshold 0.80 | 24,618 |
+| mapping rate | 0.1563 |
+| CHAIR-aligned mapped candidates | 22,056 |
+| CHAIR-aligned rate among mapped | 0.8959 |
+| extra mapped candidates | 2,562 |
+| extra map rate among mapped | 0.1041 |
+
+Interpretation: the mapper still catches the four known bottle route leaks in
+the single-image alias-chasing audits, and the threshold sweep keeps 4/4 route
+positives with 0/18 reference-unmapped nonroute maps for thresholds `0.70`
+through `1.00`. The full caption-cache audit is broader and exposes remaining
+lexical overreach against CHAIR's fixed vocabulary and granularity. Extra
+mapped candidates are conservative overreach signals rather than human-labeled
+false positives, but they are strong enough to downgrade the claim: the current
+lexical mapper is a useful diagnostic and prototype component, not the final
+open-vocabulary object-claim detector. The next method step must add better
+candidate phrase typing, target canonicalization, or verifier-backed validation
+before scaled caption-mitigation claims.
+
 ## Detection Baselines
 
 Result root:

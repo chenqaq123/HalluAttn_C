@@ -1,0 +1,1459 @@
+{
+  "candidate_limit": 32,
+  "chair_aligned_examples": [
+    {
+      "candidate": "air china airplane",
+      "caption": "The image features a large white Air China airplane parked on a runway. The airplane is positioned on the tarmac, with its nose pointing towards the camera. The airplane is surrounded by a few trucks, which are likely servicing or preparing the aircraft for its next flight.\n\nThere are several people scattered around the scene, likely working on the airplane or attending to the trucks. Some of them are closer to the airplane, while others are further away, indicating a busy and active environment.",
+      "chair_words": [
+        "airplane",
+        "truck",
+        "person"
+      ],
+      "image_id": 77123,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "air france airplane",
+      "caption": "The image features a large white Air France airplane parked on the tarmac at an airport. The airplane is positioned in the middle of the scene, with its wings visible. There are several trucks and cars surrounding the airplane, likely providing support and services for the aircraft.\n\nIn addition to the main airplane, there are two smaller airplanes visible in the background, one on the left side and the other on the right side of the scene. The presence of these smaller planes suggests that the airport is a busy hub for various aircraft.",
+      "chair_words": [
+        "airplane",
+        "truck",
+        "car"
+      ],
+      "image_id": 78580,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airlines airplane",
+      "caption": "The image features a large United Airlines airplane flying through a cloudy sky. The airplane is positioned in the middle of the scene, with its wings visible as it soars through the air. The sky is filled with clouds, creating a dramatic backdrop for the airplane's flight.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 344397,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airlines airplane",
+      "caption": "The image features a large American Airlines airplane parked on the runway at an airport. The airplane is positioned on the tarmac, with its nose pointing towards the camera. The airplane is a large commercial jet, and it appears to be preparing for takeoff or has recently landed.\n\nIn the background, there are several buildings visible, likely part of the airport infrastructure. The scene captures the essence of an active airport environment, with the airplane being the main focus of the image.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 360698,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airlines airplane flying",
+      "caption": "The image features a large United Airlines airplane flying through a cloudy sky. The airplane is positioned in the middle of the scene, with its wings visible as it soars through the air. The sky is filled with clouds, creating a dramatic backdrop for the airplane's flight.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 344397,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane flying over a large body of water, possibly a lake or a river. The airplane is positioned in the middle of the scene, with its wings visible as it soars above the water. The water appears to be calm, providing a serene backdrop for the airplane's flight.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 472,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a book open to a page with a picture of an airplane. The airplane is displayed in three different positions, showcasing its various shapes and designs. The book appears to be a vintage or historical publication, possibly discussing the evolution of airplane shapes and designs.\n\nIn addition to the airplane, there are several people visible in the image. One person is located on the left side of the book, another person is in the middle, and a third person is on the right side. They seem to be observing the book or the airplane, possibly discussing the content or admiring the historical design.",
+      "chair_words": [
+        "book",
+        "airplane",
+        "person"
+      ],
+      "image_id": 1342,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane flying high in the sky, with its landing gear down. The airplane is positioned in the middle of the scene, and its wings are spread out, showcasing its impressive size. The sky is cloudy, adding a dramatic backdrop to the scene.\n\nBelow the airplane, there is a field with a few buildings scattered around. One of the buildings is located near the bottom left corner of the image, while another is situated in the middle-right area. A third building can be seen in the top right corner of the image.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 8548,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features an airport scene with several airplanes parked on the tarmac. One large airplane is prominently visible in the center of the scene, while another smaller airplane is located towards the left side of the image. There are also two buses present in the scene, one near the left edge of the image and the other closer to the center.\n\nIn addition to the airplanes and buses, there are a few trucks scattered around the tarmac. One truck is located near the right edge of the image, another is in the middle, and the third truck is situated closer to the left side. The presence of these vehicles suggests that the airport is actively preparing for takeoff or has recently arrived from a flight.",
+      "chair_words": [
+        "airplane",
+        "bus",
+        "truck"
+      ],
+      "image_id": 18975,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large commercial airplane flying high in the sky, with its wings spread wide. The airplane is positioned in the middle of the scene, and its wings are clearly visible. The sky is a deep blue, providing a beautiful backdrop for the airplane's flight.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 43678,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image is a black and white photo of an airplane on a runway, with several people standing around it. There are at least nine people visible in the scene, some of them closer to the airplane while others are further away. The airplane is positioned in the middle of the scene, with its wings extending to the sides.\n\nThe people in the photo appear to be engaged in various activities, possibly inspecting or working on the airplane. The presence of multiple individuals suggests that this could be a busy airport or a maintenance area where people are involved in the operation and maintenance of the aircraft.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 49014,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a man standing next to a small airplane, holding a leash with two dogs on it. The dogs are positioned close to the man, with one dog on the left side and the other on the right side. The man appears to be the owner of the dogs and the airplane.\n\nThere are several other people in the scene, some of them standing near the airplane and others further away. A suitcase can be seen on the ground, possibly belonging to one of the people in the scene. The overall atmosphere suggests a gathering or event involving the airplane and the dogs.",
+      "chair_words": [
+        "person",
+        "airplane",
+        "dog",
+        "suitcase"
+      ],
+      "image_id": 53677,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large passenger jet parked on the runway at an airport. The airplane is a prominent focal point in the scene, occupying a significant portion of the image. \n\nIn addition to the main airplane, there are several other airplanes visible in the background, both near and far from the main subject. Some of these airplanes are parked on the runway, while others are positioned further away. The presence of multiple airplanes suggests that this airport is quite busy and serves a variety of aircraft.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 67327,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane parked on the tarmac at an airport. The airplane's tail end is visible, with its distinctive red and white colors. The airplane is positioned on the runway, and there are several trucks and cars around it, likely providing support services or transportation for the aircraft.\n\nIn addition to the airplane, there are two people in the scene, one near the center of the image and another closer to the right side. They might be airport staff or passengers waiting for their flight.",
+      "chair_words": [
+        "airplane",
+        "truck",
+        "car",
+        "person"
+      ],
+      "image_id": 68457,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white airplane parked on the tarmac at an airport. The airplane is positioned in the middle of the scene, with its nose pointing towards the left side of the image. There are two trucks visible in the scene, one located on the left side of the airplane and the other on the right side.\n\nIn addition to the trucks, there are several people scattered around the airplane and the tarmac. Some of them are standing close to the airplane, while others are further away. The presence of these individuals suggests that they might be working on the airplane or attending to other airport-related tasks.",
+      "chair_words": [
+        "airplane",
+        "truck",
+        "person"
+      ],
+      "image_id": 74434,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white Air China airplane parked on a runway. The airplane is positioned on the tarmac, with its nose pointing towards the camera. The airplane is surrounded by a few trucks, which are likely servicing or preparing the aircraft for its next flight.\n\nThere are several people scattered around the scene, likely working on the airplane or attending to the trucks. Some of them are closer to the airplane, while others are further away, indicating a busy and active environment.",
+      "chair_words": [
+        "airplane",
+        "truck",
+        "person"
+      ],
+      "image_id": 77123,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white Air France airplane parked on the tarmac at an airport. The airplane is positioned in the middle of the scene, with its wings visible. There are several trucks and cars surrounding the airplane, likely providing support and services for the aircraft.\n\nIn addition to the main airplane, there are two smaller airplanes visible in the background, one on the left side and the other on the right side of the scene. The presence of these smaller planes suggests that the airport is a busy hub for various aircraft.",
+      "chair_words": [
+        "airplane",
+        "truck",
+        "car"
+      ],
+      "image_id": 78580,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white and red airplane parked on the tarmac at an airport. The airplane is a Jet2 airplane, and it is currently not in use. The airplane is positioned on the runway, and there is a staircase attached to the side of the plane, indicating that it is ready for passengers to board.\n\nIn the background, there are trees visible, adding to the overall atmosphere of the airport. The scene captures the essence of an airport, with the airplane being the main focus of the image.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 105552,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white airplane parked on a runway, with its nose pointing towards the camera. The airplane is surrounded by a few other airplanes, with one located to the left and another to the right. The main airplane is positioned in the center of the scene, and its propellers are visible, indicating that it is a propeller-driven aircraft. The runway appears to be wet, possibly due to recent rain or dew.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 109045,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large commercial airplane flying high in the sky, with its wings spread wide. The airplane is positioned in the middle of the scene, and its wings are clearly visible as it soars through the air. The sky is a deep blue, providing a beautiful backdrop for the airplane's flight.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 110359,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a red and black airplane flying through a blue sky. The airplane is leaving a trail of smoke behind it, indicating that it is performing a stunt or maneuver. The plane is positioned in the middle of the scene, with the smoke trail extending from it. The sky is clear and blue, providing a perfect backdrop for the airplane's impressive display.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 115178,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a train station with two silver passenger trains parked on the tracks. One train is positioned closer to the left side of the image, while the other is located more towards the center. The trains are parked next to each other, and there is a bridge visible in the background.\n\nIn the sky above the trains, an airplane can be seen flying, adding a sense of motion to the scene. The overall atmosphere of the image is that of a busy transportation hub with various modes of transportation in use.",
+      "chair_words": [
+        "train",
+        "airplane"
+      ],
+      "image_id": 116722,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane flying through a cloudy sky. The airplane is positioned in the middle of the scene, with its wings visible as it soars through the air. The sky is filled with clouds, creating a dramatic backdrop for the airplane's flight. The scene captures the beauty of the airplane's journey through the sky, showcasing its impressive size and the vastness of the cloudy sky.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 119132,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large green truck parked in a parking lot, with a fuel tanker attached to its back. The truck is positioned near the center of the scene. In the background, there is a large airplane, possibly a jumbo jet, parked on the tarmac. \n\nThere are several cars in the parking lot, with one car located on the left side of the truck, another car on the right side, and a third car further back in the scene. The presence of the airplane and the truck with a fuel tanker suggest that this location might be a transportation hub or an airport.",
+      "chair_words": [
+        "truck",
+        "airplane",
+        "car"
+      ],
+      "image_id": 127668,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a silver airplane parked on a runway, with its hatch open. The airplane is a small, single-engine aircraft, and it appears to be a fighter jet. The hatch is open, revealing the interior of the plane.\n\nThere are two people visible in the scene, one standing closer to the left side of the airplane and the other person standing further to the right. They seem to be observing the aircraft or possibly working on it.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 139871,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane flying over a body of water, possibly an ocean or a lake. The airplane is positioned towards the right side of the scene, with its wings visible as it soars through the sky. Another airplane can be seen in the background, flying in the same direction as the main airplane.\n\nThere are several people scattered around the scene, possibly enjoying the view or attending to their own activities. Some of them are closer to the water, while others are further away, near the airplanes. The overall atmosphere of the image is one of travel and adventure, with the airplanes and people coexisting in the vast expanse of the sky and water.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 147418,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image is a black and white photograph of a large propeller airplane parked on a runway. The airplane is surrounded by several people, some of whom are standing on a ladder leading to the airplane's door. There are at least 13 people visible in the scene, with some standing closer to the airplane and others further away.\n\nThe people appear to be engaged in various activities, such as boarding or disembarking the airplane, or simply observing the aircraft. The presence of the ladder suggests that the plane is being prepared for a flight or has recently arrived.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 167588,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane flying high in the sky, with its landing gear down. The airplane is positioned in the middle of the scene, and its size is quite impressive. The sky is cloudy, adding to the dramatic atmosphere of the scene.\n\nThere are several people visible on the ground, likely airport staff or passengers waiting for the plane to land. They are scattered around the area, with some closer to the airplane and others further away. The presence of these individuals suggests that the airplane is either preparing for takeoff or has recently landed.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 172851,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane flying high in the sky, with its wings spread wide. The airplane is positioned in the middle of the scene, and its wings are visible as it soars through the air. The sky is cloudy, adding a dramatic backdrop to the scene. The airplane appears to be a fighter jet, showcasing its impressive size and design as it glides through the sky.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 173737,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white Virgin Atlantic airplane parked on a runway. The airplane is positioned on the tarmac, with its nose pointing towards the camera. The airplane is surrounded by a grassy area, giving the impression of being in a rural setting.\n\nThere are several people visible in the scene, likely airport staff or passengers. Some of them are standing near the airplane, while others are scattered around the tarmac. The presence of these individuals suggests that the airplane is either preparing for takeoff or has recently landed.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 174284,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image captures a busy highway with several cars driving on it. In the sky above the highway, a large airplane is flying, adding a sense of motion to the scene. The airplane is positioned towards the center of the image, and its size and altitude make it stand out against the backdrop of the cloudy sky.\n\nThere are multiple cars visible on the highway, with some closer to the foreground and others further away. The cars are of various sizes and are scattered across the road, creating a sense of traffic and activity.",
+      "chair_words": [
+        "car",
+        "airplane"
+      ],
+      "image_id": 175942,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a small red and white biplane flying through the sky. The airplane is in the middle of the scene, with its wings spread out, showcasing its impressive design. There are two people visible in the cockpit of the plane, likely enjoying the flight and the view.\n\nThe scene is set against a cloudy sky, adding a dramatic backdrop to the image. The airplane appears to be flying at a relatively low altitude, as it is close to the ground.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 183500,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airport runway with several airplanes parked on the tarmac. One of the airplanes is a large jetliner, which is positioned towards the center of the scene. Another airplane can be seen further back on the runway, and a third one is located closer to the left side of the image.\n\nThere are a few people scattered around the airport, likely airport staff or passengers. One person is standing near the left edge of the image, another person is located closer to the center, and the third person is standing near the right edge of the scene. The overall atmosphere of the image suggests a busy airport with various activities taking place.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 183895,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white airplane flying through the sky, with its landing gear down. The airplane is a twin-engine propeller plane, and it appears to be a commercial airliner. The plane is flying in a clear blue sky, and its landing gear is clearly visible as it prepares to land. The airplane is flying at a relatively low altitude, as indicated by the close-up view of the plane in the sky.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 189203,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white airplane parked on the tarmac, with its nose facing the viewer. The airplane has a noticeable dent in its nose, indicating that it has been in a collision or experienced some damage. The plane is positioned in front of a building, which could be a hangar or a terminal.\n\nThere are two people visible in the scene, one standing closer to the left side of the airplane and the other person further to the right. Additionally, there is a truck parked near the right side of the airplane, possibly for maintenance or support purposes.",
+      "chair_words": [
+        "airplane",
+        "person",
+        "truck"
+      ],
+      "image_id": 189955,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image captures a large commercial airplane flying low over a runway, with its landing gear down. The airplane is positioned in the middle of the scene, and its wings are clearly visible. The plane appears to be in the process of landing, as it is flying close to the ground.\n\nThere are several people on the ground, likely airport staff or passengers, scattered around the runway. Some of them are closer to the airplane, while others are further away. The scene gives a sense of anticipation as the airplane prepares to touch down.",
+      "chair_words": [
+        "airplane",
+        "person"
+      ],
+      "image_id": 196185,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large jetliner flying high in the sky, with its wings spread wide. The airplane is positioned in the middle of the scene, and its wings are clearly visible as it soars through the air. The sky is a deep blue, providing a beautiful backdrop for the airplane's flight.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 202573,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large airplane flying through the sky, with a full moon visible in the background. The airplane is positioned towards the center of the scene, and the moon is located above it, creating a striking contrast between the two objects. The moon appears to be quite large, covering a significant portion of the sky. The airplane's presence and the moon's glow create a captivating and serene atmosphere in the image.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 214205,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a large white airplane parked on the tarmac at an airport. The airplane is positioned in the middle of the scene, with its wings visible. The airplane is a British Airways jet, and it appears to be a passenger plane.\n\nIn the background, there are several cars and trucks scattered around the airport, likely providing support services for the airplane and other aircraft. Some of the vehicles are parked closer to the airplane, while others are further away. The scene captures the busy atmosphere of an airport, with various vehicles and airplanes in motion.",
+      "chair_words": [
+        "airplane",
+        "person",
+        "car",
+        "truck"
+      ],
+      "image_id": 224802,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "airplane",
+      "caption": "The image features a small airplane that has crashed into the water, resting on its side. The plane is situated in the middle of a body of water, possibly a lake or a river. The scene appears to be calm and serene, with no signs of distress or chaos.\n\nThe airplane is the main focus of the image, occupying a significant portion of the water's surface. The surrounding area is characterized by rocks, which can be seen both near the water's edge and further away. The combination of the airplane and the rocks creates a unique and interesting visual contrast.",
+      "chair_words": [
+        "airplane"
+      ],
+      "image_id": 231582,
+      "is_chair_aligned": 1,
+      "is_grounded_chair_word": 1,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "airplane",
+      "mapping_score": 1.0
+    }
+  ],
+  "chair_aligned_mapped_candidates": 22056,
+  "chair_aligned_rate_among_mapped": 0.8959298074579576,
+  "extra_map_examples": [
+    {
+      "candidate": "appliances including multiple",
+      "caption": "The image depicts a man standing in a large, well-equipped kitchen. He is wearing a white shirt and appears to be a chef, possibly preparing a meal. The kitchen is filled with various cooking utensils and appliances, including multiple knives, spoons, and bowls.\n\nThere are several bottles placed around the kitchen, possibly containing ingredients or cooking oils. A refrigerator is visible in the background, and an oven can be seen on the right side of the kitchen. The chef seems to be focused on his task, creating a professional atmosphere in the kitchen.",
+      "chair_words": [
+        "person",
+        "knife",
+        "spoon",
+        "bottle",
+        "refrigerator",
+        "oven"
+      ],
+      "image_id": 35525,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "apple",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "pineapple",
+      "caption": "The image features a dining table with a large pizza placed on a wooden tray. The pizza is topped with ham and pineapple, making it a delicious and appetizing meal. A person is present in the scene, likely enjoying the pizza or preparing to eat it.\n\nThere are also a couple of knives on the table, one near the pizza and another further away. The table setting creates a cozy and inviting atmosphere for a meal shared with friends or family.",
+      "chair_words": [
+        "dining table",
+        "pizza",
+        "person",
+        "knife"
+      ],
+      "image_id": 115793,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "apple",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "pineapple",
+      "caption": "The image features a dining table with a pineapple and a banana placed on it. The pineapple is situated towards the left side of the table, while the banana is positioned on the right side. The table appears to be a granite countertop, adding a touch of elegance to the scene.\n\nIn the background, there are two bottles, one located near the top left corner and the other towards the top right corner of the image. Additionally, there is a knife placed on the table, positioned near the center of the scene.",
+      "chair_words": [
+        "dining table",
+        "banana",
+        "bottle",
+        "knife"
+      ],
+      "image_id": 321973,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "apple",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "pineapple",
+      "caption": "The image features a dining table with a plate of food, including a dessert, placed on it. The dessert is a piece of cake, and it is accompanied by a slice of pineapple. There is also a cup of coffee on the table, adding to the meal. \n\nIn addition to the main dish, there are two wine glasses on the table, one closer to the dessert and the other further away. A bowl can be seen on the table as well, possibly containing a side dish or additional food. The table setting creates a pleasant and inviting atmosphere for a meal.",
+      "chair_words": [
+        "dining table",
+        "cake",
+        "cup",
+        "wine glass",
+        "bowl"
+      ],
+      "image_id": 497593,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "apple",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "pineapple making",
+      "caption": "The image features a dining table with a large pizza placed on a wooden tray. The pizza is topped with ham and pineapple, making it a delicious and appetizing meal. A person is present in the scene, likely enjoying the pizza or preparing to eat it.\n\nThere are also a couple of knives on the table, one near the pizza and another further away. The table setting creates a cozy and inviting atmosphere for a meal shared with friends or family.",
+      "chair_words": [
+        "dining table",
+        "pizza",
+        "person",
+        "knife"
+      ],
+      "image_id": 115793,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "apple",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a dining table filled with a variety of food and desserts, creating an inviting atmosphere for a teddy bear picnic. There are several teddy bears placed around the table, with some sitting on chairs and others standing. The teddy bears are positioned in different areas of the table, adding a playful touch to the scene.\n\nThe table is adorned with a variety of food items, including cakes, sandwiches, and carrots. There are multiple cups and bowls placed around the table, possibly containing drinks or additional food items. The table is set up to accommodate the teddy bears and their guests, making it an ideal setting for a fun and imaginative picnic.",
+      "chair_words": [
+        "dining table",
+        "teddy bear",
+        "chair",
+        "cake",
+        "sandwich",
+        "carrot",
+        "cup",
+        "bowl"
+      ],
+      "image_id": 9262,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features two teddy bears sitting next to each other on a table. One teddy bear is positioned on the left side of the table, while the other is on the right side. Both teddy bears are wearing sweaters, adding a cozy and cuddly appearance to the scene.\n\nIn the background, there is a picture of a little girl, possibly a family member or a cherished memory. The teddy bears and the picture together create a warm and inviting atmosphere in the room.",
+      "chair_words": [
+        "teddy bear",
+        "dining table",
+        "person"
+      ],
+      "image_id": 13232,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a man lying on a couch, holding a white teddy bear in his arms. He appears to be sleeping or resting comfortably on the couch. The teddy bear is positioned close to the man, with its head resting on his chest. The scene conveys a sense of relaxation and comfort.",
+      "chair_words": [
+        "person",
+        "couch",
+        "teddy bear"
+      ],
+      "image_id": 30290,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a man sitting on a toilet with a blue stuffed animal, possibly a teddy bear, placed between his legs. The man appears to be in a relaxed position, possibly resting or sleeping. The scene takes place in a bathroom, as evidenced by the presence of a toilet and a sink in the background.",
+      "chair_words": [
+        "person",
+        "toilet",
+        "teddy bear",
+        "sink"
+      ],
+      "image_id": 32258,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a young boy wearing a sweater and holding a brown teddy bear in front of his face. The boy is smiling and appears to be enjoying the moment. There are several other people in the scene, some of them standing close to the boy and others further away.\n\nIn the background, there is a backpack placed on the ground, and a chair can be seen in the middle of the scene. The overall atmosphere of the image is playful and joyful, with the boy and his teddy bear being the main focus.",
+      "chair_words": [
+        "person",
+        "teddy bear",
+        "backpack",
+        "chair"
+      ],
+      "image_id": 38666,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a brown teddy bear sitting on a chair, which is covered with a wicker material. The teddy bear is wearing a red bow tie, adding a touch of charm to the scene. The chair is positioned in the center of the image, with the teddy bear occupying a significant portion of the chair's space. The overall atmosphere of the scene is warm and inviting, with the teddy bear appearing to be the main focus of the image.",
+      "chair_words": [
+        "teddy bear",
+        "chair",
+        "tie"
+      ],
+      "image_id": 44068,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features two large stuffed teddy bears sitting next to each other on a white surface. The teddy bears are positioned in a way that they appear to be looking at each other. One teddy bear is on the left side of the image, while the other is on the right side.\n\nIn addition to the teddy bears, there are several other stuffed animals scattered around the scene. Some of these stuffed animals are located near the top left corner of the image, while others are placed in the middle and right side of the scene. The presence of these stuffed animals adds a playful and cozy atmosphere to the image.",
+      "chair_words": [
+        "teddy bear"
+      ],
+      "image_id": 57222,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image is a black and white photograph of a young girl standing in a grassy yard, holding a teddy bear. She is positioned in the center of the scene, with the teddy bear held close to her chest. The girl appears to be enjoying her time outdoors, surrounded by the natural environment.\n\nIn the background, there is a baby carriage, which suggests that the girl might be accompanied by a younger sibling or a baby. The baby carriage is located on the left side of the image, with the girl standing in front of it.",
+      "chair_words": [
+        "person",
+        "teddy bear"
+      ],
+      "image_id": 58070,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features two teddy bears sitting next to each other on a table. One teddy bear is wearing a brown hat, while the other one is wearing a green hat. They are both holding sports balls, with a total of five sports balls surrounding them. The sports balls are of various colors, including blue, yellow, and green. The scene creates a playful and fun atmosphere.",
+      "chair_words": [
+        "teddy bear",
+        "dining table",
+        "sports ball"
+      ],
+      "image_id": 66568,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features two young girls sitting on a bed, playing with a stuffed animal. One girl is sitting on the left side of the bed, while the other is on the right side. They are both holding the stuffed animal, which appears to be a pink teddy bear.\n\nThe bed is covered with a striped blanket, and there are two pillows on it, one near the left girl and the other near the right girl. A handbag can be seen placed on the bed, close to the right girl. The scene captures a moment of playful interaction between the two young girls.",
+      "chair_words": [
+        "person",
+        "bed",
+        "teddy bear",
+        "handbag"
+      ],
+      "image_id": 71302,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a car's dashboard with a small teddy bear sitting on top of the radio. The teddy bear is positioned in the middle of the dashboard, and it appears to be a cute and playful decoration. The car's interior is predominantly grey, with the dashboard being the main focus of the scene.",
+      "chair_words": [
+        "car",
+        "teddy bear"
+      ],
+      "image_id": 80413,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a woman lying on a couch, holding a teddy bear close to her face. She appears to be sleeping or resting, with the teddy bear providing a sense of comfort and companionship. The couch is situated in a living room, and the woman's position suggests a relaxed and cozy atmosphere.",
+      "chair_words": [
+        "person",
+        "couch",
+        "teddy bear"
+      ],
+      "image_id": 116861,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a man wearing a blue and white jersey, standing on a stage and holding a microphone. He appears to be singing into the microphone, capturing the attention of the audience. \n\nIn the scene, there are two other people present, one standing behind the man with the microphone and another person located further back. A teddy bear can be seen in the foreground, possibly belonging to one of the individuals in the scene. The overall atmosphere suggests a lively event or performance.",
+      "chair_words": [
+        "person",
+        "teddy bear"
+      ],
+      "image_id": 127120,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a brown teddy bear sitting on a shelf, with its head resting on its arm. The teddy bear appears to be a stuffed animal, and it is positioned in a way that it seems to be looking at the camera. The shelf is located in a dark room, which adds a sense of mystery to the scene.",
+      "chair_words": [
+        "teddy bear"
+      ],
+      "image_id": 131516,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a baby lying on a bed, wearing a green and white onesie. The baby is positioned in the center of the scene, with a brown teddy bear placed next to them. The teddy bear is quite large, occupying a significant portion of the bed. The baby appears to be playing with the teddy bear, creating a warm and cozy atmosphere.",
+      "chair_words": [
+        "person",
+        "bed",
+        "teddy bear"
+      ],
+      "image_id": 137130,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a baby girl sleeping peacefully on a bed, surrounded by a cozy environment. She is lying next to a large stuffed teddy bear, which is placed on her left side. The teddy bear is positioned in such a way that it appears to be hugging the baby girl.\n\nThe bed is covered with a colorful blanket, adding to the warm and comforting atmosphere of the scene. The baby girl and the teddy bear together create a heartwarming and adorable moment.",
+      "chair_words": [
+        "person",
+        "bed",
+        "teddy bear"
+      ],
+      "image_id": 163105,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a cozy scene with a red teddy bear sitting on a couch, wearing a red hat and a scarf. The teddy bear is positioned in the center of the scene, occupying a significant portion of the image. \n\nIn addition to the teddy bear, there is a small stuffed animal, possibly a teddy bear or a rabbit, sitting next to it. The couch is covered with a blanket, adding to the warm and inviting atmosphere of the scene.",
+      "chair_words": [
+        "teddy bear",
+        "couch"
+      ],
+      "image_id": 190700,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a brown teddy bear sitting on a laptop computer, seemingly using it. The laptop is placed on a table, and the teddy bear is positioned in front of the screen. The scene appears to be a playful and creative setup, as if the teddy bear were a person using the laptop.\n\nIn addition to the laptop and teddy bear, there is a mouse located on the right side of the table. The table occupies most of the image, with the laptop and teddy bear being the main focus.",
+      "chair_words": [
+        "teddy bear",
+        "laptop",
+        "dining table",
+        "person",
+        "mouse"
+      ],
+      "image_id": 197616,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a brown dog lying on a couch, resting its head on a brown teddy bear. The dog appears to be sleeping or relaxing, with its eyes closed. The teddy bear is positioned close to the dog, providing a sense of comfort and companionship.\n\nIn the background, there is a TV mounted on the wall, and a chair can be seen nearby. The scene creates a cozy and peaceful atmosphere, showcasing the bond between the dog and the teddy bear.",
+      "chair_words": [
+        "dog",
+        "couch",
+        "teddy bear",
+        "tv",
+        "chair"
+      ],
+      "image_id": 205854,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a statue of a man holding a teddy bear, standing in a park. The statue is positioned in the middle of the scene, with the man's arms holding the teddy bear. The statue is surrounded by a lush green field, creating a serene and peaceful atmosphere.\n\nIn the background, there are several cars parked, with some closer to the statue and others further away. Additionally, there are a few benches scattered throughout the park, providing seating for visitors to enjoy the surroundings.",
+      "chair_words": [
+        "person",
+        "teddy bear",
+        "car",
+        "bench",
+        "chair"
+      ],
+      "image_id": 209763,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a white teddy bear sitting on top of a pile of cardboard boxes. The teddy bear is positioned in the center of the scene, surrounded by various boxes. Some of the boxes are stacked on top of each other, while others are placed side by side. The scene appears to be a storage area or a place where boxes are being organized.",
+      "chair_words": [
+        "teddy bear"
+      ],
+      "image_id": 219283,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a bed with two cats lying down in a red suitcase. The cats are positioned close to each other, enjoying their time together. The suitcase is placed on the bed, and the cats seem to be relaxing and sleeping in it.\n\nIn addition to the cats and the suitcase, there are a few other items in the scene. A teddy bear is located on the left side of the bed, and a backpack can be seen on the right side. A chair is also present in the background, near the top left corner of the image.",
+      "chair_words": [
+        "bed",
+        "cat",
+        "suitcase",
+        "teddy bear",
+        "backpack",
+        "chair"
+      ],
+      "image_id": 220292,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a young boy and a young girl sitting on the floor, playing with each other. The boy is holding a toothbrush, possibly pretending to brush the girl's teeth. They are surrounded by various toys, including a teddy bear and a couple of books.\n\nThe room appears to be a playroom, with a couch in the background and a chair nearby. There are also a few cups scattered around the room, possibly containing drinks for the children. The scene captures a fun and playful moment between the two children.",
+      "chair_words": [
+        "person",
+        "toothbrush",
+        "teddy bear",
+        "book",
+        "couch",
+        "chair",
+        "cup"
+      ],
+      "image_id": 233187,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a Christmas-themed room with a dining table surrounded by chairs. On the table, there are several teddy bears, including a large teddy bear on the left side and a smaller one on the right side. The teddy bears are positioned as if they are attending a Christmas dinner, with some of them sitting on chairs and others standing around the table.\n\nIn addition to the teddy bears, there are a few other items on the table, such as a bowl, a spoon, and a fork. The room also has a Christmas tree in the background, adding to the festive atmosphere.",
+      "chair_words": [
+        "dining table",
+        "chair",
+        "teddy bear",
+        "bowl",
+        "spoon",
+        "fork"
+      ],
+      "image_id": 249129,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a man lying in bed, holding a brown teddy bear close to his face. The teddy bear is positioned on his chest, and the man appears to be smiling as he cuddles the stuffed animal. The scene is warm and comforting, showcasing the bond between the man and his teddy bear.",
+      "chair_words": [
+        "person",
+        "bed",
+        "teddy bear"
+      ],
+      "image_id": 252354,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a woman sitting on a bed, holding a brown teddy bear in her arms. She appears to be enjoying her time with the stuffed animal. The bed is covered with a blanket, and there is a clock on the wall above the bed.\n\nIn the room, there are a few other items, including a bottle located near the left side of the bed, a book placed on the bed, and a cup situated on the right side. The woman's presence and the teddy bear create a cozy and comfortable atmosphere in the room.",
+      "chair_words": [
+        "person",
+        "bed",
+        "teddy bear",
+        "clock",
+        "bottle",
+        "book",
+        "cup"
+      ],
+      "image_id": 261787,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a man sitting on a couch, with a newspaper in his hand. He is wearing a red shirt and appears to be reading the newspaper. The couch is positioned in the center of the scene, and the man is comfortably seated on it.\n\nThere are a few other items in the room, including a teddy bear located on the left side of the couch, a backpack placed on the floor near the left edge of the couch, and a handbag situated on the floor to the right of the couch. The room also has a chair positioned in the background, near the right edge of the image.",
+      "chair_words": [
+        "person",
+        "couch",
+        "chair",
+        "teddy bear",
+        "backpack",
+        "handbag"
+      ],
+      "image_id": 269098,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a large white teddy bear sitting on a chair, holding a gold bowl in its arms. The teddy bear is positioned in the center of the scene, with the bowl placed on its lap. The chair is located towards the left side of the image.\n\nIn the background, there are two potted plants, one on the left side and the other on the right side of the image. Additionally, there are two vases, one near the left edge of the image and the other towards the right side. A clock can be seen on the wall, slightly above the center of the image.",
+      "chair_words": [
+        "teddy bear",
+        "chair",
+        "bowl",
+        "potted plant",
+        "clock"
+      ],
+      "image_id": 274803,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a white couch with a group of stuffed animals sitting on it. There are four stuffed animals in total, with one being a teddy bear, another a pig, and two chickens. The teddy bear is positioned on the left side of the couch, while the pig is situated in the middle, and the two chickens are on the right side. The arrangement of the stuffed animals creates a cozy and playful atmosphere.",
+      "chair_words": [
+        "couch",
+        "teddy bear"
+      ],
+      "image_id": 277888,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a small child sleeping peacefully in a crib. The child is lying on a blanket, which is placed on the crib mattress. The crib is positioned in a corner of the room, and the child appears to be comfortably resting.\n\nIn the room, there is a chair located near the crib, and a teddy bear can be seen placed on the floor, close to the crib. The scene conveys a sense of warmth and comfort, as the child enjoys a peaceful sleep in their cozy bed.",
+      "chair_words": [
+        "person",
+        "chair",
+        "teddy bear",
+        "bed"
+      ],
+      "image_id": 280760,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a brown teddy bear wearing a green Starbucks apron, sitting on a desk in front of a computer screen. The teddy bear is positioned in the center of the scene, and the computer screen is located on the right side of the image.\n\nIn the background, there is a dining table with a cup placed on it. The cup is situated towards the left side of the table, and a spoon can be seen resting on the table as well. The scene appears to be a cozy and comfortable workspace.",
+      "chair_words": [
+        "teddy bear",
+        "dining table",
+        "laptop",
+        "cup",
+        "spoon"
+      ],
+      "image_id": 316400,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a group of teddy bears arranged in a scene that resembles a hockey game. One of the teddy bears is holding a hockey stick, while another teddy bear is positioned in front of it, as if it has just been hit by the stick. There are a total of four teddy bears in the scene, with one on the left side, one in the middle, and two on the right side.\n\nThe arrangement of the teddy bears creates a playful and fun atmosphere, as if they are participating in a friendly game of hockey.",
+      "chair_words": [
+        "teddy bear"
+      ],
+      "image_id": 328030,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a black teddy bear sitting on a ledge, overlooking a beautiful ocean view. The teddy bear appears to be looking out over the water, possibly enjoying the view or watching the boats passing by. \n\nIn the background, there are several boats scattered across the ocean, adding to the picturesque scene. The teddy bear is positioned near the center of the image, with the ocean stretching out in the background, creating a serene and peaceful atmosphere.",
+      "chair_words": [
+        "teddy bear",
+        "boat"
+      ],
+      "image_id": 348186,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a brown teddy bear sitting in a wicker basket, which is hanging from a pole. The teddy bear appears to be wearing a soccer jersey, adding a playful touch to the scene. The basket is filled with various items, including a sports ball, a bow, and a pair of scissors. The teddy bear is positioned in the center of the basket, surrounded by these items.",
+      "chair_words": [
+        "teddy bear",
+        "sports ball",
+        "tie",
+        "scissors"
+      ],
+      "image_id": 360762,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    },
+    {
+      "candidate": "bear",
+      "caption": "The image features a cozy bed with a white comforter and a brown teddy bear sitting on top of it. The teddy bear is positioned towards the center of the bed, and it appears to be the main focus of the scene. The bed is adorned with a floral print, adding a touch of elegance to the overall setting.",
+      "chair_words": [
+        "bed",
+        "teddy bear"
+      ],
+      "image_id": 372009,
+      "is_chair_aligned": 0,
+      "is_grounded_chair_word": 0,
+      "is_hallucinated_chair_word": 0,
+      "mapped_word": "bear",
+      "mapping_score": 1.0
+    }
+  ],
+  "extra_map_rate_among_mapped": 0.1040701925420424,
+  "extra_mapped_candidates": 2562,
+  "grounded_chair_aligned_mapped_candidates": 19618,
+  "hallucinated_chair_aligned_mapped_candidates": 2438,
+  "mapped_candidates": 24618,
+  "mapping_rate": 0.15632858340318526,
+  "max_captions": 0,
+  "num_canonical_words": 80,
+  "num_captions": 4977,
+  "num_object_cache_rows": 16426,
+  "object_cache": "detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl",
+  "scope_note": "Cache-only CHAIR-alignment diagnostic over generated captions. Extra mapped candidates are mapped to a CHAIR/COCO word that CHAIR did not report for that caption; this is a conservative overreach signal, not a human precision label.",
+  "threshold": 0.8,
+  "top_chair_aligned_words": [
+    [
+      "person",
+      1284
+    ],
+    [
+      "train",
+      780
+    ],
+    [
+      "dining table",
+      694
+    ],
+    [
+      "cat",
+      693
+    ],
+    [
+      "chair",
+      671
+    ],
+    [
+      "skateboard",
+      535
+    ],
+    [
+      "bus",
+      532
+    ],
+    [
+      "horse",
+      488
+    ],
+    [
+      "bench",
+      477
+    ],
+    [
+      "book",
+      472
+    ],
+    [
+      "toilet",
+      467
+    ],
+    [
+      "dog",
+      466
+    ],
+    [
+      "surfboard",
+      462
+    ],
+    [
+      "truck",
+      460
+    ],
+    [
+      "clock",
+      460
+    ],
+    [
+      "elephant",
+      412
+    ],
+    [
+      "bottle",
+      410
+    ],
+    [
+      "giraffe",
+      391
+    ],
+    [
+      "umbrella",
+      388
+    ],
+    [
+      "motorcycle",
+      362
+    ]
+  ],
+  "top_extra_mapped_words": [
+    [
+      "handbag",
+      752
+    ],
+    [
+      "backpack",
+      490
+    ],
+    [
+      "snowboard",
+      329
+    ],
+    [
+      "baseball bat",
+      179
+    ],
+    [
+      "bear",
+      165
+    ],
+    [
+      "suitcase",
+      145
+    ],
+    [
+      "apple",
+      128
+    ],
+    [
+      "train",
+      71
+    ],
+    [
+      "person",
+      42
+    ],
+    [
+      "bottle",
+      38
+    ],
+    [
+      "sandwich",
+      34
+    ],
+    [
+      "sheep",
+      25
+    ],
+    [
+      "dog",
+      25
+    ],
+    [
+      "toaster",
+      24
+    ],
+    [
+      "remote",
+      22
+    ],
+    [
+      "chair",
+      18
+    ],
+    [
+      "vase",
+      17
+    ],
+    [
+      "skateboard",
+      12
+    ],
+    [
+      "fork",
+      7
+    ],
+    [
+      "bowl",
+      7
+    ]
+  ],
+  "top_mapped_words": [
+    [
+      "person",
+      1326
+    ],
+    [
+      "handbag",
+      973
+    ],
+    [
+      "train",
+      851
+    ],
+    [
+      "backpack",
+      710
+    ],
+    [
+      "dining table",
+      694
+    ],
+    [
+      "cat",
+      693
+    ],
+    [
+      "chair",
+      689
+    ],
+    [
+      "snowboard",
+      588
+    ],
+    [
+      "skateboard",
+      547
+    ],
+    [
+      "bus",
+      532
+    ],
+    [
+      "dog",
+      491
+    ],
+    [
+      "horse",
+      489
+    ],
+    [
+      "book",
+      477
+    ],
+    [
+      "bench",
+      477
+    ],
+    [
+      "baseball bat",
+      474
+    ],
+    [
+      "toilet",
+      473
+    ],
+    [
+      "surfboard",
+      463
+    ],
+    [
+      "truck",
+      460
+    ],
+    [
+      "clock",
+      460
+    ],
+    [
+      "bottle",
+      448
+    ]
+  ],
+  "total_open_vocab_candidates": 157476,
+  "unmapped_candidates": 132858
+}

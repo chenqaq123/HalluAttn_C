@@ -161,6 +161,15 @@ Reading:
   object-like phrase discovery plus candidate-to-target mapping and TDEV
   verification, not a larger hand-written alias list or raw phrase scoring
   alone.
+- A full cached-caption mapper audit is a necessary caveat on that direction.
+  Over 4,977 generated captions, the lightweight open-vocabulary extractor
+  produced 157,476 candidates; 24,618 mapped to a canonical CHAIR/COCO object
+  at threshold `0.80`. Of those mapped candidates, 22,056 were aligned with a
+  CHAIR-recognized word in the same caption (`89.59%`), while 2,562 were extra
+  mapped candidates (`10.41%`). This is not a human precision estimate, but it
+  does expose remaining lexical overreach. The lexical mapper is therefore a
+  route-leak prototype and scaling diagnostic, not a paper-ready open-vocabulary
+  object detector.
 
 ## Paper-Safe Claim
 
@@ -206,3 +215,4 @@ The strongest safe claim is:
 - `detection/baselines/results/tdev_decode_gate_open_vocab_auto_map_summary/open_vocab_leak_summary.md`
 - `detection/src/sinkdetect/open_vocab_claims.py`
 - `detection/baselines/results/tdev_decode_gate_open_vocab_mapping_thresholds/mapping_threshold_audit.md`
+- `detection/baselines/results/open_vocab_mapper_caption_cache_audit/open_vocab_mapper_caption_cache_audit.md`

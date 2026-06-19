@@ -256,7 +256,14 @@ failure to the constructive TDEV method.
    one implementation. A threshold audit keeps 4/4 known route leaks and maps
    0/18 reference-unmapped nonroute candidates for thresholds `0.70` through
    `1.00`; this supports `0.80` for the next multi-image prototype, while still
-   requiring a real human-labeled precision check before paper claims.
+   requiring a real human-labeled precision check before paper claims. A
+   full-cache mapper audit over 4,977 generated captions sharpens this caveat:
+   24,618/157,476 open-vocabulary candidates map to canonical CHAIR/COCO
+   targets, 89.59% of those mapped candidates align with CHAIR-recognized words
+   in the same caption, and 10.41% are extra mapped candidates. This is useful
+   as a conservative overreach signal, not as a precision estimate. The next
+   implementation should therefore improve candidate phrase typing and target
+   canonicalization before investing in a large decode-time run.
 2. **TDEV-lite transfer.** Calibrated LH-Shape linear readout is positive on
    CHAIR detection. The CHAIR cascade audit shows it can triage TDEV-region
    calls, but the gain is partly shared by position/PAS prefilters. The full
