@@ -554,6 +554,88 @@ def check_appendix_caption_proxy() -> None:
             raise AssertionError(f"appendix-caption:{row_label}: table={actual} expected={rounded}")
 
 
+def check_caption_route_summary() -> None:
+    acceptance = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json"
+        ).read_text()
+    )
+    repair = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_repair/sentence_repair_metrics.json"
+        ).read_text()
+    )
+    concise = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
+        ).read_text()
+    )
+    summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
+
+    generated_rows = {
+        "t96 hard gate": [
+            acceptance["num_examples"],
+            acceptance["chair"]["gated"]["overall"]["CHAIRi"],
+            acceptance["chair"]["gated"]["total_hallucinated_mentions"],
+            acceptance["mean_gated_words"],
+            0.0,
+        ],
+        "sentence repair": [
+            repair["num_examples"],
+            repair["chair"]["repaired"]["overall"]["CHAIRi"],
+            repair["chair"]["repaired"]["total_hallucinated_mentions"],
+            repair["mean_repaired_words"],
+            repair["mean_removed_words_by_repair"],
+        ],
+        "sentence acceptance": [
+            acceptance["num_examples"],
+            acceptance["chair"]["accepted"]["overall"]["CHAIRi"],
+            acceptance["chair"]["accepted"]["total_hallucinated_mentions"],
+            acceptance["mean_accepted_words"],
+            acceptance["mean_removed_words_by_acceptance"],
+        ],
+    }
+    for row_label, expected in generated_rows.items():
+        actual = _numbers_from_markdown_row(summary, row_label)
+        rounded = [
+            round(expected[0]),
+            round(expected[1], 4),
+            round(expected[2]),
+            round(expected[3], 2),
+            round(expected[4], 2),
+        ]
+        if actual != rounded:
+            raise AssertionError(f"caption-route-generated:{row_label}: table={actual} expected={rounded}")
+
+    concise_summary = concise["summary"]
+    concise_rows = {
+        "retained vanilla grounded mentions": concise_summary["accepted_retained_vanilla_grounded_rate"] * 100,
+        "hallucination reduction vs gated": concise_summary["accepted_hallucination_reduction_vs_gated"] * 100,
+        "hallucination reduction vs vanilla": concise_summary["accepted_hallucination_reduction_vs_vanilla"] * 100,
+        "object mention retention vs gated": concise_summary["accepted_object_mention_retention_vs_gated"] * 100,
+        "generic/empty accepted captions": concise_summary["generic_or_empty_accepted"],
+    }
+    for row_label, expected in concise_rows.items():
+        actual = _numbers_from_markdown_row(summary, row_label)
+        expected_value = round(expected, 2)
+        if actual != [expected_value]:
+            raise AssertionError(f"caption-route-concise:{row_label}: table={actual} expected={[expected_value]}")
+
+    _assert_contains(
+        summary,
+        "Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects.",
+        "caption-route:length-reduction-nuance",
+    )
+    _assert_contains(
+        summary,
+        "The remaining risk is larger-scale content preservation, not length reduction itself.",
+        "caption-route:content-preservation-risk",
+    )
+
+
 def main() -> None:
     check_detection_main()
     check_strong_controls()
@@ -567,6 +649,7 @@ def main() -> None:
     check_appendix_qwen()
     check_appendix_tdev_lite()
     check_appendix_caption_proxy()
+    check_caption_route_summary()
     print("All audited paper numbers match current result artifacts.")
 
 
