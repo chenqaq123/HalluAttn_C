@@ -145,6 +145,18 @@ def build() -> str:
     verified_select_r10_content = read_json(
         "detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_content_light/caption_content_light_metrics.json"
     )["summary"]
+    local_add = read_json(
+        "detection/baselines/results/tdev_caption_verified_local_additions_100/verified_local_addition_metrics.json"
+    )
+    local_add_preservation = read_json(
+        "detection/baselines/results/tdev_caption_verified_local_additions_100_preservation/caption_variant_preservation_metrics.json"
+    )["summary"]
+    local_add_content = read_json(
+        "detection/baselines/results/tdev_caption_verified_local_additions_100_content_light/caption_content_light_metrics.json"
+    )["summary"]
+    local_add_o04 = read_json(
+        "detection/baselines/results/tdev_caption_verified_local_additions_100_o04/verified_local_addition_metrics.json"
+    )
 
     all_mentions = summary_by_name(feasibility, "all_mentions")
     hallucinated = summary_by_name(feasibility, "hallucinated_mentions")
@@ -258,9 +270,20 @@ def build() -> str:
             "",
             "The deployable-style selector confirms the oracle warning. A loose word-ratio guard accepts 40 detail candidates and worsens CHAIR/content retention. A strict r1.00 guard accepts only 10 detail candidates and is statistically indistinguishable from claim-local repair: CHAIRi 0.0599 vs. 0.0600 and retained vanilla grounded 73.65% vs. 73.47%. The bottleneck is not just selection; the candidate generator must produce claim-local additions that preserve detail without rewriting away supported content.",
             "",
+            "## Verified Local-Addition Probe",
+            "",
+            "This probe keeps the repaired caption and only appends low-overlap sentences from a detail-regenerated candidate whose introduced claims pass the closed-loop target-vs-neighbor audit. It tests whether whole-caption regeneration can serve as a source of local detail spans.",
+            "",
+            "| Selector | Images | Images with additions | Added sentences | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs vanilla | Content-light | Reading |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|",
+            f"| local additions o0.55 | {local_add['num_examples']} | {local_add['images_with_additions']} | {local_add['total_added_sentences']} | {f4(local_add['chair']['selected']['overall']['CHAIRi'])} | {local_add['chair']['selected']['total_hallucinated_mentions']} | {f2(local_add['mean_words']['selected'])} | {pct(local_add_preservation['variant_retained_vanilla_grounded_rate'])} | {pct(local_add_preservation['variant_object_mention_retention_vs_vanilla'])} | {local_add_content['content_light']} | appends mostly paraphrases; adds one hallucinated mention |",
+            f"| local additions o0.40 | {local_add_o04['num_examples']} | {local_add_o04['images_with_additions']} | {local_add_o04['total_added_sentences']} | {f4(local_add_o04['chair']['selected']['overall']['CHAIRi'])} | {local_add_o04['chair']['selected']['total_hallucinated_mentions']} | {f2(local_add_o04['mean_words']['selected'])} | {pct(broad_claim_preservation['repaired_retained_vanilla_grounded_rate'])} | {pct(broad_claim_preservation['repaired_object_mention_retention_vs_vanilla'])} | {broad_claim_content['content_light']} | stricter overlap rejects all additions and returns to repair |",
+            "",
+            "The local-addition probe narrows the fix. Whole-caption regeneration does not yield clean missing-detail spans: a loose overlap threshold appends only 6 mostly redundant sentences, increases hallucinated mentions from 27 to 28, and only nudges retained vanilla grounded from 73.47% to 73.82%; a stricter threshold appends nothing. The next generator must be explicitly trained or prompted to propose atomic missing-detail claims/spans, not full paraphrased captions.",
+            "",
             "## Method Decision",
             "",
-            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe, candidate-pool oracle, and deployable-style verified selector show that prompt-only rewriting plus selection is insufficient, so the remaining method gap is verification-in-loop candidate generation: propose missing details, verify each claim, and fall back to the deterministic repair when no safe new detail is found.",
+            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe, candidate-pool oracle, deployable-style verified selector, and local-addition probe show that prompt-only rewriting plus selection is insufficient, so the remaining method gap is verification-in-loop candidate generation: propose atomic missing-detail spans, verify each claim, and fall back to the deterministic repair when no safe new detail is found.",
             "",
             "The next implementation target is therefore:",
             "",
@@ -275,7 +298,7 @@ def build() -> str:
             "",
             "## Paper-Safe Scope",
             "",
-            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is verification-in-loop candidate generation, evaluated against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits. The prompt-only regeneration probe and candidate-pool oracle should be reported as negative controls.",
+            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is verification-in-loop candidate generation, evaluated against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits. The prompt-only regeneration probe, candidate-pool oracle, verified selector, and local-addition probe should be reported as negative controls.",
             "",
             "## Source Artifacts",
             "",
@@ -320,6 +343,10 @@ def build() -> str:
             "- `detection/baselines/results/tdev_caption_verified_candidate_select_100_r10/verified_candidate_selection_metrics.json`",
             "- `detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_preservation/caption_variant_preservation_metrics.json`",
             "- `detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_content_light/caption_content_light_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_verified_local_additions_100/verified_local_addition_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_verified_local_additions_100_preservation/caption_variant_preservation_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_verified_local_additions_100_content_light/caption_content_light_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_verified_local_additions_100_o04/verified_local_addition_metrics.json`",
         ]
     )
     return "\n".join(lines) + "\n"

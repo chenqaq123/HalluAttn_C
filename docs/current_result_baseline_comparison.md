@@ -251,10 +251,16 @@ Reading:
   loose word-ratio guard it accepts 40 detail candidates and worsens CHAIRi to
   `0.0621` with only `70.86%` retained vanilla grounded; with a strict r1.00
   guard it accepts only 10 candidates and is effectively repair-level (`0.0599`
-  CHAIRi, `73.65%` retained vanilla grounded). The next caption method should
-  therefore use regeneration only as a verified candidate source for missing
-  visible details, keeping deterministic claim-local repair as the fallback and
-  improving candidate generation rather than relying on reranking alone.
+  CHAIRi, `73.65%` retained vanilla grounded). A local-addition probe keeps the
+  repaired caption and appends low-overlap verified sentences, but whole-caption
+  regeneration still does not provide good local spans: overlap `0.55` appends
+  only 6 mostly redundant sentences and increases hallucinated mentions to `28`
+  (`0.0605` CHAIRi), while overlap `0.40` appends nothing and exactly returns to
+  repair. The next caption method should therefore use regeneration only as a
+  verified candidate source for missing visible details, keeping deterministic
+  claim-local repair as the fallback and improving candidate generation toward
+  atomic missing-detail spans rather than relying on reranking or paraphrase
+  extraction alone.
 
 ## Paper-Safe Claim
 

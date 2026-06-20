@@ -759,6 +759,30 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_content_light/caption_content_light_metrics.json"
         ).read_text()
     )
+    local_add = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_local_additions_100/verified_local_addition_metrics.json"
+        ).read_text()
+    )
+    local_add_preservation = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_local_additions_100_preservation/caption_variant_preservation_metrics.json"
+        ).read_text()
+    )
+    local_add_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_local_additions_100_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
+    local_add_o04 = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_local_additions_100_o04/verified_local_addition_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -829,6 +853,8 @@ def check_caption_route_summary() -> None:
     verified_select_content_summary = verified_select_content["summary"]
     verified_select_r10_preservation_summary = verified_select_r10_preservation["summary"]
     verified_select_r10_content_summary = verified_select_r10_content["summary"]
+    local_add_preservation_summary = local_add_preservation["summary"]
+    local_add_content_summary = local_add_content["summary"]
 
     _assert_contains(
         summary,
@@ -922,6 +948,21 @@ def check_caption_route_summary() -> None:
         "The bottleneck is not just selection; the candidate generator must produce claim-local additions",
         "caption-route:verified-selector-conclusion",
     )
+    _assert_contains(
+        summary,
+        f"| local additions o0.55 | {local_add['num_examples']} | {local_add['images_with_additions']} | {local_add['total_added_sentences']} | {local_add['chair']['selected']['overall']['CHAIRi']:.4f} | {local_add['chair']['selected']['total_hallucinated_mentions']} | {local_add['mean_words']['selected']:.2f} | {local_add_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {local_add_preservation_summary['variant_object_mention_retention_vs_vanilla'] * 100:.2f}% | {local_add_content_summary['content_light']} | appends mostly paraphrases; adds one hallucinated mention |",
+        "caption-route:local-add-o055-row",
+    )
+    _assert_contains(
+        summary,
+        f"| local additions o0.40 | {local_add_o04['num_examples']} | {local_add_o04['images_with_additions']} | {local_add_o04['total_added_sentences']} | {local_add_o04['chair']['selected']['overall']['CHAIRi']:.4f} | {local_add_o04['chair']['selected']['total_hallucinated_mentions']} | {local_add_o04['mean_words']['selected']:.2f} | {broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_claim_summary['repaired_object_mention_retention_vs_vanilla'] * 100:.2f}% | {broad_claim_content_summary['content_light']} | stricter overlap rejects all additions and returns to repair |",
+        "caption-route:local-add-o040-row",
+    )
+    _assert_contains(
+        summary,
+        "The next generator must be explicitly trained or prompted to propose atomic missing-detail claims/spans",
+        "caption-route:local-add-conclusion",
+    )
 
     concise_summary = concise["summary"]
     concise_rows = {
@@ -952,6 +993,11 @@ def check_caption_route_summary() -> None:
         summary,
         "the remaining method gap is verification-in-loop candidate generation",
         "caption-route:scale-risk",
+    )
+    _assert_contains(
+        summary,
+        "propose atomic missing-detail spans",
+        "caption-route:atomic-span-direction",
     )
     _assert_contains(
         summary,

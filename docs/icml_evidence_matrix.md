@@ -61,9 +61,11 @@ head/region steering methods are runnable baselines or related-work pressure.
    raises retained vanilla grounded mentions to `75.22%`. A deployable-style
    verified selector does not close the gap either: r0.75 worsens CHAIRi to
    `0.0621`, while strict r1.00 is repair-level (`0.0599` CHAIRi, `73.65%`
-   retained vanilla grounded). For a stronger ICML story, the remaining gap is
-   verification-in-loop candidate generation: propose
-   missing details, extract object-like claims, map them to canonical targets,
+   retained vanilla grounded). Local-addition from whole-caption regeneration is
+   also a negative control: o0.55 adds only 6 mostly redundant sentences and one
+   hallucinated mention, while o0.40 adds nothing. For a stronger ICML story, the
+   remaining gap is verification-in-loop candidate generation: propose
+   atomic missing-detail spans, extract object-like claims, map them to canonical targets,
    accept only claims passing target-vs-neighbor evidence, and fall back to local
    repair when no safe new detail exists. Report CHAIR together with retained
    grounded objects, object-mention retention, mean words, and content-light rate.
@@ -110,8 +112,8 @@ Checked sources:
 1. **Upgrade faithful-concise caption prototype.** The deterministic neutral-rewrite
    proxy, generated hard-gate smoke tests, sentence acceptance, claim-local
    repair smoke, 20/40/100-image scaled checks, prompt-only regeneration
-   negative controls, candidate-pool oracle, and deployable-style verified
-   selector probe are complete. The remaining high-value gap is
+   negative controls, candidate-pool oracle, deployable-style verified selector,
+   and local-addition probes are complete. The remaining high-value gap is
    verification-in-loop candidate generation, not selector-only
    reranking, evaluated against the same high-risk set with CHAIR, retained
    grounded objects, object retention, mean words, and content-light rate.
