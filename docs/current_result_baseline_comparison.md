@@ -238,10 +238,13 @@ Reading:
   vanilla grounded mentions (`73.47%` vs. `70.68%`), and fewer truly
   content-light caption cases (`0` vs. `1`). The older CHAIR-objectless counts
   (`3` vs. `4`) mostly reflect descriptive non-COCO content such as roads,
-  signs, poles, or watercraft. The next caption method should therefore add
-  controlled regeneration for preserving visible detail on top of
-  verifier-guided claim acceptance, not rely on fixed token suppression or pure
-  deletion.
+  signs, poles, or watercraft. A prompt-only controlled-regeneration probe is
+  not enough: the concise prompt lowers CHAIRi to `0.0538` but collapses to
+  `17.75` words and only `36.47%` retained vanilla grounded mentions; the detail
+  prompt reaches `39.04` words but worsens CHAIRi to `0.0714` and retains only
+  `60.73%`. The next caption method should therefore use regeneration only as a
+  verified candidate source for missing visible details, keeping deterministic
+  claim-local repair as the fallback.
 
 ## Paper-Safe Claim
 

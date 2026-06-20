@@ -1,0 +1,943 @@
+[
+  {
+    "image_id": 6213,
+    "caption": "A bathroom with a white bathtub and a sink. The bathtub is next to a mirror, and a red shower curtain is hanging in front of it.",
+    "generated_words": [
+      "sink"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 12319,
+    "caption": "Two giraffes are walking together in a grassy field surrounded by trees.",
+    "generated_words": [
+      "giraffe"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 15994,
+    "caption": "A woman wearing a purple sweater is sitting on a couch and holding a cell phone to her ear.",
+    "generated_words": [
+      "person",
+      "couch",
+      "cell phone"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 22596,
+    "caption": "A cow stands in a stream of water, surrounded by a lush green forest. Another cow can be seen in the background.",
+    "generated_words": [
+      "cow",
+      "cow"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 23369,
+    "caption": "A black motorcycle is parked on the side of the road, with a red, white, and blue flag nearby.",
+    "generated_words": [
+      "motorcycle"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 27768,
+    "caption": "A large white bus is driving down a street with several people standing on the sidewalk.",
+    "generated_words": [
+      "bus",
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 28826,
+    "caption": "A wooden bench is placed on a sandy beach, overlooking the ocean.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 33489,
+    "caption": "A large blue boat is being transported on a truck down a street, with the boat securely strapped to the back of the truck.",
+    "generated_words": [
+      "boat",
+      "truck",
+      "boat",
+      "truck"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 36962,
+    "caption": "A cat sits on top of a television, looking at something behind it.",
+    "generated_words": [
+      "cat",
+      "tv"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 40686,
+    "caption": "The image shows a small living space that combines a bedroom and kitchenette. The bedroom area has a bed with a blue comforter and pillows, while the kitchenette is equipped with a refrigerator, a sink, and a microwave.",
+    "generated_words": [
+      "bed",
+      "refrigerator",
+      "sink",
+      "microwave"
+    ],
+    "hallucinated_words": [
+      "sink",
+      "microwave"
+    ]
+  },
+  {
+    "image_id": 47524,
+    "caption": "A man with glasses and a beard is holding a toothbrush in his hand.",
+    "generated_words": [
+      "person",
+      "toothbrush"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 47611,
+    "caption": "The image shows a restaurant with two dining tables in the middle of the room, accompanied by chairs on each side. A clock is mounted on the wall in the background.",
+    "generated_words": [
+      "dining table",
+      "chair",
+      "clock"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 48795,
+    "caption": "A book titled \"Our Crowd\" is placed on a wooden bench.",
+    "generated_words": [
+      "book",
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 52386,
+    "caption": "A giraffe is eating grass from a wooden pole in a zoo enclosure.",
+    "generated_words": [
+      "giraffe"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 53263,
+    "caption": "A young girl and boy are standing in front of a birthday cake with balloons surrounding it.",
+    "generated_words": [
+      "person",
+      "person",
+      "cake"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 57238,
+    "caption": "A white refrigerator is positioned in the corner of a kitchen, surrounded by chairs on both sides and a dining table nearby.",
+    "generated_words": [
+      "refrigerator",
+      "chair",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 63521,
+    "caption": "Two young children wearing birthday party hats sit on a couch, enjoying a meal together.",
+    "generated_words": [
+      "person",
+      "couch"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 67180,
+    "caption": "A woman wearing a hat and a green jacket sits on a wooden bench near a stone wall.",
+    "generated_words": [
+      "person",
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 71914,
+    "caption": "The refrigerator is open, revealing a variety of food items inside.",
+    "generated_words": [
+      "refrigerator"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 78194,
+    "caption": "A young boy is lying on a couch, playing a video game.",
+    "generated_words": [
+      "person",
+      "couch"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 79689,
+    "caption": "A man sits in a bathroom with his back to the camera, surrounded by clothes hanging on a rack and a towel on the floor.",
+    "generated_words": [
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 102517,
+    "caption": "A man wearing glasses and a mustache stands in front of a house, making a funny face for the camera.",
+    "generated_words": [
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 103815,
+    "caption": "A baseball player in a white uniform is pitching a ball during a game.",
+    "generated_words": [
+      "person",
+      "sports ball"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 108645,
+    "caption": "Two men are sitting on a couch, playing a video game together.",
+    "generated_words": [
+      "couch"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 121417,
+    "caption": "A woman sitting on a bench holding a pink umbrella over her head while talking on her cell phone.",
+    "generated_words": [
+      "person",
+      "bench",
+      "umbrella",
+      "cell phone"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 122745,
+    "caption": "A stop sign with the word \"Voldemort\" written on it is located in a dark setting with a mountain in the background.",
+    "generated_words": [
+      "stop sign"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 126983,
+    "caption": "A black stove top oven is situated next to a white refrigerator in a small kitchen with a checkered tile floor.",
+    "generated_words": [
+      "oven",
+      "oven",
+      "refrigerator"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 130645,
+    "caption": "A large bus is driving down a busy street, surrounded by other vehicles and people.",
+    "generated_words": [
+      "bus",
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 131203,
+    "caption": "A laptop computer with a keyboard and a screen is open and turned on, displaying a blue screen with a message on it.",
+    "generated_words": [
+      "laptop",
+      "keyboard"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 135116,
+    "caption": "A large, shaggy, light-colored dog stands on the grass near a car, looking at the camera.",
+    "generated_words": [
+      "dog",
+      "car"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 146997,
+    "caption": "A vase filled with a mix of red and orange flowers is placed on a table.",
+    "generated_words": [
+      "vase",
+      "orange",
+      "dining table"
+    ],
+    "hallucinated_words": [
+      "orange",
+      "dining table"
+    ]
+  },
+  {
+    "image_id": 150091,
+    "caption": "A long red and yellow train with a black front is traveling down the tracks.",
+    "generated_words": [
+      "train"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 164115,
+    "caption": "A surfboard is leaning against a wooden fence, with a blue cooler placed nearby.",
+    "generated_words": [
+      "surfboard"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 174113,
+    "caption": "A cat sits on a kitchen counter next to a microwave and a knife set.",
+    "generated_words": [
+      "cat",
+      "microwave",
+      "knife"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 175604,
+    "caption": "A doughnut with cereal toppings sits on a table next to a cup of coffee.",
+    "generated_words": [
+      "donut",
+      "dining table",
+      "cup"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 180383,
+    "caption": "A cow statue with a television mounted on its back displays a news broadcast.",
+    "generated_words": [
+      "cow",
+      "tv"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 181627,
+    "caption": "A pizza is on a white plate on a dining table, accompanied by a knife and fork. A cell phone is also present on the table.",
+    "generated_words": [
+      "pizza",
+      "dining table",
+      "knife",
+      "fork",
+      "cell phone",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 183332,
+    "caption": "A woman is working on a laptop in front of another person.",
+    "generated_words": [
+      "person",
+      "laptop",
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 205190,
+    "caption": "Two trains are parked side by side on a track, with one train on the left and the other on the right. There are three people in the scene, with one person standing near the left train and two others standing near the right train.",
+    "generated_words": [
+      "train",
+      "train",
+      "person",
+      "person",
+      "train",
+      "train"
+    ],
+    "hallucinated_words": [
+      "person",
+      "person"
+    ]
+  },
+  {
+    "image_id": 208648,
+    "caption": "A train with a yellow front engine and white train carts is traveling down the tracks.",
+    "generated_words": [
+      "train",
+      "train"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 214698,
+    "caption": "A stop sign is leaning to the side on a residential street with several cars parked along the road.",
+    "generated_words": [
+      "stop sign",
+      "car"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 221502,
+    "caption": "A wooden bench is situated in a grassy field with a plaque attached to the back.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 231237,
+    "caption": "A brown vase filled with a variety of flowers, including red and yellow ones, is placed on a table.",
+    "generated_words": [
+      "vase",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 234697,
+    "caption": "A foggy night scene with a street corner featuring a traffic light.",
+    "generated_words": [
+      "traffic light"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 246717,
+    "caption": "A busy street scene with several cars and trucks driving down the road, and multiple traffic lights positioned at various points along the street.",
+    "generated_words": [
+      "car",
+      "truck",
+      "traffic light"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 252403,
+    "caption": "A woman with glasses and long hair is holding a blue and white toothbrush.",
+    "generated_words": [
+      "person",
+      "toothbrush"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 256251,
+    "caption": "A person is holding a slice of pizza with cheese on it, while a bottle is also visible on the table.",
+    "generated_words": [
+      "person",
+      "pizza",
+      "bottle",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 262162,
+    "caption": "A bedroom with a bed in the corner and a desk with a desklamp on it.",
+    "generated_words": [
+      "bed",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 266611,
+    "caption": "A yellow sign on the side of a road indicates a give way.",
+    "generated_words": [],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 271457,
+    "caption": "A wooden bench is situated near a body of water, possibly a lake or a river. The water appears to be calm, and the surrounding environment is serene.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 273688,
+    "caption": "A large pizza with cheese and herbs on top is placed on a dining table, accompanied by a smaller pizza on the right side.",
+    "generated_words": [
+      "pizza",
+      "dining table",
+      "pizza"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 279387,
+    "caption": "A quiet street with a brick sidewalk and a metal pole.",
+    "generated_words": [],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 282046,
+    "caption": "A bench is sitting on a sandy beach, overlooking the ocean.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 289633,
+    "caption": "A man with a beard and mustache brushes his teeth in a bathroom.",
+    "generated_words": [
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 293804,
+    "caption": "A living room with a fireplace and two couches, one on the left and another on the right, and a chair near the left couch.",
+    "generated_words": [
+      "couch",
+      "chair",
+      "couch"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 296521,
+    "caption": "A large orange and blue train is traveling down the tracks, with a person standing nearby.",
+    "generated_words": [
+      "orange",
+      "train",
+      "person"
+    ],
+    "hallucinated_words": [
+      "person"
+    ]
+  },
+  {
+    "image_id": 303089,
+    "caption": "A man wearing glasses brushes his teeth in a bathroom.",
+    "generated_words": [
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 304341,
+    "caption": "A large clock is mounted on the side of a white building, with two potted plants nearby.",
+    "generated_words": [
+      "clock",
+      "potted plant"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 313562,
+    "caption": "A woman wearing a blue apron stands in front of a large pile of carrots, possibly at a market or a produce stand.",
+    "generated_words": [
+      "person",
+      "carrot"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 316400,
+    "caption": "A brown teddy bear wearing a green Starbuck's apron is sitting on a deskside computer.",
+    "generated_words": [
+      "teddy bear",
+      "laptop"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 321217,
+    "caption": "A snow-covered hill with a bench in the middle of the scene, surrounded by a beautiful snowy landscape and a clear blue sky.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 328785,
+    "caption": "A man wearing glasses stands in front of a stop sign.",
+    "generated_words": [
+      "person",
+      "stop sign"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 330536,
+    "caption": "A small bathroom with a white toilet and bathtub.",
+    "generated_words": [
+      "toilet"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 330750,
+    "caption": "A stone building with a bench in front of it and a red mailbox nearby.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 334311,
+    "caption": "A lonely bench sits on a dirt road surrounded by trees.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 343852,
+    "caption": "A man wearing a hat and sunglasses is eating a lollypop.",
+    "generated_words": [
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 346207,
+    "caption": "A cat lays on a desk with a laptop and computer monitor, surrounded by books and a cell phone.",
+    "generated_words": [
+      "cat",
+      "dining table",
+      "laptop",
+      "laptop",
+      "tv",
+      "book",
+      "cell phone"
+    ],
+    "hallucinated_words": [
+      "cell phone"
+    ]
+  },
+  {
+    "image_id": 356494,
+    "caption": "A man is riding a jet ski in the ocean, skillfully navigating the water.",
+    "generated_words": [
+      "person",
+      "airplane",
+      "skis"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 361751,
+    "caption": "A black metal bench is situated on a sidewalk near a fence, with a tree nearby.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 362368,
+    "caption": "A young boy in a red shirt holds a plate filled with a delicious dessert, including marshmallows and other treats.",
+    "generated_words": [
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 367528,
+    "caption": "A wooden dining table with a red pitcher and a pink mug on it. The pitcher is filled with flowers, adding a touch of color and life to the scene.",
+    "generated_words": [
+      "dining table",
+      "person",
+      "person"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 382696,
+    "caption": "A kitchen undergoing remodeling with a refrigerator in the middle of the room and an oven being removed.",
+    "generated_words": [
+      "refrigerator",
+      "oven"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 383107,
+    "caption": "The living room has a large window, a couch, a chair, and a computer desk with a chair.",
+    "generated_words": [
+      "couch",
+      "chair",
+      "laptop",
+      "dining table",
+      "chair"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 386803,
+    "caption": "A group of people are enjoying a day on the water in small boats.",
+    "generated_words": [
+      "person",
+      "boat"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 391158,
+    "caption": "An old-fashioned steam engine train is parked inside a building, likely a train station or a museum.",
+    "generated_words": [
+      "train",
+      "train"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 410878,
+    "caption": "A motorcycle is parked on a dirt road in front of a picnic table and bench, creating a peaceful outdoor setting.",
+    "generated_words": [
+      "motorcycle",
+      "dining table",
+      "bench"
+    ],
+    "hallucinated_words": [
+      "dining table"
+    ]
+  },
+  {
+    "image_id": 414034,
+    "caption": "A young child is sitting on a bed, holding a remote control in their hands.",
+    "generated_words": [
+      "person",
+      "bed",
+      "remote"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 425522,
+    "caption": "A large pile of luggage is stacked on a luggage rack, including various suitcases and backpacks in different sizes and colors.",
+    "generated_words": [
+      "suitcase",
+      "suitcase",
+      "suitcase",
+      "backpack"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 426253,
+    "caption": "A microwave oven is heating a pizza on a plate.",
+    "generated_words": [
+      "microwave",
+      "oven",
+      "pizza"
+    ],
+    "hallucinated_words": [
+      "pizza"
+    ]
+  },
+  {
+    "image_id": 426342,
+    "caption": "A man is holding a dog on a leash in a grassy yard.",
+    "generated_words": [
+      "person",
+      "dog"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 428079,
+    "caption": "A large vase is placed on a table in a hallway, with two people in the background.",
+    "generated_words": [
+      "vase",
+      "dining table",
+      "person"
+    ],
+    "hallucinated_words": [
+      "person"
+    ]
+  },
+  {
+    "image_id": 428161,
+    "caption": "Two men in suits are examining a small blue box.",
+    "generated_words": [],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 446206,
+    "caption": "A train is traveling on a bridge over a city street, with a bus driving underneath it.",
+    "generated_words": [
+      "train",
+      "bus"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 457217,
+    "caption": "A young girl in a red dress is petting the trunk of a large elephant.",
+    "generated_words": [
+      "person",
+      "elephant"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 461655,
+    "caption": "A vase filled with yellow and white flowers is placed on a table.",
+    "generated_words": [
+      "vase",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 462211,
+    "caption": "A busy city street with a red traffic light hanging above the road.",
+    "generated_words": [
+      "traffic light"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 462364,
+    "caption": "A bathroom with a white toilet, a bathtub, a sink, and two boxes of tissues on the toilet.",
+    "generated_words": [
+      "toilet",
+      "sink",
+      "toilet"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 467988,
+    "caption": "A desk with a laptop, a trash can, and a television mounted on the wall.",
+    "generated_words": [
+      "dining table",
+      "laptop",
+      "tv"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 470704,
+    "caption": "Three wine glasses are placed on a wooden dining table, each filled with wine. The table also has two wine bottles, one on the left and one on the right side. A book is also present on the table, possibly a wine guide or cookbook.",
+    "generated_words": [
+      "wine glass",
+      "dining table",
+      "dining table",
+      "bottle",
+      "book",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 472030,
+    "caption": "A bench is located in a forest filled with greenery, surrounded by trees and bushes.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 474188,
+    "caption": "A green metal bench is situated on a gravel path near a forest, surrounded by a few leaves.",
+    "generated_words": [
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 494629,
+    "caption": "A man is sitting on a toilet in a room, using a computer.",
+    "generated_words": [
+      "person",
+      "toilet",
+      "laptop"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 498463,
+    "caption": "A large stainless steel refrigerator freezer is the main focus of the scene, positioned in the corner of the kitchen.",
+    "generated_words": [
+      "refrigerator",
+      "refrigerator"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 517973,
+    "caption": "A white Volkswagen Beetle is parked in a parking lot with a surfboard strapped to its roof.",
+    "generated_words": [
+      "surfboard"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 522782,
+    "caption": "A bed is situated on the right side of the room, while a computer desk with two monitors, a keyboard, and a mouse is located on the left side.",
+    "generated_words": [
+      "bed",
+      "laptop",
+      "dining table",
+      "tv",
+      "keyboard",
+      "mouse"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 523565,
+    "caption": "A white vase filled with red berries is placed on a table.",
+    "generated_words": [
+      "vase",
+      "dining table"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 525682,
+    "caption": "Three people are sitting in a living room, with one person reading a book, another playing a game, and the third using an electronic device.",
+    "generated_words": [
+      "person",
+      "person",
+      "book"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 531349,
+    "caption": "A red double-decker bus is parked on a concrete surface, with a beautiful cityscape and a mountain in the background.",
+    "generated_words": [
+      "bus"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 540288,
+    "caption": "A woman in a floral top is sitting at a table, eating a sandwich with enthusiasm.",
+    "generated_words": [
+      "person",
+      "dining table",
+      "sandwich"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 559416,
+    "caption": "A man stands in a grassy field holding skis, looking at a sheep.",
+    "generated_words": [
+      "person",
+      "skis",
+      "sheep"
+    ],
+    "hallucinated_words": [
+      "skis"
+    ]
+  }
+]

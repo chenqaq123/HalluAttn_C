@@ -98,6 +98,24 @@ def build() -> str:
     broad_claim_content = read_json(
         "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair_content_light/caption_content_light_metrics.json"
     )["summary"]
+    regen_concise = read_json(
+        "detection/baselines/results/tdev_caption_controlled_regen_100_t80/controlled_regeneration_metrics.json"
+    )
+    regen_concise_preservation = read_json(
+        "detection/baselines/results/tdev_caption_controlled_regen_100_t80_preservation/caption_variant_preservation_metrics.json"
+    )["summary"]
+    regen_concise_content = read_json(
+        "detection/baselines/results/tdev_caption_controlled_regen_100_t80_content_light/caption_content_light_metrics.json"
+    )["summary"]
+    regen_detail = read_json(
+        "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/controlled_regeneration_metrics.json"
+    )
+    regen_detail_preservation = read_json(
+        "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_preservation/caption_variant_preservation_metrics.json"
+    )["summary"]
+    regen_detail_content = read_json(
+        "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_content_light/caption_content_light_metrics.json"
+    )["summary"]
 
     all_mentions = summary_by_name(feasibility, "all_mentions")
     hallucinated = summary_by_name(feasibility, "hallucinated_mentions")
@@ -179,9 +197,19 @@ def build() -> str:
             "",
             "The scaled checks support the direction but narrow the claim. On the 100-image high-risk set, sentence acceptance and claim-local repair both reduce hard-gated hallucinated mentions from 73 to 27. Claim-local repair is still slightly better than sentence acceptance: CHAIRi 0.0600 vs. 0.0622, mean words 50.74 vs. 49.14, retained vanilla grounded mentions 73.47% vs. 70.68%, and content-light cases 0 vs. 1. The old CHAIR-objectless counts, 3 vs. 4, mostly reflect non-COCO but descriptive objects such as roads, signs, poles, or watercraft. However, the repair gain is now modest and object retention vs. vanilla remains only 64.01%. This is useful caption-side prototype evidence, not a complete caption mitigation result.",
             "",
+            "## Controlled Regeneration Probe",
+            "",
+            "| Prototype | Images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs vanilla | Content-light | Reading |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---|",
+            f"| claim-local repair | {broad_claim_repair['num_examples']} | {f4(broad_claim_repair['chair']['repaired']['overall']['CHAIRi'])} | {broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {f2(broad_claim_repair['mean_repaired_words'])} | {pct(broad_claim_preservation['repaired_retained_vanilla_grounded_rate'])} | {pct(broad_claim_preservation['repaired_object_mention_retention_vs_vanilla'])} | {broad_claim_content['content_light']} | current best deterministic fallback |",
+            f"| controlled regen concise | {regen_concise['num_examples']} | {f4(regen_concise['chair']['regenerated']['overall']['CHAIRi'])} | {regen_concise['chair']['regenerated']['total_hallucinated_mentions']} | {f2(regen_concise['mean_words']['regenerated'])} | {pct(regen_concise_preservation['variant_retained_vanilla_grounded_rate'])} | {pct(regen_concise_preservation['variant_object_mention_retention_vs_vanilla'])} | {regen_concise_content['content_light']} | lowers CHAIR by over-compressing content |",
+            f"| controlled regen detail | {regen_detail['num_examples']} | {f4(regen_detail['chair']['regenerated']['overall']['CHAIRi'])} | {regen_detail['chair']['regenerated']['total_hallucinated_mentions']} | {f2(regen_detail['mean_words']['regenerated'])} | {pct(regen_detail_preservation['variant_retained_vanilla_grounded_rate'])} | {pct(regen_detail_preservation['variant_object_mention_retention_vs_vanilla'])} | {regen_detail_content['content_light']} | recovers length but not the repair tradeoff |",
+            "",
+            "Prompt-only regeneration is therefore not the solution. The concise prompt reduces CHAIRi by collapsing to short safe captions, while the detail-preserving prompt restores some length but has worse CHAIRi and lower grounded-content retention than claim-local repair. The next method should be verification-in-loop regeneration or candidate selection: regenerate only missing visible details, verify each new claim against target-vs-neighbor evidence, and keep the deterministic repaired caption as a fallback.",
+            "",
             "## Method Decision",
             "",
-            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive, so the remaining method gap is controlled regeneration for preserving visible detail when a safe prefix is not enough.",
+            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe shows that prompt-only rewriting is insufficient, so the remaining method gap is verification-in-loop regeneration or candidate selection for preserving visible detail when a safe prefix is not enough.",
             "",
             "The next implementation target is therefore:",
             "",
@@ -189,14 +217,14 @@ def build() -> str:
             "2. Extract object-like claims, including open-vocabulary route forms.",
             "3. Map each claim to a canonical target when possible and score target-vs-neighbor evidence.",
             "4. Accept supported claims and reject unsupported claims; allow the caption to become shorter when unsupported detail is the only thing being removed.",
-            "5. Apply constrained local repair or regeneration when rejection would remove central visible content, when an unsupported claim sits in a detachable clause, or when the accepted caption would become content-light.",
+            "5. Apply constrained local repair first; use regeneration only as a verified candidate source for missing visible details, and fall back to the repaired caption when regenerated claims fail target-vs-neighbor checks.",
             "6. Report CHAIR together with concise-faithfulness metrics: retained supported objects, mean words, object mentions, empty/generic-caption rate, and manual examples.",
             "",
             "This preserves the paper's motivation: the method does not merely make object claims less frequent, and it does not rely on visual routing as proof. It explicitly tests whether the candidate claim is target-discriminative under related evidence. The desired behavior is not maximum caption length; it is concise but faithful captioning that keeps supported visual content and stops before unsupported object invention.",
             "",
             "## Paper-Safe Scope",
             "",
-            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to add controlled regeneration for preserving visible detail, then evaluate it against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits.",
+            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is verification-in-loop regeneration or candidate selection, evaluated against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits. The prompt-only regeneration probe should be reported as a negative control.",
             "",
             "## Source Artifacts",
             "",
@@ -225,6 +253,12 @@ def build() -> str:
             "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair/claim_repair_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance_content_light/caption_content_light_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair_content_light/caption_content_light_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_controlled_regen_100_t80/controlled_regeneration_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_controlled_regen_100_t80_preservation/caption_variant_preservation_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_controlled_regen_100_t80_content_light/caption_content_light_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/controlled_regeneration_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_preservation/caption_variant_preservation_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_content_light/caption_content_light_metrics.json`",
         ]
     )
     return "\n".join(lines) + "\n"

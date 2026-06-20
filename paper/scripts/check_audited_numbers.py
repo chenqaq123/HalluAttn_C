@@ -669,6 +669,42 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair_content_light/caption_content_light_metrics.json"
         ).read_text()
     )
+    regen_concise = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_controlled_regen_100_t80/controlled_regeneration_metrics.json"
+        ).read_text()
+    )
+    regen_concise_preservation = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_controlled_regen_100_t80_preservation/caption_variant_preservation_metrics.json"
+        ).read_text()
+    )
+    regen_concise_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_controlled_regen_100_t80_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
+    regen_detail = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/controlled_regeneration_metrics.json"
+        ).read_text()
+    )
+    regen_detail_preservation = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_preservation/caption_variant_preservation_metrics.json"
+        ).read_text()
+    )
+    regen_detail_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -727,6 +763,10 @@ def check_caption_route_summary() -> None:
     expanded_claim_content_summary = expanded_claim_content["summary"]
     broad_acceptance_content_summary = broad_acceptance_content["summary"]
     broad_claim_content_summary = broad_claim_content["summary"]
+    regen_concise_preservation_summary = regen_concise_preservation["summary"]
+    regen_concise_content_summary = regen_concise_content["summary"]
+    regen_detail_preservation_summary = regen_detail_preservation["summary"]
+    regen_detail_content_summary = regen_detail_content["summary"]
 
     _assert_contains(
         summary,
@@ -775,6 +815,22 @@ def check_caption_route_summary() -> None:
         "caption-route:scaled-100-claim-repair-row",
     )
 
+    _assert_contains(
+        summary,
+        f"| claim-local repair | {broad_claim_repair['num_examples']} | {broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {broad_claim_repair['mean_repaired_words']:.2f} | {broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_claim_summary['repaired_object_mention_retention_vs_vanilla'] * 100:.2f}% | {broad_claim_content_summary['content_light']} | current best deterministic fallback |",
+        "caption-route:regen-probe-repair-row",
+    )
+    _assert_contains(
+        summary,
+        f"| controlled regen concise | {regen_concise['num_examples']} | {regen_concise['chair']['regenerated']['overall']['CHAIRi']:.4f} | {regen_concise['chair']['regenerated']['total_hallucinated_mentions']} | {regen_concise['mean_words']['regenerated']:.2f} | {regen_concise_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {regen_concise_preservation_summary['variant_object_mention_retention_vs_vanilla'] * 100:.2f}% | {regen_concise_content_summary['content_light']} | lowers CHAIR by over-compressing content |",
+        "caption-route:regen-probe-concise-row",
+    )
+    _assert_contains(
+        summary,
+        f"| controlled regen detail | {regen_detail['num_examples']} | {regen_detail['chair']['regenerated']['overall']['CHAIRi']:.4f} | {regen_detail['chair']['regenerated']['total_hallucinated_mentions']} | {regen_detail['mean_words']['regenerated']:.2f} | {regen_detail_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {regen_detail_preservation_summary['variant_object_mention_retention_vs_vanilla'] * 100:.2f}% | {regen_detail_content_summary['content_light']} | recovers length but not the repair tradeoff |",
+        "caption-route:regen-probe-detail-row",
+    )
+
     concise_summary = concise["summary"]
     concise_rows = {
         "retained vanilla grounded mentions": concise_summary["accepted_retained_vanilla_grounded_rate"] * 100,
@@ -802,7 +858,7 @@ def check_caption_route_summary() -> None:
     claim_summary = claim_repair["preservation"]["summary"]
     _assert_contains(
         summary,
-        "the remaining method gap is controlled regeneration for preserving visible detail",
+        "the remaining method gap is verification-in-loop regeneration or candidate selection",
         "caption-route:scale-risk",
     )
     _assert_contains(
@@ -822,7 +878,7 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         evidence,
-        f"claim-local repair improves it to `{broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{broad_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`, and reduces content-light cases (`{broad_acceptance_content_summary['content_light']} -> {broad_claim_content_summary['content_light']}`)",
+        f"Prompt-only regeneration is a negative control: concise lowers CHAIRi to `{regen_concise['chair']['regenerated']['overall']['CHAIRi']:.4f}` by over-compressing to `{regen_concise['mean_words']['regenerated']:.2f}` words and `{regen_concise_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}%` retained vanilla grounded; detail reaches `{regen_detail['mean_words']['regenerated']:.2f}` words but worsens CHAIRi to `{regen_detail['chair']['regenerated']['overall']['CHAIRi']:.4f}` and retains only `{regen_detail_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}%`",
         "evidence:caption-claim-repair-scaled",
     )
     _assert_contains(
