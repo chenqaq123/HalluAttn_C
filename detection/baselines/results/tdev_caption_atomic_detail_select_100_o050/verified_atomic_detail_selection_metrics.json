@@ -1,0 +1,80 @@
+{
+  "atomic_examples_json": "detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050/atomic_detail_generation_examples.json",
+  "audit_json": "detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050_audit/closed_loop_example_audit.json",
+  "chair": {
+    "augmented": {
+      "details_file": "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050/augmented_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.05893909626719057,
+        "CHAIRs": 0.2,
+        "F1": 0.7551724137931034,
+        "Len": 0.6097,
+        "Precision": 0.8866396761133604,
+        "Recall": 0.6576576576576577
+      },
+      "total_hallucinated_mentions": 30,
+      "total_object_mentions": 509
+    },
+    "gated": {
+      "details_file": "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050/gated_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.11717495987158909,
+        "CHAIRs": 0.46,
+        "F1": 0.7519500780031201,
+        "Len": 0.8014,
+        "Precision": 0.7824675324675324,
+        "Recall": 0.7237237237237237
+      },
+      "total_hallucinated_mentions": 73,
+      "total_object_mentions": 623
+    },
+    "repaired": {
+      "details_file": "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050/repaired_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.06,
+        "CHAIRs": 0.19,
+        "F1": 0.7327433628318585,
+        "Len": 0.5655,
+        "Precision": 0.8922413793103449,
+        "Recall": 0.6216216216216216
+      },
+      "total_hallucinated_mentions": 27,
+      "total_object_mentions": 450
+    },
+    "selected": {
+      "details_file": "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050/selected_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.056016597510373446,
+        "CHAIRs": 0.19,
+        "F1": 0.7504363001745201,
+        "Len": 0.5902000000000001,
+        "Precision": 0.8958333333333334,
+        "Recall": 0.6456456456456456
+      },
+      "total_hallucinated_mentions": 27,
+      "total_object_mentions": 482
+    },
+    "vanilla": {
+      "details_file": "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050/vanilla_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.18492176386913228,
+        "CHAIRs": 0.73,
+        "F1": 0.723342939481268,
+        "Len": 0.8133,
+        "Precision": 0.6952908587257618,
+        "Recall": 0.7537537537537538
+      },
+      "total_hallucinated_mentions": 130,
+      "total_object_mentions": 703
+    }
+  },
+  "mean_words": {
+    "augmented": 54.67,
+    "repaired": 50.74,
+    "selected": 52.96
+  },
+  "num_examples": 100,
+  "scope_note": "Verified atomic detail selection. Selection uses only closed-loop target-vs-neighbor audit results; CHAIR is used only after selection for evaluation.",
+  "selected_atomic_additions": 26,
+  "selected_repair_fallback": 74
+}

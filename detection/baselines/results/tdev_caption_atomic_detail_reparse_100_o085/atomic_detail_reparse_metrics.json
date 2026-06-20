@@ -1,0 +1,14 @@
+{
+  "images_with_additions": 71,
+  "max_additions": 2,
+  "max_overlap": 0.85,
+  "max_sentence_words": 16,
+  "mean_words": {
+    "augmented": 56.74,
+    "repaired": 50.74
+  },
+  "min_sentence_words": 5,
+  "num_examples": 100,
+  "source_atomic_examples_json": "detection/baselines/results/tdev_caption_atomic_detail_gen_100/atomic_detail_generation_examples.json",
+  "total_additions": 71
+}

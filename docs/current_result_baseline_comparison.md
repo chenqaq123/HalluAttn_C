@@ -1,6 +1,6 @@
 # Current Result and Baseline Comparison
 
-Date: 2026-06-19
+Date: 2026-06-20
 
 This note is the current one-page answer to: *what are the results, and how do
 they compare with baselines?* It should be read as a status summary, not as a
@@ -258,13 +258,17 @@ Reading:
   (`0.0605` CHAIRi), while overlap `0.40` appends nothing and exactly returns to
   repair. The atomic-span generator is the first positive caption-side route:
   raw atomic augmentation adds detail but increases hallucinated mentions to
-  `31`, while verified atomic selection accepts 30 images, keeps hallucinated
-  mentions fixed at `27`, improves CHAIRi from `0.0600` to `0.0558`, raises mean
-  words from `50.74` to `53.33`, and raises retained vanilla grounded mentions
-  from `73.47%` to `76.79%`. A gain decomposition shows raw atomic spans add
-  `+59` grounded and `+4` hallucinated mentions, while verified selection keeps
-  `+34` grounded/object mentions with `+0` hallucinated mentions. The next
-  caption method should therefore use
+  `31`, while verified atomic selection at the default overlap threshold accepts
+  30 images, keeps hallucinated mentions fixed at `27`, improves CHAIRi from
+  `0.0600` to `0.0558`, raises mean words from `50.74` to `53.33`, and raises
+  retained vanilla grounded mentions from `73.47%` to `76.79%`. A new overlap
+  sweep shows the result is not a knife-edge duplicate-filter artifact: o0.50
+  accepts 26 images with CHAIRi `0.0560`, o0.65 accepts 30 with CHAIRi `0.0558`,
+  and o0.85 accepts 46 with CHAIRi `0.0541`; all three keep hallucinated
+  mentions at `27` and add `0` hallucinated mentions over repair. The o0.85
+  variant adds `+49` grounded mentions over repair and raises retained vanilla
+  grounded mentions to `77.49%`, so it is the best current prototype setting.
+  The next caption method should therefore use
   generation only for atomic missing-detail spans, keep deterministic claim-local
   repair as fallback, and accept spans only after target-vs-neighbor claim
   verification.

@@ -813,6 +813,29 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100/atomic_detail_gain_metrics.json"
         ).read_text()
     )
+
+    def load_atomic_variant(
+        label: str,
+        reparse_dir: str,
+        select_dir: str,
+        preservation_dir: str,
+        content_dir: str,
+        gain_dir: str,
+    ) -> dict[str, object]:
+        gain = json.loads((PROJECT_ROOT / gain_dir / "atomic_detail_gain_metrics.json").read_text())
+        return {
+            "label": label,
+            "reparse": json.loads((PROJECT_ROOT / reparse_dir / "atomic_detail_reparse_metrics.json").read_text()),
+            "select": json.loads((PROJECT_ROOT / select_dir / "verified_atomic_detail_selection_metrics.json").read_text()),
+            "preservation": json.loads(
+                (PROJECT_ROOT / preservation_dir / "caption_variant_preservation_metrics.json").read_text()
+            )["summary"],
+            "content": json.loads((PROJECT_ROOT / content_dir / "caption_content_light_metrics.json").read_text())[
+                "summary"
+            ],
+            "verified_gain": gain["verified_selected_vs_repaired"]["summary"],
+        }
+
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -890,6 +913,35 @@ def check_caption_route_summary() -> None:
     atomic_raw_gain_summary = atomic_gain["raw_augmented_vs_repaired"]["summary"]
     atomic_verified_gain_summary = atomic_gain["verified_selected_vs_repaired"]["summary"]
     atomic_gain_counts = atomic_gain["selection_counts"]
+    atomic_variants = [
+        load_atomic_variant(
+            "o0.50",
+            "detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_preservation",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_content_light",
+            "detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o050",
+        ),
+        {
+            "label": "o0.65",
+            "reparse": {
+                "images_with_additions": atomic_gen["images_with_additions"],
+                "total_additions": atomic_gen["total_additions"],
+            },
+            "select": atomic_select,
+            "preservation": atomic_select_preservation_summary,
+            "content": atomic_select_content_summary,
+            "verified_gain": atomic_verified_gain_summary,
+        },
+        load_atomic_variant(
+            "o0.85",
+            "detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o085",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o085",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_preservation",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_content_light",
+            "detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o085",
+        ),
+    ]
 
     _assert_contains(
         summary,
@@ -1012,6 +1064,28 @@ def check_caption_route_summary() -> None:
         summary,
         "Verified atomic selection changes the caption-side conclusion",
         "caption-route:atomic-positive-conclusion",
+    )
+    for variant in atomic_variants:
+        select = variant["select"]
+        reparse = variant["reparse"]
+        preservation = variant["preservation"]
+        content = variant["content"]
+        verified_gain = variant["verified_gain"]
+        if variant["label"] == "o0.50":
+            reading = "conservative filter"
+        elif variant["label"] == "o0.65":
+            reading = "default filter"
+        else:
+            reading = "best current detail/faithfulness tradeoff"
+        _assert_contains(
+            summary,
+            f"| verified atomic {variant['label']} | {reparse['images_with_additions']} images / {reparse['total_additions']} spans | {select['selected_atomic_additions']} | {select['chair']['selected']['overall']['CHAIRi']:.4f} | {select['chair']['selected']['total_hallucinated_mentions']} | {select['mean_words']['selected']:.2f} | {preservation['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {verified_gain['delta_grounded_mentions']} | {verified_gain['delta_hallucinated_mentions']} | {content['content_light']} | {reading} |",
+            f"caption-route:atomic-overlap-{variant['label']}",
+        )
+    _assert_contains(
+        summary,
+        "The overlap sweep strengthens the claim without changing its scope",
+        "caption-route:atomic-overlap-conclusion",
     )
     _assert_contains(
         summary,

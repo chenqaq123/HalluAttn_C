@@ -34,6 +34,31 @@ def summary_by_name(payload: dict[str, Any], name: str) -> dict[str, Any]:
     raise KeyError(name)
 
 
+def atomic_variant(
+    label: str,
+    reparse_dir: str,
+    select_dir: str,
+    preservation_dir: str,
+    content_dir: str,
+    gain_dir: str,
+) -> dict[str, Any]:
+    reparse = read_json(f"{reparse_dir}/atomic_detail_reparse_metrics.json")
+    select = read_json(f"{select_dir}/verified_atomic_detail_selection_metrics.json")
+    preservation = read_json(f"{preservation_dir}/caption_variant_preservation_metrics.json")["summary"]
+    content = read_json(f"{content_dir}/caption_content_light_metrics.json")["summary"]
+    gain = read_json(f"{gain_dir}/atomic_detail_gain_metrics.json")
+    return {
+        "label": label,
+        "reparse": reparse,
+        "select": select,
+        "preservation": preservation,
+        "content": content,
+        "raw_gain": gain["raw_augmented_vs_repaired"]["summary"],
+        "verified_gain": gain["verified_selected_vs_repaired"]["summary"],
+        "gain_counts": gain["selection_counts"],
+    }
+
+
 def build() -> str:
     feasibility = read_json("detection/baselines/results/tdev_decode_gate_feasibility/decode_gate_feasibility_metrics.json")
     prefilter = read_json("detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_metrics.json")
@@ -175,6 +200,39 @@ def build() -> str:
     atomic_raw_gain = atomic_gain["raw_augmented_vs_repaired"]["summary"]
     atomic_verified_gain = atomic_gain["verified_selected_vs_repaired"]["summary"]
     atomic_gain_counts = atomic_gain["selection_counts"]
+    atomic_variants = [
+        atomic_variant(
+            "o0.50",
+            "detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_preservation",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_content_light",
+            "detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o050",
+        ),
+        {
+            "label": "o0.65",
+            "reparse": {
+                "num_examples": atomic_gen["num_examples"],
+                "images_with_additions": atomic_gen["images_with_additions"],
+                "total_additions": atomic_gen["total_additions"],
+                "mean_words": atomic_gen["mean_words"],
+            },
+            "select": atomic_select,
+            "preservation": atomic_select_preservation,
+            "content": atomic_select_content,
+            "raw_gain": atomic_raw_gain,
+            "verified_gain": atomic_verified_gain,
+            "gain_counts": atomic_gain_counts,
+        },
+        atomic_variant(
+            "o0.85",
+            "detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o085",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o085",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_preservation",
+            "detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_content_light",
+            "detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o085",
+        ),
+    ]
 
     all_mentions = summary_by_name(feasibility, "all_mentions")
     hallucinated = summary_by_name(feasibility, "hallucinated_mentions")
@@ -310,6 +368,34 @@ def build() -> str:
             "",
             "Verified atomic selection changes the caption-side conclusion. Relative to claim-local repair, it keeps hallucinated mentions fixed at 27, improves CHAIRi from 0.0600 to 0.0558, raises mean words from 50.74 to 53.33, and raises retained vanilla grounded mentions from 73.47% to 76.79%. This is still a bounded 100-image high-risk prototype, but it is aligned with the paper motivation: looking is not enough, so generated details are only accepted when their object claims pass target-vs-neighbor verification.",
             "",
+            "### Atomic Overlap Sensitivity",
+            "",
+            "This ablation re-parses the same raw atomic generations with different overlap thresholds before verifier selection. It checks whether the positive result depends on one hand-tuned duplicate filter.",
+            "",
+            "| Variant | Raw candidates | Accepted images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Delta grounded | Delta hallucinated | Content-light | Reading |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|",
+        ]
+    )
+    for variant in atomic_variants:
+        select = variant["select"]
+        reparse = variant["reparse"]
+        preservation = variant["preservation"]
+        content = variant["content"]
+        verified_gain = variant["verified_gain"]
+        if variant["label"] == "o0.50":
+            reading = "conservative filter"
+        elif variant["label"] == "o0.65":
+            reading = "default filter"
+        else:
+            reading = "best current detail/faithfulness tradeoff"
+        lines.append(
+            f"| verified atomic {variant['label']} | {reparse['images_with_additions']} images / {reparse['total_additions']} spans | {select['selected_atomic_additions']} | {f4(select['chair']['selected']['overall']['CHAIRi'])} | {select['chair']['selected']['total_hallucinated_mentions']} | {f2(select['mean_words']['selected'])} | {pct(preservation['variant_retained_vanilla_grounded_rate'])} | {verified_gain['delta_grounded_mentions']} | {verified_gain['delta_hallucinated_mentions']} | {content['content_light']} | {reading} |"
+        )
+    lines.extend(
+        [
+            "",
+            "The overlap sweep strengthens the claim without changing its scope. Stricter filtering still improves repair without adding hallucinated mentions, and the looser o0.85 variant accepts 46 images, adds 49 grounded mentions over repair, adds 0 hallucinated mentions, and raises retained vanilla grounded mentions to 77.49%. The result is still a high-risk 100-image prototype, not a full caption benchmark result.",
+            "",
             "### Atomic Gain Decomposition",
             "",
             "| Gain audit | Raw augmented vs repair | Verified selected vs repair |",
@@ -394,6 +480,18 @@ def build() -> str:
             "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_preservation/caption_variant_preservation_metrics.json`",
             "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_content_light/caption_content_light_metrics.json`",
             "- `detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100/atomic_detail_gain_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050/atomic_detail_reparse_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050_audit/closed_loop_example_audit.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o050/verified_atomic_detail_selection_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_preservation/caption_variant_preservation_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_content_light/caption_content_light_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o050/atomic_detail_gain_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o085/atomic_detail_reparse_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o085_audit/closed_loop_example_audit.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o085/verified_atomic_detail_selection_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_preservation/caption_variant_preservation_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_content_light/caption_content_light_metrics.json`",
+            "- `detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o085/atomic_detail_gain_metrics.json`",
         ]
     )
     return "\n".join(lines) + "\n"

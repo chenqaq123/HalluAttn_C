@@ -124,6 +124,18 @@ This is the first positive caption-side prototype after the negative controls. L
 
 Verified atomic selection changes the caption-side conclusion. Relative to claim-local repair, it keeps hallucinated mentions fixed at 27, improves CHAIRi from 0.0600 to 0.0558, raises mean words from 50.74 to 53.33, and raises retained vanilla grounded mentions from 73.47% to 76.79%. This is still a bounded 100-image high-risk prototype, but it is aligned with the paper motivation: looking is not enough, so generated details are only accepted when their object claims pass target-vs-neighbor verification.
 
+### Atomic Overlap Sensitivity
+
+This ablation re-parses the same raw atomic generations with different overlap thresholds before verifier selection. It checks whether the positive result depends on one hand-tuned duplicate filter.
+
+| Variant | Raw candidates | Accepted images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Delta grounded | Delta hallucinated | Content-light | Reading |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| verified atomic o0.50 | 47 images / 47 spans | 26 | 0.0560 | 27 | 52.96 | 76.79% | 32 | 0 | 0 | conservative filter |
+| verified atomic o0.65 | 52 images / 52 spans | 30 | 0.0558 | 27 | 53.33 | 76.79% | 34 | 0 | 0 | default filter |
+| verified atomic o0.85 | 71 images / 71 spans | 46 | 0.0541 | 27 | 54.63 | 77.49% | 49 | 0 | 0 | best current detail/faithfulness tradeoff |
+
+The overlap sweep strengthens the claim without changing its scope. Stricter filtering still improves repair without adding hallucinated mentions, and the looser o0.85 variant accepts 46 images, adds 49 grounded mentions over repair, adds 0 hallucinated mentions, and raises retained vanilla grounded mentions to 77.49%. The result is still a high-risk 100-image prototype, not a full caption benchmark result.
+
 ### Atomic Gain Decomposition
 
 | Gain audit | Raw augmented vs repair | Verified selected vs repair |
@@ -208,3 +220,15 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_caption_atomic_detail_select_100_preservation/caption_variant_preservation_metrics.json`
 - `detection/baselines/results/tdev_caption_atomic_detail_select_100_content_light/caption_content_light_metrics.json`
 - `detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100/atomic_detail_gain_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050/atomic_detail_reparse_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o050_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o050/verified_atomic_detail_selection_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_preservation/caption_variant_preservation_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o050_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o050/atomic_detail_gain_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o085/atomic_detail_reparse_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_reparse_100_o085_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o085/verified_atomic_detail_selection_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_preservation/caption_variant_preservation_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_o085_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100_o085/atomic_detail_gain_metrics.json`
