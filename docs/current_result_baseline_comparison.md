@@ -261,7 +261,10 @@ Reading:
   `31`, while verified atomic selection accepts 30 images, keeps hallucinated
   mentions fixed at `27`, improves CHAIRi from `0.0600` to `0.0558`, raises mean
   words from `50.74` to `53.33`, and raises retained vanilla grounded mentions
-  from `73.47%` to `76.79%`. The next caption method should therefore use
+  from `73.47%` to `76.79%`. A gain decomposition shows raw atomic spans add
+  `+59` grounded and `+4` hallucinated mentions, while verified selection keeps
+  `+34` grounded/object mentions with `+0` hallucinated mentions. The next
+  caption method should therefore use
   generation only for atomic missing-detail spans, keep deterministic claim-local
   repair as fallback, and accept spans only after target-vs-neighbor claim
   verification.

@@ -1,0 +1,2384 @@
+{
+  "inputs": {
+    "augmented_details_json": "detection/baselines/results/tdev_caption_atomic_detail_select_100/augmented_chair_details.json",
+    "repaired_details_json": "detection/baselines/results/tdev_caption_atomic_detail_select_100/repaired_chair_details.json",
+    "selected_details_json": "detection/baselines/results/tdev_caption_atomic_detail_select_100/selected_chair_details.json",
+    "selection_examples_json": "detection/baselines/results/tdev_caption_atomic_detail_select_100/verified_atomic_detail_selection_examples.json"
+  },
+  "raw_augmented_vs_repaired": {
+    "per_image": [
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 6213,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 12319,
+        "new_grounded_mentions": {
+          "giraffe": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "giraffe": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 9,
+        "image_id": 15994,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 22596,
+        "new_grounded_mentions": {
+          "cow": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "cow": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 23369,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 10,
+        "image_id": 27768,
+        "new_grounded_mentions": {
+          "bus": 1,
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bus": 1,
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 28826,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 33489,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 36962,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 40686,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 47524,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 47611,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 48795,
+        "new_grounded_mentions": {
+          "book": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "book": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 52386,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 7,
+        "image_id": 53263,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 57238,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 63521,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 67180,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 1,
+        "delta_object_mentions": 2,
+        "delta_words": 11,
+        "image_id": 71914,
+        "new_grounded_mentions": {
+          "refrigerator": 1
+        },
+        "new_hallucinated_mentions": {
+          "apple": 1
+        },
+        "new_object_mentions": {
+          "apple": 1,
+          "refrigerator": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 10,
+        "image_id": 78194,
+        "new_grounded_mentions": {
+          "person": 1,
+          "toothbrush": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1,
+          "toothbrush": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 79689,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 102517,
+        "new_grounded_mentions": {
+          "person": 1,
+          "tie": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1,
+          "tie": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 9,
+        "image_id": 103815,
+        "new_grounded_mentions": {
+          "sports ball": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "sports ball": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 1,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 108645,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {
+          "clock": 1
+        },
+        "new_object_mentions": {
+          "clock": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 121417,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 7,
+        "image_id": 122745,
+        "new_grounded_mentions": {
+          "stop sign": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "stop sign": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 1,
+        "delta_object_mentions": 2,
+        "delta_words": 10,
+        "image_id": 126983,
+        "new_grounded_mentions": {
+          "oven": 1
+        },
+        "new_hallucinated_mentions": {
+          "microwave": 1
+        },
+        "new_object_mentions": {
+          "microwave": 1,
+          "oven": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 130645,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 131203,
+        "new_grounded_mentions": {
+          "laptop": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "laptop": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 135116,
+        "new_grounded_mentions": {
+          "dog": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dog": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 1,
+        "delta_object_mentions": 2,
+        "delta_words": 6,
+        "image_id": 146997,
+        "new_grounded_mentions": {
+          "vase": 1
+        },
+        "new_hallucinated_mentions": {
+          "book": 1
+        },
+        "new_object_mentions": {
+          "book": 1,
+          "vase": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 150091,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 164115,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 174113,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 175604,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 180383,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 181627,
+        "new_grounded_mentions": {
+          "fork": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "fork": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 183332,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 11,
+        "image_id": 205190,
+        "new_grounded_mentions": {
+          "train": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "train": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 208648,
+        "new_grounded_mentions": {
+          "train": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "train": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 11,
+        "image_id": 214698,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 15,
+        "image_id": 221502,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 231237,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 12,
+        "image_id": 234697,
+        "new_grounded_mentions": {
+          "traffic light": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "traffic light": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 246717,
+        "new_grounded_mentions": {
+          "car": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "car": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 252403,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 256251,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 3,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 3,
+        "delta_words": 7,
+        "image_id": 262162,
+        "new_grounded_mentions": {
+          "dining table": 1,
+          "laptop": 1,
+          "tv": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dining table": 1,
+          "laptop": 1,
+          "tv": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 266611,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 271457,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 273688,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 279387,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 282046,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 289633,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 12,
+        "image_id": 293804,
+        "new_grounded_mentions": {
+          "potted plant": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "potted plant": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 296521,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 303089,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 304341,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 313562,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 316400,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 321217,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 328785,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 330536,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 10,
+        "image_id": 330750,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 11,
+        "image_id": 334311,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 343852,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 346207,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 7,
+        "image_id": 356494,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 361751,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 362368,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 367528,
+        "new_grounded_mentions": {
+          "dining table": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dining table": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 382696,
+        "new_grounded_mentions": {
+          "oven": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "oven": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 383107,
+        "new_grounded_mentions": {
+          "dining table": 1,
+          "laptop": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dining table": 1,
+          "laptop": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 10,
+        "image_id": 386803,
+        "new_grounded_mentions": {
+          "boat": 1,
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "boat": 1,
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 391158,
+        "new_grounded_mentions": {
+          "train": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "train": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 410878,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 7,
+        "image_id": 414034,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 425522,
+        "new_grounded_mentions": {
+          "backpack": 1,
+          "suitcase": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "backpack": 1,
+          "suitcase": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 426253,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 426342,
+        "new_grounded_mentions": {
+          "dog": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dog": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 428079,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 9,
+        "image_id": 428161,
+        "new_grounded_mentions": {
+          "person": 1,
+          "tie": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1,
+          "tie": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 446206,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 457217,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 461655,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 10,
+        "image_id": 462211,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 462364,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 6,
+        "image_id": 467988,
+        "new_grounded_mentions": {
+          "dining table": 1,
+          "laptop": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dining table": 1,
+          "laptop": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 470704,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 472030,
+        "new_grounded_mentions": {
+          "backpack": 1,
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "backpack": 1,
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 7,
+        "image_id": 474188,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 494629,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 7,
+        "image_id": 498463,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 517973,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 6,
+        "image_id": 522782,
+        "new_grounded_mentions": {
+          "cup": 1,
+          "dining table": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "cup": 1,
+          "dining table": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 523565,
+        "new_grounded_mentions": {
+          "vase": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "vase": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 11,
+        "image_id": 525682,
+        "new_grounded_mentions": {
+          "couch": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "couch": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 9,
+        "image_id": 531349,
+        "new_grounded_mentions": {
+          "bus": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bus": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 540288,
+        "new_grounded_mentions": {
+          "cell phone": 1,
+          "dining table": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "cell phone": 1,
+          "dining table": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 559416,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      }
+    ],
+    "summary": {
+      "delta_grounded_mentions": 59,
+      "delta_hallucinated_mentions": 4,
+      "delta_object_mentions": 63,
+      "delta_words": 440,
+      "images_with_more_grounded": 46,
+      "images_with_more_hallucinated": 4,
+      "images_with_more_objects": 47,
+      "num_images": 100
+    }
+  },
+  "scope_note": "Gain audit for verified atomic-detail captions. Deltas compare CHAIR-recognized object mentions before and after atomic additions; selection itself does not use CHAIR.",
+  "selection_counts": {
+    "accepted_atomic_addition_images": 30,
+    "accepted_atomic_spans": 30,
+    "rejected_atomic_spans": 22,
+    "repair_fallback_images": 70
+  },
+  "verified_selected_vs_repaired": {
+    "per_image": [
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 6213,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 12319,
+        "new_grounded_mentions": {
+          "giraffe": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "giraffe": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 9,
+        "image_id": 15994,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 22596,
+        "new_grounded_mentions": {
+          "cow": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "cow": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 23369,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 10,
+        "image_id": 27768,
+        "new_grounded_mentions": {
+          "bus": 1,
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bus": 1,
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 28826,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 33489,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 36962,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 40686,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 47524,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 47611,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 48795,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 52386,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 53263,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 57238,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 63521,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 67180,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 71914,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 78194,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 79689,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 102517,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 103815,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 108645,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 121417,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 122745,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 126983,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 130645,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 131203,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 135116,
+        "new_grounded_mentions": {
+          "dog": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dog": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 146997,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 150091,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 164115,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 174113,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 175604,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 180383,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 6,
+        "image_id": 181627,
+        "new_grounded_mentions": {
+          "fork": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "fork": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 183332,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 11,
+        "image_id": 205190,
+        "new_grounded_mentions": {
+          "train": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "train": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 208648,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 11,
+        "image_id": 214698,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 221502,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 231237,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 12,
+        "image_id": 234697,
+        "new_grounded_mentions": {
+          "traffic light": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "traffic light": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 246717,
+        "new_grounded_mentions": {
+          "car": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "car": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 252403,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 256251,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 3,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 3,
+        "delta_words": 7,
+        "image_id": 262162,
+        "new_grounded_mentions": {
+          "dining table": 1,
+          "laptop": 1,
+          "tv": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dining table": 1,
+          "laptop": 1,
+          "tv": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 266611,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 271457,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 273688,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 279387,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 282046,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 8,
+        "image_id": 289633,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 12,
+        "image_id": 293804,
+        "new_grounded_mentions": {
+          "potted plant": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "potted plant": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 296521,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 303089,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 10,
+        "image_id": 304341,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 313562,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 316400,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 321217,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 328785,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 330536,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 10,
+        "image_id": 330750,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 11,
+        "image_id": 334311,
+        "new_grounded_mentions": {
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 343852,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 346207,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 356494,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 361751,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 362368,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 367528,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 382696,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 383107,
+        "new_grounded_mentions": {
+          "dining table": 1,
+          "laptop": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "dining table": 1,
+          "laptop": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 386803,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 391158,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 410878,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 7,
+        "image_id": 414034,
+        "new_grounded_mentions": {
+          "person": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 425522,
+        "new_grounded_mentions": {
+          "backpack": 1,
+          "suitcase": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "backpack": 1,
+          "suitcase": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 426253,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 426342,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 428079,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 9,
+        "image_id": 428161,
+        "new_grounded_mentions": {
+          "person": 1,
+          "tie": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "person": 1,
+          "tie": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 446206,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 457217,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 461655,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 10,
+        "image_id": 462211,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 462364,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 467988,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 470704,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 472030,
+        "new_grounded_mentions": {
+          "backpack": 1,
+          "bench": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "backpack": 1,
+          "bench": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 7,
+        "image_id": 474188,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 494629,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 7,
+        "image_id": 498463,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 517973,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 6,
+        "image_id": 522782,
+        "new_grounded_mentions": {
+          "cup": 1,
+          "dining table": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "cup": 1,
+          "dining table": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 523565,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 11,
+        "image_id": 525682,
+        "new_grounded_mentions": {
+          "couch": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "couch": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 1,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 1,
+        "delta_words": 9,
+        "image_id": 531349,
+        "new_grounded_mentions": {
+          "bus": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "bus": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 2,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 2,
+        "delta_words": 7,
+        "image_id": 540288,
+        "new_grounded_mentions": {
+          "cell phone": 1,
+          "dining table": 1
+        },
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {
+          "cell phone": 1,
+          "dining table": 1
+        }
+      },
+      {
+        "delta_grounded_mentions": 0,
+        "delta_hallucinated_mentions": 0,
+        "delta_object_mentions": 0,
+        "delta_words": 0,
+        "image_id": 559416,
+        "new_grounded_mentions": {},
+        "new_hallucinated_mentions": {},
+        "new_object_mentions": {}
+      }
+    ],
+    "summary": {
+      "delta_grounded_mentions": 34,
+      "delta_hallucinated_mentions": 0,
+      "delta_object_mentions": 34,
+      "delta_words": 259,
+      "images_with_more_grounded": 25,
+      "images_with_more_hallucinated": 0,
+      "images_with_more_objects": 25,
+      "num_images": 100
+    }
+  }
+}

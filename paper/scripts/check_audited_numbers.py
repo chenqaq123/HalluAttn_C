@@ -807,6 +807,12 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_caption_atomic_detail_select_100_content_light/caption_content_light_metrics.json"
         ).read_text()
     )
+    atomic_gain = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100/atomic_detail_gain_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -881,6 +887,9 @@ def check_caption_route_summary() -> None:
     local_add_content_summary = local_add_content["summary"]
     atomic_select_preservation_summary = atomic_select_preservation["summary"]
     atomic_select_content_summary = atomic_select_content["summary"]
+    atomic_raw_gain_summary = atomic_gain["raw_augmented_vs_repaired"]["summary"]
+    atomic_verified_gain_summary = atomic_gain["verified_selected_vs_repaired"]["summary"]
+    atomic_gain_counts = atomic_gain["selection_counts"]
 
     _assert_contains(
         summary,
@@ -1003,6 +1012,26 @@ def check_caption_route_summary() -> None:
         summary,
         "Verified atomic selection changes the caption-side conclusion",
         "caption-route:atomic-positive-conclusion",
+    )
+    _assert_contains(
+        summary,
+        f"| accepted / fallback images | -- | {atomic_gain_counts['accepted_atomic_addition_images']} / {atomic_gain_counts['repair_fallback_images']} |",
+        "caption-route:atomic-gain-counts",
+    )
+    _assert_contains(
+        summary,
+        f"| delta grounded mentions | {atomic_raw_gain_summary['delta_grounded_mentions']} | {atomic_verified_gain_summary['delta_grounded_mentions']} |",
+        "caption-route:atomic-gain-grounded",
+    )
+    _assert_contains(
+        summary,
+        f"| delta hallucinated mentions | {atomic_raw_gain_summary['delta_hallucinated_mentions']} | {atomic_verified_gain_summary['delta_hallucinated_mentions']} |",
+        "caption-route:atomic-gain-hallucinated",
+    )
+    _assert_contains(
+        summary,
+        "The improvement is therefore not an empty-caption or repetition artifact",
+        "caption-route:atomic-gain-interpretation",
     )
 
     concise_summary = concise["summary"]

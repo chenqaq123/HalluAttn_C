@@ -124,6 +124,18 @@ This is the first positive caption-side prototype after the negative controls. L
 
 Verified atomic selection changes the caption-side conclusion. Relative to claim-local repair, it keeps hallucinated mentions fixed at 27, improves CHAIRi from 0.0600 to 0.0558, raises mean words from 50.74 to 53.33, and raises retained vanilla grounded mentions from 73.47% to 76.79%. This is still a bounded 100-image high-risk prototype, but it is aligned with the paper motivation: looking is not enough, so generated details are only accepted when their object claims pass target-vs-neighbor verification.
 
+### Atomic Gain Decomposition
+
+| Gain audit | Raw augmented vs repair | Verified selected vs repair |
+|---|---:|---:|
+| accepted / fallback images | -- | 30 / 70 |
+| delta object mentions | 63 | 34 |
+| delta grounded mentions | 59 | 34 |
+| delta hallucinated mentions | 4 | 0 |
+| images with more grounded mentions | 46 | 25 |
+
+The gain decomposition shows the verifier's role directly. Raw atomic spans add 59 grounded mentions but also 4 hallucinated mentions. Verified selection keeps 34 new grounded/object mentions across 25 images while adding 0 hallucinated mentions. The improvement is therefore not an empty-caption or repetition artifact; it is the verifier selecting useful atomic additions and rejecting risky ones.
+
 ## Method Decision
 
 The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe, candidate-pool oracle, deployable-style verified selector, and local-addition probe show why prompt-only rewriting plus selection is insufficient. The atomic-detail probe gives the current method direction: propose short missing-detail spans, verify each introduced claim against target-vs-neighbor evidence, and fall back to the deterministic repair when no safe new detail is found.
@@ -195,3 +207,4 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_caption_atomic_detail_select_100/verified_atomic_detail_selection_metrics.json`
 - `detection/baselines/results/tdev_caption_atomic_detail_select_100_preservation/caption_variant_preservation_metrics.json`
 - `detection/baselines/results/tdev_caption_atomic_detail_select_100_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_gain_audit_100/atomic_detail_gain_metrics.json`

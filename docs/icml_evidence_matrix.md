@@ -67,7 +67,10 @@ head/region steering methods are runnable baselines or related-work pressure.
    verified atomic detail generation: raw atomic spans need verification (`31`
    hallucinated mentions), but verified atomic selection accepts 30 images, keeps
    hallucinated mentions at `27`, improves CHAIRi to `0.0558`, and raises retained
-   vanilla grounded mentions to `76.79%`. For a stronger ICML story, scale and
+   vanilla grounded mentions to `76.79%`. The gain audit is the key sanity check:
+   raw atomic spans add `+59` grounded and `+4` hallucinated mentions, while the
+   verifier keeps `+34` grounded/object mentions with `+0` hallucinated mentions.
+   For a stronger ICML story, scale and
    harden this verification-in-loop candidate generation: propose short missing-detail
    spans, extract object-like claims, map them to canonical targets, accept only
    claims passing target-vs-neighbor evidence, and fall back to local repair when
