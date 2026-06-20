@@ -1,0 +1,81 @@
+{
+  "audit_json": "detection/baselines/results/tdev_caption_verified_expansion_100_audit/closed_loop_example_audit.json",
+  "chair": {
+    "candidate": {
+      "details_file": "detection/baselines/results/tdev_caption_verified_candidate_select_100_r09/candidate_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.07142857142857142,
+        "CHAIRs": 0.2,
+        "F1": 0.7504363001745201,
+        "Len": 0.4338,
+        "Precision": 0.8958333333333334,
+        "Recall": 0.6456456456456456
+      },
+      "total_hallucinated_mentions": 27,
+      "total_object_mentions": 378
+    },
+    "gated": {
+      "details_file": "detection/baselines/results/tdev_caption_verified_candidate_select_100_r09/gated_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.11717495987158909,
+        "CHAIRs": 0.46,
+        "F1": 0.7519500780031201,
+        "Len": 0.8014,
+        "Precision": 0.7824675324675324,
+        "Recall": 0.7237237237237237
+      },
+      "total_hallucinated_mentions": 73,
+      "total_object_mentions": 623
+    },
+    "repaired": {
+      "details_file": "detection/baselines/results/tdev_caption_verified_candidate_select_100_r09/repaired_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.06,
+        "CHAIRs": 0.19,
+        "F1": 0.7327433628318585,
+        "Len": 0.5655,
+        "Precision": 0.8922413793103449,
+        "Recall": 0.6216216216216216
+      },
+      "total_hallucinated_mentions": 27,
+      "total_object_mentions": 450
+    },
+    "selected": {
+      "details_file": "detection/baselines/results/tdev_caption_verified_candidate_select_100_r09/selected_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.06,
+        "CHAIRs": 0.19,
+        "F1": 0.7327433628318585,
+        "Len": 0.5617,
+        "Precision": 0.8922413793103449,
+        "Recall": 0.6216216216216216
+      },
+      "total_hallucinated_mentions": 27,
+      "total_object_mentions": 450
+    },
+    "vanilla": {
+      "details_file": "detection/baselines/results/tdev_caption_verified_candidate_select_100_r09/vanilla_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.18492176386913228,
+        "CHAIRs": 0.73,
+        "F1": 0.723342939481268,
+        "Len": 0.8133,
+        "Precision": 0.6952908587257618,
+        "Recall": 0.7537537537537538
+      },
+      "total_hallucinated_mentions": 130,
+      "total_object_mentions": 703
+    }
+  },
+  "mean_words": {
+    "candidate": 39.04,
+    "repaired": 50.74,
+    "selected": 50.37
+  },
+  "min_candidate_word_ratio": 0.9,
+  "num_examples": 100,
+  "regen_examples_json": "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/controlled_regeneration_examples.json",
+  "scope_note": "Verified candidate selection prototype. Selection uses only closed-loop target-vs-neighbor audit results and a word-ratio guard; CHAIR is used only after selection for evaluation.",
+  "selected_detail_regen": 24,
+  "selected_repair_fallback": 76
+}

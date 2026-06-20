@@ -723,6 +723,42 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_caption_candidate_pool_oracle_100_no_worse_content_light/caption_content_light_metrics.json"
         ).read_text()
     )
+    verified_select = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_candidate_select_100/verified_candidate_selection_metrics.json"
+        ).read_text()
+    )
+    verified_select_preservation = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_candidate_select_100_preservation/caption_variant_preservation_metrics.json"
+        ).read_text()
+    )
+    verified_select_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_candidate_select_100_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
+    verified_select_r10 = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_candidate_select_100_r10/verified_candidate_selection_metrics.json"
+        ).read_text()
+    )
+    verified_select_r10_preservation = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_preservation/caption_variant_preservation_metrics.json"
+        ).read_text()
+    )
+    verified_select_r10_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -789,6 +825,10 @@ def check_caption_route_summary() -> None:
     oracle_no_worse_summary = oracle["summaries"]["no_worse_than_repair"]
     oracle_min_content_summary = oracle_min_content["summary"]
     oracle_no_worse_content_summary = oracle_no_worse_content["summary"]
+    verified_select_preservation_summary = verified_select_preservation["summary"]
+    verified_select_content_summary = verified_select_content["summary"]
+    verified_select_r10_preservation_summary = verified_select_r10_preservation["summary"]
+    verified_select_r10_content_summary = verified_select_r10_content["summary"]
 
     _assert_contains(
         summary,
@@ -866,6 +906,21 @@ def check_caption_route_summary() -> None:
         summary,
         "the gain is too small to justify a selector-only paper claim",
         "caption-route:oracle-small-gain",
+    )
+    _assert_contains(
+        summary,
+        f"| verified selector r0.75 | {verified_select['num_examples']} | {verified_select['selected_detail_regen']} | {verified_select['chair']['selected']['overall']['CHAIRi']:.4f} | {verified_select['chair']['selected']['total_hallucinated_mentions']} | {verified_select['mean_words']['selected']:.2f} | {verified_select_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {verified_select_preservation_summary['variant_object_mention_retention_vs_vanilla'] * 100:.2f}% | {verified_select_content_summary['content_light']} | verifier admits too many compressed candidates; worse than repair |",
+        "caption-route:verified-selector-r075-row",
+    )
+    _assert_contains(
+        summary,
+        f"| verified selector r1.00 | {verified_select_r10['num_examples']} | {verified_select_r10['selected_detail_regen']} | {verified_select_r10['chair']['selected']['overall']['CHAIRi']:.4f} | {verified_select_r10['chair']['selected']['total_hallucinated_mentions']} | {verified_select_r10['mean_words']['selected']:.2f} | {verified_select_r10_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {verified_select_r10_preservation_summary['variant_object_mention_retention_vs_vanilla'] * 100:.2f}% | {verified_select_r10_content_summary['content_light']} | stricter guard collapses to repair-level behavior |",
+        "caption-route:verified-selector-r100-row",
+    )
+    _assert_contains(
+        summary,
+        "The bottleneck is not just selection; the candidate generator must produce claim-local additions",
+        "caption-route:verified-selector-conclusion",
     )
 
     concise_summary = concise["summary"]

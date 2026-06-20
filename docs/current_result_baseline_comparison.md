@@ -247,10 +247,14 @@ Reading:
   no-worse-than-repair oracle keeps hallucinated mentions at `27`, moves CHAIRi
   only from `0.0600` to `0.0586`, and raises retained vanilla grounded mentions
   from `73.47%` to `75.22%` while selecting detail-regenerated captions for 20
-  images. The next caption method should therefore use regeneration only as a
-  verified candidate source for missing visible details, keeping deterministic
-  claim-local repair as the fallback and improving candidate generation rather
-  than relying on reranking alone.
+  images. A deployable-style verified selector confirms the limitation: with a
+  loose word-ratio guard it accepts 40 detail candidates and worsens CHAIRi to
+  `0.0621` with only `70.86%` retained vanilla grounded; with a strict r1.00
+  guard it accepts only 10 candidates and is effectively repair-level (`0.0599`
+  CHAIRi, `73.65%` retained vanilla grounded). The next caption method should
+  therefore use regeneration only as a verified candidate source for missing
+  visible details, keeping deterministic claim-local repair as the fallback and
+  improving candidate generation rather than relying on reranking alone.
 
 ## Paper-Safe Claim
 

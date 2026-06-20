@@ -58,8 +58,11 @@ head/region steering methods are runnable baselines or related-work pressure.
    `39.04` words but worsens CHAIRi to `0.0714` and retains only `60.73%`.
    The candidate-pool oracle is also small: no-worse-than-repair selection keeps
    27 hallucinated mentions and only
-   raises retained vanilla grounded mentions to `75.22%`. For a stronger ICML
-   story, the remaining gap is verification-in-loop candidate generation: propose
+   raises retained vanilla grounded mentions to `75.22%`. A deployable-style
+   verified selector does not close the gap either: r0.75 worsens CHAIRi to
+   `0.0621`, while strict r1.00 is repair-level (`0.0599` CHAIRi, `73.65%`
+   retained vanilla grounded). For a stronger ICML story, the remaining gap is
+   verification-in-loop candidate generation: propose
    missing details, extract object-like claims, map them to canonical targets,
    accept only claims passing target-vs-neighbor evidence, and fall back to local
    repair when no safe new detail exists. Report CHAIR together with retained
@@ -107,8 +110,9 @@ Checked sources:
 1. **Upgrade faithful-concise caption prototype.** The deterministic neutral-rewrite
    proxy, generated hard-gate smoke tests, sentence acceptance, claim-local
    repair smoke, 20/40/100-image scaled checks, prompt-only regeneration
-   negative controls, and candidate-pool oracle are complete. The remaining
-   high-value gap is verification-in-loop candidate generation, not selector-only
+   negative controls, candidate-pool oracle, and deployable-style verified
+   selector probe are complete. The remaining high-value gap is
+   verification-in-loop candidate generation, not selector-only
    reranking, evaluated against the same high-risk set with CHAIR, retained
    grounded objects, object retention, mean words, and content-light rate.
 2. **Region-box mechanism figure.** The contact-sheet mechanism figure is

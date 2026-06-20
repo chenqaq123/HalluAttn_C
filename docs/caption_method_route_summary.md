@@ -91,9 +91,20 @@ This is an upper-bound analysis, not a deployable method: it uses CHAIR labels t
 
 The no-worse-than-repair oracle is the relevant upper bound for a future verifier. It keeps hallucinated mentions at 27, improves CHAIRi only from 0.0600 to 0.0586, and raises retained vanilla grounded mentions from 73.47% to 75.22%. This means the existing regeneration candidates contain some recoverable detail, but the gain is too small to justify a selector-only paper claim. The next method needs better candidate generation plus target-vs-neighbor claim verification.
 
+## Verified Candidate Selection Probe
+
+Unlike the oracle above, this probe does not use CHAIR labels for selection. It accepts detail-regenerated captions only when the repaired-to-candidate closed-loop audit finds no unsupported introduced target/open-vocabulary claim, with a repaired-caption fallback.
+
+| Selector | Images | Accepted detail | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs vanilla | Content-light | Reading |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| verified selector r0.75 | 100 | 40 | 0.0621 | 27 | 48.80 | 70.86% | 61.88% | 0 | verifier admits too many compressed candidates; worse than repair |
+| verified selector r1.00 | 100 | 10 | 0.0599 | 27 | 50.75 | 73.65% | 64.15% | 0 | stricter guard collapses to repair-level behavior |
+
+The deployable-style selector confirms the oracle warning. A loose word-ratio guard accepts 40 detail candidates and worsens CHAIR/content retention. A strict r1.00 guard accepts only 10 detail candidates and is statistically indistinguishable from claim-local repair: CHAIRi 0.0599 vs. 0.0600 and retained vanilla grounded 73.65% vs. 73.47%. The bottleneck is not just selection; the candidate generator must produce claim-local additions that preserve detail without rewriting away supported content.
+
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe and candidate-pool oracle show that prompt-only rewriting plus selection is insufficient, so the remaining method gap is verification-in-loop candidate generation: propose missing details, verify each claim, and fall back to the deterministic repair when no safe new detail is found.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe, candidate-pool oracle, and deployable-style verified selector show that prompt-only rewriting plus selection is insufficient, so the remaining method gap is verification-in-loop candidate generation: propose missing details, verify each claim, and fall back to the deterministic repair when no safe new detail is found.
 
 The next implementation target is therefore:
 
@@ -146,3 +157,10 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_caption_candidate_pool_oracle_100/candidate_pool_oracle_metrics.json`
 - `detection/baselines/results/tdev_caption_candidate_pool_oracle_100_min_hallucination_content_light/caption_content_light_metrics.json`
 - `detection/baselines/results/tdev_caption_candidate_pool_oracle_100_no_worse_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_caption_verified_expansion_100_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_caption_verified_candidate_select_100/verified_candidate_selection_metrics.json`
+- `detection/baselines/results/tdev_caption_verified_candidate_select_100_preservation/caption_variant_preservation_metrics.json`
+- `detection/baselines/results/tdev_caption_verified_candidate_select_100_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_caption_verified_candidate_select_100_r10/verified_candidate_selection_metrics.json`
+- `detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_preservation/caption_variant_preservation_metrics.json`
+- `detection/baselines/results/tdev_caption_verified_candidate_select_100_r10_content_light/caption_content_light_metrics.json`
