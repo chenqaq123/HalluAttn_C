@@ -63,12 +63,16 @@ head/region steering methods are runnable baselines or related-work pressure.
    `0.0621`, while strict r1.00 is repair-level (`0.0599` CHAIRi, `73.65%`
    retained vanilla grounded). Local-addition from whole-caption regeneration is
    also a negative control: o0.55 adds only 6 mostly redundant sentences and one
-   hallucinated mention, while o0.40 adds nothing. For a stronger ICML story, the
-   remaining gap is verification-in-loop candidate generation: propose
-   atomic missing-detail spans, extract object-like claims, map them to canonical targets,
-   accept only claims passing target-vs-neighbor evidence, and fall back to local
-   repair when no safe new detail exists. Report CHAIR together with retained
-   grounded objects, object-mention retention, mean words, and content-light rate.
+   hallucinated mention, while o0.40 adds nothing. The current positive route is
+   verified atomic detail generation: raw atomic spans need verification (`31`
+   hallucinated mentions), but verified atomic selection accepts 30 images, keeps
+   hallucinated mentions at `27`, improves CHAIRi to `0.0558`, and raises retained
+   vanilla grounded mentions to `76.79%`. For a stronger ICML story, scale and
+   harden this verification-in-loop candidate generation: propose short missing-detail
+   spans, extract object-like claims, map them to canonical targets, accept only
+   claims passing target-vs-neighbor evidence, and fall back to local repair when
+   no safe new detail exists. Report CHAIR together with retained grounded
+   objects, object-mention retention, mean words, and content-light rate.
 2. **Positive head/region baselines are not fully reproduced.** Current local
    ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, DAMRO subset, and
    NoLan-compatible all-splits. AIR official code is now accessible and is the
@@ -113,8 +117,9 @@ Checked sources:
    proxy, generated hard-gate smoke tests, sentence acceptance, claim-local
    repair smoke, 20/40/100-image scaled checks, prompt-only regeneration
    negative controls, candidate-pool oracle, deployable-style verified selector,
-   and local-addition probes are complete. The remaining high-value gap is
-   verification-in-loop candidate generation, not selector-only
+   local-addition probes, and the first verified atomic-span prototype are
+   complete. The remaining high-value gap is scaling and hardening
+   verification-in-loop atomic detail generation, not selector-only
    reranking, evaluated against the same high-risk set with CHAIR, retained
    grounded objects, object retention, mean words, and content-light rate.
 2. **Region-box mechanism figure.** The contact-sheet mechanism figure is

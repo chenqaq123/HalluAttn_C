@@ -783,6 +783,30 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_caption_verified_local_additions_100_o04/verified_local_addition_metrics.json"
         ).read_text()
     )
+    atomic_gen = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_atomic_detail_gen_100/atomic_detail_generation_metrics.json"
+        ).read_text()
+    )
+    atomic_select = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_atomic_detail_select_100/verified_atomic_detail_selection_metrics.json"
+        ).read_text()
+    )
+    atomic_select_preservation = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_atomic_detail_select_100_preservation/caption_variant_preservation_metrics.json"
+        ).read_text()
+    )
+    atomic_select_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_atomic_detail_select_100_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -855,6 +879,8 @@ def check_caption_route_summary() -> None:
     verified_select_r10_content_summary = verified_select_r10_content["summary"]
     local_add_preservation_summary = local_add_preservation["summary"]
     local_add_content_summary = local_add_content["summary"]
+    atomic_select_preservation_summary = atomic_select_preservation["summary"]
+    atomic_select_content_summary = atomic_select_content["summary"]
 
     _assert_contains(
         summary,
@@ -963,6 +989,21 @@ def check_caption_route_summary() -> None:
         "The next generator must be explicitly trained or prompted to propose atomic missing-detail claims/spans",
         "caption-route:local-add-conclusion",
     )
+    _assert_contains(
+        summary,
+        f"| raw atomic augmentation | {atomic_gen['num_examples']} | {atomic_gen['images_with_additions']} images / {atomic_gen['total_additions']} spans | {atomic_gen['chair']['augmented']['overall']['CHAIRi']:.4f} | {atomic_gen['chair']['augmented']['total_hallucinated_mentions']} | {atomic_gen['mean_words']['augmented']:.2f} | -- | -- | -- | adds detail but needs verifier; hallucinated mentions rise |",
+        "caption-route:raw-atomic-row",
+    )
+    _assert_contains(
+        summary,
+        f"| verified atomic selection | {atomic_select['num_examples']} | {atomic_select['selected_atomic_additions']} images | {atomic_select['chair']['selected']['overall']['CHAIRi']:.4f} | {atomic_select['chair']['selected']['total_hallucinated_mentions']} | {atomic_select['mean_words']['selected']:.2f} | {atomic_select_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {atomic_select_preservation_summary['variant_object_mention_retention_vs_vanilla'] * 100:.2f}% | {atomic_select_content_summary['content_light']} | improves repair without increasing hallucinated mentions |",
+        "caption-route:verified-atomic-row",
+    )
+    _assert_contains(
+        summary,
+        "Verified atomic selection changes the caption-side conclusion",
+        "caption-route:atomic-positive-conclusion",
+    )
 
     concise_summary = concise["summary"]
     concise_rows = {
@@ -991,12 +1032,12 @@ def check_caption_route_summary() -> None:
     claim_summary = claim_repair["preservation"]["summary"]
     _assert_contains(
         summary,
-        "the remaining method gap is verification-in-loop candidate generation",
-        "caption-route:scale-risk",
+        "The atomic-detail probe gives the current method direction",
+        "caption-route:atomic-method-direction",
     )
     _assert_contains(
         summary,
-        "propose atomic missing-detail spans",
+        "propose short missing-detail spans",
         "caption-route:atomic-span-direction",
     )
     _assert_contains(

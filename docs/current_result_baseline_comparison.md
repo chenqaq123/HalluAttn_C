@@ -256,11 +256,15 @@ Reading:
   regeneration still does not provide good local spans: overlap `0.55` appends
   only 6 mostly redundant sentences and increases hallucinated mentions to `28`
   (`0.0605` CHAIRi), while overlap `0.40` appends nothing and exactly returns to
-  repair. The next caption method should therefore use regeneration only as a
-  verified candidate source for missing visible details, keeping deterministic
-  claim-local repair as the fallback and improving candidate generation toward
-  atomic missing-detail spans rather than relying on reranking or paraphrase
-  extraction alone.
+  repair. The atomic-span generator is the first positive caption-side route:
+  raw atomic augmentation adds detail but increases hallucinated mentions to
+  `31`, while verified atomic selection accepts 30 images, keeps hallucinated
+  mentions fixed at `27`, improves CHAIRi from `0.0600` to `0.0558`, raises mean
+  words from `50.74` to `53.33`, and raises retained vanilla grounded mentions
+  from `73.47%` to `76.79%`. The next caption method should therefore use
+  generation only for atomic missing-detail spans, keep deterministic claim-local
+  repair as fallback, and accept spans only after target-vs-neighbor claim
+  verification.
 
 ## Paper-Safe Claim
 

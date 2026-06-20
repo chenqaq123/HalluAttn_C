@@ -113,9 +113,20 @@ This probe keeps the repaired caption and only appends low-overlap sentences fro
 
 The local-addition probe narrows the fix. Whole-caption regeneration does not yield clean missing-detail spans: a loose overlap threshold appends only 6 mostly redundant sentences, increases hallucinated mentions from 27 to 28, and only nudges retained vanilla grounded from 73.47% to 73.82%; a stricter threshold appends nothing. The next generator must be explicitly trained or prompted to propose atomic missing-detail claims/spans, not full paraphrased captions.
 
+## Atomic Detail Generation Probe
+
+This is the first positive caption-side prototype after the negative controls. LLaVA is prompted to produce at most two short new visible-detail sentences from the image and repaired draft. The closed-loop verifier then keeps augmented captions only when introduced claims pass target-vs-neighbor verification.
+
+| Prototype | Images | Accepted additions | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs vanilla | Content-light | Reading |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| raw atomic augmentation | 100 | 52 images / 52 spans | 0.0604 | 31 | 55.14 | -- | -- | -- | adds detail but needs verifier; hallucinated mentions rise |
+| verified atomic selection | 100 | 30 images | 0.0558 | 27 | 53.33 | 76.79% | 68.85% | 0 | improves repair without increasing hallucinated mentions |
+
+Verified atomic selection changes the caption-side conclusion. Relative to claim-local repair, it keeps hallucinated mentions fixed at 27, improves CHAIRi from 0.0600 to 0.0558, raises mean words from 50.74 to 53.33, and raises retained vanilla grounded mentions from 73.47% to 76.79%. This is still a bounded 100-image high-risk prototype, but it is aligned with the paper motivation: looking is not enough, so generated details are only accepted when their object claims pass target-vs-neighbor verification.
+
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe, candidate-pool oracle, deployable-style verified selector, and local-addition probe show that prompt-only rewriting plus selection is insufficient, so the remaining method gap is verification-in-loop candidate generation: propose atomic missing-detail spans, verify each claim, and fall back to the deterministic repair when no safe new detail is found.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe, candidate-pool oracle, deployable-style verified selector, and local-addition probe show why prompt-only rewriting plus selection is insufficient. The atomic-detail probe gives the current method direction: propose short missing-detail spans, verify each introduced claim against target-vs-neighbor evidence, and fall back to the deterministic repair when no safe new detail is found.
 
 The next implementation target is therefore:
 
@@ -130,7 +141,7 @@ This preserves the paper's motivation: the method does not merely make object cl
 
 ## Paper-Safe Scope
 
-Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is verification-in-loop candidate generation, evaluated against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits. The prompt-only regeneration probe, candidate-pool oracle, verified selector, and local-addition probe should be reported as negative controls.
+Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is verification-in-loop atomic detail generation, evaluated beyond the current 100-image high-risk set with CHAIR, content-light, and content-preservation audits. The prompt-only regeneration probe, candidate-pool oracle, verified selector, and local-addition probe should be reported as negative controls.
 
 ## Source Artifacts
 
@@ -179,3 +190,8 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_caption_verified_local_additions_100_preservation/caption_variant_preservation_metrics.json`
 - `detection/baselines/results/tdev_caption_verified_local_additions_100_content_light/caption_content_light_metrics.json`
 - `detection/baselines/results/tdev_caption_verified_local_additions_100_o04/verified_local_addition_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_gen_100/atomic_detail_generation_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_gen_100_audit/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100/verified_atomic_detail_selection_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_preservation/caption_variant_preservation_metrics.json`
+- `detection/baselines/results/tdev_caption_atomic_detail_select_100_content_light/caption_content_light_metrics.json`
