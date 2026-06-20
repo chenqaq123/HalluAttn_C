@@ -56,23 +56,23 @@ This note is generated from saved caption-side TDEV prototype artifacts. It keep
 
 ## Scaled Smoke Checks
 
-| Scale | Prototype | Images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs gated | Empty/generic | Reading |
+| Scale | Prototype | Images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs gated | COCO-objectless / content-light | Reading |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|
 | 20-image | t96 hard gate | 20 | 0.1654 | 22 | 72.00 | -- | -- | -- | high-risk generated baseline |
-| 20-image | sentence acceptance | 20 | 0.0674 | 6 | 48.85 | 72.81% | 66.92% | 1 | reduces hallucination but can delete too much |
-| 20-image | claim-local repair | 20 | 0.0625 | 6 | 52.35 | 78.95% | 72.18% | 0 | preserves more supported content with the same hallucinated mention count |
+| 20-image | sentence acceptance | 20 | 0.0674 | 6 | 48.85 | 72.81% | 66.92% | 1 / 1 | reduces hallucination but can delete too much |
+| 20-image | claim-local repair | 20 | 0.0625 | 6 | 52.35 | 78.95% | 72.18% | 0 / 0 | preserves more supported content with the same hallucinated mention count |
 | 40-image | t96 hard gate | 40 | 0.1544 | 42 | 74.08 | -- | -- | -- | maximum available iter2-prefilter set |
-| 40-image | sentence acceptance | 40 | 0.0773 | 15 | 50.70 | 76.17% | 71.32% | 1 | same hallucination count as repair but less content retention |
-| 40-image | claim-local repair | 40 | 0.0739 | 15 | 53.38 | 80.00% | 74.63% | 0 | best larger-scale prototype tradeoff |
+| 40-image | sentence acceptance | 40 | 0.0773 | 15 | 50.70 | 76.17% | 71.32% | 1 / 1 | same hallucination count as repair but less content retention |
+| 40-image | claim-local repair | 40 | 0.0739 | 15 | 53.38 | 80.00% | 74.63% | 0 / 0 | best larger-scale prototype tradeoff |
 | 100-image | t96 hard gate | 100 | 0.1172 | 73 | 72.13 | -- | -- | -- | broader high-risk generated baseline |
-| 100-image | sentence acceptance | 100 | 0.0622 | 27 | 49.14 | 70.68% | 69.66% | 4 | strong hallucination reduction but visible-content loss remains |
-| 100-image | claim-local repair | 100 | 0.0600 | 27 | 50.74 | 73.47% | 72.23% | 3 | slight CHAIR/content gain over acceptance, but generic cases remain |
+| 100-image | sentence acceptance | 100 | 0.0622 | 27 | 49.14 | 70.68% | 69.66% | 4 / 1 | strong hallucination reduction but visible-content loss remains |
+| 100-image | claim-local repair | 100 | 0.0600 | 27 | 50.74 | 73.47% | 72.23% | 3 / 0 | slight CHAIR/content gain over acceptance; content-light cases are removed |
 
-The scaled checks support the direction but narrow the claim. On the 100-image high-risk set, sentence acceptance and claim-local repair both reduce hard-gated hallucinated mentions from 73 to 27. Claim-local repair is still slightly better than sentence acceptance: CHAIRi 0.0600 vs. 0.0622, mean words 50.74 vs. 49.14, retained vanilla grounded mentions 73.47% vs. 70.68%, and empty/generic cases 3 vs. 4. However, the repair gain is now modest, generic/empty cases are no longer zero, and object retention vs. vanilla remains only 64.01%. This is useful caption-side prototype evidence, not a complete caption mitigation result.
+The scaled checks support the direction but narrow the claim. On the 100-image high-risk set, sentence acceptance and claim-local repair both reduce hard-gated hallucinated mentions from 73 to 27. Claim-local repair is still slightly better than sentence acceptance: CHAIRi 0.0600 vs. 0.0622, mean words 50.74 vs. 49.14, retained vanilla grounded mentions 73.47% vs. 70.68%, and content-light cases 0 vs. 1. The old CHAIR-objectless counts, 3 vs. 4, mostly reflect non-COCO but descriptive objects such as roads, signs, poles, or watercraft. However, the repair gain is now modest and object retention vs. vanilla remains only 64.01%. This is useful caption-side prototype evidence, not a complete caption mitigation result.
 
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or collapses into generic captions. The 100-image result shows that deterministic local repair is a useful but modest improvement over sentence deletion, so the remaining method gap is a controlled regeneration step with a generic-content guard when a safe prefix is not enough.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive, so the remaining method gap is controlled regeneration for preserving visible detail when a safe prefix is not enough.
 
 The next implementation target is therefore:
 
@@ -80,14 +80,14 @@ The next implementation target is therefore:
 2. Extract object-like claims, including open-vocabulary route forms.
 3. Map each claim to a canonical target when possible and score target-vs-neighbor evidence.
 4. Accept supported claims and reject unsupported claims; allow the caption to become shorter when unsupported detail is the only thing being removed.
-5. Apply constrained local repair or regeneration when rejection would remove central visible content, when an unsupported claim sits in a detachable clause, or when the accepted caption would become generic.
+5. Apply constrained local repair or regeneration when rejection would remove central visible content, when an unsupported claim sits in a detachable clause, or when the accepted caption would become content-light.
 6. Report CHAIR together with concise-faithfulness metrics: retained supported objects, mean words, object mentions, empty/generic-caption rate, and manual examples.
 
 This preserves the paper's motivation: the method does not merely make object claims less frequent, and it does not rely on visual routing as proof. It explicitly tests whether the candidate claim is target-discriminative under related evidence. The desired behavior is not maximum caption length; it is concise but faithful captioning that keeps supported visual content and stops before unsupported object invention.
 
 ## Paper-Safe Scope
 
-Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to add controlled regeneration and a generic-content guard, then evaluate it against the 100-image high-risk set with the same CHAIR and content-preservation audits.
+Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to add controlled regeneration for preserving visible detail, then evaluate it against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits.
 
 ## Source Artifacts
 
@@ -114,3 +114,5 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair/claim_repair_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair_content_light/caption_content_light_metrics.json`

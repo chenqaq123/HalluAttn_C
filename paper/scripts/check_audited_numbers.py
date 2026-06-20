@@ -597,6 +597,18 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_claim_repair/claim_repair_metrics.json"
         ).read_text()
     )
+    scaled_acceptance_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_sentence_acceptance_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
+    scaled_claim_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_claim_repair_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
     expanded_acceptance = json.loads(
         (
             PROJECT_ROOT
@@ -615,6 +627,18 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair/claim_repair_metrics.json"
         ).read_text()
     )
+    expanded_acceptance_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
+    expanded_claim_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
     broad_acceptance = json.loads(
         (
             PROJECT_ROOT
@@ -631,6 +655,18 @@ def check_caption_route_summary() -> None:
         (
             PROJECT_ROOT
             / "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair/claim_repair_metrics.json"
+        ).read_text()
+    )
+    broad_acceptance_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
+    broad_claim_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair_content_light/caption_content_light_metrics.json"
         ).read_text()
     )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
@@ -685,6 +721,12 @@ def check_caption_route_summary() -> None:
     expanded_claim_summary = expanded_claim_repair["preservation"]["summary"]
     broad_concise_summary = broad_concise["summary"]
     broad_claim_summary = broad_claim_repair["preservation"]["summary"]
+    scaled_acceptance_content_summary = scaled_acceptance_content["summary"]
+    scaled_claim_content_summary = scaled_claim_content["summary"]
+    expanded_acceptance_content_summary = expanded_acceptance_content["summary"]
+    expanded_claim_content_summary = expanded_claim_content["summary"]
+    broad_acceptance_content_summary = broad_acceptance_content["summary"]
+    broad_claim_content_summary = broad_claim_content["summary"]
 
     _assert_contains(
         summary,
@@ -693,12 +735,12 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         summary,
-        f"| 20-image | sentence acceptance | {scaled_acceptance['num_examples']} | {scaled_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {scaled_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {scaled_acceptance['mean_accepted_words']:.2f} | {scaled_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {scaled_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {scaled_concise_summary['generic_or_empty_accepted']} | reduces hallucination but can delete too much |",
+        f"| 20-image | sentence acceptance | {scaled_acceptance['num_examples']} | {scaled_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {scaled_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {scaled_acceptance['mean_accepted_words']:.2f} | {scaled_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {scaled_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {scaled_acceptance_content_summary['chair_objectless']} / {scaled_acceptance_content_summary['content_light']} | reduces hallucination but can delete too much |",
         "caption-route:scaled-20-acceptance-row",
     )
     _assert_contains(
         summary,
-        f"| 20-image | claim-local repair | {scaled_claim_repair['num_examples']} | {scaled_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {scaled_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {scaled_claim_repair['mean_repaired_words']:.2f} | {scaled_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {scaled_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {scaled_claim_summary['generic_or_empty_repaired']} | preserves more supported content with the same hallucinated mention count |",
+        f"| 20-image | claim-local repair | {scaled_claim_repair['num_examples']} | {scaled_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {scaled_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {scaled_claim_repair['mean_repaired_words']:.2f} | {scaled_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {scaled_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {scaled_claim_content_summary['chair_objectless']} / {scaled_claim_content_summary['content_light']} | preserves more supported content with the same hallucinated mention count |",
         "caption-route:scaled-20-claim-repair-row",
     )
     _assert_contains(
@@ -708,12 +750,12 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         summary,
-        f"| 40-image | sentence acceptance | {expanded_acceptance['num_examples']} | {expanded_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {expanded_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {expanded_acceptance['mean_accepted_words']:.2f} | {expanded_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {expanded_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {expanded_concise_summary['generic_or_empty_accepted']} | same hallucination count as repair but less content retention |",
+        f"| 40-image | sentence acceptance | {expanded_acceptance['num_examples']} | {expanded_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {expanded_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {expanded_acceptance['mean_accepted_words']:.2f} | {expanded_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {expanded_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {expanded_acceptance_content_summary['chair_objectless']} / {expanded_acceptance_content_summary['content_light']} | same hallucination count as repair but less content retention |",
         "caption-route:scaled-40-acceptance-row",
     )
     _assert_contains(
         summary,
-        f"| 40-image | claim-local repair | {expanded_claim_repair['num_examples']} | {expanded_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {expanded_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {expanded_claim_repair['mean_repaired_words']:.2f} | {expanded_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {expanded_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {expanded_claim_summary['generic_or_empty_repaired']} | best larger-scale prototype tradeoff |",
+        f"| 40-image | claim-local repair | {expanded_claim_repair['num_examples']} | {expanded_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {expanded_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {expanded_claim_repair['mean_repaired_words']:.2f} | {expanded_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {expanded_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {expanded_claim_content_summary['chair_objectless']} / {expanded_claim_content_summary['content_light']} | best larger-scale prototype tradeoff |",
         "caption-route:scaled-40-claim-repair-row",
     )
 
@@ -724,12 +766,12 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         summary,
-        f"| 100-image | sentence acceptance | {broad_acceptance['num_examples']} | {broad_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {broad_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {broad_acceptance['mean_accepted_words']:.2f} | {broad_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {broad_concise_summary['generic_or_empty_accepted']} | strong hallucination reduction but visible-content loss remains |",
+        f"| 100-image | sentence acceptance | {broad_acceptance['num_examples']} | {broad_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {broad_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {broad_acceptance['mean_accepted_words']:.2f} | {broad_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {broad_acceptance_content_summary['chair_objectless']} / {broad_acceptance_content_summary['content_light']} | strong hallucination reduction but visible-content loss remains |",
         "caption-route:scaled-100-acceptance-row",
     )
     _assert_contains(
         summary,
-        f"| 100-image | claim-local repair | {broad_claim_repair['num_examples']} | {broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {broad_claim_repair['mean_repaired_words']:.2f} | {broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {broad_claim_summary['generic_or_empty_repaired']} | slight CHAIR/content gain over acceptance, but generic cases remain |",
+        f"| 100-image | claim-local repair | {broad_claim_repair['num_examples']} | {broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {broad_claim_repair['mean_repaired_words']:.2f} | {broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {broad_claim_content_summary['chair_objectless']} / {broad_claim_content_summary['content_light']} | slight CHAIR/content gain over acceptance; content-light cases are removed |",
         "caption-route:scaled-100-claim-repair-row",
     )
 
@@ -754,13 +796,13 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         summary,
-        "generic/empty cases are no longer zero",
+        "The old CHAIR-objectless counts",
         "caption-route:generic-risk",
     )
     claim_summary = claim_repair["preservation"]["summary"]
     _assert_contains(
         summary,
-        "the remaining method gap is a controlled regeneration step with a generic-content guard",
+        "the remaining method gap is controlled regeneration for preserving visible detail",
         "caption-route:scale-risk",
     )
     _assert_contains(
@@ -780,7 +822,7 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         evidence,
-        f"claim-local repair improves it to `{broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{broad_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
+        f"claim-local repair improves it to `{broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{broad_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`, and reduces content-light cases (`{broad_acceptance_content_summary['content_light']} -> {broad_claim_content_summary['content_light']}`)",
         "evidence:caption-claim-repair-scaled",
     )
     _assert_contains(

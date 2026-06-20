@@ -235,10 +235,13 @@ Reading:
   `0.1172` drops to `0.0622` with sentence acceptance and `0.0600` with
   claim-local repair; both leave 27 hallucinated mentions, while claim-local
   repair keeps slightly more text (`50.74` vs. `49.14` words), higher retained
-  vanilla grounded mentions (`73.47%` vs. `70.68%`), and fewer empty/generic
-  caption cases (`3` vs. `4`). The next caption method should therefore add
-  controlled regeneration and a generic-content guard on top of verifier-guided
-  claim acceptance, not rely on fixed token suppression or pure deletion.
+  vanilla grounded mentions (`73.47%` vs. `70.68%`), and fewer truly
+  content-light caption cases (`0` vs. `1`). The older CHAIR-objectless counts
+  (`3` vs. `4`) mostly reflect descriptive non-COCO content such as roads,
+  signs, poles, or watercraft. The next caption method should therefore add
+  controlled regeneration for preserving visible detail on top of
+  verifier-guided claim acceptance, not rely on fixed token suppression or pure
+  deletion.
 
 ## Paper-Safe Claim
 
