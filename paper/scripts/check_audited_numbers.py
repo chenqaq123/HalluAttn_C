@@ -1175,18 +1175,38 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         baseline_note,
-        '"use a detector to revise captions" in general',
-        "baseline-note:caption-boundary",
+        'use a detector to',
+        "baseline-note:caption-boundary-detector",
     )
     _assert_contains(
         baseline_note,
-        "Shorter captions are acceptable when they stop unsupported object",
+        'ask the LVLM to verify itself',
+        "baseline-note:caption-boundary-self-verification",
+    )
+    _assert_contains(
+        baseline_note,
+        "Shorter captions are acceptable when they stop unsupported",
         "baseline-note:caption-short-ok",
     )
     _assert_contains(
         baseline_note,
-        "content preservation, not length by",
+        "content preservation",
         "baseline-note:caption-content-risk",
+    )
+    _assert_contains(
+        baseline_note,
+        "PND/BRACS/Region-Aware/AIR",
+        "baseline-note:routing-pressure",
+    )
+    _assert_contains(
+        baseline_note,
+        "LogicCheckGPT/R-CoV",
+        "baseline-note:closed-loop-pressure",
+    )
+    _assert_contains(
+        baseline_note,
+        "genericizing claims",
+        "baseline-note:caption-baseline-gate",
     )
 
 

@@ -24,7 +24,7 @@ queried target object.
 | C7. Caption-side mitigation exists, but the useful route is claim acceptance plus constrained local repair plus verified candidate regeneration rather than fixed token suppression. | Partial, updated | Proxy rows show useful target selection: top-5 neutral rewrite CHAIRi `0.1340 -> 0.1186`; top-10 deletion CHAIRi `0.1048`. Generated smoke tests show fixed hard gating can route into substitute claims. On the 100-image high-risk set, claim-local repair reaches CHAIRi `0.0600`, `27` hallucinated mentions, `73.47%` retained vanilla grounded, and `0` content-light cases. Prompt-only regeneration is a negative control: concise lowers CHAIRi to `0.0538` by over-compressing to `17.75` words and `36.47%` retained vanilla grounded; detail reaches `39.04` words but worsens CHAIRi to `0.0714` and retains only `60.73%`. | Caption route summary plus appendix/prototype table. | Still high-risk selected and deterministic repair is only a modest gain. Next action is verification-in-loop regeneration or candidate selection, reported with content-preservation metrics, not length alone. |
 | C8. TDEV-lite gives practicality but not standalone mitigation. | Supported with scope | LH-alone POPE MCC `0.495`, TPR `0.432`; LH->TDEV at 2,025/9,000 calls MCC `0.754`, FPR `0.056`, related FPR `0.075`. | Efficiency/practicality table. | Must be labeled supervised routing/triage; do not present it as a training-free attention method. |
 | C9. Cross-model direction holds on Qwen2.5-VL. | Supported, small effect | `docs/multimodel_replication_audit.md`: Qwen vanilla macro MCC `0.765`, FPR `0.033`, related FPR `0.041`; fixed TDEV macro MCC `0.769`, FPR `0.027`, related FPR `0.034`. | Cross-model table. | Evidence is output-level plus model-independent OWLv2 verification, not Qwen internal attention evidence. |
-| C10. Novelty is target-discriminative verification, not external detection, chain verification, or stronger visual routing. | Supported by related-work boundary | Woodpecker/LURE/R-CoV cover post-hoc claim extraction/verification/revision; CAI/CAST/Region-Aware/Focus Matters cover internal visual-routing or attention steering. Our local semantic-neighbor controls show why aggregate visual reliance is not enough. | Related work + limitation section. | State explicitly that TDEV may use an external verifier backend, but the contribution is the related-neighbor control and target-vs-neighbor decision criterion. |
+| C10. Novelty is target-discriminative verification, not external detection, self-verification, chain verification, or stronger visual routing. | Supported by related-work boundary | Woodpecker/LURE/LogicCheckGPT/R-CoV cover post-hoc or self-verification correction; CAI/CAST/Region-Aware/Focus Matters/AIR/BRACS/PND cover internal visual-routing, steering, or decoding. Our local semantic-neighbor controls show why aggregate visual reliance is not enough. | Related work + limitation section. | State explicitly that TDEV may use an external verifier backend, but the contribution is the related-neighbor control and target-vs-neighbor decision criterion. |
 
 ## Proposed Main Tables and Figures
 
@@ -95,8 +95,8 @@ Recent related work reinforces the chosen scope:
 
 | Family | Examples | Boundary for this paper |
 |---|---|---|
-| Tool or chain verification | Woodpecker, LURE, UNIHD, R-CoV | They validate or rewrite with multi-step tools, statistical factors, or verification chains. We should not claim novelty as a generic post-hoc correction pipeline. |
-| Caption/head steering | CAI, CAST | They increase visual attention through caption-query patterns. Our required test is whether the steered evidence is target-discriminative under related-present negatives. |
+| Tool, self-, or chain verification | Woodpecker, LURE, LogicCheckGPT, UNIHD, R-CoV | They validate or rewrite with multi-step tools, statistical factors, logical consistency, or region-verification chains. We should not claim novelty as a generic post-hoc correction pipeline. |
+| Caption/head steering and decoding | CAI, CAST, PND, BRACS | They increase visual attention, steer hidden states, or contrast positive/negative visual paths. Our required test is whether the steered evidence is target-discriminative under related-present negatives. |
 | Phase-aware visual-token suppression | Focus Matters | It filters/suppresses visual tokens from internal attention dynamics. Treat as positive related work; audit if code becomes public/runnable. |
 | Region/head recalibration | Region-Aware Attention Recalibration | Closest low-cost internal mitigation direction. Treat as positive related work; audit if code becomes public/runnable. |
 | Internal probes | HALP, local LH-Shape | Supports practicality of internal routing, but TDEV-lite must remain a triage/readout story unless it passes full semantic-neighbor controls. |
@@ -107,7 +107,9 @@ Checked sources:
 - Woodpecker: https://arxiv.org/abs/2310.16045
 - LURE: https://arxiv.org/abs/2310.00754
 - UNIHD/MHaluBench: https://arxiv.org/abs/2402.03190
+- LogicCheckGPT / Logical Closed Loop: https://arxiv.org/abs/2402.11622
 - R-CoV: https://arxiv.org/abs/2604.20696
+- PND: https://arxiv.org/abs/2605.06679 and https://arxiv.org/abs/2604.24396
 - CAI: https://arxiv.org/abs/2506.23590
 - CAST: https://arxiv.org/abs/2605.04641
 - Focus Matters: https://arxiv.org/abs/2604.03556

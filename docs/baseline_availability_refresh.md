@@ -33,22 +33,30 @@ POPE/CHAIR evaluation, but it uses a forked LLaVA stack and requires an isolated
 Transformers setup. See `docs/air_baseline_feasibility.md`.
 
 Do not spend the next phase implementing unofficial approximations of CAI, CAST,
-Focus Matters, BRACS, AIR, Region-Aware Attention Recalibration, Woodpecker,
-LURE, or R-CoV. If official code is directly available and easy to adapt, run
-the bounded semantic-neighbor audit. If code remains unavailable or unclear, cite
-these papers as closest concurrent/related methods and state that our claim is a
-diagnostic plus verification criterion, not superiority over unreleased
-implementations.
+Focus Matters, BRACS, PND, AIR, Region-Aware Attention Recalibration,
+Woodpecker, LURE, LogicCheckGPT, or R-CoV. If official code is directly
+available and easy to adapt, run the bounded semantic-neighbor audit. If code
+remains unavailable or unclear, cite these papers as closest concurrent/related
+methods and state that our claim is a diagnostic plus verification criterion, not
+superiority over unreleased implementations.
 
-Caption-side work now has its own boundary. Woodpecker, LURE, and R-CoV already
-cover the broad post-hoc extraction-verification-revision template. Our
-publishable route cannot be "use a detector to revise captions" in general. It
-must be the narrower target-discriminative question exposed by our experiments:
-when a candidate object claim is semantically plausible because related objects
-are visible, verify the target against its neighbors and accept only supported
-claims. Shorter captions are acceptable when they stop unsupported object
-invention; the remaining risk to measure is content preservation, not length by
-itself.
+Caption-side work now has its own boundary. Woodpecker, LURE, LogicCheckGPT, and
+R-CoV already cover broad post-hoc extraction-verification-revision or
+self-verification templates. Our publishable route cannot be "use a detector to
+revise captions" in general, nor can it be "ask the LVLM to verify itself" in
+general. It must be the narrower target-discriminative question exposed by our
+experiments: when a candidate object claim is semantically plausible because
+related objects are visible, verify the target against its neighbors and accept
+only supported claims. Shorter captions are acceptable when they stop unsupported
+object invention; the remaining risk to measure is content preservation, not
+length by itself.
+
+The latest refresh adds two pressure points. First, PND/BRACS/Region-Aware/AIR
+strengthen the class of training-free visual-routing or decoding baselines, so
+our main table must keep the related-present FPR gap rather than only aggregate
+POPE/CHAIR. Second, LogicCheckGPT/R-CoV strengthen the class of closed-loop
+verification baselines, so our caption route must report claim-level acceptance
+with retained grounded objects and examples of target-vs-neighbor rejection.
 
 ## Availability Table
 
@@ -61,9 +69,11 @@ itself.
 | CAST: Caption-Guided Visual Attention Steering | arXiv page exists; arXiv code/media section exposes generic code-finder links but no direct official GitHub link in the checked page. | Closest head-steering baseline: probes caption-guided heads and applies steering vectors; claims SOTA with low overhead. | P0 related work; audit semantic-neighbor FPR if code appears. |
 | Region-Aware Attention Recalibration | arXiv page states that code will be public. No direct runnable code found in the current check. | Closest region/head recalibration baseline; explicitly targets CHAIR, POPE, and MME with training-free region-aware attention modulation. | P0 related work; monitor for code and then run the subset audit. |
 | Focus Matters: Phase-Aware Suppression | arXiv page exists; no direct official code link found in the current arXiv/search check. | Training-free single-forward-pass visual-token/attention suppression with low-latency hallucination mitigation claims; relevant as another internal visual-routing baseline. | P1 related work; audit semantic-neighbor FPR if official code appears. |
+| PND: Positive-and-Negative Decoding | arXiv page exists; no direct official code link found in the current arXiv/search check. | Recent training-free decoding baseline that contrasts positive visual evidence with negative/counterfactual visual paths; claims POPE/MME/CHAIR gains and more descriptive detail. | P0 related work; audit semantic-neighbor FPR if runnable because PND may improve aggregate detail while still amplifying related-object evidence. |
 | Dynamic Multimodal Activation Steering | arXiv page exists; no direct official code link found in the checked page. | Relevant activation/head steering baseline, but less directly tied to semantic-neighbor target verification. | P1 related work unless official code appears and is easy to run. |
 | Woodpecker | arXiv page links released source code. | Training-free post-remedy pipeline with concept extraction, question formulation, visual validation, claim generation, and correction. It is the classic external verifier/reviser baseline family. | Related-work boundary for caption correction; only run if we allocate a separate high-latency post-hoc baseline comparison. |
 | LURE | arXiv page links released source code; accepted by ICLR 2024. | Post-hoc hallucination revisor using co-occurrence, uncertainty, and position factors. Our local LURE-style detection controls already show these factors do not explain TDEV under controlled CHAIR detection. | Cite as caption revisor baseline; keep current LURE-style controlled-factor audit as the direct local evidence. |
+| LogicCheckGPT / Logical Closed Loop | arXiv page exists. | Self-consistency verification baseline that probes logical correlations between objects and attributes instead of using an external detector. | Related-work pressure for any "closed-loop verification" framing; our distinction is semantic-neighbor target discrimination, not logical consistency alone. |
 | R-CoV | arXiv page links project code. | Region-aware chain-of-verification with entity extraction, coordinate generation, region description, verification, and final response generation. Strongly overlaps with generic post-hoc caption correction. | Related-work pressure for caption-side experiments; our distinction is target-vs-neighbor verification under semantic-neighbor evidence, not chain verification itself. |
 
 ## Required Audit If Code Appears
@@ -82,6 +92,14 @@ Run a bounded semantic-neighbor audit before full-scale reruns:
    whether the method verifies the queried target rather than amplifying
    associated evidence.
 
+For post-hoc correction or closed-loop verification baselines such as
+Woodpecker, LogicCheckGPT, and R-CoV, use the same 100-image high-risk caption
+set before any broader run. Report CHAIRi/CHAIRs, hallucinated mentions, mean
+words, retained vanilla grounded mentions, object retention versus vanilla,
+content-light rate, and examples. A baseline that lowers CHAIR by deleting or
+genericizing claims should not be counted as solving the problem unless it also
+preserves supported objects and handles semantically related distractors.
+
 ## Paper Positioning
 
 These baselines occupy three neighboring spaces:
@@ -89,10 +107,11 @@ These baselines occupy three neighboring spaces:
 - CAI/CAST/Focus Matters/Region-Aware/AIR/BRACS ask how to improve visual
   routing, hidden-state steering, visual-token filtering, or regional attention
   during inference.
-- NoLan asks whether dynamic language-prior suppression is enough to reduce
-  object hallucination without an explicit object verifier.
-- Woodpecker/LURE/R-CoV ask whether generated captions can be corrected by
-  post-hoc claim extraction, validation, and revision.
+- VCD/NoLan/PND ask whether contrastive or language-prior-aware decoding is
+  enough to reduce object hallucination without an explicit object verifier.
+- Woodpecker/LURE/LogicCheckGPT/R-CoV ask whether generated captions can be
+  corrected by post-hoc claim extraction, validation, self-consistency, region
+  verification, and revision.
 - TDEV asks how to evaluate and operationalize target-vs-neighbor verification
   under semantic-neighbor negatives.
 
@@ -115,6 +134,7 @@ or co-occurrence-heavy.
 - NoLan: https://arxiv.org/abs/2602.22144 and https://github.com/lingfengren/NoLan
 - AIR: https://arxiv.org/abs/2603.24058 and https://github.com/Ice-wave/AIR
 - BRACS: https://arxiv.org/abs/2605.29881
+- PND: https://arxiv.org/abs/2605.06679 and https://arxiv.org/abs/2604.24396
 - CAI: https://arxiv.org/abs/2506.23590
 - CAST: https://arxiv.org/abs/2605.04641
 - Region-Aware Attention Recalibration: https://arxiv.org/abs/2605.24957
@@ -122,4 +142,5 @@ or co-occurrence-heavy.
 - Dynamic Multimodal Activation Steering: https://arxiv.org/abs/2602.21704
 - Woodpecker: https://arxiv.org/abs/2310.16045
 - LURE: https://arxiv.org/abs/2310.00754
+- LogicCheckGPT / Logical Closed Loop: https://arxiv.org/abs/2402.11622
 - R-CoV: https://arxiv.org/abs/2604.20696
