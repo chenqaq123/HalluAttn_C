@@ -579,6 +579,24 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/claim_repair_metrics.json"
         ).read_text()
     )
+    scaled_acceptance = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json"
+        ).read_text()
+    )
+    scaled_concise = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
+        ).read_text()
+    )
+    scaled_claim_repair = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_claim_repair/claim_repair_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -625,6 +643,59 @@ def check_caption_route_summary() -> None:
         if actual != rounded:
             raise AssertionError(f"caption-route-generated:{row_label}: table={actual} expected={rounded}")
 
+    scaled_generated_rows = {
+        "t96 hard gate": [
+            scaled_acceptance["num_examples"],
+            scaled_acceptance["chair"]["gated"]["overall"]["CHAIRi"],
+            scaled_acceptance["chair"]["gated"]["total_hallucinated_mentions"],
+            scaled_acceptance["mean_gated_words"],
+        ],
+        "sentence acceptance": [
+            scaled_acceptance["num_examples"],
+            scaled_acceptance["chair"]["accepted"]["overall"]["CHAIRi"],
+            scaled_acceptance["chair"]["accepted"]["total_hallucinated_mentions"],
+            scaled_acceptance["mean_accepted_words"],
+        ],
+        "claim-local repair": [
+            scaled_claim_repair["num_examples"],
+            scaled_claim_repair["chair"]["repaired"]["overall"]["CHAIRi"],
+            scaled_claim_repair["chair"]["repaired"]["total_hallucinated_mentions"],
+            scaled_claim_repair["mean_repaired_words"],
+        ],
+    }
+    scaled_concise_summary = scaled_concise["summary"]
+    scaled_claim_summary = scaled_claim_repair["preservation"]["summary"]
+    scaled_extra_values = {
+        "sentence acceptance": [
+            scaled_concise_summary["accepted_retained_vanilla_grounded_rate"] * 100,
+            scaled_concise_summary["accepted_object_mention_retention_vs_gated"] * 100,
+            scaled_concise_summary["generic_or_empty_accepted"],
+        ],
+        "claim-local repair": [
+            scaled_claim_summary["repaired_retained_vanilla_grounded_rate"] * 100,
+            scaled_claim_summary["repaired_object_mention_retention_vs_gated"] * 100,
+            scaled_claim_summary["generic_or_empty_repaired"],
+        ],
+    }
+    for row_label, expected in scaled_generated_rows.items():
+        actual = _numbers_from_markdown_row(summary, row_label)
+        if row_label == "t96 hard gate":
+            rounded = [round(expected[0]), round(expected[1], 4), round(expected[2]), round(expected[3], 2)]
+        else:
+            rounded = [round(expected[0]), round(expected[1], 4), round(expected[2]), round(expected[3], 2)] + [
+                round(scaled_extra_values[row_label][0], 2),
+                round(scaled_extra_values[row_label][1], 2),
+                round(scaled_extra_values[row_label][2]),
+            ]
+        # The row label appears in both the 5-image and 20-image tables. For the
+        # scaled rows, compare against the last matching markdown row.
+        matches = re.findall(rf"^\|\s*{re.escape(row_label)}\s*\|(.+)$", summary, re.MULTILINE)
+        if not matches:
+            raise AssertionError(f"Missing markdown table row: {row_label}")
+        actual = [float(value) for value in re.findall(r"[+-]?(?:\d+\.\d+|\.\d+|\d+)", matches[-1])]
+        if actual != rounded:
+            raise AssertionError(f"caption-route-scaled:{row_label}: table={actual} expected={rounded}")
+
     concise_summary = concise["summary"]
     concise_rows = {
         "retained vanilla grounded mentions": concise_summary["accepted_retained_vanilla_grounded_rate"] * 100,
@@ -656,9 +727,9 @@ def check_caption_route_summary() -> None:
         "caption-route:claim-repair-retention",
     )
     _assert_contains(
-        evidence,
-        f"acceptance reduces 96-token gated CHAIRi `{acceptance['chair']['gated']['overall']['CHAIRi']:.4f} -> {acceptance['chair']['accepted']['overall']['CHAIRi']:.4f}` and hallucinated mentions `{acceptance['chair']['gated']['total_hallucinated_mentions']} -> {acceptance['chair']['accepted']['total_hallucinated_mentions']}`",
-        "evidence:caption-acceptance-delta",
+        summary,
+        f"| sentence acceptance | {acceptance['num_examples']} | {acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {acceptance['chair']['accepted']['total_hallucinated_mentions']} | {acceptance['mean_accepted_words']:.2f} | {acceptance['mean_removed_words_by_acceptance']:.2f} | strong hallucination reduction, but drops complete mixed sentences |",
+        "caption-route:five-image-acceptance-row",
     )
     _assert_contains(
         summary,
@@ -667,8 +738,8 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         evidence,
-        f"claim-local repair improves CHAIRi further to `{claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, and raises retained vanilla grounded mentions to `{claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
-        "evidence:caption-claim-repair",
+        f"claim-local repair improves it to `{scaled_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{scaled_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{scaled_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{scaled_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
+        "evidence:caption-claim-repair-scaled",
     )
     _assert_contains(
         baseline_note,

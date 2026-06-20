@@ -1,0 +1,52 @@
+{
+  "audit_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_audit_ov96/closed_loop_example_audit.json",
+  "chair": {
+    "accepted": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_sentence_acceptance/accepted_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.06741573033707865,
+        "CHAIRs": 0.2,
+        "F1": 0.7676767676767676,
+        "Len": 0.5445,
+        "Precision": 0.8636363636363636,
+        "Recall": 0.6909090909090909
+      },
+      "total_hallucinated_mentions": 6,
+      "total_object_mentions": 89
+    },
+    "gated": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_sentence_acceptance/gated_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.16541353383458646,
+        "CHAIRs": 0.6,
+        "F1": 0.7394957983193278,
+        "Len": 0.8035,
+        "Precision": 0.6875,
+        "Recall": 0.8
+      },
+      "total_hallucinated_mentions": 22,
+      "total_object_mentions": 133
+    },
+    "vanilla": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_sentence_acceptance/vanilla_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.20279720279720279,
+        "CHAIRs": 0.8,
+        "F1": 0.6991869918699187,
+        "Len": 0.808,
+        "Precision": 0.6323529411764706,
+        "Recall": 0.7818181818181819
+      },
+      "total_hallucinated_mentions": 29,
+      "total_object_mentions": 143
+    }
+  },
+  "examples_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96/gated_generation_examples.json",
+  "mean_accepted_words": 48.85,
+  "mean_gated_words": 72.0,
+  "mean_removed_words_by_acceptance": 23.15,
+  "num_changed": 20,
+  "num_examples": 20,
+  "num_removed_chunks": 32,
+  "scope_note": "Offline sentence-level candidate acceptance proxy. It rejects generated sentences/tails containing residual denied claims or unsupported introduced claims from the closed-loop audit; it does not generate replacements."
+}

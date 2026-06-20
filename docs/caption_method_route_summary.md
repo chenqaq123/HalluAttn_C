@@ -54,6 +54,16 @@ This note is generated from saved caption-side TDEV prototype artifacts. It keep
 | object mention retention vs gated | 68.75% | less destructive than sentence acceptance |
 | generic/empty repaired captions | 0 | no repaired caption is empty/generic under the audit threshold |
 
+## 20-Image Scaled Smoke Check
+
+| Prototype | Images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs gated | Empty/generic | Reading |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| t96 hard gate | 20 | 0.1654 | 22 | 72.00 | -- | -- | -- | larger high-risk generated baseline |
+| sentence acceptance | 20 | 0.0674 | 6 | 48.85 | 72.81% | 66.92% | 1 | reduces hallucination but can delete too much |
+| claim-local repair | 20 | 0.0625 | 6 | 52.35 | 78.95% | 72.18% | 0 | preserves more supported content with the same hallucinated mention count |
+
+The 20-image check supports the 5-image direction but also narrows the claim. Claim-local repair keeps hallucinated mentions at 6, improves CHAIRi from 0.1654 to 0.0625, and removes the empty-caption case seen in sentence acceptance, but mean length still drops from 72.00 to 52.35 words. This is scaled prototype evidence, not a complete caption mitigation result.
+
 ## Method Decision
 
 The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The new claim-local repair smoke keeps the same hallucination reduction while preserving more grounded content by trimming only speculative or enumerating clauses when a safe prefix remains. The remaining risk is scaling this beyond five high-risk images and replacing deterministic clause trims with a controlled repair/regeneration step when the safe prefix is not enough.
@@ -81,3 +91,8 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/claim_repair_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96/gated_generation_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_audit_ov96/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_claim_repair/claim_repair_metrics.json`

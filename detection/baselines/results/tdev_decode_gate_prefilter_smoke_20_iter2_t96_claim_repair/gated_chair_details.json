@@ -1,0 +1,309 @@
+[
+  {
+    "image_id": 6213,
+    "caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby. \n\nThere are two bottes placed on the countertop, one closer to the sink and the other further away. Additionally, there are two cups,",
+    "generated_words": [
+      "sink",
+      "sink",
+      "sink",
+      "cup"
+    ],
+    "hallucinated_words": [
+      "cup"
+    ]
+  },
+  {
+    "image_id": 12319,
+    "caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraffes, there are several other animals in the scene, including a zebra and a few elephants. The zebra is located towards the left",
+    "generated_words": [
+      "giraffe",
+      "giraffe",
+      "giraffe",
+      "giraffe",
+      "zebra",
+      "elephant",
+      "zebra"
+    ],
+    "hallucinated_words": [
+      "zebra",
+      "elephant",
+      "zebra"
+    ]
+  },
+  {
+    "image_id": 15994,
+    "caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene, there is also a remote control placed near the woman, possibly for controlling a nearby TV or other electronic device.",
+    "generated_words": [
+      "person",
+      "couch",
+      "cell phone",
+      "person",
+      "couch",
+      "remote",
+      "person",
+      "tv"
+    ],
+    "hallucinated_words": [
+      "tv"
+    ]
+  },
+  {
+    "image_id": 22596,
+    "caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two chickens in the scene, one near the main cow and the other closer to the background cow. The chickens seem to be exploring the area or",
+    "generated_words": [
+      "cow",
+      "cow",
+      "cow",
+      "cow",
+      "cow",
+      "cow"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 23369,
+    "caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motorcycle and another further away.\n\nIn addition to the motorcycle, there is a person standing in the background, possibly observing the scene or passing by",
+    "generated_words": [
+      "motorcycle",
+      "motorcycle",
+      "stop sign",
+      "potted plant",
+      "motorcycle",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated_words": [
+      "stop sign",
+      "potted plant",
+      "person"
+    ]
+  },
+  {
+    "image_id": 27768,
+    "caption": "The image features a large white bus driving down a street, likely in a city. The bus is the main focus of the scene, occupying a significant portion of the image. There are several people visible on the street, with some standing closer to the bus and others further away.\n\nIn addition to the bus, there are two cars in the scene, one located on the right side of the bus and the other further back on the right side of the street. A",
+    "generated_words": [
+      "bus",
+      "bus",
+      "person",
+      "bus",
+      "bus",
+      "car",
+      "bus"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 28826,
+    "caption": "The image features a wooden bench situated on a sandy beach, overlooking the ocean. The bench is positioned near the water, providing a perfect spot for relaxation and enjoying the view. The beach is relatively empty, with no other objects or individuals visible in the scene. The bench is the main focal point of the image, creating a serene and peaceful atmosphere.",
+    "generated_words": [
+      "bench",
+      "bench",
+      "bench"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 33489,
+    "caption": "The image features a large blue boat being transported on a truck down a street. The boat is securely strapped to the back of the truck, ensuring it stays in place during the journey. The truck is driving down the road, with the boat taking up a significant portion of the scene.\n\nThere are several traffic lights visible in the image, with one on the left side of the truck and two others further down the street. Additionally,",
+    "generated_words": [
+      "boat",
+      "truck",
+      "boat",
+      "truck",
+      "truck",
+      "boat",
+      "traffic light",
+      "truck"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 36962,
+    "caption": "The image features a cat sitting on top of a television set, which is placed on a wooden deskside. The cat appears to be curiously looking at something, possibly a door or a window, located behind the television. The television is positioned in the center of the scene, with the cat sitting on top of it.\n\nIn the background, there is a chair placed near the left side of the image, and a person can be seen standing in the far",
+    "generated_words": [
+      "cat",
+      "tv",
+      "cat",
+      "tv",
+      "tv",
+      "cat",
+      "chair",
+      "person"
+    ],
+    "hallucinated_words": [
+      "person"
+    ]
+  },
+  {
+    "image_id": 40686,
+    "caption": "The image features a small, cozy living space with a bedroom and kitchenette combined. The bedroom area has a bed with a blue comforter and pillows, providing a comfortable sleeping area. The kitchenette is equipped with a refrigerator, a sink, and a microwave, making it a functional space for preparing meals.\n\nThere are two people in the room, one standing near the bed and the other closer to",
+    "generated_words": [
+      "bed",
+      "refrigerator",
+      "sink",
+      "microwave",
+      "person",
+      "bed"
+    ],
+    "hallucinated_words": [
+      "sink",
+      "microwave",
+      "person"
+    ]
+  },
+  {
+    "image_id": 47524,
+    "caption": "The image features a bald man with glasses, wearing a black shirt, and holding a toothbrush in his hand. He appears to be brushing his teeth or preparing to do so. The man is standing in a bathroom, with a towel hanging nearby.\n\nIn the background, there is a TV mounted on the wall, and a cup can be seen placed on a surface. The scene captures a typical moment of daily h",
+    "generated_words": [
+      "person",
+      "toothbrush",
+      "person",
+      "tv",
+      "cup"
+    ],
+    "hallucinated_words": [
+      "tv",
+      "cup"
+    ]
+  },
+  {
+    "image_id": 47611,
+    "caption": "The image features a restaurant with two dining tables placed in the middle of the room. Each table is accompanied by a chair, creating a comfortable seating arrangement for guests. The tables are positioned close to each other, with one table located near the left side of the room and the other table situated near the right side.\n\nIn the background, there is a clock mounted on the wall, providing a sense of time for the restaurant's patrons. The overall",
+    "generated_words": [
+      "dining table",
+      "dining table",
+      "chair",
+      "dining table",
+      "dining table",
+      "dining table",
+      "clock"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 48795,
+    "caption": "The image features a wooden bench with a book placed on it. The book is titled \"Our Crowd: The Greatest Gathering of Good Guys, Good Girls, and Good Times Ever!\" and appears to be a guide for a social event. The book is open, and it is resting on the bench, inviting someone to sit and read it. The bench is positioned in the foreground, and the book is the main focus",
+    "generated_words": [
+      "bench",
+      "book",
+      "book",
+      "person",
+      "person",
+      "book",
+      "bench",
+      "bench",
+      "book"
+    ],
+    "hallucinated_words": [
+      "person",
+      "person"
+    ]
+  },
+  {
+    "image_id": 52386,
+    "caption": "The image features a giraffe standing in a grassy area, eating grass from a wooden pole. The giraffe is positioned near the center of the scene, with its head close to the pole. The grassy area appears to be a part of a zoo enclosure, as there are several other wooden poles scattered around the scene.\n\nIn addition to the giraffe, there are two people visible in the background, likely observing the g",
+    "generated_words": [
+      "giraffe",
+      "giraffe",
+      "giraffe",
+      "person"
+    ],
+    "hallucinated_words": [
+      "person"
+    ]
+  },
+  {
+    "image_id": 53263,
+    "caption": "The image features a birthday celebration with a young girl and a young boy standing in front of a birthday cake. The cake is placed on a dining table, and there are several balloons surrounding it, adding to the festive atmosphere. The girl and boy are both smiling, enjoying the moment.\n\nIn addition to the cake, there are two knobs on the table, possibly for cutting the cake or serving it.",
+    "generated_words": [
+      "person",
+      "person",
+      "cake",
+      "cake",
+      "dining table",
+      "person",
+      "person",
+      "cake",
+      "dining table",
+      "cake"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 57238,
+    "caption": "The image features a kitchen with a white refrigerator freezer positioned in the corner of the room. The refrigerator is surrounded by a few chairs, with one chair located on the left side of the refrigerator and two chairs on the right side. \n\nIn addition to the refrigerator, there is a dining table in the room, which is situated near the left side of the refrigerator. A",
+    "generated_words": [
+      "refrigerator",
+      "refrigerator",
+      "refrigerator",
+      "chair",
+      "chair",
+      "refrigerator",
+      "chair",
+      "refrigerator",
+      "dining table",
+      "refrigerator"
+    ],
+    "hallucinated_words": []
+  },
+  {
+    "image_id": 63521,
+    "caption": "The image features two young children sitting on a couch, wearing birthday party hats. They are enjoying a meal together, with one child eating from a bowl and the other from a cup. The children are positioned close to each other, creating a warm and friendly atmosphere.\n\nThe couch is located in the background, and there are a few other items in the scene. A spoon can be seen near the bowl, and",
+    "generated_words": [
+      "person",
+      "couch",
+      "person",
+      "bowl",
+      "cup",
+      "person",
+      "couch",
+      "spoon",
+      "bowl"
+    ],
+    "hallucinated_words": [
+      "cup"
+    ]
+  },
+  {
+    "image_id": 67180,
+    "caption": "The image features a woman sitting on a wooden bench, wearing a hat and a green jacket. She is positioned in the center of the scene, with her legs crossed. The bench is located near a stone wall, which adds a rustic touch to the setting.\n\nIn the background, there is a potted plant placed on the left side of the scene, and a hand bag can be seen resting on the ground, close to the woman",
+    "generated_words": [
+      "person",
+      "bench",
+      "bench",
+      "potted plant",
+      "person"
+    ],
+    "hallucinated_words": [
+      "potted plant"
+    ]
+  },
+  {
+    "image_id": 71914,
+    "caption": "The image features a white refrigerator with its door open, revealing a variety of food items inside. The refrigerator is filled with several bottles, some of which are placed on the shelves, while others are located on the door. There are also a few appliances in the scene, including a microwave and an oven.\n\nIn addition to the food and appliances, there are two clocks visible in the",
+    "generated_words": [
+      "refrigerator",
+      "refrigerator",
+      "bottle",
+      "microwave",
+      "oven",
+      "clock"
+    ],
+    "hallucinated_words": [
+      "bottle",
+      "oven",
+      "clock"
+    ]
+  },
+  {
+    "image_id": 78194,
+    "caption": "The image features a young boy lying on a couch, playing a video game with a Wii controller in his hand. He appears to be enjoying the game, possibly watching the screen intently. The couch is covered with a checkered blanket, providing a cozy and comfortable environment for the boy to relax and play.",
+    "generated_words": [
+      "person",
+      "couch",
+      "couch",
+      "person"
+    ],
+    "hallucinated_words": []
+  }
+]

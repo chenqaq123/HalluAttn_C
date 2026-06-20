@@ -36,6 +36,7 @@ CLAUSE_MARKERS = [
     " including",
     ", such as",
     " such as",
+    " with ",
 ]
 
 GENERIC_UNSUPPORTED_CLAIMS = {
@@ -43,9 +44,12 @@ GENERIC_UNSUPPORTED_CLAIMS = {
     "nearby",
     "observing",
     "passing",
+    "for",
+    "providing",
     "seem",
     "standing",
     "towards",
+    "watching",
 }
 
 
