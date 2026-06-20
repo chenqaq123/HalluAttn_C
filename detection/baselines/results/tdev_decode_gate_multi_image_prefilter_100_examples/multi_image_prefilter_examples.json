@@ -1,0 +1,2326 @@
+[
+  {
+    "image_id": 6213,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11385087005794048,
+    "denied_words": [
+      "bottle",
+      "toothbrush"
+    ],
+    "aliases_by_word": {
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ],
+      "toothbrush": [
+        "toothbrush",
+        "toothbrushes"
+      ]
+    },
+    "num_denied_token_sequences": 26,
+    "caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby. \n\nThere are two bottles placed on the countertop, one closer to the sink and the other further away. Additionally, there are two cups, one near the sink and the other closer to the bathtub. A toothbrush can also be seen on the countertop, near the sink."
+  },
+  {
+    "image_id": 12319,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09830849140882492,
+    "denied_words": [
+      "bird"
+    ],
+    "aliases_by_word": {
+      "bird": [
+        "bird",
+        "birds"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraffes, there are several birds scattered throughout the scene, adding to the lively atmosphere. The birds are positioned at various heights and distances, some closer to the giraffes and others further away."
+  },
+  {
+    "image_id": 15994,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10024849779903888,
+    "denied_words": [
+      "tv"
+    ],
+    "aliases_by_word": {
+      "tv": [
+        "tv",
+        "tvs",
+        "television"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene, there is also a remote control placed near the woman, possibly for controlling a television or other electronic devices. The overall atmosphere of the image suggests a casual and comfortable setting, with the woman enjoying her time on the couch."
+  },
+  {
+    "image_id": 22596,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10393759317696094,
+    "denied_words": [
+      "bird"
+    ],
+    "aliases_by_word": {
+      "bird": [
+        "bird",
+        "birds"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds in the scene, one perched on a branch near the cow and the other flying above the water. The overall atmosphere of the image is serene and peaceful, with the cow and birds coexisting in their natural habitat."
+  },
+  {
+    "image_id": 23369,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09711643576622009,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motorcycle and another further away.\n\nIn addition to the motorcycle, there is a car parked on the road, slightly behind the motorcycle. The overall atmosphere of the scene suggests a peaceful and relaxed environment."
+  },
+  {
+    "image_id": 27768,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10358628526329994,
+    "denied_words": [
+      "handbag"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a large white bus driving down a street, likely in a city. The bus is the main focus of the scene, occupying a significant portion of the image. There are several people visible on the street, with some standing closer to the bus and others further away.\n\nIn addition to the bus, there are two cars in the scene, one located on the right side of the bus and the other further back on the right side of the street. A person is also holding a handbag, which can be seen near the center of the image."
+  },
+  {
+    "image_id": 28826,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11428969761356711,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a wooden bench situated on a sandy beach, overlooking the ocean. The bench is positioned near the water, providing a perfect spot for relaxation and enjoying the view. The beach is relatively empty, with no people visible in the scene. The bench is the main focal point of the image, and it appears to be the only piece of furniture on the beach."
+  },
+  {
+    "image_id": 33489,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10823838494718074,
+    "denied_words": [
+      "handbag",
+      "car"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ],
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 8,
+    "caption": "The image features a large blue boat being transported on a truck down a city street. The boat is strapped to the back of the truck, and it appears to be a sailboat. The truck is driving down the street, and there are traffic lights visible in the scene, indicating that the boat is being transported through an urban area.\n\nIn addition to the truck and the boat, there are a few other objects in the scene. A car is parked on the side of the street, and a person can be seen standing near the boat. There is also a handbag placed on the ground, possibly belonging to the person standing nearby."
+  },
+  {
+    "image_id": 36962,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.1073231491073966,
+    "denied_words": [
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a cat sitting on top of a television set, which is placed on a wooden table. The cat appears to be curiously looking at something, possibly a door or a window, located behind the television. The cat is positioned in the center of the scene, with the television on its right side.\n\nThe room also contains a chair, which is located on the left side of the image, and a remote control placed on the table near the cat. The overall scene gives a sense of a cozy and comfortable living space."
+  },
+  {
+    "image_id": 40686,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10789938632398843,
+    "denied_words": [
+      "bottle"
+    ],
+    "aliases_by_word": {
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ]
+    },
+    "num_denied_token_sequences": 22,
+    "caption": "The image features a small, cozy living space with a bedroom and kitchenette combined. The bedroom area has a bed with a blue comforter and pillows, providing a comfortable sleeping area. The kitchenette is equipped with a refrigerator, a sink, and a microwave, making it a functional space for preparing meals.\n\nThere are two people in the room, one standing near the bed and the other closer to the kitchenette. The room also has a few items on the bed, such as a towel and a bottle. The overall atmosphere of the room is inviting and comfortable, making it an ideal space for relaxation and rest."
+  },
+  {
+    "image_id": 47524,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.1054473415762186,
+    "denied_words": [
+      "sink"
+    ],
+    "aliases_by_word": {
+      "sink": [
+        "sink",
+        "sinks"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a bald man with glasses, wearing a black shirt, and holding a toothbrush in his hand. He appears to be brushing his teeth or preparing to do so. The man is standing in a bathroom, with a sink visible in the background. The scene captures a typical moment of daily hygiene for the man."
+  },
+  {
+    "image_id": 47611,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10956679459661245,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a restaurant with two dining tables placed in the middle of the room. Each table is accompanied by a chair, creating a comfortable seating arrangement for guests. The tables are positioned close to each other, with one table located near the left side of the room and the other table situated near the right side.\n\nA clock is mounted on the wall above the tables, providing a functional and decorative element to the space. The restaurant appears to be empty, with no people visible in the scene. The overall atmosphere suggests a quiet and inviting environment for patrons to enjoy their meals."
+  },
+  {
+    "image_id": 48795,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09931993566453456,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a wooden bench with a book placed on it. The book is titled \"Our Crowd: The Greatest Gathering of People Who Love People.\" The bench is located in a park, and the book appears to be a guide or a reference for the visitors. The book is placed on the bench, making it easily accessible for people to read and enjoy."
+  },
+  {
+    "image_id": 52386,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.1039075319468975,
+    "denied_words": [
+      "bird"
+    ],
+    "aliases_by_word": {
+      "bird": [
+        "bird",
+        "birds"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a giraffe standing in a grassy area, eating grass from a wooden pole. The giraffe is positioned near the center of the scene, with its head close to the pole. The grassy area appears to be a part of a zoo enclosure, as there are several other wooden poles scattered around the scene.\n\nIn addition to the giraffe, there are two birds visible in the image, one located near the top left corner and the other towards the top right corner. The presence of these birds adds to the natural ambiance of the scene."
+  },
+  {
+    "image_id": 53263,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.1044667101278901,
+    "denied_words": [
+      "knife"
+    ],
+    "aliases_by_word": {
+      "knife": [
+        "knife",
+        "knifes",
+        "knives"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a birthday celebration with a young girl and a young boy standing in front of a birthday cake. The cake is placed on a dining table, and there are several balloons surrounding it, adding to the festive atmosphere. The girl and boy are both smiling, enjoying the moment.\n\nIn addition to the cake, there are two knives visible in the scene, likely used for cutting and serving the cake. The overall scene conveys a joyful and happy birthday celebration."
+  },
+  {
+    "image_id": 57238,
+    "num_selected_mentions": 3,
+    "num_unique_denied_words": 3,
+    "num_selected_hallucinated_mentions": 3,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11095444288104772,
+    "denied_words": [
+      "cup",
+      "bowl",
+      "sink"
+    ],
+    "aliases_by_word": {
+      "cup": [
+        "cup",
+        "cups"
+      ],
+      "bowl": [
+        "bowl",
+        "bowls"
+      ],
+      "sink": [
+        "sink",
+        "sinks"
+      ]
+    },
+    "num_denied_token_sequences": 12,
+    "caption": "The image features a kitchen with a white refrigerator freezer positioned in the corner of the room. The refrigerator is surrounded by a few chairs, with one chair located on the left side of the refrigerator and two chairs on the right side. \n\nIn addition to the refrigerator, there is a dining table in the room, which is situated near the left side of the refrigerator. A cup can be seen placed on the table, and a bowl is located on the left side of the table. The kitchen also has a sink, which is situated on the right side of the room."
+  },
+  {
+    "image_id": 63521,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.108461684435606,
+    "denied_words": [
+      "clock",
+      "chair"
+    ],
+    "aliases_by_word": {
+      "clock": [
+        "clock",
+        "clocks"
+      ],
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 10,
+    "caption": "The image features two young children sitting on a couch, wearing birthday party hats. They are enjoying a meal together, with one child eating from a bowl and the other from a cup. The children are positioned close to each other, creating a warm and friendly atmosphere.\n\nThe couch is located in the background, and there are a few other items in the scene. A spoon can be seen near the bowl, and a bottle is placed on the couch. Additionally, there is a chair situated in the background, and a clock is mounted on the wall."
+  },
+  {
+    "image_id": 67180,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10772443551570177,
+    "denied_words": [
+      "handbag"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a woman sitting on a wooden bench, wearing a hat and a green jacket. She is positioned in the center of the scene, with her legs crossed. The bench is located near a stone wall, which adds a rustic touch to the setting.\n\nIn the background, there is a potted plant placed on the left side of the scene, and a handbag can be seen resting on the ground, close to the woman. The overall atmosphere of the image is casual and relaxed, with the woman enjoying her time on the bench."
+  },
+  {
+    "image_id": 71914,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10185194469988346,
+    "denied_words": [
+      "apple"
+    ],
+    "aliases_by_word": {
+      "apple": [
+        "apple",
+        "apples"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a white refrigerator with its door open, revealing a variety of food items inside. The refrigerator is filled with several bottles, some of which are placed on the shelves, while others are located on the door. There are also a few apples and oranges visible in the refrigerator, adding to the assortment of food items.\n\nIn addition to the refrigerator, there is a microwave placed above it, and a clock on the wall nearby. The scene appears to be a typical kitchen setting, with the refrigerator being a central part of the space."
+  },
+  {
+    "image_id": 78194,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10288927972316741,
+    "denied_words": [
+      "remote"
+    ],
+    "aliases_by_word": {
+      "remote": [
+        "remote",
+        "remotes"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a young boy lying on a couch, playing a video game with a remote control in his hand. He appears to be enjoying the game, possibly on a Nintendo Wii console. The boy is positioned in the center of the couch, with the remote control held in his hand.\n\nThe couch is covered with a checkered blanket, adding a cozy and comfortable atmosphere to the scene. The boy's focused expression and engagement with the game suggest that he is fully immersed in the experience."
+  },
+  {
+    "image_id": 79689,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10264982365071773,
+    "denied_words": [
+      "bottle"
+    ],
+    "aliases_by_word": {
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ]
+    },
+    "num_denied_token_sequences": 22,
+    "caption": "The image depicts a man sitting on a wooden chair in a bathroom. The chair is positioned near a toilet, and the man appears to be looking at the toilet. The bathroom is equipped with a sink, and there are several towels hanging on the wall. \n\nIn addition to the towels, there are two bottles placed on the wall, one closer to the sink and the other further away. The scene gives off a somewhat eerie atmosphere, possibly due to the darkness of the room or the man's posture."
+  },
+  {
+    "image_id": 102517,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10121142510324715,
+    "denied_words": [
+      "handbag",
+      "chair"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ],
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 10,
+    "caption": "The image features a man wearing glasses and a mustache, standing in front of a house. He appears to be making a funny face, possibly for the camera. The man is dressed in a suit and tie, giving him a professional appearance.\n\nThe scene also includes a chair located near the man, and a handbag can be seen placed on the ground. The house in the background adds to the overall setting of the image."
+  },
+  {
+    "image_id": 103815,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10848665878176689,
+    "denied_words": [
+      "bench"
+    ],
+    "aliases_by_word": {
+      "bench": [
+        "bench",
+        "benches"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image captures a baseball game in progress, with a pitcher in the middle of throwing a pitch. The pitcher is wearing a baseball glove and is in the process of releasing the ball. The baseball is visible in the air, close to the pitcher's hand.\n\nThere are several other people in the scene, including a batter, a catcher, and a few other players. The batter is holding a baseball bat, ready to swing at the incoming pitch. The catcher is positioned behind the batter, wearing a baseball glove and preparing to catch the ball. The other players are scattered around the field, likely in their respective positions.\n\nThe scene is set on a baseball field, with a bench visible in the background. The atmosphere is lively, as the players are actively engaged in the game."
+  },
+  {
+    "image_id": 108645,
+    "num_selected_mentions": 3,
+    "num_unique_denied_words": 3,
+    "num_selected_hallucinated_mentions": 3,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10736273404210805,
+    "denied_words": [
+      "potted plant",
+      "book",
+      "chair"
+    ],
+    "aliases_by_word": {
+      "potted plant": [
+        "potted plant",
+        "potted plants"
+      ],
+      "book": [
+        "book",
+        "books"
+      ],
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features two men sitting on a couch, playing a video game together. Both men are holding Wii controllers in their hands, fully engaged in the game. They are positioned close to each other, with one man on the left side of the couch and the other on the right.\n\nThe room they are in has a few decorative elements, such as a clock on the wall and a potted plant nearby. There is also a chair in the background, and a couple of books placed on the couch. The overall atmosphere appears to be relaxed and enjoyable as the two men share a fun gaming experience."
+  },
+  {
+    "image_id": 121417,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10591183591634035,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a woman sitting on a bench, holding a pink umbrella over her head. She is talking on her cell phone, which is positioned close to her ear. The woman is wearing a black jacket, and she has a handbag placed beside her on the bench.\n\nThe scene takes place on a street, with a car visible in the background. The woman appears to be enjoying her time outdoors while staying protected from the elements with her umbrella."
+  },
+  {
+    "image_id": 122745,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10433232121169567,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a stop sign with the word \"Voldemort\" written on it, likely as a playful or humorous alteration. The stop sign is located in a dark setting, possibly at night, with a mountain in the background. The scene appears to be set in a city, as there are multiple cars parked or driving nearby. The cars are scattered around the area, with some closer to the foreground and others further in the background."
+  },
+  {
+    "image_id": 126983,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10759720101952552,
+    "denied_words": [
+      "bottle",
+      "microwave"
+    ],
+    "aliases_by_word": {
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ],
+      "microwave": [
+        "microwave",
+        "microwaves"
+      ]
+    },
+    "num_denied_token_sequences": 26,
+    "caption": "The image features a small kitchen with a black stove top oven and a white refrigerator. The oven is located on the right side of the kitchen, while the refrigerator is on the left side. The kitchen floor is covered with a checkered tile pattern, adding a unique touch to the space.\n\nThere are several items placed on the countertops, including a microwave and a toaster. A couple of bottles can also be seen on the countertops, possibly containing beverages or condiments. The kitchen appears to be well-equipped and functional, with all the necessary appliances and items for cooking and food storage."
+  },
+  {
+    "image_id": 130645,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10288040794432163,
+    "denied_words": [
+      "handbag"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image depicts a busy street scene with a large bus driving down the road, surrounded by other vehicles. There are two cars visible in the scene, one behind the bus and another further down the road. A truck can also be seen on the right side of the bus.\n\nThere are several people in the scene, with some standing near the bus and others walking along the street. One person is carrying a handbag, which is visible near the center of the image. The overall atmosphere suggests a bustling urban environment with various modes of transportation in use."
+  },
+  {
+    "image_id": 131203,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10482072539627552,
+    "denied_words": [
+      "chair"
+    ],
+    "aliases_by_word": {
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a laptop computer with a keyboard and a screen. The laptop is open and turned on, displaying a blue screen with a message on it. The keyboard is located in the lower part of the laptop, and the screen is positioned above it.\n\nIn the background, there is a chair visible, likely for the user to sit on while working on the laptop. The scene appears to be a workspace or a personal area where the laptop is being used."
+  },
+  {
+    "image_id": 135116,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10732061311602592,
+    "denied_words": [
+      "sports ball",
+      "person"
+    ],
+    "aliases_by_word": {
+      "sports ball": [
+        "sports ball",
+        "sports balls",
+        "ball"
+      ],
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 20,
+    "caption": "The image features a large, shaggy, light-colored dog standing on the grass near a car. The dog appears to be looking at the camera, possibly posing for a picture. The car is parked in the background, occupying a significant portion of the scene.\n\nThere are also two other people in the image, one standing closer to the left side of the dog and the other person further to the right. Additionally, there is a sports ball located near the right side of the dog, possibly indicating that the dog is waiting for its owner to play with it."
+  },
+  {
+    "image_id": 146997,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10653900902718305,
+    "denied_words": [
+      "book"
+    ],
+    "aliases_by_word": {
+      "book": [
+        "book",
+        "books"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a vase filled with a beautiful arrangement of flowers, including a mix of red and orange flowers. The vase is placed on a table, and the flowers are arranged in a way that they are visible from different angles. The vase itself is made of books, adding a unique and creative touch to the display. The combination of the vase and the flowers creates an eye-catching and artistic centerpiece."
+  },
+  {
+    "image_id": 150091,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10658009432256221,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a large, long train traveling down the tracks. The train is predominantly red and yellow, with a few black elements as well. It appears to be a freight train, as it is carrying a significant amount of cargo.\n\nThere are several cars visible on the train, with some located near the front and others further back. The train is moving along the tracks, providing a sense of motion and activity in the scene."
+  },
+  {
+    "image_id": 164115,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10112048581242561,
+    "denied_words": [
+      "person",
+      "car"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ],
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 18,
+    "caption": "The image features a surfboard leaning against a wooden fence, with a blue cooler placed nearby. The surfboard is positioned horizontally, and the cooler is placed on the ground, close to the surfboard. The scene appears to be set in a park or a similar outdoor area.\n\nIn the background, there are several cars parked, with one car on the left side, another on the right side, and a third car further back. Additionally, there is a bench located near the left side of the image, providing a place for people to sit and enjoy the surroundings."
+  },
+  {
+    "image_id": 174113,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11541859189048409,
+    "denied_words": [
+      "orange"
+    ],
+    "aliases_by_word": {
+      "orange": [
+        "orange",
+        "oranges"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a white and orange cat sitting on a kitchen counter next to a microwave. The cat appears to be looking at the camera, possibly curious about its surroundings. The kitchen counter is cluttered with various items, including a knife set, a spoon, and a fork. There are also two bowls placed on the counter, one near the cat and the other further away. The scene gives off a cozy and lived-in atmosphere."
+  },
+  {
+    "image_id": 175604,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11197487160563468,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a dining table with a delicious-looking doughnut and a cup of coffee placed on it. The doughnut is covered in various toppings, including cereal, and is positioned towards the left side of the table. The cup of coffee is located on the right side of the table, close to the edge.\n\nIn the background, there is a person partially visible, likely enjoying the meal or preparing to eat the doughnut and drink the coffee. The scene appears to be a cozy and inviting setting for a snack or breakfast."
+  },
+  {
+    "image_id": 180383,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10828432150185108,
+    "denied_words": [
+      "potted plant",
+      "chair"
+    ],
+    "aliases_by_word": {
+      "potted plant": [
+        "potted plant",
+        "potted plants"
+      ],
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 10,
+    "caption": "The image features a cow statue with a television mounted on its back. The cow statue is brown and has a television screen attached to its back, displaying a news broadcast. The television is positioned in the middle of the cow's back, making it the focal point of the scene.\n\nThe cow statue is placed in a room with a dining table visible in the background. The room also has a chair positioned near the table, and a potted plant can be seen in the corner of the room."
+  },
+  {
+    "image_id": 181627,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.1109780379384756,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a delicious pizza on a white plate, placed on a dining table. The pizza is cooked and ready to be eaten, with a knife and fork nearby, indicating that it is meant to be enjoyed with a proper utensil setup. \n\nIn addition to the pizza, there is a cell phone on the table, possibly belonging to the person who prepared or ordered the pizza. The table setting also includes a cup, which could be used for a beverage to accompany the meal."
+  },
+  {
+    "image_id": 183332,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09760544344782829,
+    "denied_words": [
+      "book"
+    ],
+    "aliases_by_word": {
+      "book": [
+        "book",
+        "books"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a woman sitting in front of a laptop computer, which is placed on a desk. She appears to be working on the laptop, possibly using it for a presentation or a project. Another person is standing behind her, observing the laptop screen.\n\nThere are several books scattered around the room, with some placed on the desk and others on the floor. A clock is also visible on the wall, indicating the time. The room seems to be a workspace or a study area, with the woman and the person behind her focused on the laptop screen."
+  },
+  {
+    "image_id": 205190,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10843135964125394,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features two blue and yellow trains parked side by side on a train track. The trains are positioned close to each other, with one train occupying the left side of the track and the other train taking up the right side.\n\nThere are several people visible in the scene, with one person standing near the left train and two others standing near the right train. Additionally, there is a car parked in the background, slightly behind the trains."
+  },
+  {
+    "image_id": 208648,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10565931618213653,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a train traveling down the tracks, with a yellow front engine pulling a white train car. The train is moving along the tracks, and there are several other cars behind it. The train appears to be traveling through a rural area, with a grassy field visible in the background.\n\nIn addition to the train, there is a person standing near the tracks, possibly observing the train's movement or waiting for it to pass. The scene captures the essence of a typical day in a rural setting with a train in motion."
+  },
+  {
+    "image_id": 214698,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.0985935878753662,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image depicts a residential street with a stop sign positioned on the side of the road. The stop sign is leaning to the side, possibly due to a recent storm or an accident. The street is lined with houses, and there are several cars parked along the road.\n\nIn addition to the stop sign, there are two other signs visible in the scene. One is a street sign, and the other is a satellite dish. The street appears to be a mix of residential and urban elements, with the stop sign and street sign providing guidance for drivers and pedestrians."
+  },
+  {
+    "image_id": 221502,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11135937634855508,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a wooden bench situated in a grassy field, with a plaque attached to the back of the bench. The plaque is dedicated to a person named Martha, who is remembered and honored by the bench. The bench is located near the edge of the grassy field, providing a comfortable spot for visitors to sit and enjoy the surrounding environment."
+  },
+  {
+    "image_id": 231237,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10854792304337024,
+    "denied_words": [
+      "book"
+    ],
+    "aliases_by_word": {
+      "book": [
+        "book",
+        "books"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a vase filled with a variety of flowers, including red and yellow ones, placed on a table. The vase is positioned in the center of the scene, drawing attention to its beautiful arrangement. The table appears to be a dining table, and there are several books scattered around the table, possibly indicating a reading or studying area. The combination of the vase of flowers and the books creates a cozy and inviting atmosphere."
+  },
+  {
+    "image_id": 234697,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09725449129939079,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image depicts a foggy night scene with a street corner featuring a traffic light. The traffic light is positioned on the left side of the scene, and there are two other traffic lights visible in the background. The street appears to be empty, with no cars or pedestrians visible.\n\nThe foggy conditions create a mysterious atmosphere, and the streetlights illuminate the area, casting a soft glow on the surroundings. The overall scene gives a sense of quietness and stillness, as the foggy night envelops the street corner."
+  },
+  {
+    "image_id": 246717,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11035532306879758,
+    "denied_words": [
+      "handbag",
+      "person"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ],
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 18,
+    "caption": "The image depicts a busy street scene with several cars and trucks driving down the road. There are multiple traffic lights positioned at various points along the street, ensuring the smooth flow of traffic. \n\nIn addition to the vehicles, there are several pedestrians walking along the sidewalk, some of them carrying handbags. The street is lined with trees, providing a pleasant atmosphere for the people and vehicles passing by. The scene captures the hustle and bustle of daily life in a city environment."
+  },
+  {
+    "image_id": 252403,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11258315749466419,
+    "denied_words": [
+      "sink"
+    ],
+    "aliases_by_word": {
+      "sink": [
+        "sink",
+        "sinks"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a young woman with long hair, wearing glasses, and holding a blue and white toothbrush in her hand. She is posing for the camera, showcasing the toothbrush. The toothbrush is positioned in the center of the frame, with the woman's hand holding it.\n\nThe woman appears to be in a room, possibly a bathroom, as there is a sink visible in the background. The scene captures a casual and relaxed moment, with the woman enjoying her time while brushing her teeth."
+  },
+  {
+    "image_id": 256251,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10404284007847309,
+    "denied_words": [
+      "chair"
+    ],
+    "aliases_by_word": {
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a person holding a slice of pizza in their hand, with a piece of cheese visible on the slice. The pizza is placed on a plate, which is situated on a dining table. The person is also holding a bottle, likely containing a beverage to accompany the pizza.\n\nIn addition to the main scene, there are two more pizza slices on the table, one near the top right corner and another in the middle of the table. The table is surrounded by chairs, with one on the left side and another on the right side."
+  },
+  {
+    "image_id": 262162,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10486474186182021,
+    "denied_words": [
+      "dining table",
+      "bottle"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ]
+    },
+    "num_denied_token_sequences": 36,
+    "caption": "The image features a bedroom with a bed situated in the left corner of the room. A desk with a computer setup is located in the right corner of the room, with a chair positioned in front of it. The desk is equipped with a keyboard and a mouse, and there are two laptops placed on the desk, one on the left side and the other on the right side.\n\nIn addition to the computer setup, there are two TVs in the room, one on the left side and the other on the right side. A bottle can be seen on the desk, and a book is placed on the bed. The room appears to be well-organized and functional, with a comfortable bed and a dedicated workspace."
+  },
+  {
+    "image_id": 266611,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10200125247240066,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a road with a yellow sign on the side, indicating a give way. The sign is positioned near the center of the scene, and the road appears to be empty. The surroundings include a grassy area and a field, giving the impression of a rural setting.\n\nIn the background, there are a few cars parked or driving along the road, with one car closer to the left side of the image and two others further back on the right side. The presence of these vehicles suggests that the road is not entirely deserted."
+  },
+  {
+    "image_id": 271457,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11536876752972602,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a wooden bench situated near a body of water, possibly a lake or a river. The bench is positioned in a grassy area, providing a comfortable spot for people to sit and enjoy the view. The water appears to be calm, and the surrounding environment is serene.\n\nThere are a few people in the scene, with one person standing closer to the water and two others further away. The presence of these individuals suggests that the bench is a popular spot for relaxation and contemplation."
+  },
+  {
+    "image_id": 273688,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10867763951420784,
+    "denied_words": [
+      "bowl"
+    ],
+    "aliases_by_word": {
+      "bowl": [
+        "bowl",
+        "bowls"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a large, freshly baked pizza with a generous amount of cheese and herbs on top. The pizza is placed on a dining table, taking up a significant portion of the table's surface. The cheese is melted and bubbly, creating a mouth-watering appearance.\n\nIn addition to the main pizza, there is another smaller pizza located towards the right side of the table. The table also has a bowl placed near the top left corner, possibly containing a side dish or condiment."
+  },
+  {
+    "image_id": 279387,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11282366503030061,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a street with a brick sidewalk and a metal pole. The sidewalk is made of bricks, and the pole is located near the center of the scene. The street appears to be empty, with no cars or pedestrians visible. The overall atmosphere of the scene is quiet and peaceful."
+  },
+  {
+    "image_id": 282046,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11167709331959486,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a lonely bench situated on a sandy beach, overlooking the ocean. The bench is positioned near the water's edge, providing a perfect spot for relaxation and enjoying the view. The beach appears to be empty, with no people or other objects visible in the scene. The sky above the beach is cloudy, adding to the serene atmosphere of the scene."
+  },
+  {
+    "image_id": 289633,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10104356415569782,
+    "denied_words": [
+      "sink"
+    ],
+    "aliases_by_word": {
+      "sink": [
+        "sink",
+        "sinks"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a man with a beard and mustache, brushing his teeth with a toothbrush. He is looking at the camera while performing this activity. The man is wearing a necklace, adding a touch of style to his appearance. The scene is set in a bathroom, with a sink visible in the background."
+  },
+  {
+    "image_id": 293804,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10387668468058109,
+    "denied_words": [
+      "book",
+      "clock"
+    ],
+    "aliases_by_word": {
+      "book": [
+        "book",
+        "books"
+      ],
+      "clock": [
+        "clock",
+        "clocks"
+      ]
+    },
+    "num_denied_token_sequences": 8,
+    "caption": "The image features a cozy living room with a fireplace as the focal point. The fireplace is surrounded by two couches, one on the left side and another on the right side of the room. A chair is also present in the room, located near the left couch. \n\nIn addition to the seating, there are a few decorative elements in the room. A potted plant is placed near the right couch, and a vase can be seen on a surface in the room. A clock is mounted on the wall, and a book is resting on a surface, possibly a coffee table. The room is well-lit, creating a warm and inviting atmosphere."
+  },
+  {
+    "image_id": 296521,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10124330304563045,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a large orange and blue train traveling down the tracks, with a person standing nearby. The train is positioned in the middle of the scene, occupying a significant portion of the image. The person is standing to the left of the train, possibly observing or waiting for the train to pass.\n\nThe train appears to be a long passenger train, with several cars visible behind it. The scene is set in a lush green environment, with trees surrounding the train tracks."
+  },
+  {
+    "image_id": 303089,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10607971146702766,
+    "denied_words": [
+      "sink"
+    ],
+    "aliases_by_word": {
+      "sink": [
+        "sink",
+        "sinks"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a man with glasses brushing his teeth in a bathroom. He is wearing a pair of glasses and appears to be focused on his task. The man is using a toothbrush to clean his teeth, and there is a cup placed nearby. The bathroom appears to be well-lit, with a sink visible in the background."
+  },
+  {
+    "image_id": 304341,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11116280488669872,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a white building with a large clock mounted on its side. The clock is positioned near the center of the building, making it a prominent feature. The building also has a bench located in front of it, providing a place for people to sit and relax.\n\nThere are two potted plants in the scene, one near the left side of the building and the other closer to the right side. Additionally, there are two people in the image, one standing near the left side of the building and the other closer to the right side."
+  },
+  {
+    "image_id": 313562,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.1004086647927761,
+    "denied_words": [
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a woman standing in front of a table filled with a variety of carrots. She is wearing a blue apron and appears to be selling the carrots at a market. The table is covered with numerous carrots, some of which are placed in piles, while others are spread out across the table. The woman is smiling, showcasing her friendly and approachable demeanor."
+  },
+  {
+    "image_id": 316400,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10276846606284379,
+    "denied_words": [
+      "dining table",
+      "spoon"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "spoon": [
+        "spoon",
+        "spoons"
+      ]
+    },
+    "num_denied_token_sequences": 18,
+    "caption": "The image features a brown teddy bear wearing a green Starbucks apron, sitting on a desk in front of a computer screen. The teddy bear is positioned in the center of the scene, and the computer screen is located on the right side of the image.\n\nIn the background, there is a dining table with a cup placed on it. The cup is situated towards the left side of the table, and a spoon can be seen resting on the table as well. The scene appears to be a cozy and comfortable workspace."
+  },
+  {
+    "image_id": 321217,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11515741551294922,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a snow-covered hill with a bench prominently placed on the snow. The bench is positioned in the middle of the scene, surrounded by a beautiful snowy landscape. The sky above the hill is clear and blue, creating a serene atmosphere.\n\nIn the background, there are trees visible, adding to the picturesque winter scene. The bench appears to be a popular spot for people to sit and enjoy the view, as it is located in a prime location on the snowy hill."
+  },
+  {
+    "image_id": 328785,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10912322428077459,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a man wearing glasses, standing in front of a stop sign. He is positioned close to the sign, with his face and ears visible in the foreground. The stop sign is located on the left side of the image, and the man appears to be looking at the camera.\n\nIn the background, there is a tree and a car, suggesting that the scene takes place on a street or a road. The man's glasses are clearly visible, adding to the overall detail of the image."
+  },
+  {
+    "image_id": 330536,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10565701860934495,
+    "denied_words": [
+      "bottle"
+    ],
+    "aliases_by_word": {
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ]
+    },
+    "num_denied_token_sequences": 22,
+    "caption": "The image features a small, clean bathroom with a white toilet situated next to a white bathtub. The toilet is positioned on the right side of the bathtub, while the bathtub occupies the left side of the room. The bathroom also has a sink located towards the right side of the room.\n\nThere is a window in the bathroom, providing natural light to the space. A towel is hanging on the left side of the bathtub, and a bottle can be seen placed on the right side of the sink. The overall appearance of the bathroom is tidy and well-maintained."
+  },
+  {
+    "image_id": 330750,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10932495061308145,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a stone building with a bench situated in front of it. The bench is made of wood and is placed on a grassy area, providing a comfortable spot for people to sit and relax. The building appears to be a stone structure with a window, and there is a red mailbox nearby.\n\nIn addition to the bench, there are two trash cans in the scene, one located closer to the building and the other further away. The presence of these trash cans suggests that the area is well-maintained and clean."
+  },
+  {
+    "image_id": 334311,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10775077704340219,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a lonely park bench situated on a dirt road, surrounded by trees. The bench is positioned on the side of the road, providing a place for people to sit and enjoy the natural surroundings. The bench is made of wood and has a metal frame, giving it a sturdy and durable appearance. The dirt road appears to be a pathway, leading to a park or a scenic area."
+  },
+  {
+    "image_id": 343852,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10241762444376945,
+    "denied_words": [
+      "cake"
+    ],
+    "aliases_by_word": {
+      "cake": [
+        "cake",
+        "cakes"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a man wearing a suit and tie, sitting on the ground and enjoying a piece of cake. He is holding the cake in his hand, and it appears to be a chocolate cake. The man is also wearing sunglasses, adding a stylish touch to his outfit.\n\nThere are several other people in the scene, some of them sitting on the ground and others standing. A cup can be seen placed on the ground, possibly belonging to one of the people in the scene. The overall atmosphere seems to be casual and relaxed, with everyone enjoying their time together."
+  },
+  {
+    "image_id": 346207,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.09799696773290634,
+    "denied_words": [
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a wooden desk with a laptop and a computer monitor placed on it. A cat is comfortably laying on the desk, occupying a significant portion of the space. The cat appears to be looking at the camera, possibly posing for a picture.\n\nThere are several books scattered around the desk, with some placed near the laptop and others closer to the edge of the desk. A cell phone can also be seen on the desk, resting near the laptop. Additionally, a remote control is located on the desk, possibly for controlling a nearby television or other electronic device."
+  },
+  {
+    "image_id": 356494,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10423888906836509,
+    "denied_words": [
+      "airplane"
+    ],
+    "aliases_by_word": {
+      "airplane": [
+        "airplane",
+        "airplanes",
+        "jet"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a man wearing a wetsuit, riding a jet ski on a body of water. He is skillfully navigating the jet ski through the water, enjoying the thrill of the ride. The jet ski is positioned in the center of the scene, with the man skillfully controlling it.\n\nThe water appears to be slightly choppy, adding to the excitement of the ride. The man's wetsuit is visible, providing him with the necessary protection and flexibility while engaging in this water sport."
+  },
+  {
+    "image_id": 361751,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10386592417955398,
+    "denied_words": [
+      "person",
+      "potted plant"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ],
+      "potted plant": [
+        "potted plant",
+        "potted plants"
+      ]
+    },
+    "num_denied_token_sequences": 18,
+    "caption": "The image features a black metal bench situated on a sidewalk near a fence. The bench is positioned in the middle of the scene, with a tree nearby. There are several other benches in the background, some of which are located closer to the fence.\n\nIn addition to the benches, there are a few potted plants scattered throughout the scene, adding a touch of greenery to the area. A person can be seen standing near the benches, possibly enjoying the outdoor space or waiting for someone."
+  },
+  {
+    "image_id": 362368,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10083402030169963,
+    "denied_words": [
+      "dining table",
+      "chair"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 20,
+    "caption": "The image features a young boy wearing a red shirt, standing in front of a plate filled with a delicious dessert. The plate is topped with a variety of candy, including marshmallows and other treats. The boy appears to be enjoying the dessert, possibly at a park or an outdoor event.\n\nIn the background, there is another person partially visible, possibly a friend or family member. The scene also includes a chair and a dining table, suggesting that the dessert is being served in a casual setting."
+  },
+  {
+    "image_id": 367528,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10249636404216289,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a wooden dining table with a red pitcher and a pink mug placed on it. The pitcher is filled with flowers, adding a touch of color and life to the scene. The table is surrounded by chairs, with one on the left side and another on the right side.\n\nIn the background, there is a television set mounted on the wall, providing entertainment for those seated at the table. The combination of the flowers, mug, and television creates a cozy and inviting atmosphere for a meal or gathering."
+  },
+  {
+    "image_id": 382696,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09956214472651481,
+    "denied_words": [
+      "spoon",
+      "bottle"
+    ],
+    "aliases_by_word": {
+      "spoon": [
+        "spoon",
+        "spoons"
+      ],
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ]
+    },
+    "num_denied_token_sequences": 26,
+    "caption": "The image depicts a kitchen undergoing a remodeling process. The kitchen features a sink, a refrigerator, and an oven. The oven is currently being removed, and the refrigerator is placed in the middle of the room. There is also a dishwasher in the kitchen.\n\nThe room is filled with various tools and equipment, including a pair of scissors, a knife, and a spoon. A cup can be seen placed on a surface, and a bottle is located near the center of the room. The overall atmosphere of the kitchen suggests that it is in the midst of a renovation or remodeling project."
+  },
+  {
+    "image_id": 383107,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.09864522039890289,
+    "denied_words": [
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image depicts a cozy living room with a large window, providing ample natural light. The room features a comfortable couch situated on the right side of the space, and a chair is placed in the center of the room. A desk with a computer and a keyboard can be seen in the foreground, creating a workspace within the living area.\n\nThere are several books scattered throughout the room, with some placed on the desk and others on the couch. A handbag is also visible on the floor, close to the chair. The room appears to be well-organized and inviting, with a pleasant atmosphere for both relaxation and work."
+  },
+  {
+    "image_id": 386803,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09707595862448215,
+    "denied_words": [
+      "umbrella"
+    ],
+    "aliases_by_word": {
+      "umbrella": [
+        "umbrella",
+        "umbrellas"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image depicts a group of people enjoying a day on the water in small boats. There are several boats visible in the scene, with some people rowing and others sitting in the boats. The people are scattered throughout the image, with some closer to the foreground and others further in the background.\n\nIn addition to the people and boats, there are a few umbrellas present in the scene, providing shade for the people on the water. The umbrellas are located near the center of the image, with one on the left side and another on the right side. The overall atmosphere of the scene is lively and fun, as the people engage in various activities on the water."
+  },
+  {
+    "image_id": 391158,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11624800961464643,
+    "denied_words": [
+      "dining table",
+      "person"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 28,
+    "caption": "The image features a large, old-fashioned steam engine train parked inside a building, likely a train station or a museum. The train is prominently displayed, taking up a significant portion of the scene. The train's engine is visible, with its front end extending from the left side of the image to the right.\n\nIn addition to the train, there are two people in the scene, one located near the left side and the other closer to the right side. A cup can be seen placed on a surface, possibly a table or a counter, near the left side of the image."
+  },
+  {
+    "image_id": 410878,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.104744094312191,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a parked motorcycle on a dirt road, surrounded by a grassy area. The motorcycle is parked in front of a picnic table, which is located near a bench. The scene appears to be a peaceful outdoor setting, possibly a park or a camping site.\n\nThere are two people in the scene, one standing closer to the motorcycle and the other further away. A backpack can be seen placed on the ground near the motorcycle, possibly belonging to one of the people in the scene."
+  },
+  {
+    "image_id": 414034,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10771763499826192,
+    "denied_words": [
+      "tv"
+    ],
+    "aliases_by_word": {
+      "tv": [
+        "tv",
+        "tvs",
+        "television"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a young child sitting on a bed, holding a remote control in their hands. The child appears to be focused on the remote, possibly playing a video game or adjusting the television settings. \n\nThe bed is covered with a striped blanket, and there is a bottle placed nearby, possibly for the child to drink from during their playtime. The scene captures the child's engagement with the remote control, creating a sense of curiosity and excitement."
+  },
+  {
+    "image_id": 425522,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.100010487139225,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a large pile of luggage stacked on a luggage rack, likely in a public transportation setting such as a train or bus. The luggage consists of various suitcases and backpacks, with some of them being blue. The suitcases are placed on top of each other, creating a visually dense arrangement.\n\nIn addition to the luggage, there are two handbags visible in the scene, one located near the top left corner and the other near the bottom left corner. The overall scene gives the impression of a busy transportation area with many people traveling with their belongings."
+  },
+  {
+    "image_id": 426253,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10369362205266952,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a microwave oven with a plate of food inside, placed on a countertop. The microwave is located on the left side of the image, and the plate of food is positioned towards the center. The food appears to be a pizza, and it is being heated in the microwave.\n\nThere is a person standing in the background, partially visible on the left side of the image. The scene suggests that the person might be preparing or checking on the food in the microwave."
+  },
+  {
+    "image_id": 426342,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10514018300920724,
+    "denied_words": [
+      "cow"
+    ],
+    "aliases_by_word": {
+      "cow": [
+        "cow",
+        "cows",
+        "bull"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a man standing in a grassy yard, holding a dog on a leash. The dog appears to be a large, muscular breed, possibly a pit bull. The man is positioned on the left side of the dog, while the dog is on the right side of the man.\n\nThe yard is surrounded by a house, with a potted plant visible in the background. The scene suggests a relaxed and enjoyable outdoor setting where the man and his dog are spending time together."
+  },
+  {
+    "image_id": 428079,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10967097047716379,
+    "denied_words": [
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a large, tall vase placed on a table in a room. The vase is positioned in the center of the scene, and it appears to be the main focus of the image. The room has a yellow wall, which adds a warm and inviting atmosphere to the space.\n\nThere are two people in the room, one standing closer to the left side of the image and the other person standing further to the right. They seem to be observing the vase or engaging in conversation. The room also contains a potted plant located on the right side, adding a touch of greenery to the space."
+  },
+  {
+    "image_id": 428161,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10311690799891948,
+    "denied_words": [
+      "handbag",
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ],
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 18,
+    "caption": "The image features two men dressed in suits, standing next to each other and looking at a small blue box. One of the men is wearing a tie, which is visible as he holds the box. The men appear to be engaged in a conversation or examining the contents of the box.\n\nThe scene takes place outdoors, with a dining table visible in the background. There are two chairs placed near the table, one on the left side and the other on the right side of the table. A handbag can also be seen placed on the ground, close to the left side of the table."
+  },
+  {
+    "image_id": 446206,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10201454803347587,
+    "denied_words": [
+      "handbag"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a train traveling on a bridge over a city street, with a bus driving underneath it. The train is positioned towards the left side of the scene, while the bus is located on the right side, both moving in the same direction.\n\nThere are several people in the scene, with one person standing near the left edge of the image, another person closer to the center, and a third person on the right side. A handbag can be seen near the person on the right side of the image.\n\nThe city street is lined with trees, providing a pleasant atmosphere for the commuters."
+  },
+  {
+    "image_id": 457217,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.09894916124641895,
+    "denied_words": [
+      "dining table",
+      "chair"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ]
+    },
+    "num_denied_token_sequences": 20,
+    "caption": "The image features a young girl standing next to a large elephant, possibly in a zoo or a similar setting. The elephant is positioned on the right side of the scene, with the girl standing close to it. The girl is wearing a red dress, and she appears to be petting the elephant's trunk.\n\nIn the background, there are several chairs and dining tables arranged, suggesting that this might be a dining area or a place where visitors can relax and enjoy the view of the elephant."
+  },
+  {
+    "image_id": 461655,
+    "num_selected_mentions": 3,
+    "num_unique_denied_words": 3,
+    "num_selected_hallucinated_mentions": 2,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10113643936812877,
+    "denied_words": [
+      "chair",
+      "dining table",
+      "book"
+    ],
+    "aliases_by_word": {
+      "chair": [
+        "chair",
+        "chairs",
+        "seat"
+      ],
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "book": [
+        "book",
+        "books"
+      ]
+    },
+    "num_denied_token_sequences": 24,
+    "caption": "The image features a vase filled with a bouquet of white and yellow tulips, placed on a dining table. The vase is made of glass, and the flowers are arranged in a visually appealing manner. The table is surrounded by chairs, with one on the left side and another on the right side.\n\nIn addition to the vase of flowers, there are a few other items in the scene. A bottle can be seen on the left side of the table, and a cup is located near the center of the table. A book is also present, resting on the table close to the left edge."
+  },
+  {
+    "image_id": 462211,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.0983941637724638,
+    "denied_words": [
+      "handbag"
+    ],
+    "aliases_by_word": {
+      "handbag": [
+        "handbag",
+        "handbags"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a busy city street with a traffic light hanging above the road. The traffic light is currently displaying a red light, indicating that vehicles must stop. There are several people walking on the sidewalk, with some of them carrying handbags.\n\nIn addition to the traffic light, there are multiple signs on the street, including a \"no left turn\" sign and a \"no U-turn\" sign. These signs are likely meant to guide drivers and ensure smooth traffic flow in the area. The scene captures the hustle and bustle of city life, with people going about their daily routines and vehicles adhering to traffic regulations."
+  },
+  {
+    "image_id": 462364,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10322297632694244,
+    "denied_words": [
+      "bottle"
+    ],
+    "aliases_by_word": {
+      "bottle": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ]
+    },
+    "num_denied_token_sequences": 22,
+    "caption": "The image features a bathroom with a white toilet situated next to a bathtub. The toilet is positioned under a window, and a shower curtain is hanging in front of it. The bathroom also has a sink, which is located on the left side of the room.\n\nThere are two boxes of tissues placed on the toilet, one near the left side and the other closer to the center. Additionally, there is a cup placed on the left side of the toilet, and a bottle can be seen on the right side of the toilet."
+  },
+  {
+    "image_id": 467988,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 2,
+    "max_risk_score": 0.104109066426754,
+    "denied_words": [
+      "dining table",
+      "cell phone"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "cell phone": [
+        "cell phone",
+        "cell phones",
+        "telephone"
+      ]
+    },
+    "num_denied_token_sequences": 20,
+    "caption": "The image features a small desk with a laptop computer sitting on top of it. The desk is positioned in a corner of the room, and there is a chair placed in front of it. A television is mounted on the wall above the desk, providing entertainment while working or studying.\n\nIn addition to the laptop, there are two keyboards on the desk, one in front of the laptop and another one placed to the side. A mouse can also be seen on the desk, close to the laptop. A cell phone is placed on the desk, and a handbag is located nearby. A trash can is situated in the corner of the room, and a remote control is placed on the desk."
+  },
+  {
+    "image_id": 470704,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10058186843991279,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a wooden dining table with three wine glasses placed on it. Each glass is filled with wine, and they are accompanied by wine bottles. One of the wine bottles is placed on the left side of the table, while the other two are positioned on the right side. \n\nIn addition to the wine glasses and bottles, there is a book on the table, possibly a wine guide or a menu. The scene appears to be set for a wine tasting or a social gathering where people can enjoy the wine and engage in conversation."
+  },
+  {
+    "image_id": 472030,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.0981422633677721,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a bench situated in a lush, green forest. The bench is surrounded by a variety of trees, creating a serene and peaceful atmosphere. The forest is filled with greenery, including a multitude of trees and bushes, giving the impression of a dense, natural environment.\n\nIn addition to the bench, there is a backpack placed on the ground near the bench, possibly belonging to someone who has come to enjoy the tranquility of the forest. The backpack is positioned close to the bench, making it easily accessible for the person who brought it."
+  },
+  {
+    "image_id": 474188,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.11196227826178073,
+    "denied_words": [
+      "person"
+    ],
+    "aliases_by_word": {
+      "person": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a green metal bench situated on a gravel path. The bench is positioned on the side of a hill, providing a comfortable spot for people to sit and enjoy the surrounding scenery. The bench is surrounded by a few leaves, adding a touch of nature to the scene. The bench is located near a forest, making it an ideal spot for relaxation and contemplation."
+  },
+  {
+    "image_id": 494629,
+    "num_selected_mentions": 2,
+    "num_unique_denied_words": 2,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.09842704504728317,
+    "denied_words": [
+      "dining table",
+      "book"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ],
+      "book": [
+        "book",
+        "books"
+      ]
+    },
+    "num_denied_token_sequences": 18,
+    "caption": "The image features a man sitting on a toilet in a room, using a computer. He is wearing a blue shirt and appears to be focused on the task at hand. The room also contains a TV mounted on the wall, and a keyboard and mouse are placed on a desk nearby. \n\nThere are two other people in the room, one standing near the left side of the image and another person standing closer to the right side. A cup can be seen on the desk, and a book is placed on the floor, slightly to the right of the man on the toilet."
+  },
+  {
+    "image_id": 498463,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.1054945596307516,
+    "denied_words": [
+      "sink"
+    ],
+    "aliases_by_word": {
+      "sink": [
+        "sink",
+        "sinks"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a kitchen with a large stainless steel refrigerator freezer positioned in the corner. The refrigerator is the main focus of the scene, and it appears to be a modern and sleek appliance. \n\nIn addition to the refrigerator, there is a microwave placed on the countertop, slightly to the right of the refrigerator. The kitchen also has a sink located towards the right side of the scene. A cup can be seen placed on the countertop, close to the sink."
+  },
+  {
+    "image_id": 517973,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09971162386238575,
+    "denied_words": [
+      "truck"
+    ],
+    "aliases_by_word": {
+      "truck": [
+        "truck",
+        "trucks"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a white Volkswagen Beetle parked in a parking lot. The car is adorned with a surfboard strapped to its roof, giving it a unique and fun appearance. The surfboard is placed in the middle of the car, covering a significant portion of the roof.\n\nIn the background, there is another car parked further away, and a truck can be seen on the left side of the image. The scene captures the essence of a beach-inspired lifestyle, with the car and surfboard as the main focal points."
+  },
+  {
+    "image_id": 522782,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.10196789063513279,
+    "denied_words": [
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image depicts a small bedroom with a bed and a computer desk. The bed is situated on the right side of the room, while the computer desk is located on the left side. The desk is equipped with a computer monitor, keyboard, and mouse, creating a workspace within the bedroom.\n\nThere are two chairs in the room, one near the bed and the other near the computer desk. A cup can be seen on the desk, possibly for a beverage while working. Additionally, there are two books placed on the desk, suggesting that the occupant of the room might be engaged in reading or studying."
+  },
+  {
+    "image_id": 523565,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 0,
+    "num_selected_grounded_mentions": 1,
+    "max_risk_score": 0.09793987952172756,
+    "denied_words": [
+      "dining table"
+    ],
+    "aliases_by_word": {
+      "dining table": [
+        "dining table",
+        "dining tables",
+        "desk",
+        "table",
+        "counter top",
+        "countertop",
+        "tabletop"
+      ]
+    },
+    "num_denied_token_sequences": 14,
+    "caption": "The image features a white vase filled with red berries, creating a beautiful and colorful display. The vase is placed on a table, and the red berries are scattered throughout the vase, creating a visually appealing arrangement. The vase is positioned in the center of the scene, drawing attention to its unique and eye-catching contents."
+  },
+  {
+    "image_id": 525682,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.0971374762058258,
+    "denied_words": [
+      "potted plant"
+    ],
+    "aliases_by_word": {
+      "potted plant": [
+        "potted plant",
+        "potted plants"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image depicts a cozy living room scene with three people sitting on a couch and a chair. They are engaged in various activities, such as reading books, playing games, and using electronic devices. There are multiple books scattered around the room, with some on the couch and others on the floor.\n\nA dining table is located in the room, with a couple of chairs placed around it. A potted plant can be seen in the background, adding a touch of greenery to the space. A bird is also present in the room, perched on a surface near the couch.\n\nIn addition to the people and objects, there are a few other items in the room, including a cell phone, a remote, and a cup. The overall atmosphere of the living room is warm and inviting, with the occupants enjoying their time together."
+  },
+  {
+    "image_id": 531349,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.09779612056910991,
+    "denied_words": [
+      "car"
+    ],
+    "aliases_by_word": {
+      "car": [
+        "car",
+        "cars"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a large red double-decker bus parked on a street near a body of water. The bus is prominently displayed in the scene, occupying a significant portion of the image. The bus is likely a tour bus, as it is parked in front of a city skyline.\n\nThere are several people in the scene, with one person standing close to the bus and others scattered around the area. A car can be seen parked further down the street, and a bench is located near the bus, providing a place for people to sit and enjoy the view."
+  },
+  {
+    "image_id": 540288,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.10417410254478454,
+    "denied_words": [
+      "cup"
+    ],
+    "aliases_by_word": {
+      "cup": [
+        "cup",
+        "cups"
+      ]
+    },
+    "num_denied_token_sequences": 4,
+    "caption": "The image features a woman sitting at a dining table, enjoying a sandwich. She is wearing a floral top and appears to be eating the sandwich with great enthusiasm. The table is surrounded by chairs, with one on the left side of the woman and another on the right.\n\nThere are a few other items on the table, including a cell phone placed towards the right side, a book located in the middle, and a cup situated on the left side. The scene seems to be a casual and relaxed dining experience for the woman."
+  },
+  {
+    "image_id": 559416,
+    "num_selected_mentions": 1,
+    "num_unique_denied_words": 1,
+    "num_selected_hallucinated_mentions": 1,
+    "num_selected_grounded_mentions": 0,
+    "max_risk_score": 0.1090151098370552,
+    "denied_words": [
+      "skis"
+    ],
+    "aliases_by_word": {
+      "skis": [
+        "skis",
+        "skises",
+        "ski"
+      ]
+    },
+    "num_denied_token_sequences": 6,
+    "caption": "The image features a man standing in a grassy field, holding a pair of ski poles. He is positioned near the center of the scene, with a sheep grazing nearby. There are two other sheep in the field, one closer to the left side and the other towards the right side.\n\nIn the background, there is a majestic castle, adding a sense of grandeur to the scene. The sky above the field is cloudy, creating a dramatic atmosphere. The man appears to be enjoying his time in the field, surrounded by the peaceful and picturesque landscape."
+  }
+]

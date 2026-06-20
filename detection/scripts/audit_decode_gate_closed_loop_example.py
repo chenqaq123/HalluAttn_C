@@ -152,6 +152,9 @@ def score_claims(
     claims: list[str],
     neighbors: dict[str, list[str]],
     args: argparse.Namespace,
+    processor: Owlv2Processor,
+    model: Owlv2ForObjectDetection,
+    device: torch.device,
 ) -> dict[str, dict[str, Any]]:
     if not claims:
         return {}
@@ -160,10 +163,6 @@ def score_claims(
         object_names.update(neighbors.get(claim, []))
     object_list = sorted(object_names)
     prompts = [f"a photo of a {obj}" for obj in object_list]
-    device = torch.device(args.device if torch.cuda.is_available() or not args.device.startswith("cuda") else "cpu")
-    processor = Owlv2Processor.from_pretrained(args.owlv2_model_path, local_files_only=True)
-    model = Owlv2ForObjectDetection.from_pretrained(args.owlv2_model_path, local_files_only=True).to(device)
-    model.eval()
     image = Image.open(image_path).convert("RGB")
     scores = encode_image_object_scores(model, processor, [image], prompts, object_list, device)[0]
     image.close()
@@ -212,6 +211,10 @@ def main() -> None:
     neighbors = read_neighbors(Path(args.neighbors_json), args.top_neighbors)
     variant_aliases = read_variant_aliases(Path(args.variant_aliases_json))
     variant_roots = read_variant_roots(Path(args.variant_roots_json))
+    device = torch.device(args.device if torch.cuda.is_available() or not args.device.startswith("cuda") else "cpu")
+    processor = Owlv2Processor.from_pretrained(args.owlv2_model_path, local_files_only=True)
+    model = Owlv2ForObjectDetection.from_pretrained(args.owlv2_model_path, local_files_only=True).to(device)
+    model.eval()
 
     caption_rows: list[dict[str, Any]] = []
     for example in examples:
@@ -266,7 +269,7 @@ def main() -> None:
         vanilla_open_vocab_set = set(vanilla_open_vocab)
         introduced_open_vocab = [claim for claim in gated_open_vocab if claim not in vanilla_open_vocab_set]
         all_claims = sorted(set(introduced) | set(introduced_open_vocab))
-        all_claim_scores = score_claims(Path(example["image_path"]), all_claims, neighbors, args)
+        all_claim_scores = score_claims(Path(example["image_path"]), all_claims, neighbors, args, processor, model, device)
         claim_scores = {claim: all_claim_scores[claim] for claim in introduced if claim in all_claim_scores}
         open_vocab_claim_scores = {
             claim: all_claim_scores[claim]

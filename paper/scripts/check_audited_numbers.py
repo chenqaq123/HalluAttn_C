@@ -615,6 +615,24 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair/claim_repair_metrics.json"
         ).read_text()
     )
+    broad_acceptance = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json"
+        ).read_text()
+    )
+    broad_concise = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
+        ).read_text()
+    )
+    broad_claim_repair = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair/claim_repair_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -665,6 +683,8 @@ def check_caption_route_summary() -> None:
     scaled_claim_summary = scaled_claim_repair["preservation"]["summary"]
     expanded_concise_summary = expanded_concise["summary"]
     expanded_claim_summary = expanded_claim_repair["preservation"]["summary"]
+    broad_concise_summary = broad_concise["summary"]
+    broad_claim_summary = broad_claim_repair["preservation"]["summary"]
 
     _assert_contains(
         summary,
@@ -697,6 +717,22 @@ def check_caption_route_summary() -> None:
         "caption-route:scaled-40-claim-repair-row",
     )
 
+    _assert_contains(
+        summary,
+        f"| 100-image | t96 hard gate | {broad_acceptance['num_examples']} | {broad_acceptance['chair']['gated']['overall']['CHAIRi']:.4f} | {broad_acceptance['chair']['gated']['total_hallucinated_mentions']} | {broad_acceptance['mean_gated_words']:.2f} | -- | -- | -- | broader high-risk generated baseline |",
+        "caption-route:scaled-100-gated-row",
+    )
+    _assert_contains(
+        summary,
+        f"| 100-image | sentence acceptance | {broad_acceptance['num_examples']} | {broad_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {broad_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {broad_acceptance['mean_accepted_words']:.2f} | {broad_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {broad_concise_summary['generic_or_empty_accepted']} | strong hallucination reduction but visible-content loss remains |",
+        "caption-route:scaled-100-acceptance-row",
+    )
+    _assert_contains(
+        summary,
+        f"| 100-image | claim-local repair | {broad_claim_repair['num_examples']} | {broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {broad_claim_repair['mean_repaired_words']:.2f} | {broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {broad_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {broad_claim_summary['generic_or_empty_repaired']} | slight CHAIR/content gain over acceptance, but generic cases remain |",
+        "caption-route:scaled-100-claim-repair-row",
+    )
+
     concise_summary = concise["summary"]
     concise_rows = {
         "retained vanilla grounded mentions": concise_summary["accepted_retained_vanilla_grounded_rate"] * 100,
@@ -716,10 +752,15 @@ def check_caption_route_summary() -> None:
         "Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects;",
         "caption-route:length-reduction-nuance",
     )
+    _assert_contains(
+        summary,
+        "generic/empty cases are no longer zero",
+        "caption-route:generic-risk",
+    )
     claim_summary = claim_repair["preservation"]["summary"]
     _assert_contains(
         summary,
-        "The remaining risk is scaling beyond the current 40-image iter2-prefilter ceiling",
+        "the remaining method gap is a controlled regeneration step with a generic-content guard",
         "caption-route:scale-risk",
     )
     _assert_contains(
@@ -739,7 +780,7 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         evidence,
-        f"claim-local repair improves it to `{expanded_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{expanded_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{expanded_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{expanded_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
+        f"claim-local repair improves it to `{broad_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{broad_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{broad_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
         "evidence:caption-claim-repair-scaled",
     )
     _assert_contains(

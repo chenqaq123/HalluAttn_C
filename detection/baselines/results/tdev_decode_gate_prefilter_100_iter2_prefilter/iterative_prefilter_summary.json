@@ -1,0 +1,163 @@
+{
+  "added_words": [
+    {
+      "aliases": [
+        "elephant",
+        "elephants"
+      ],
+      "image_id": 12319,
+      "word": "elephant"
+    },
+    {
+      "aliases": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ],
+      "image_id": 23369,
+      "word": "person"
+    },
+    {
+      "aliases": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ],
+      "image_id": 36962,
+      "word": "person"
+    },
+    {
+      "aliases": [
+        "cup",
+        "cups"
+      ],
+      "image_id": 47524,
+      "word": "cup"
+    },
+    {
+      "aliases": [
+        "tv",
+        "tvs",
+        "television"
+      ],
+      "image_id": 47524,
+      "word": "tv"
+    },
+    {
+      "aliases": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ],
+      "image_id": 52386,
+      "word": "person"
+    },
+    {
+      "aliases": [
+        "clock",
+        "clocks"
+      ],
+      "image_id": 71914,
+      "word": "clock"
+    },
+    {
+      "aliases": [
+        "cup",
+        "cups"
+      ],
+      "image_id": 108645,
+      "word": "cup"
+    },
+    {
+      "aliases": [
+        "bowl",
+        "bowls"
+      ],
+      "image_id": 126983,
+      "word": "bowl"
+    },
+    {
+      "aliases": [
+        "cup",
+        "cups"
+      ],
+      "image_id": 126983,
+      "word": "cup"
+    },
+    {
+      "aliases": [
+        "person",
+        "persons",
+        "people",
+        "drivers",
+        "human figure",
+        "individual",
+        "passerby"
+      ],
+      "image_id": 131203,
+      "word": "person"
+    },
+    {
+      "aliases": [
+        "backpack",
+        "backpacks"
+      ],
+      "image_id": 135116,
+      "word": "backpack"
+    },
+    {
+      "aliases": [
+        "potted plant",
+        "potted plants"
+      ],
+      "image_id": 164115,
+      "word": "potted plant"
+    },
+    {
+      "aliases": [
+        "bottle",
+        "bottles",
+        "bottled drink",
+        "bottled beverage",
+        "bottled water",
+        "drink bottle",
+        "water bottle",
+        "bottleneck",
+        "bottled",
+        "bottling machine",
+        "bottling"
+      ],
+      "image_id": 183332,
+      "word": "bottle"
+    },
+    {
+      "aliases": [
+        "cell phone",
+        "cell phones",
+        "telephone"
+      ],
+      "image_id": 183332,
+      "word": "cell phone"
+    }
+  ],
+  "audit_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_audit_ov96/closed_loop_example_audit.json",
+  "base_examples_json": "detection/baselines/results/tdev_decode_gate_multi_image_prefilter_100_examples/multi_image_prefilter_examples.json",
+  "num_added_words": 15,
+  "num_images": 100,
+  "num_images_with_additions": 12,
+  "output_examples_json": "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_prefilter/iterative_prefilter_examples.json",
+  "scope_note": "Bounded second-pass deny-list expansion from generated-caption audits. Only introduced COCO words with TDEV two_stage_present=0 are added.",
+  "tokenizer_path": "/home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9"
+}

@@ -64,12 +64,15 @@ This note is generated from saved caption-side TDEV prototype artifacts. It keep
 | 40-image | t96 hard gate | 40 | 0.1544 | 42 | 74.08 | -- | -- | -- | maximum available iter2-prefilter set |
 | 40-image | sentence acceptance | 40 | 0.0773 | 15 | 50.70 | 76.17% | 71.32% | 1 | same hallucination count as repair but less content retention |
 | 40-image | claim-local repair | 40 | 0.0739 | 15 | 53.38 | 80.00% | 74.63% | 0 | best larger-scale prototype tradeoff |
+| 100-image | t96 hard gate | 100 | 0.1172 | 73 | 72.13 | -- | -- | -- | broader high-risk generated baseline |
+| 100-image | sentence acceptance | 100 | 0.0622 | 27 | 49.14 | 70.68% | 69.66% | 4 | strong hallucination reduction but visible-content loss remains |
+| 100-image | claim-local repair | 100 | 0.0600 | 27 | 50.74 | 73.47% | 72.23% | 3 | slight CHAIR/content gain over acceptance, but generic cases remain |
 
-The scaled checks support the 5-image direction but also narrow the claim. On the 40-image maximum available iter2-prefilter set, claim-local repair keeps hallucinated mentions at 15 like sentence acceptance, improves CHAIRi from 0.1544 to 0.0739, retains more vanilla grounded mentions (80.00% vs. 76.17%), and avoids the empty/generic case. However, hallucination reduction vs. gated drops from 72.73% at 20 images to 64.29% at 40 images, and mean length still falls from 74.08 to 53.38 words. This is scaled prototype evidence, not a complete caption mitigation result.
+The scaled checks support the direction but narrow the claim. On the 100-image high-risk set, sentence acceptance and claim-local repair both reduce hard-gated hallucinated mentions from 73 to 27. Claim-local repair is still slightly better than sentence acceptance: CHAIRi 0.0600 vs. 0.0622, mean words 50.74 vs. 49.14, retained vanilla grounded mentions 73.47% vs. 70.68%, and empty/generic cases 3 vs. 4. However, the repair gain is now modest, generic/empty cases are no longer zero, and object retention vs. vanilla remains only 64.01%. This is useful caption-side prototype evidence, not a complete caption mitigation result.
 
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or collapses into generic captions. The new claim-local repair smoke keeps the same hallucination reduction while preserving more grounded content by trimming only speculative or enumerating clauses when a safe prefix remains. The remaining risk is scaling beyond the current 40-image iter2-prefilter ceiling and replacing deterministic clause trims with a controlled repair/regeneration step when the safe prefix is not enough.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or collapses into generic captions. The 100-image result shows that deterministic local repair is a useful but modest improvement over sentence deletion, so the remaining method gap is a controlled regeneration step with a generic-content guard when a safe prefix is not enough.
 
 The next implementation target is therefore:
 
@@ -77,14 +80,14 @@ The next implementation target is therefore:
 2. Extract object-like claims, including open-vocabulary route forms.
 3. Map each claim to a canonical target when possible and score target-vs-neighbor evidence.
 4. Accept supported claims and reject unsupported claims; allow the caption to become shorter when unsupported detail is the only thing being removed.
-5. Apply constrained local repair only when rejection would remove central visible content or when an unsupported claim sits in a detachable clause.
+5. Apply constrained local repair or regeneration when rejection would remove central visible content, when an unsupported claim sits in a detachable clause, or when the accepted caption would become generic.
 6. Report CHAIR together with concise-faithfulness metrics: retained supported objects, mean words, object mentions, empty/generic-caption rate, and manual examples.
 
 This preserves the paper's motivation: the method does not merely make object claims less frequent, and it does not rely on visual routing as proof. It explicitly tests whether the candidate claim is target-discriminative under related evidence. The desired behavior is not maximum caption length; it is concise but faithful captioning that keeps supported visual content and stops before unsupported object invention.
 
 ## Paper-Safe Scope
 
-Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to either scale beyond the 40-image iter2-prefilter ceiling with a broader prefilter, or replace deterministic clause trims with controlled regeneration while keeping the same CHAIR and content-preservation audits.
+Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to add controlled regeneration and a generic-content guard, then evaluate it against the 100-image high-risk set with the same CHAIR and content-preservation audits.
 
 ## Source Artifacts
 
@@ -104,3 +107,10 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair/claim_repair_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_multi_image_prefilter_100_examples/multi_image_prefilter_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_prefilter/iterative_prefilter_summary.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96/gated_generation_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_audit_ov96/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair/claim_repair_metrics.json`

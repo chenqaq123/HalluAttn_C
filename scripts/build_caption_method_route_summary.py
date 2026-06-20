@@ -70,6 +70,16 @@ def build() -> str:
         "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair/claim_repair_metrics.json"
     )
     expanded_claim_preservation = expanded_claim_repair["preservation"]["summary"]
+    broad_acceptance = read_json(
+        "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json"
+    )
+    broad_concise = read_json(
+        "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
+    )["summary"]
+    broad_claim_repair = read_json(
+        "detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair/claim_repair_metrics.json"
+    )
+    broad_claim_preservation = broad_claim_repair["preservation"]["summary"]
 
     all_mentions = summary_by_name(feasibility, "all_mentions")
     hallucinated = summary_by_name(feasibility, "hallucinated_mentions")
@@ -145,12 +155,15 @@ def build() -> str:
             f"| 40-image | t96 hard gate | {expanded_acceptance['num_examples']} | {f4(expanded_acceptance['chair']['gated']['overall']['CHAIRi'])} | {expanded_acceptance['chair']['gated']['total_hallucinated_mentions']} | {f2(expanded_acceptance['mean_gated_words'])} | -- | -- | -- | maximum available iter2-prefilter set |",
             f"| 40-image | sentence acceptance | {expanded_acceptance['num_examples']} | {f4(expanded_acceptance['chair']['accepted']['overall']['CHAIRi'])} | {expanded_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {f2(expanded_acceptance['mean_accepted_words'])} | {pct(expanded_concise['accepted_retained_vanilla_grounded_rate'])} | {pct(expanded_concise['accepted_object_mention_retention_vs_gated'])} | {expanded_concise['generic_or_empty_accepted']} | same hallucination count as repair but less content retention |",
             f"| 40-image | claim-local repair | {expanded_claim_repair['num_examples']} | {f4(expanded_claim_repair['chair']['repaired']['overall']['CHAIRi'])} | {expanded_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {f2(expanded_claim_repair['mean_repaired_words'])} | {pct(expanded_claim_preservation['repaired_retained_vanilla_grounded_rate'])} | {pct(expanded_claim_preservation['repaired_object_mention_retention_vs_gated'])} | {expanded_claim_preservation['generic_or_empty_repaired']} | best larger-scale prototype tradeoff |",
+            f"| 100-image | t96 hard gate | {broad_acceptance['num_examples']} | {f4(broad_acceptance['chair']['gated']['overall']['CHAIRi'])} | {broad_acceptance['chair']['gated']['total_hallucinated_mentions']} | {f2(broad_acceptance['mean_gated_words'])} | -- | -- | -- | broader high-risk generated baseline |",
+            f"| 100-image | sentence acceptance | {broad_acceptance['num_examples']} | {f4(broad_acceptance['chair']['accepted']['overall']['CHAIRi'])} | {broad_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {f2(broad_acceptance['mean_accepted_words'])} | {pct(broad_concise['accepted_retained_vanilla_grounded_rate'])} | {pct(broad_concise['accepted_object_mention_retention_vs_gated'])} | {broad_concise['generic_or_empty_accepted']} | strong hallucination reduction but visible-content loss remains |",
+            f"| 100-image | claim-local repair | {broad_claim_repair['num_examples']} | {f4(broad_claim_repair['chair']['repaired']['overall']['CHAIRi'])} | {broad_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {f2(broad_claim_repair['mean_repaired_words'])} | {pct(broad_claim_preservation['repaired_retained_vanilla_grounded_rate'])} | {pct(broad_claim_preservation['repaired_object_mention_retention_vs_gated'])} | {broad_claim_preservation['generic_or_empty_repaired']} | slight CHAIR/content gain over acceptance, but generic cases remain |",
             "",
-            "The scaled checks support the 5-image direction but also narrow the claim. On the 40-image maximum available iter2-prefilter set, claim-local repair keeps hallucinated mentions at 15 like sentence acceptance, improves CHAIRi from 0.1544 to 0.0739, retains more vanilla grounded mentions (80.00% vs. 76.17%), and avoids the empty/generic case. However, hallucination reduction vs. gated drops from 72.73% at 20 images to 64.29% at 40 images, and mean length still falls from 74.08 to 53.38 words. This is scaled prototype evidence, not a complete caption mitigation result.",
+            "The scaled checks support the direction but narrow the claim. On the 100-image high-risk set, sentence acceptance and claim-local repair both reduce hard-gated hallucinated mentions from 73 to 27. Claim-local repair is still slightly better than sentence acceptance: CHAIRi 0.0600 vs. 0.0622, mean words 50.74 vs. 49.14, retained vanilla grounded mentions 73.47% vs. 70.68%, and empty/generic cases 3 vs. 4. However, the repair gain is now modest, generic/empty cases are no longer zero, and object retention vs. vanilla remains only 64.01%. This is useful caption-side prototype evidence, not a complete caption mitigation result.",
             "",
             "## Method Decision",
             "",
-            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or collapses into generic captions. The new claim-local repair smoke keeps the same hallucination reduction while preserving more grounded content by trimming only speculative or enumerating clauses when a safe prefix remains. The remaining risk is scaling beyond the current 40-image iter2-prefilter ceiling and replacing deterministic clause trims with a controlled repair/regeneration step when the safe prefix is not enough.",
+            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or collapses into generic captions. The 100-image result shows that deterministic local repair is a useful but modest improvement over sentence deletion, so the remaining method gap is a controlled regeneration step with a generic-content guard when a safe prefix is not enough.",
             "",
             "The next implementation target is therefore:",
             "",
@@ -158,14 +171,14 @@ def build() -> str:
             "2. Extract object-like claims, including open-vocabulary route forms.",
             "3. Map each claim to a canonical target when possible and score target-vs-neighbor evidence.",
             "4. Accept supported claims and reject unsupported claims; allow the caption to become shorter when unsupported detail is the only thing being removed.",
-            "5. Apply constrained local repair only when rejection would remove central visible content or when an unsupported claim sits in a detachable clause.",
+            "5. Apply constrained local repair or regeneration when rejection would remove central visible content, when an unsupported claim sits in a detachable clause, or when the accepted caption would become generic.",
             "6. Report CHAIR together with concise-faithfulness metrics: retained supported objects, mean words, object mentions, empty/generic-caption rate, and manual examples.",
             "",
             "This preserves the paper's motivation: the method does not merely make object claims less frequent, and it does not rely on visual routing as proof. It explicitly tests whether the candidate claim is target-discriminative under related evidence. The desired behavior is not maximum caption length; it is concise but faithful captioning that keeps supported visual content and stops before unsupported object invention.",
             "",
             "## Paper-Safe Scope",
             "",
-            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to either scale beyond the 40-image iter2-prefilter ceiling with a broader prefilter, or replace deterministic clause trims with controlled regeneration while keeping the same CHAIR and content-preservation audits.",
+            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to add controlled regeneration and a generic-content guard, then evaluate it against the 100-image high-risk set with the same CHAIR and content-preservation audits.",
             "",
             "## Source Artifacts",
             "",
@@ -185,6 +198,13 @@ def build() -> str:
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair/claim_repair_metrics.json`",
+            "- `detection/baselines/results/tdev_decode_gate_multi_image_prefilter_100_examples/multi_image_prefilter_metrics.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_prefilter/iterative_prefilter_summary.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96/gated_generation_metrics.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_audit_ov96/closed_loop_example_audit.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_100_iter2_t96_claim_repair/claim_repair_metrics.json`",
         ]
     )
     return "\n".join(lines) + "\n"

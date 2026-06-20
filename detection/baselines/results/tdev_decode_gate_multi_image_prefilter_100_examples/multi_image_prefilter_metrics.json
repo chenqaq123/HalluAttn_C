@@ -1,0 +1,138 @@
+{
+  "chosen_image_hallucinated_mentions": 164,
+  "chosen_image_hallucination_coverage": 0.6646341463414634,
+  "max_images": 100,
+  "multi_token_sequences_per_image": {
+    "max": 34,
+    "mean": 7.45,
+    "median": 7.0,
+    "p95": 22.0
+  },
+  "num_chosen_images": 100,
+  "num_global_selected_mentions": 821,
+  "num_images_in_scores": 4977,
+  "num_rows": 16426,
+  "num_selected_mentions_on_chosen_images": 126,
+  "num_unique_image_word_pairs": 126,
+  "per_image_max_denied": 0,
+  "phrases_per_denied_word": {
+    "max": 11,
+    "mean": 4.333333333333333,
+    "median": 3.0,
+    "p95": 11.0
+  },
+  "scope_note": "Offline preflight over cached caption-mention scores. It estimates deny-list width and CHAIR-label precision for candidate multi-image decode-gate runs; it does not evaluate generated captions or all absent COCO objects.",
+  "score": "hybrid_positive_branch_absence",
+  "scores_csv": "detection/baselines/results/owlv2_region_detection/owlv2_region_detection_scores.csv",
+  "selected_grounded_mentions": 17,
+  "selected_hallucinated_mentions": 109,
+  "selected_mentions_per_image": {
+    "max": 3,
+    "mean": 1.26,
+    "median": 1.0,
+    "p95": 2.0
+  },
+  "selected_precision_hallucinated": 0.8650793650793651,
+  "single_token_sequences_per_image": {
+    "max": 10,
+    "mean": 3.47,
+    "median": 3.0,
+    "p95": 7.0
+  },
+  "token_sequences_per_image": {
+    "max": 36,
+    "mean": 10.92,
+    "median": 10.0,
+    "p95": 24.0
+  },
+  "tokenizer_path": "/home/chenguanxu/common_model/huggingface/models--llava-hf--llava-1.5-7b-hf/snapshots/b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+  "top_frac": 0.05,
+  "top_selected_words": [
+    [
+      "person",
+      25
+    ],
+    [
+      "dining table",
+      16
+    ],
+    [
+      "car",
+      14
+    ],
+    [
+      "handbag",
+      9
+    ],
+    [
+      "chair",
+      9
+    ],
+    [
+      "bottle",
+      8
+    ],
+    [
+      "book",
+      7
+    ],
+    [
+      "sink",
+      6
+    ],
+    [
+      "potted plant",
+      4
+    ],
+    [
+      "bird",
+      3
+    ],
+    [
+      "tv",
+      2
+    ],
+    [
+      "cup",
+      2
+    ],
+    [
+      "bowl",
+      2
+    ],
+    [
+      "clock",
+      2
+    ],
+    [
+      "spoon",
+      2
+    ],
+    [
+      "toothbrush",
+      1
+    ],
+    [
+      "knife",
+      1
+    ],
+    [
+      "apple",
+      1
+    ],
+    [
+      "remote",
+      1
+    ],
+    [
+      "bench",
+      1
+    ]
+  ],
+  "unique_denied_words_per_image": {
+    "max": 3,
+    "mean": 1.26,
+    "median": 1.0,
+    "p95": 2.0
+  }
+}
