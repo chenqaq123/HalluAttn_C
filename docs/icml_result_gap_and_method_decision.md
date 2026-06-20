@@ -75,8 +75,9 @@ one of two target-discriminative routes.
 ### Route A: TDEV-Guided Claim Acceptance
 
 Goal: turn TDEV from a post-hoc verifier into a practical object-claim
-acceptance policy for generated captions. The current evidence says this should
-not be framed as a pure token-ban decoder.
+acceptance policy for faithful concise captioning. The current evidence says this
+should not be framed as a pure token-ban decoder or as a length-preservation
+method.
 
 Mechanism:
 
@@ -92,7 +93,9 @@ Why this fits: it intervenes exactly at unsupported object claims, so it remains
 aligned with the associated-evidence failure mode. Unlike generic caption
 rewrites, it does not claim success just because object mentions become rarer;
 it explicitly tests whether each candidate claim is target-discriminative under
-related evidence.
+related evidence. A shorter caption is acceptable when the removed text consists
+of unsupported object claims; the failure case is becoming generic, empty, or
+losing the main supported scene content.
 
 Latest caption-side prototype summary: `docs/caption_method_route_summary.md` is
 generated from saved artifacts. Token feasibility is high: near-generation-position
@@ -108,13 +111,16 @@ gate still has CHAIRi `0.2500` and 8 hallucinated mentions because it routes int
 complete substitute/escape claims. Sentence repair improves CHAIRi to `0.1786`
 and 5 hallucinated mentions but misses complete substitutes. Sentence acceptance
 reaches CHAIRi `0.1053` and 2 hallucinated mentions, showing that verifier-guided
-claim rejection targets the right failure mode; however it removes `24.60` words
-on average, so it is a method-direction diagnostic rather than a final caption
-method.
+claim rejection targets the right failure mode. It removes `24.60` words on
+average, which is not automatically bad, but this remains a method-direction
+diagnostic because we have not yet measured whether the retained caption keeps
+the main supported scene content across a larger sample.
 
 Risk: the next step must add constrained repair/regeneration after claim
-rejection. Without replacement, sentence acceptance over-deletes; without claim
-acceptance, token suppression routes into new unsupported claims.
+rejection only when deletion would remove central supported content or leave an
+incoherent fragment. Without this distinction, sentence acceptance may become too
+generic; without claim acceptance, token suppression routes into new unsupported
+claims.
 
 ### Route B: Internal TDEV-Lite Distillation
 
@@ -142,8 +148,9 @@ is call reduction / triage, not detector replacement.
 1. **Do Route A as claim acceptance plus constrained repair first.** Use the same
    high-risk CHAIR subset and report CHAIRi, CHAIRs, mean words, object mentions,
    rejected claims, repaired spans, and manual fluency/error examples. The success
-   condition is lower hallucination without the mean-word collapse seen in pure
-   sentence acceptance.
+   condition is lower hallucination while preserving the main supported scene
+   content; mean-word reduction is acceptable when it removes unsupported detail,
+   but empty or generic captions should be counted as failures.
 2. **Then improve Route B if time allows.** Distill target-vs-neighbor margin, not
    binary hallucination, and compare against prompt-position and target-length
    routing controls.

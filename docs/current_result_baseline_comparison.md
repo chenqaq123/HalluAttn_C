@@ -24,8 +24,8 @@ It does not yet support a strong standalone caption-mitigation paper.
   much stronger on controlled CHAIR object-mention detection.
 - Caption-side correction is now beyond pure text-edit proxy, but still only at
   smoke-test scale. The next required method step is TDEV-guided claim acceptance
-  with constrained repair/regeneration, not pure token banning, post-hoc deletion,
-  or generic noun replacement.
+  for faithful concise captioning, with constrained repair/regeneration only when
+  deletion would remove central supported content or leave incoherent fragments.
 
 ## POPE Mitigation and Semantic-Neighbor Controls
 
