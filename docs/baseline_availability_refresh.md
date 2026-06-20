@@ -1,6 +1,6 @@
 # Baseline Availability Refresh
 
-Date: 2026-06-19
+Date: 2026-06-20
 
 This refresh records the current status of the closest recent baselines for the
 ICML version of **Looking Is Not Verifying**. The goal is to avoid two mistakes:
@@ -33,15 +33,26 @@ POPE/CHAIR evaluation, but it uses a forked LLaVA stack and requires an isolated
 Transformers setup. See `docs/air_baseline_feasibility.md`.
 
 Do not spend the next phase implementing unofficial approximations of CAI, CAST,
-Focus Matters, BRACS, AIR, or Region-Aware Attention Recalibration. If official
-code is directly available and easy to adapt, run the bounded semantic-neighbor
-audit. If code remains unavailable or unclear, cite these papers as closest
-concurrent/related methods and state that our claim is a diagnostic plus
-verification criterion, not superiority over unreleased implementations.
+Focus Matters, BRACS, AIR, Region-Aware Attention Recalibration, Woodpecker,
+LURE, or R-CoV. If official code is directly available and easy to adapt, run
+the bounded semantic-neighbor audit. If code remains unavailable or unclear, cite
+these papers as closest concurrent/related methods and state that our claim is a
+diagnostic plus verification criterion, not superiority over unreleased
+implementations.
+
+Caption-side work now has its own boundary. Woodpecker, LURE, and R-CoV already
+cover the broad post-hoc extraction-verification-revision template. Our
+publishable route cannot be "use a detector to revise captions" in general. It
+must be the narrower target-discriminative question exposed by our experiments:
+when a candidate object claim is semantically plausible because related objects
+are visible, verify the target against its neighbors and accept only supported
+claims. Shorter captions are acceptable when they stop unsupported object
+invention; the remaining risk to measure is content preservation, not length by
+itself.
 
 ## Availability Table
 
-| Method | Source status on 2026-06-19 | Why it matters | Current action |
+| Method | Source status on 2026-06-20 | Why it matters | Current action |
 |---|---|---|---|
 | NoLan: No-Language-Hallucination Decoding | Public GitHub repository found: `https://github.com/lingfengren/NoLan`; README says code released and supports LLaVA-1.5/InstructBLIP/Qwen-VL integration. | Closest runnable decoding baseline: suppresses language priors by comparing multimodal and text-only distributions. This directly tests whether language-prior suppression fixes related-object false positives. | Completed as a deterministic local compatibility port on all POPE splits; positive on FPR/related FPR, but lower TPR and not official NoLan. |
 | AIR: Attention Imbalance Rectification | Official repository recovered and inspected: `https://github.com/Ice-wave/AIR` at commit `cc0e00f1b5d608a011a1c312059be5ccc9d25641`; README says CVPR 2026 official code and includes LLaVA v1.5/v1.6 POPE/CHAIR runners. | Strong attention-reallocation baseline across CHAIR, POPE, and MM-Vet; conceptually close to our attention-proxy critique and likely the next fair positive counterexample. | P0 runnable candidate in isolated env. Export a LLaVA-style adversarial semantic-neighbor subset and run official AIR before any full all-split rerun. |
@@ -51,6 +62,9 @@ verification criterion, not superiority over unreleased implementations.
 | Region-Aware Attention Recalibration | arXiv page states that code will be public. No direct runnable code found in the current check. | Closest region/head recalibration baseline; explicitly targets CHAIR, POPE, and MME with training-free region-aware attention modulation. | P0 related work; monitor for code and then run the subset audit. |
 | Focus Matters: Phase-Aware Suppression | arXiv page exists; no direct official code link found in the current arXiv/search check. | Training-free single-forward-pass visual-token/attention suppression with low-latency hallucination mitigation claims; relevant as another internal visual-routing baseline. | P1 related work; audit semantic-neighbor FPR if official code appears. |
 | Dynamic Multimodal Activation Steering | arXiv page exists; no direct official code link found in the checked page. | Relevant activation/head steering baseline, but less directly tied to semantic-neighbor target verification. | P1 related work unless official code appears and is easy to run. |
+| Woodpecker | arXiv page links released source code. | Training-free post-remedy pipeline with concept extraction, question formulation, visual validation, claim generation, and correction. It is the classic external verifier/reviser baseline family. | Related-work boundary for caption correction; only run if we allocate a separate high-latency post-hoc baseline comparison. |
+| LURE | arXiv page links released source code; accepted by ICLR 2024. | Post-hoc hallucination revisor using co-occurrence, uncertainty, and position factors. Our local LURE-style detection controls already show these factors do not explain TDEV under controlled CHAIR detection. | Cite as caption revisor baseline; keep current LURE-style controlled-factor audit as the direct local evidence. |
+| R-CoV | arXiv page links project code. | Region-aware chain-of-verification with entity extraction, coordinate generation, region description, verification, and final response generation. Strongly overlaps with generic post-hoc caption correction. | Related-work pressure for caption-side experiments; our distinction is target-vs-neighbor verification under semantic-neighbor evidence, not chain verification itself. |
 
 ## Required Audit If Code Appears
 
@@ -77,6 +91,8 @@ These baselines occupy three neighboring spaces:
   during inference.
 - NoLan asks whether dynamic language-prior suppression is enough to reduce
   object hallucination without an explicit object verifier.
+- Woodpecker/LURE/R-CoV ask whether generated captions can be corrected by
+  post-hoc claim extraction, validation, and revision.
 - TDEV asks how to evaluate and operationalize target-vs-neighbor verification
   under semantic-neighbor negatives.
 
@@ -85,6 +101,14 @@ method should be tested under related-present FPR and target-vs-neighbor control
 before being interpreted as object hallucination mitigation. This keeps the paper
 connected to the original motivation: **looking is not grounding, and stronger
 routing is not the same as verifying the queried target.**
+
+For caption-side claims, the same rule applies at the claim level. A method that
+removes object words, rewrites them to generic nouns, or makes captions shorter
+is not sufficient. A publishable caption prototype should report CHAIR together
+with retained grounded object mentions, object-mention retention, mean words,
+empty/generic-caption rate, and representative examples showing that rejected
+claims fail target-vs-neighbor evidence rather than merely being late, uncertain,
+or co-occurrence-heavy.
 
 ## Checked Sources
 
@@ -96,3 +120,6 @@ routing is not the same as verifying the queried target.**
 - Region-Aware Attention Recalibration: https://arxiv.org/abs/2605.24957
 - Focus Matters: https://arxiv.org/abs/2604.03556
 - Dynamic Multimodal Activation Steering: https://arxiv.org/abs/2602.21704
+- Woodpecker: https://arxiv.org/abs/2310.16045
+- LURE: https://arxiv.org/abs/2310.00754
+- R-CoV: https://arxiv.org/abs/2604.20696

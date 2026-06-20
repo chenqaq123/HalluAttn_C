@@ -574,6 +574,8 @@ def check_caption_route_summary() -> None:
         ).read_text()
     )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
+    evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
+    baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
 
     generated_rows = {
         "t96 hard gate": [
@@ -633,6 +635,31 @@ def check_caption_route_summary() -> None:
         summary,
         "The remaining risk is larger-scale content preservation, not length reduction itself.",
         "caption-route:content-preservation-risk",
+    )
+    _assert_contains(
+        evidence,
+        f"sentence acceptance reduces 96-token gated CHAIRi `{acceptance['chair']['gated']['overall']['CHAIRi']:.4f} -> {acceptance['chair']['accepted']['overall']['CHAIRi']:.4f}` and hallucinated mentions `{acceptance['chair']['gated']['total_hallucinated_mentions']} -> {acceptance['chair']['accepted']['total_hallucinated_mentions']}`",
+        "evidence:caption-acceptance-delta",
+    )
+    _assert_contains(
+        evidence,
+        f"accepted captions retain `{concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` of vanilla grounded object mentions and have `{concise_summary['generic_or_empty_accepted']}` generic/empty accepted captions",
+        "evidence:caption-concise-faithfulness",
+    )
+    _assert_contains(
+        baseline_note,
+        '"use a detector to revise captions" in general',
+        "baseline-note:caption-boundary",
+    )
+    _assert_contains(
+        baseline_note,
+        "Shorter captions are acceptable when they stop unsupported object",
+        "baseline-note:caption-short-ok",
+    )
+    _assert_contains(
+        baseline_note,
+        "content preservation, not length by",
+        "baseline-note:caption-content-risk",
     )
 
 

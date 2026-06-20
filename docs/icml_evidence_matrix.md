@@ -1,6 +1,6 @@
 # ICML Evidence Matrix
 
-Date: 2026-06-18
+Date: 2026-06-20
 
 This matrix is the current writing and experiment gate for the ICML version of
 **Looking Is Not Verifying**. It links each paper claim to the strongest saved
@@ -21,10 +21,10 @@ queried target object.
 | C4. Generic region/object evidence is not enough. | Supported | Same table: OWLv2 target direct MCC `0.777` but related FPR `0.184` and adversarial related FPR `0.281`. | Main mitigation/control table, row group: region evidence. | Avoid calling OWLv2 target score a failed detector; it is strong aggregate evidence but non-discriminative under semantic neighbors. |
 | C5. Target-vs-neighbor verification is the constructive criterion. | Supported, modest effect | Hybrid gate+rescue: MCC `0.763`, FPR `0.051`, related FPR `0.069`; strict margin related FPR `0.010` but TPR `0.359`. | Main TDEV table plus calibration ablation. | Need to frame as best current tradeoff, not solved hallucination. |
 | C6. The criterion transfers to object-mention detection. | Supported | `docs/tdev_ablation_summary.md`: target absence + 0.25 neighbor dominance reaches overall `0.874`, within-bin `0.852`, matched-pair `0.854`, residual `0.722`. | CHAIR detection table. | Make clear this is post-hoc object-mention scoring, not fluent generation. |
-| C7. Caption-side mitigation exists but is still proxy/rewrite-based. | Partial | Top-5 neutral rewrite: CHAIRi `0.1340 -> 0.1186`, CHAIRs `0.4921 -> 0.4505`, mean words `89.54 -> 89.41`; top-5 generic noun rewrite keeps length closer (`89.53`) with the same CHAIR drop; sentence gate reaches CHAIRi `0.1165`, CHAIRs `0.4396` but mean words `86.53`; top-10 deletion: CHAIRi `0.1048`, CHAIRs `0.4047`. | Caption mitigation table/prototype evidence, appendix only unless a fluent decode-time gate is added. | Biggest ICML weakness remains that deterministic post-processing either uses generic nouns or deletes too much context. Next action is object-token/object-phrase decoding gate. |
+| C7. Caption-side mitigation exists, but the useful route is claim acceptance rather than fixed token suppression. | Partial, updated | Proxy rows show useful target selection: top-5 neutral rewrite CHAIRi `0.1340 -> 0.1186`; top-10 deletion CHAIRi `0.1048`. Generated smoke tests show fixed hard gating can route into substitute claims, while sentence acceptance reduces 96-token gated CHAIRi `0.2500 -> 0.1053` and hallucinated mentions `8 -> 2`. Concise-faithfulness audit: accepted captions retain `70.83%` of vanilla grounded object mentions and have `0` generic/empty accepted captions. | Caption route summary plus appendix/prototype table. | Still smoke-scale. Next action is a bounded faithful-concise caption experiment with claim acceptance and constrained local repair, reported with content-preservation metrics, not length alone. |
 | C8. TDEV-lite gives practicality but not standalone mitigation. | Supported with scope | LH-alone POPE MCC `0.495`, TPR `0.432`; LH->TDEV at 2,025/9,000 calls MCC `0.754`, FPR `0.056`, related FPR `0.075`. | Efficiency/practicality table. | Must be labeled supervised routing/triage; do not present it as a training-free attention method. |
 | C9. Cross-model direction holds on Qwen2.5-VL. | Supported, small effect | `docs/multimodel_replication_audit.md`: Qwen vanilla macro MCC `0.765`, FPR `0.033`, related FPR `0.041`; fixed TDEV macro MCC `0.769`, FPR `0.027`, related FPR `0.034`. | Cross-model table. | Evidence is output-level plus model-independent OWLv2 verification, not Qwen internal attention evidence. |
-| C10. Novelty is not external detection or chain verification. | Supported by related-work boundary | Woodpecker/UNIHD/R-CoV cover tool or chain verification; CAI/CAST/Region-Aware cover internal attention steering. | Related work + limitation section. | Need one paragraph explicitly separating TDEV from high-latency post-hoc verification and attention steering. |
+| C10. Novelty is target-discriminative verification, not external detection, chain verification, or stronger visual routing. | Supported by related-work boundary | Woodpecker/LURE/R-CoV cover post-hoc claim extraction/verification/revision; CAI/CAST/Region-Aware/Focus Matters cover internal visual-routing or attention steering. Our local semantic-neighbor controls show why aggregate visual reliance is not enough. | Related work + limitation section. | State explicitly that TDEV may use an external verifier backend, but the contribution is the related-neighbor control and target-vs-neighbor decision criterion. |
 
 ## Proposed Main Tables and Figures
 
@@ -48,11 +48,14 @@ head/region steering methods are runnable baselines or related-work pressure.
 1. **Caption mitigation is not yet a natural method.** The neutral and
    generic-noun rewrite proxies are less destructive than deletion and keep
    sentence length closer to vanilla, but they are still deterministic
-   post-processing. The generic-noun version confirms that CHAIR can improve
-   while object claims are replaced by broad nouns, so it should not be promoted
-   as visual correction. For a stronger ICML story, implement constrained
-   regeneration, a learned/LLM sentence-local rewrite, or a decoding-time object
-   gate if local generation hooks are reliable.
+   post-processing. The generated hard-gate smoke tests show a sharper failure:
+   token suppression can produce substitute or escape object claims, so a larger
+   deny list is not the right main path. For a stronger ICML story, run a bounded
+   faithful-concise caption experiment: extract object-like claims, map them to
+   canonical targets, accept only claims passing target-vs-neighbor evidence, and
+   use constrained local repair only when deletion removes central supported
+   content or leaves an incoherent fragment. Report CHAIR together with retained
+   grounded objects, object-mention retention, mean words, and empty/generic rate.
 2. **Positive head/region baselines are not fully reproduced.** Current local
    ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, DAMRO subset, and
    NoLan-compatible all-splits. AIR official code is now accessible and is the
@@ -71,7 +74,7 @@ Recent related work reinforces the chosen scope:
 
 | Family | Examples | Boundary for this paper |
 |---|---|---|
-| Tool or chain verification | Woodpecker, UNIHD, R-CoV | They validate or rewrite with multi-step tools/chains. We should not claim novelty as a post-hoc correction pipeline. |
+| Tool or chain verification | Woodpecker, LURE, UNIHD, R-CoV | They validate or rewrite with multi-step tools, statistical factors, or verification chains. We should not claim novelty as a generic post-hoc correction pipeline. |
 | Caption/head steering | CAI, CAST | They increase visual attention through caption-query patterns. Our required test is whether the steered evidence is target-discriminative under related-present negatives. |
 | Phase-aware visual-token suppression | Focus Matters | It filters/suppresses visual tokens from internal attention dynamics. Treat as positive related work; audit if code becomes public/runnable. |
 | Region/head recalibration | Region-Aware Attention Recalibration | Closest low-cost internal mitigation direction. Treat as positive related work; audit if code becomes public/runnable. |
@@ -81,6 +84,7 @@ Recent related work reinforces the chosen scope:
 Checked sources:
 
 - Woodpecker: https://arxiv.org/abs/2310.16045
+- LURE: https://arxiv.org/abs/2310.00754
 - UNIHD/MHaluBench: https://arxiv.org/abs/2402.03190
 - R-CoV: https://arxiv.org/abs/2604.20696
 - CAI: https://arxiv.org/abs/2506.23590
@@ -92,10 +96,10 @@ Checked sources:
 
 ## Next Concrete Work Order
 
-1. **Fluent caption rewrite prototype.** The deterministic neutral-rewrite proxy is
-   complete. The remaining high-value gap is a fluent constrained regeneration
-   or sentence-local rewrite that preserves non-object content while removing
-   unsupported object claims.
+1. **Faithful-concise caption prototype.** The deterministic neutral-rewrite proxy
+   and generated hard-gate smoke tests are complete. The remaining high-value gap
+   is verifier-guided claim acceptance plus constrained local repair, evaluated
+   on the same high-risk images with both CHAIR and content-preservation metrics.
 2. **Region-box mechanism figure.** The contact-sheet mechanism figure is
    complete. If time allows, add detector boxes or attention overlays for the
    same examples; this is optional because the score/evidence figure already
