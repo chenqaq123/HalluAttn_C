@@ -705,6 +705,24 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_content_light/caption_content_light_metrics.json"
         ).read_text()
     )
+    oracle = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_candidate_pool_oracle_100/candidate_pool_oracle_metrics.json"
+        ).read_text()
+    )
+    oracle_min_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_candidate_pool_oracle_100_min_hallucination_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
+    oracle_no_worse_content = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_caption_candidate_pool_oracle_100_no_worse_content_light/caption_content_light_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -767,6 +785,10 @@ def check_caption_route_summary() -> None:
     regen_concise_content_summary = regen_concise_content["summary"]
     regen_detail_preservation_summary = regen_detail_preservation["summary"]
     regen_detail_content_summary = regen_detail_content["summary"]
+    oracle_min_summary = oracle["summaries"]["min_hallucination"]
+    oracle_no_worse_summary = oracle["summaries"]["no_worse_than_repair"]
+    oracle_min_content_summary = oracle_min_content["summary"]
+    oracle_no_worse_content_summary = oracle_no_worse_content["summary"]
 
     _assert_contains(
         summary,
@@ -830,6 +852,21 @@ def check_caption_route_summary() -> None:
         f"| controlled regen detail | {regen_detail['num_examples']} | {regen_detail['chair']['regenerated']['overall']['CHAIRi']:.4f} | {regen_detail['chair']['regenerated']['total_hallucinated_mentions']} | {regen_detail['mean_words']['regenerated']:.2f} | {regen_detail_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | {regen_detail_preservation_summary['variant_object_mention_retention_vs_vanilla'] * 100:.2f}% | {regen_detail_content_summary['content_light']} | recovers length but not the repair tradeoff |",
         "caption-route:regen-probe-detail-row",
     )
+    _assert_contains(
+        summary,
+        f"| oracle min hallucination | {oracle_min_summary['num_images']} | {oracle_min_summary['chairi']:.4f} | {oracle_min_summary['total_hallucinated_mentions']} | {oracle_min_summary['mean_words']:.2f} | {oracle_min_summary['retained_vanilla_grounded_rate'] * 100:.2f}% | {oracle_min_summary['object_mention_retention_vs_vanilla'] * 100:.2f}% | {oracle_min_content_summary['content_light']} | repair {oracle_min_summary['selected_candidate_counts'].get('claim-local repair', 0)}, concise {oracle_min_summary['selected_candidate_counts'].get('controlled regen concise', 0)}, detail {oracle_min_summary['selected_candidate_counts'].get('controlled regen detail', 0)} | best possible hallucination control still costs visible content |",
+        "caption-route:oracle-min-hallucination-row",
+    )
+    _assert_contains(
+        summary,
+        f"| oracle no-worse-than-repair | {oracle_no_worse_summary['num_images']} | {oracle_no_worse_summary['chairi']:.4f} | {oracle_no_worse_summary['total_hallucinated_mentions']} | {oracle_no_worse_summary['mean_words']:.2f} | {oracle_no_worse_summary['retained_vanilla_grounded_rate'] * 100:.2f}% | {oracle_no_worse_summary['object_mention_retention_vs_vanilla'] * 100:.2f}% | {oracle_no_worse_content_summary['content_light']} | repair {oracle_no_worse_summary['selected_candidate_counts'].get('claim-local repair', 0)}, concise {oracle_no_worse_summary['selected_candidate_counts'].get('controlled regen concise', 0)}, detail {oracle_no_worse_summary['selected_candidate_counts'].get('controlled regen detail', 0)} | small upper-bound gain: detail candidates help 20 images but do not change the conclusion |",
+        "caption-route:oracle-no-worse-row",
+    )
+    _assert_contains(
+        summary,
+        "the gain is too small to justify a selector-only paper claim",
+        "caption-route:oracle-small-gain",
+    )
 
     concise_summary = concise["summary"]
     concise_rows = {
@@ -858,7 +895,7 @@ def check_caption_route_summary() -> None:
     claim_summary = claim_repair["preservation"]["summary"]
     _assert_contains(
         summary,
-        "the remaining method gap is verification-in-loop regeneration or candidate selection",
+        "the remaining method gap is verification-in-loop candidate generation",
         "caption-route:scale-risk",
     )
     _assert_contains(
@@ -878,8 +915,18 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         evidence,
-        f"Prompt-only regeneration is a negative control: concise lowers CHAIRi to `{regen_concise['chair']['regenerated']['overall']['CHAIRi']:.4f}` by over-compressing to `{regen_concise['mean_words']['regenerated']:.2f}` words and `{regen_concise_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}%` retained vanilla grounded; detail reaches `{regen_detail['mean_words']['regenerated']:.2f}` words but worsens CHAIRi to `{regen_detail['chair']['regenerated']['overall']['CHAIRi']:.4f}` and retains only `{regen_detail_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}%`",
-        "evidence:caption-claim-repair-scaled",
+        f"concise lowers CHAIRi to `{regen_concise['chair']['regenerated']['overall']['CHAIRi']:.4f}` by over-compressing",
+        "evidence:caption-regen-concise-negative",
+    )
+    _assert_contains(
+        evidence,
+        f"detail reaches\n   `{regen_detail['mean_words']['regenerated']:.2f}` words but worsens CHAIRi to `{regen_detail['chair']['regenerated']['overall']['CHAIRi']:.4f}` and retains only `{regen_detail_preservation_summary['variant_retained_vanilla_grounded_rate'] * 100:.2f}%`",
+        "evidence:caption-regen-detail-negative",
+    )
+    _assert_contains(
+        evidence,
+        f"no-worse-than-repair selection keeps\n   {oracle_no_worse_summary['total_hallucinated_mentions']} hallucinated mentions and only\n   raises retained vanilla grounded mentions to `{oracle_no_worse_summary['retained_vanilla_grounded_rate'] * 100:.2f}%`",
+        "evidence:caption-oracle-small-gain",
     )
     _assert_contains(
         baseline_note,

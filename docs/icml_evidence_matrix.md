@@ -36,7 +36,7 @@ queried target object.
 | Table 3: TDEV POPE/CHAIR ablations | Show raw target evidence, margin, two-stage, hybrid, and CHAIR transfer. | `scripts/build_tdev_ablation_summary.py`; `docs/tdev_ablation_summary.md`. | Ready. |
 | Table 4: TDEV-lite practicality | Show LH-alone fails, LH-routed TDEV saves calls and beats prompt controls. | `mitigation/results/pope_internal_external_ablation_full/`; CHAIR cascade metrics. | Ready but should be secondary. |
 | Table 5: Cross-model Qwen replication | Show direction holds beyond LLaVA. | `mitigation/scripts/audit_qwen25vl_replication.py`; `docs/multimodel_replication_audit.md`. | Ready with scoped wording. |
-| Table 6: Caption rewrite / correction | Show caption-side usefulness. | `detection/baselines/results/tdev_caption_rewrite_{neutral,generic}/chair_metrics.json` and `detection/baselines/results/tdev_caption_edit*/chair_metrics.json`. | Partial; deterministic rewrite proxies are ready, fluent regeneration still missing. |
+| Table 6: Caption rewrite / correction | Show caption-side usefulness and limits. | `docs/caption_method_route_summary.md`; `detection/baselines/results/tdev_caption_candidate_pool_oracle_100/candidate_pool_oracle_metrics.json`. | Partial; repair works as a fallback, prompt-only regeneration and selector-only oracle are negative controls. |
 
 ## Current ICML Weak Points
 
@@ -50,13 +50,20 @@ head/region steering methods are runnable baselines or related-work pressure.
    sentence length closer to vanilla, but they are still deterministic
    post-processing. The generated hard-gate smoke tests show a sharper failure:
    token suppression can produce substitute or escape object claims, so a larger
-   deny list is not the right main path. For a stronger ICML story, run a bounded
-   faithful-concise caption experiment: extract object-like claims, map them to
-   canonical targets, accept only claims passing target-vs-neighbor evidence, and
-   use constrained local repair when an unsupported claim is in a detachable
-   clause or when deletion would remove central supported content. Report CHAIR
-   together with retained grounded objects, object-mention retention, mean words,
-   and empty/generic rate.
+   deny list is not the right main path. Claim-local repair is the current safe
+   fallback on the 100-image high-risk set (`0.0600` CHAIRi, `73.47%` retained
+   vanilla grounded mentions, `0` content-light cases). Prompt-only regeneration
+   is a negative control: concise lowers CHAIRi to `0.0538` by over-compressing
+   to `17.75` words and `36.47%` retained vanilla grounded; detail reaches
+   `39.04` words but worsens CHAIRi to `0.0714` and retains only `60.73%`.
+   The candidate-pool oracle is also small: no-worse-than-repair selection keeps
+   27 hallucinated mentions and only
+   raises retained vanilla grounded mentions to `75.22%`. For a stronger ICML
+   story, the remaining gap is verification-in-loop candidate generation: propose
+   missing details, extract object-like claims, map them to canonical targets,
+   accept only claims passing target-vs-neighbor evidence, and fall back to local
+   repair when no safe new detail exists. Report CHAIR together with retained
+   grounded objects, object-mention retention, mean words, and content-light rate.
 2. **Positive head/region baselines are not fully reproduced.** Current local
    ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, DAMRO subset, and
    NoLan-compatible all-splits. AIR official code is now accessible and is the
@@ -99,10 +106,10 @@ Checked sources:
 
 1. **Upgrade faithful-concise caption prototype.** The deterministic neutral-rewrite
    proxy, generated hard-gate smoke tests, sentence acceptance, claim-local
-   repair smoke, 20/40/100-image scaled checks, and prompt-only regeneration
-   negative controls are complete. The remaining high-value gap is
-   verification-in-loop regeneration or candidate selection for visible-detail
-   preservation, evaluated against the same high-risk set with CHAIR, retained
+   repair smoke, 20/40/100-image scaled checks, prompt-only regeneration
+   negative controls, and candidate-pool oracle are complete. The remaining
+   high-value gap is verification-in-loop candidate generation, not selector-only
+   reranking, evaluated against the same high-risk set with CHAIR, retained
    grounded objects, object retention, mean words, and content-light rate.
 2. **Region-box mechanism figure.** The contact-sheet mechanism figure is
    complete. If time allows, add detector boxes or attention overlays for the

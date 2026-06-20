@@ -80,9 +80,20 @@ The scaled checks support the direction but narrow the claim. On the 100-image h
 
 Prompt-only regeneration is therefore not the solution. The concise prompt reduces CHAIRi by collapsing to short safe captions, while the detail-preserving prompt restores some length but has worse CHAIRi and lower grounded-content retention than claim-local repair. The next method should be verification-in-loop regeneration or candidate selection: regenerate only missing visible details, verify each new claim against target-vs-neighbor evidence, and keep the deterministic repaired caption as a fallback.
 
+## Candidate Pool Oracle
+
+This is an upper-bound analysis, not a deployable method: it uses CHAIR labels to choose among the already generated claim-local repair, concise regeneration, and detail regeneration candidates. It asks whether the current candidate pool contains useful alternatives that a future verifier could select without hallucination growth.
+
+| Selector | Images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs vanilla | Content-light | Selected candidates | Reading |
+|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| oracle min hallucination | 100 | 0.0268 | 11 | 45.47 | 69.28% | 58.46% | 0 | repair 79, concise 14, detail 7 | best possible hallucination control still costs visible content |
+| oracle no-worse-than-repair | 100 | 0.0586 | 27 | 50.27 | 75.22% | 65.58% | 0 | repair 80, concise 0, detail 20 | small upper-bound gain: detail candidates help 20 images but do not change the conclusion |
+
+The no-worse-than-repair oracle is the relevant upper bound for a future verifier. It keeps hallucinated mentions at 27, improves CHAIRi only from 0.0600 to 0.0586, and raises retained vanilla grounded mentions from 73.47% to 75.22%. This means the existing regeneration candidates contain some recoverable detail, but the gain is too small to justify a selector-only paper claim. The next method needs better candidate generation plus target-vs-neighbor claim verification.
+
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe shows that prompt-only rewriting is insufficient, so the remaining method gap is verification-in-loop regeneration or candidate selection for preserving visible detail when a safe prefix is not enough.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair/regeneration**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or truly collapses into content-light captions. The content-light audit shows that many CHAIR-objectless captions are still descriptive. The controlled-regeneration probe and candidate-pool oracle show that prompt-only rewriting plus selection is insufficient, so the remaining method gap is verification-in-loop candidate generation: propose missing details, verify each claim, and fall back to the deterministic repair when no safe new detail is found.
 
 The next implementation target is therefore:
 
@@ -97,7 +108,7 @@ This preserves the paper's motivation: the method does not merely make object cl
 
 ## Paper-Safe Scope
 
-Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is verification-in-loop regeneration or candidate selection, evaluated against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits. The prompt-only regeneration probe should be reported as a negative control.
+Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is verification-in-loop candidate generation, evaluated against the 100-image high-risk set with CHAIR, content-light, and content-preservation audits. The prompt-only regeneration probe and candidate-pool oracle should be reported as negative controls.
 
 ## Source Artifacts
 
@@ -132,3 +143,6 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/controlled_regeneration_metrics.json`
 - `detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_preservation/caption_variant_preservation_metrics.json`
 - `detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_caption_candidate_pool_oracle_100/candidate_pool_oracle_metrics.json`
+- `detection/baselines/results/tdev_caption_candidate_pool_oracle_100_min_hallucination_content_light/caption_content_light_metrics.json`
+- `detection/baselines/results/tdev_caption_candidate_pool_oracle_100_no_worse_content_light/caption_content_light_metrics.json`

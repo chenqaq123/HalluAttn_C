@@ -1,0 +1,49 @@
+{
+  "inputs": {
+    "concise_details_json": "detection/baselines/results/tdev_caption_controlled_regen_100_t80/regenerated_chair_details.json",
+    "detail_details_json": "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/regenerated_chair_details.json",
+    "gated_details_json": "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/gated_chair_details.json",
+    "repaired_details_json": "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/repaired_chair_details.json",
+    "vanilla_details_json": "detection/baselines/results/tdev_caption_controlled_regen_100_detail_t128/vanilla_chair_details.json"
+  },
+  "scope_note": "Oracle candidate-pool analysis. It uses CHAIR labels to select among already-generated repair/regeneration candidates and should be read as an upper bound for a future verifier, not as a deployable method.",
+  "summaries": {
+    "min_hallucination": {
+      "chairi": 0.0267639902676399,
+      "chairs": 0.08,
+      "mean_words": 45.47,
+      "num_images": 100,
+      "object_mention_retention_vs_gated": 0.6597110754414125,
+      "object_mention_retention_vs_vanilla": 0.5846372688477952,
+      "retained_gated_grounded_rate": 0.7145454545454546,
+      "retained_vanilla_grounded_rate": 0.6928446771378709,
+      "selected_candidate_counts": {
+        "claim-local repair": 79,
+        "controlled regen concise": 14,
+        "controlled regen detail": 7
+      },
+      "selector": "min_hallucination",
+      "total_grounded_mentions": 400,
+      "total_hallucinated_mentions": 11,
+      "total_object_mentions": 411
+    },
+    "no_worse_than_repair": {
+      "chairi": 0.05856832971800434,
+      "chairs": 0.19,
+      "mean_words": 50.27,
+      "num_images": 100,
+      "object_mention_retention_vs_gated": 0.7399678972712681,
+      "object_mention_retention_vs_vanilla": 0.6557610241820768,
+      "retained_gated_grounded_rate": 0.7763636363636364,
+      "retained_vanilla_grounded_rate": 0.7521815008726004,
+      "selected_candidate_counts": {
+        "claim-local repair": 80,
+        "controlled regen detail": 20
+      },
+      "selector": "no_worse_than_repair",
+      "total_grounded_mentions": 434,
+      "total_hallucinated_mentions": 27,
+      "total_object_mentions": 461
+    }
+  }
+}

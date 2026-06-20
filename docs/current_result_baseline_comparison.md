@@ -242,9 +242,15 @@ Reading:
   not enough: the concise prompt lowers CHAIRi to `0.0538` but collapses to
   `17.75` words and only `36.47%` retained vanilla grounded mentions; the detail
   prompt reaches `39.04` words but worsens CHAIRi to `0.0714` and retains only
-  `60.73%`. The next caption method should therefore use regeneration only as a
+  `60.73%`. A candidate-pool oracle over repair, concise regeneration, and
+  detail regeneration confirms that selector-only gains are small: the
+  no-worse-than-repair oracle keeps hallucinated mentions at `27`, moves CHAIRi
+  only from `0.0600` to `0.0586`, and raises retained vanilla grounded mentions
+  from `73.47%` to `75.22%` while selecting detail-regenerated captions for 20
+  images. The next caption method should therefore use regeneration only as a
   verified candidate source for missing visible details, keeping deterministic
-  claim-local repair as the fallback.
+  claim-local repair as the fallback and improving candidate generation rather
+  than relying on reranking alone.
 
 ## Paper-Safe Claim
 
