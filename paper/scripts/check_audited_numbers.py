@@ -573,6 +573,12 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
         ).read_text()
     )
+    claim_repair = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/claim_repair_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -598,6 +604,13 @@ def check_caption_route_summary() -> None:
             acceptance["chair"]["accepted"]["total_hallucinated_mentions"],
             acceptance["mean_accepted_words"],
             acceptance["mean_removed_words_by_acceptance"],
+        ],
+        "claim-local repair": [
+            claim_repair["num_examples"],
+            claim_repair["chair"]["repaired"]["overall"]["CHAIRi"],
+            claim_repair["chair"]["repaired"]["total_hallucinated_mentions"],
+            claim_repair["mean_repaired_words"],
+            claim_repair["mean_removed_words_by_repair"],
         ],
     }
     for row_label, expected in generated_rows.items():
@@ -631,20 +644,31 @@ def check_caption_route_summary() -> None:
         "Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects.",
         "caption-route:length-reduction-nuance",
     )
+    claim_summary = claim_repair["preservation"]["summary"]
     _assert_contains(
         summary,
-        "The remaining risk is larger-scale content preservation, not length reduction itself.",
-        "caption-route:content-preservation-risk",
+        "The remaining risk is scaling this beyond five high-risk images",
+        "caption-route:scale-risk",
+    )
+    _assert_contains(
+        summary,
+        f"| retained vanilla grounded mentions | {claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | improves content retention over sentence acceptance |",
+        "caption-route:claim-repair-retention",
     )
     _assert_contains(
         evidence,
-        f"sentence acceptance reduces 96-token gated CHAIRi `{acceptance['chair']['gated']['overall']['CHAIRi']:.4f} -> {acceptance['chair']['accepted']['overall']['CHAIRi']:.4f}` and hallucinated mentions `{acceptance['chair']['gated']['total_hallucinated_mentions']} -> {acceptance['chair']['accepted']['total_hallucinated_mentions']}`",
+        f"acceptance reduces 96-token gated CHAIRi `{acceptance['chair']['gated']['overall']['CHAIRi']:.4f} -> {acceptance['chair']['accepted']['overall']['CHAIRi']:.4f}` and hallucinated mentions `{acceptance['chair']['gated']['total_hallucinated_mentions']} -> {acceptance['chair']['accepted']['total_hallucinated_mentions']}`",
         "evidence:caption-acceptance-delta",
     )
     _assert_contains(
+        summary,
+        f"| retained vanilla grounded mentions | {concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | accepted captions keep most supported object mentions |",
+        "caption-route:accepted-concise-faithfulness",
+    )
+    _assert_contains(
         evidence,
-        f"accepted captions retain `{concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` of vanilla grounded object mentions and have `{concise_summary['generic_or_empty_accepted']}` generic/empty accepted captions",
-        "evidence:caption-concise-faithfulness",
+        f"claim-local repair improves CHAIRi further to `{claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, and raises retained vanilla grounded mentions to `{claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
+        "evidence:caption-claim-repair",
     )
     _assert_contains(
         baseline_note,

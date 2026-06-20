@@ -30,7 +30,8 @@ This note is generated from saved caption-side TDEV prototype artifacts. It keep
 |---|---:|---:|---:|---:|---:|---|
 | t96 hard gate | 5 | 0.2500 | 8 | 71.80 | 0.00 | hard gating creates substitute/escape claims |
 | sentence repair | 5 | 0.1786 | 5 | 63.60 | 8.20 | fixes incomplete tails but misses complete substitute claims |
-| sentence acceptance | 5 | 0.1053 | 2 | 47.20 | 24.60 | best hallucination reduction; length drop is acceptable only if core visual content remains |
+| sentence acceptance | 5 | 0.1053 | 2 | 47.20 | 24.60 | strong hallucination reduction, but drops complete mixed sentences |
+| claim-local repair | 5 | 0.0909 | 2 | 52.40 | 19.40 | best smoke tradeoff: preserves safe sentence prefixes before unsupported clauses |
 
 ## Concise-Faithfulness Audit
 
@@ -42,9 +43,20 @@ This note is generated from saved caption-side TDEV prototype artifacts. It keep
 | object mention retention vs gated | 59.38% | shorter but not object-empty |
 | generic/empty accepted captions | 0 | no accepted caption is empty/generic under the audit threshold |
 
+## Claim-Local Repair Audit
+
+| Metric | Value | Reading |
+|---|---:|---|
+| local repair actions | 2 | complete sentence prefixes saved before unsupported clauses |
+| retained vanilla grounded mentions | 83.33% | improves content retention over sentence acceptance |
+| hallucination reduction vs gated | 75.00% | keeps the same hallucination reduction as sentence acceptance |
+| hallucination reduction vs vanilla | 77.78% | improves over original generated captions |
+| object mention retention vs gated | 68.75% | less destructive than sentence acceptance |
+| generic/empty repaired captions | 0 | no repaired caption is empty/generic under the audit threshold |
+
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The concise-faithfulness audit supports this nuance on the 5-image smoke set: accepted captions retain most grounded object mentions while removing most hallucinated mentions, and none are empty/generic under the current threshold. The remaining risk is larger-scale content preservation, not length reduction itself.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The new claim-local repair smoke keeps the same hallucination reduction while preserving more grounded content by trimming only speculative or enumerating clauses when a safe prefix remains. The remaining risk is scaling this beyond five high-risk images and replacing deterministic clause trims with a controlled repair/regeneration step when the safe prefix is not enough.
 
 The next implementation target is therefore:
 
@@ -52,14 +64,14 @@ The next implementation target is therefore:
 2. Extract object-like claims, including open-vocabulary route forms.
 3. Map each claim to a canonical target when possible and score target-vs-neighbor evidence.
 4. Accept supported claims and reject unsupported claims; allow the caption to become shorter when unsupported detail is the only thing being removed.
-5. Ask for constrained local repair only when rejection would remove central visible content or leave an incoherent fragment.
+5. Apply constrained local repair only when rejection would remove central visible content or when an unsupported claim sits in a detachable clause.
 6. Report CHAIR together with concise-faithfulness metrics: retained supported objects, mean words, object mentions, empty/generic-caption rate, and manual examples.
 
 This preserves the paper's motivation: the method does not merely make object claims less frequent, and it does not rely on visual routing as proof. It explicitly tests whether the candidate claim is target-discriminative under related evidence. The desired behavior is not maximum caption length; it is concise but faithful captioning that keeps supported visual content and stops before unsupported object invention.
 
 ## Paper-Safe Scope
 
-Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is a small generated-caption experiment that compares hard gate, sentence repair, sentence acceptance, and constrained repair on the same high-risk image set, judged by hallucination reduction and whether concise captions still preserve the main supported scene content.
+Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to scale the same generated-caption experiment beyond the 5-image smoke set, comparing hard gate, sentence repair, sentence acceptance, and claim-local repair on the same high-risk image set, judged by hallucination reduction and whether concise captions still preserve the main supported scene content.
 
 ## Source Artifacts
 
@@ -68,3 +80,4 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_repair/sentence_repair_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/claim_repair_metrics.json`

@@ -226,10 +226,13 @@ Reading:
   per caption on average. A concise-faithfulness audit clarifies that this is
   not merely empty-caption gaming: accepted captions retain `70.83%` of vanilla
   grounded object mentions, remove `75.00%` of gated hallucinated mentions, and
-  have `0` generic/empty accepted captions under the current threshold. The next
-  caption method should therefore use verifier-guided claim acceptance with
-  constrained rewrite or completion when deletion would remove central supported
-  content, not fixed token suppression or pure deletion.
+  have `0` generic/empty accepted captions under the current threshold. A new
+  claim-local repair proxy keeps the same hallucinated mention count (`2`) while
+  improving CHAIRi to `0.0909`, mean words to `52.40`, and retained vanilla
+  grounded mentions to `83.33%` by trimming only detachable unsupported clauses
+  when a safe sentence prefix remains. The next caption method should therefore
+  scale verifier-guided claim acceptance with constrained local repair, not fixed
+  token suppression or pure deletion.
 
 ## Paper-Safe Claim
 

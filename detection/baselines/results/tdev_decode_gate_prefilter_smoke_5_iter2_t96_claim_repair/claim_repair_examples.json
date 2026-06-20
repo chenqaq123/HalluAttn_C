@@ -1,0 +1,229 @@
+[
+  {
+    "image_id": 6213,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000006213.jpg",
+    "denied_words": [
+      "bottle",
+      "toothbrush"
+    ],
+    "vanilla_caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby. \n\nThere are two bottles placed on the countertop, one closer to the sink and the other further away. Additionally, there are two cups,",
+    "gated_caption": "The image features a bathroom with a white bathtub and a sink. The bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it. The sink is located on the right side of the bathroom, with a towel hanging nearby. \n\nThere are two bottes placed on the countertop, one closer to the sink and the other further away. Additionally, there are two cups,",
+    "repaired_caption": "The image features a bathroom with a white bathtub and a sink.\n\nThe bathtub is situated next to a mirror, and a red shower curtain is hanging in front of it.\n\nThe sink is located on the right side of the bathroom, with a towel hanging nearby.",
+    "repair_info": {
+      "actions": [
+        {
+          "text": "There are two bottes placed on the countertop, one closer to the sink and the other further away.",
+          "kept_text": "",
+          "complete": 1,
+          "claims": [
+            "bottes"
+          ],
+          "reason": "unsupported_claim",
+          "repair_attempt": "no_safe_clause",
+          "action": "drop_chunk"
+        },
+        {
+          "text": "Additionally, there are two cups,",
+          "kept_text": "",
+          "complete": 0,
+          "claims": [],
+          "reason": "incomplete_tail",
+          "action": "drop_chunk"
+        }
+      ],
+      "claims_by_source": {
+        "denied_residual": [],
+        "introduced_hallucinated": [],
+        "unsupported_open_vocab": [
+          "bottes"
+        ],
+        "variant_or_root_leaks": []
+      }
+    },
+    "vanilla_words": 70,
+    "gated_words": 70,
+    "repaired_words": 47,
+    "removed_words_by_repair": 23
+  },
+  {
+    "image_id": 12319,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000012319.jpg",
+    "denied_words": [
+      "bird"
+    ],
+    "vanilla_caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraffes, there are several birds scattered throughout the scene, adding to the lively atmosphere. The birds are positioned at various heights and distances, some closer",
+    "gated_caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe. The two giraffes are walking together, with the larger one leading the way. They are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraffes, there are several other animals in the scene, including a zebra and a few elephants. The zebra is located towards the left",
+    "repaired_caption": "The image features a large giraffe walking through a grassy field, accompanied by a smaller giraffe.\n\nThe two giraffes are walking together, with the larger one leading the way.\n\nThey are surrounded by trees, creating a natural and serene environment.\n\nIn addition to the giraffes, there are several other animals in the scene.",
+    "repair_info": {
+      "actions": [
+        {
+          "text": "In addition to the giraffes, there are several other animals in the scene, including a zebra and a few elephants.",
+          "kept_text": "In addition to the giraffes, there are several other animals in the scene.",
+          "complete": 1,
+          "claims": [
+            "elephants",
+            "few elephants",
+            "zebra"
+          ],
+          "reason": "trim_clause_before_including",
+          "action": "local_repair"
+        },
+        {
+          "text": "The zebra is located towards the left",
+          "kept_text": "",
+          "complete": 0,
+          "claims": [
+            "zebra"
+          ],
+          "reason": "unsupported_claim",
+          "repair_attempt": "no_safe_clause",
+          "action": "drop_chunk"
+        }
+      ],
+      "claims_by_source": {
+        "denied_residual": [],
+        "introduced_hallucinated": [
+          "elephant",
+          "zebra"
+        ],
+        "unsupported_open_vocab": [
+          "elephants",
+          "few elephants"
+        ],
+        "variant_or_root_leaks": []
+      }
+    },
+    "vanilla_words": 69,
+    "gated_words": 67,
+    "repaired_words": 53,
+    "removed_words_by_repair": 14
+  },
+  {
+    "image_id": 15994,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000015994.jpg",
+    "denied_words": [
+      "tv"
+    ],
+    "vanilla_caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene, there is also a remote control placed near the woman, possibly for controlling a television or other electronic devices. The overall atmosphere of the image suggests a cas",
+    "gated_caption": "The image features a woman sitting on a couch, holding a cell phone to her ear. She appears to be engaged in a conversation or listening to a message. The woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene, there is also a remote control placed near the woman, possibly for controlling a nearby TV or other electronic device.",
+    "repaired_caption": "The image features a woman sitting on a couch, holding a cell phone to her ear.\n\nShe appears to be engaged in a conversation or listening to a message.\n\nThe woman is wearing a purple sweater, and there is a pink blanket on the couch behind her.\n\nIn the scene, there is also a remote control placed near the woman.",
+    "repair_info": {
+      "actions": [
+        {
+          "text": "In the scene, there is also a remote control placed near the woman, possibly for controlling a nearby TV or other electronic device.",
+          "kept_text": "In the scene, there is also a remote control placed near the woman.",
+          "complete": 1,
+          "claims": [
+            "tv"
+          ],
+          "reason": "trim_clause_before_possibly",
+          "action": "local_repair"
+        }
+      ],
+      "claims_by_source": {
+        "denied_residual": [
+          "tv"
+        ],
+        "introduced_hallucinated": [],
+        "unsupported_open_vocab": [],
+        "variant_or_root_leaks": []
+      }
+    },
+    "vanilla_words": 78,
+    "gated_words": 70,
+    "repaired_words": 60,
+    "removed_words_by_repair": 10
+  },
+  {
+    "image_id": 22596,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000022596.jpg",
+    "denied_words": [
+      "bird",
+      "person"
+    ],
+    "vanilla_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two birds in the scene, one perched on a branch near the cow and the other flying above the water. The overall atmosphere of the image is serene and peace",
+    "gated_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest. The cow appears to be enjoying the water, possibly cooling off or drinking. Another cow can be seen in the background, standing further away from the main cow.\n\nThere are also two chickens in the scene, one near the main cow and the other closer to the background cow. The chickens seem to be exploring the area or",
+    "repaired_caption": "The image features a cow standing in a shallow stream of water, surrounded by a lush green forest.\n\nThe cow appears to be enjoying the water, possibly cooling off or drinking.\n\nAnother cow can be seen in the background, standing further away from the main cow.",
+    "repair_info": {
+      "actions": [
+        {
+          "text": "There are also two chickens in the scene, one near the main cow and the other closer to the background cow.",
+          "kept_text": "",
+          "complete": 1,
+          "claims": [
+            "chickens"
+          ],
+          "reason": "unsupported_claim",
+          "repair_attempt": "no_safe_clause",
+          "action": "drop_chunk"
+        },
+        {
+          "text": "The chickens seem to be exploring the area or",
+          "kept_text": "",
+          "complete": 0,
+          "claims": [
+            "chickens",
+            "chickens seem"
+          ],
+          "reason": "unsupported_claim",
+          "repair_attempt": "no_safe_clause",
+          "action": "drop_chunk"
+        }
+      ],
+      "claims_by_source": {
+        "denied_residual": [],
+        "introduced_hallucinated": [],
+        "unsupported_open_vocab": [
+          "chickens",
+          "chickens seem"
+        ],
+        "variant_or_root_leaks": []
+      }
+    },
+    "vanilla_words": 79,
+    "gated_words": 76,
+    "repaired_words": 46,
+    "removed_words_by_repair": 30
+  },
+  {
+    "image_id": 23369,
+    "image_path": "/home/chenguanxu/common_dataset/coco-2014-dataset/val2014/COCO_val2014_000000023369.jpg",
+    "denied_words": [
+      "car"
+    ],
+    "vanilla_caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motorcycle and another further away.\n\nIn addition to the motorcycle, there is a car parked on the road, slightly behind the motorcycle. The",
+    "gated_caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby. The motorcycle is positioned in front of a house, and there is a stop sign visible in the background. The scene also includes a few potted plants, one near the motorcycle and another further away.\n\nIn addition to the motorcycle, there is a person standing in the background, possibly observing the scene or passing by",
+    "repaired_caption": "The image features a black motorcycle parked on the side of a road, with a red, white, and blue flag nearby.\n\nThe motorcycle is positioned in front of a house, and there is a stop sign visible in the background.\n\nThe scene also includes a few potted plants, one near the motorcycle and another further away.",
+    "repair_info": {
+      "actions": [
+        {
+          "text": "In addition to the motorcycle, there is a person standing in the background, possibly observing the scene or passing by",
+          "kept_text": "",
+          "complete": 0,
+          "claims": [
+            "person",
+            "person standing"
+          ],
+          "reason": "unsupported_claim",
+          "repair_attempt": "no_safe_clause",
+          "action": "drop_chunk"
+        }
+      ],
+      "claims_by_source": {
+        "denied_residual": [],
+        "introduced_hallucinated": [
+          "person"
+        ],
+        "unsupported_open_vocab": [
+          "person",
+          "person standing"
+        ],
+        "variant_or_root_leaks": []
+      }
+    },
+    "vanilla_words": 74,
+    "gated_words": 76,
+    "repaired_words": 56,
+    "removed_words_by_repair": 20
+  }
+]

@@ -43,9 +43,13 @@ def build() -> str:
     acceptance = read_json(
         "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json"
     )
+    claim_repair = read_json(
+        "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/claim_repair_metrics.json"
+    )
     concise = read_json(
         "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
     )["summary"]
+    claim_preservation = claim_repair["preservation"]["summary"]
 
     all_mentions = summary_by_name(feasibility, "all_mentions")
     hallucinated = summary_by_name(feasibility, "hallucinated_mentions")
@@ -87,7 +91,8 @@ def build() -> str:
             "|---|---:|---:|---:|---:|---:|---|",
             f"| t96 hard gate | {acceptance['num_examples']} | {f4(acceptance['chair']['gated']['overall']['CHAIRi'])} | {acceptance['chair']['gated']['total_hallucinated_mentions']} | {f2(acceptance['mean_gated_words'])} | 0.00 | hard gating creates substitute/escape claims |",
             f"| sentence repair | {repair['num_examples']} | {f4(repair['chair']['repaired']['overall']['CHAIRi'])} | {repair['chair']['repaired']['total_hallucinated_mentions']} | {f2(repair['mean_repaired_words'])} | {f2(repair['mean_removed_words_by_repair'])} | fixes incomplete tails but misses complete substitute claims |",
-            f"| sentence acceptance | {acceptance['num_examples']} | {f4(acceptance['chair']['accepted']['overall']['CHAIRi'])} | {acceptance['chair']['accepted']['total_hallucinated_mentions']} | {f2(acceptance['mean_accepted_words'])} | {f2(acceptance['mean_removed_words_by_acceptance'])} | best hallucination reduction; length drop is acceptable only if core visual content remains |",
+            f"| sentence acceptance | {acceptance['num_examples']} | {f4(acceptance['chair']['accepted']['overall']['CHAIRi'])} | {acceptance['chair']['accepted']['total_hallucinated_mentions']} | {f2(acceptance['mean_accepted_words'])} | {f2(acceptance['mean_removed_words_by_acceptance'])} | strong hallucination reduction, but drops complete mixed sentences |",
+            f"| claim-local repair | {claim_repair['num_examples']} | {f4(claim_repair['chair']['repaired']['overall']['CHAIRi'])} | {claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {f2(claim_repair['mean_repaired_words'])} | {f2(claim_repair['mean_removed_words_by_repair'])} | best smoke tradeoff: preserves safe sentence prefixes before unsupported clauses |",
             "",
             "## Concise-Faithfulness Audit",
             "",
@@ -99,9 +104,20 @@ def build() -> str:
             f"| object mention retention vs gated | {pct(concise['accepted_object_mention_retention_vs_gated'])} | shorter but not object-empty |",
             f"| generic/empty accepted captions | {concise['generic_or_empty_accepted']} | no accepted caption is empty/generic under the audit threshold |",
             "",
+            "## Claim-Local Repair Audit",
+            "",
+            "| Metric | Value | Reading |",
+            "|---|---:|---|",
+            f"| local repair actions | {claim_repair['num_local_repair_actions']} | complete sentence prefixes saved before unsupported clauses |",
+            f"| retained vanilla grounded mentions | {pct(claim_preservation['repaired_retained_vanilla_grounded_rate'])} | improves content retention over sentence acceptance |",
+            f"| hallucination reduction vs gated | {pct(claim_preservation['repaired_hallucination_reduction_vs_gated'])} | keeps the same hallucination reduction as sentence acceptance |",
+            f"| hallucination reduction vs vanilla | {pct(claim_preservation['repaired_hallucination_reduction_vs_vanilla'])} | improves over original generated captions |",
+            f"| object mention retention vs gated | {pct(claim_preservation['repaired_object_mention_retention_vs_gated'])} | less destructive than sentence acceptance |",
+            f"| generic/empty repaired captions | {claim_preservation['generic_or_empty_repaired']} | no repaired caption is empty/generic under the audit threshold |",
+            "",
             "## Method Decision",
             "",
-            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The concise-faithfulness audit supports this nuance on the 5-image smoke set: accepted captions retain most grounded object mentions while removing most hallucinated mentions, and none are empty/generic under the current threshold. The remaining risk is larger-scale content preservation, not length reduction itself.",
+            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The new claim-local repair smoke keeps the same hallucination reduction while preserving more grounded content by trimming only speculative or enumerating clauses when a safe prefix remains. The remaining risk is scaling this beyond five high-risk images and replacing deterministic clause trims with a controlled repair/regeneration step when the safe prefix is not enough.",
             "",
             "The next implementation target is therefore:",
             "",
@@ -109,14 +125,14 @@ def build() -> str:
             "2. Extract object-like claims, including open-vocabulary route forms.",
             "3. Map each claim to a canonical target when possible and score target-vs-neighbor evidence.",
             "4. Accept supported claims and reject unsupported claims; allow the caption to become shorter when unsupported detail is the only thing being removed.",
-            "5. Ask for constrained local repair only when rejection would remove central visible content or leave an incoherent fragment.",
+            "5. Apply constrained local repair only when rejection would remove central visible content or when an unsupported claim sits in a detachable clause.",
             "6. Report CHAIR together with concise-faithfulness metrics: retained supported objects, mean words, object mentions, empty/generic-caption rate, and manual examples.",
             "",
             "This preserves the paper's motivation: the method does not merely make object claims less frequent, and it does not rely on visual routing as proof. It explicitly tests whether the candidate claim is target-discriminative under related evidence. The desired behavior is not maximum caption length; it is concise but faithful captioning that keeps supported visual content and stops before unsupported object invention.",
             "",
             "## Paper-Safe Scope",
             "",
-            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is a small generated-caption experiment that compares hard gate, sentence repair, sentence acceptance, and constrained repair on the same high-risk image set, judged by hallucination reduction and whether concise captions still preserve the main supported scene content.",
+            "Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to scale the same generated-caption experiment beyond the 5-image smoke set, comparing hard gate, sentence repair, sentence acceptance, and claim-local repair on the same high-risk image set, judged by hallucination reduction and whether concise captions still preserve the main supported scene content.",
             "",
             "## Source Artifacts",
             "",
@@ -125,6 +141,7 @@ def build() -> str:
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_repair/sentence_repair_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/claim_repair_metrics.json`",
         ]
     )
     return "\n".join(lines) + "\n"

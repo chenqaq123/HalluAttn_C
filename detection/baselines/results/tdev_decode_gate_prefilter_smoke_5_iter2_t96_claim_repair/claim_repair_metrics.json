@@ -1,0 +1,190 @@
+{
+  "audit_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_audit_ov96/closed_loop_example_audit.json",
+  "chair": {
+    "gated": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/gated_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.25,
+        "CHAIRs": 0.8,
+        "F1": 0.6666666666666667,
+        "Len": 0.8,
+        "Precision": 0.5333333333333333,
+        "Recall": 0.8888888888888888
+      },
+      "total_hallucinated_mentions": 8,
+      "total_object_mentions": 32
+    },
+    "repaired": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/repaired_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.09090909090909091,
+        "CHAIRs": 0.2,
+        "F1": 0.8421052631578948,
+        "Len": 0.5860000000000001,
+        "Precision": 0.8,
+        "Recall": 0.8888888888888888
+      },
+      "total_hallucinated_mentions": 2,
+      "total_object_mentions": 22
+    },
+    "vanilla": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_claim_repair/vanilla_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.2727272727272727,
+        "CHAIRs": 1.0,
+        "F1": 0.64,
+        "Len": 0.826,
+        "Precision": 0.5,
+        "Recall": 0.8888888888888888
+      },
+      "total_hallucinated_mentions": 9,
+      "total_object_mentions": 33
+    }
+  },
+  "examples_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96/gated_generation_examples.json",
+  "mean_gated_words": 71.8,
+  "mean_removed_words_by_repair": 19.4,
+  "mean_repaired_words": 52.4,
+  "num_changed": 5,
+  "num_dropped_chunks": 6,
+  "num_examples": 5,
+  "num_local_repair_actions": 2,
+  "preservation": {
+    "per_image": [
+      {
+        "dropped_chunks": 2,
+        "gated_grounded_mentions": 3,
+        "gated_hallucinated_mentions": 1,
+        "gated_object_mentions": 4,
+        "gated_words": 70,
+        "generic_or_empty_repaired": 0,
+        "image_id": 6213,
+        "local_repair_actions": 0,
+        "repaired_grounded_mentions": 2,
+        "repaired_hallucinated_mentions": 0,
+        "repaired_object_mentions": 2,
+        "repaired_retained_gated_grounded_mentions": 2,
+        "repaired_retained_vanilla_grounded_mentions": 2,
+        "repaired_words": 47,
+        "vanilla_grounded_mentions": 3,
+        "vanilla_hallucinated_mentions": 2,
+        "vanilla_object_mentions": 5,
+        "vanilla_words": 70
+      },
+      {
+        "dropped_chunks": 1,
+        "gated_grounded_mentions": 4,
+        "gated_hallucinated_mentions": 3,
+        "gated_object_mentions": 7,
+        "gated_words": 67,
+        "generic_or_empty_repaired": 0,
+        "image_id": 12319,
+        "local_repair_actions": 1,
+        "repaired_grounded_mentions": 4,
+        "repaired_hallucinated_mentions": 0,
+        "repaired_object_mentions": 4,
+        "repaired_retained_gated_grounded_mentions": 4,
+        "repaired_retained_vanilla_grounded_mentions": 4,
+        "repaired_words": 53,
+        "vanilla_grounded_mentions": 4,
+        "vanilla_hallucinated_mentions": 2,
+        "vanilla_object_mentions": 6,
+        "vanilla_words": 69
+      },
+      {
+        "dropped_chunks": 0,
+        "gated_grounded_mentions": 7,
+        "gated_hallucinated_mentions": 1,
+        "gated_object_mentions": 8,
+        "gated_words": 70,
+        "generic_or_empty_repaired": 0,
+        "image_id": 15994,
+        "local_repair_actions": 1,
+        "repaired_grounded_mentions": 7,
+        "repaired_hallucinated_mentions": 0,
+        "repaired_object_mentions": 7,
+        "repaired_retained_gated_grounded_mentions": 7,
+        "repaired_retained_vanilla_grounded_mentions": 7,
+        "repaired_words": 60,
+        "vanilla_grounded_mentions": 7,
+        "vanilla_hallucinated_mentions": 1,
+        "vanilla_object_mentions": 8,
+        "vanilla_words": 78
+      },
+      {
+        "dropped_chunks": 2,
+        "gated_grounded_mentions": 6,
+        "gated_hallucinated_mentions": 0,
+        "gated_object_mentions": 6,
+        "gated_words": 76,
+        "generic_or_empty_repaired": 0,
+        "image_id": 22596,
+        "local_repair_actions": 0,
+        "repaired_grounded_mentions": 4,
+        "repaired_hallucinated_mentions": 0,
+        "repaired_object_mentions": 4,
+        "repaired_retained_gated_grounded_mentions": 4,
+        "repaired_retained_vanilla_grounded_mentions": 4,
+        "repaired_words": 46,
+        "vanilla_grounded_mentions": 5,
+        "vanilla_hallucinated_mentions": 1,
+        "vanilla_object_mentions": 6,
+        "vanilla_words": 79
+      },
+      {
+        "dropped_chunks": 1,
+        "gated_grounded_mentions": 4,
+        "gated_hallucinated_mentions": 3,
+        "gated_object_mentions": 7,
+        "gated_words": 76,
+        "generic_or_empty_repaired": 0,
+        "image_id": 23369,
+        "local_repair_actions": 0,
+        "repaired_grounded_mentions": 3,
+        "repaired_hallucinated_mentions": 2,
+        "repaired_object_mentions": 5,
+        "repaired_retained_gated_grounded_mentions": 3,
+        "repaired_retained_vanilla_grounded_mentions": 3,
+        "repaired_words": 56,
+        "vanilla_grounded_mentions": 5,
+        "vanilla_hallucinated_mentions": 3,
+        "vanilla_object_mentions": 8,
+        "vanilla_words": 74
+      }
+    ],
+    "summary": {
+      "dropped_chunks": 6,
+      "generic_or_empty_repaired": 0,
+      "generic_or_empty_repaired_rate": 0.0,
+      "grounded_mentions": {
+        "gated": 24,
+        "repaired": 20,
+        "vanilla": 24
+      },
+      "hallucinated_mentions": {
+        "gated": 8,
+        "repaired": 2,
+        "vanilla": 9
+      },
+      "local_repair_actions": 2,
+      "mean_words": {
+        "gated": 71.8,
+        "repaired": 52.4,
+        "vanilla": 74.0
+      },
+      "num_images": 5,
+      "object_mentions": {
+        "gated": 32,
+        "repaired": 22,
+        "vanilla": 33
+      },
+      "repaired_hallucination_reduction_vs_gated": 0.75,
+      "repaired_hallucination_reduction_vs_vanilla": 0.7777777777777778,
+      "repaired_object_mention_retention_vs_gated": 0.6875,
+      "repaired_object_mention_retention_vs_vanilla": 0.6666666666666666,
+      "repaired_retained_gated_grounded_rate": 0.8333333333333334,
+      "repaired_retained_vanilla_grounded_rate": 0.8333333333333334
+    }
+  },
+  "scope_note": "Offline claim-local repair proxy. It rejects unsupported claims from the closed-loop audit, but first tries to preserve a complete sentence prefix before speculative or enumerating clauses. It does not generate replacement text."
+}

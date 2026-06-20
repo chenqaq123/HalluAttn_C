@@ -21,7 +21,7 @@ queried target object.
 | C4. Generic region/object evidence is not enough. | Supported | Same table: OWLv2 target direct MCC `0.777` but related FPR `0.184` and adversarial related FPR `0.281`. | Main mitigation/control table, row group: region evidence. | Avoid calling OWLv2 target score a failed detector; it is strong aggregate evidence but non-discriminative under semantic neighbors. |
 | C5. Target-vs-neighbor verification is the constructive criterion. | Supported, modest effect | Hybrid gate+rescue: MCC `0.763`, FPR `0.051`, related FPR `0.069`; strict margin related FPR `0.010` but TPR `0.359`. | Main TDEV table plus calibration ablation. | Need to frame as best current tradeoff, not solved hallucination. |
 | C6. The criterion transfers to object-mention detection. | Supported | `docs/tdev_ablation_summary.md`: target absence + 0.25 neighbor dominance reaches overall `0.874`, within-bin `0.852`, matched-pair `0.854`, residual `0.722`. | CHAIR detection table. | Make clear this is post-hoc object-mention scoring, not fluent generation. |
-| C7. Caption-side mitigation exists, but the useful route is claim acceptance rather than fixed token suppression. | Partial, updated | Proxy rows show useful target selection: top-5 neutral rewrite CHAIRi `0.1340 -> 0.1186`; top-10 deletion CHAIRi `0.1048`. Generated smoke tests show fixed hard gating can route into substitute claims, while sentence acceptance reduces 96-token gated CHAIRi `0.2500 -> 0.1053` and hallucinated mentions `8 -> 2`. Concise-faithfulness audit: accepted captions retain `70.83%` of vanilla grounded object mentions and have `0` generic/empty accepted captions. | Caption route summary plus appendix/prototype table. | Still smoke-scale. Next action is a bounded faithful-concise caption experiment with claim acceptance and constrained local repair, reported with content-preservation metrics, not length alone. |
+| C7. Caption-side mitigation exists, but the useful route is claim acceptance plus constrained local repair rather than fixed token suppression. | Partial, updated | Proxy rows show useful target selection: top-5 neutral rewrite CHAIRi `0.1340 -> 0.1186`; top-10 deletion CHAIRi `0.1048`. Generated smoke tests show fixed hard gating can route into substitute claims. Sentence acceptance reduces 96-token gated CHAIRi `0.2500 -> 0.1053` and hallucinated mentions `8 -> 2`; claim-local repair improves CHAIRi further to `0.0909`, keeps hallucinated mentions at `2`, and raises retained vanilla grounded mentions to `83.33%` with `0` generic/empty captions. | Caption route summary plus appendix/prototype table. | Still smoke-scale. Next action is to scale the same faithful-concise caption experiment beyond 5 images, reported with content-preservation metrics, not length alone. |
 | C8. TDEV-lite gives practicality but not standalone mitigation. | Supported with scope | LH-alone POPE MCC `0.495`, TPR `0.432`; LH->TDEV at 2,025/9,000 calls MCC `0.754`, FPR `0.056`, related FPR `0.075`. | Efficiency/practicality table. | Must be labeled supervised routing/triage; do not present it as a training-free attention method. |
 | C9. Cross-model direction holds on Qwen2.5-VL. | Supported, small effect | `docs/multimodel_replication_audit.md`: Qwen vanilla macro MCC `0.765`, FPR `0.033`, related FPR `0.041`; fixed TDEV macro MCC `0.769`, FPR `0.027`, related FPR `0.034`. | Cross-model table. | Evidence is output-level plus model-independent OWLv2 verification, not Qwen internal attention evidence. |
 | C10. Novelty is target-discriminative verification, not external detection, chain verification, or stronger visual routing. | Supported by related-work boundary | Woodpecker/LURE/R-CoV cover post-hoc claim extraction/verification/revision; CAI/CAST/Region-Aware/Focus Matters cover internal visual-routing or attention steering. Our local semantic-neighbor controls show why aggregate visual reliance is not enough. | Related work + limitation section. | State explicitly that TDEV may use an external verifier backend, but the contribution is the related-neighbor control and target-vs-neighbor decision criterion. |
@@ -53,9 +53,10 @@ head/region steering methods are runnable baselines or related-work pressure.
    deny list is not the right main path. For a stronger ICML story, run a bounded
    faithful-concise caption experiment: extract object-like claims, map them to
    canonical targets, accept only claims passing target-vs-neighbor evidence, and
-   use constrained local repair only when deletion removes central supported
-   content or leaves an incoherent fragment. Report CHAIR together with retained
-   grounded objects, object-mention retention, mean words, and empty/generic rate.
+   use constrained local repair when an unsupported claim is in a detachable
+   clause or when deletion would remove central supported content. Report CHAIR
+   together with retained grounded objects, object-mention retention, mean words,
+   and empty/generic rate.
 2. **Positive head/region baselines are not fully reproduced.** Current local
    ports cover PAI, ClearSight, VisAttnSink, VCD, SPIN subset, DAMRO subset, and
    NoLan-compatible all-splits. AIR official code is now accessible and is the
@@ -96,10 +97,11 @@ Checked sources:
 
 ## Next Concrete Work Order
 
-1. **Faithful-concise caption prototype.** The deterministic neutral-rewrite proxy
-   and generated hard-gate smoke tests are complete. The remaining high-value gap
-   is verifier-guided claim acceptance plus constrained local repair, evaluated
-   on the same high-risk images with both CHAIR and content-preservation metrics.
+1. **Scale faithful-concise caption prototype.** The deterministic neutral-rewrite
+   proxy, generated hard-gate smoke tests, sentence acceptance, and claim-local
+   repair smoke are complete. The remaining high-value gap is scaling the same
+   verifier-guided claim acceptance plus constrained local repair beyond five
+   high-risk images with both CHAIR and content-preservation metrics.
 2. **Region-box mechanism figure.** The contact-sheet mechanism figure is
    complete. If time allows, add detector boxes or attention overlays for the
    same examples; this is optional because the score/evidence figure already
