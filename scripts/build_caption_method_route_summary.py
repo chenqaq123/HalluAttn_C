@@ -43,6 +43,9 @@ def build() -> str:
     acceptance = read_json(
         "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json"
     )
+    concise = read_json(
+        "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
+    )["summary"]
 
     all_mentions = summary_by_name(feasibility, "all_mentions")
     hallucinated = summary_by_name(feasibility, "hallucinated_mentions")
@@ -86,9 +89,19 @@ def build() -> str:
             f"| sentence repair | {repair['num_examples']} | {f4(repair['chair']['repaired']['overall']['CHAIRi'])} | {repair['chair']['repaired']['total_hallucinated_mentions']} | {f2(repair['mean_repaired_words'])} | {f2(repair['mean_removed_words_by_repair'])} | fixes incomplete tails but misses complete substitute claims |",
             f"| sentence acceptance | {acceptance['num_examples']} | {f4(acceptance['chair']['accepted']['overall']['CHAIRi'])} | {acceptance['chair']['accepted']['total_hallucinated_mentions']} | {f2(acceptance['mean_accepted_words'])} | {f2(acceptance['mean_removed_words_by_acceptance'])} | best hallucination reduction; length drop is acceptable only if core visual content remains |",
             "",
+            "## Concise-Faithfulness Audit",
+            "",
+            "| Metric | Value | Reading |",
+            "|---|---:|---|",
+            f"| retained vanilla grounded mentions | {pct(concise['accepted_retained_vanilla_grounded_rate'])} | accepted captions keep most supported object mentions |",
+            f"| hallucination reduction vs gated | {pct(concise['accepted_hallucination_reduction_vs_gated'])} | accepted captions remove most gated hallucinated mentions |",
+            f"| hallucination reduction vs vanilla | {pct(concise['accepted_hallucination_reduction_vs_vanilla'])} | accepted captions improve over the original generated captions |",
+            f"| object mention retention vs gated | {pct(concise['accepted_object_mention_retention_vs_gated'])} | shorter but not object-empty |",
+            f"| generic/empty accepted captions | {concise['generic_or_empty_accepted']} | no accepted caption is empty/generic under the audit threshold |",
+            "",
             "## Method Decision",
             "",
-            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The real risk is becoming generic or dropping the main visible content because there is no replacement generator.",
+            "The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The concise-faithfulness audit supports this nuance on the 5-image smoke set: accepted captions retain most grounded object mentions while removing most hallucinated mentions, and none are empty/generic under the current threshold. The remaining risk is larger-scale content preservation, not length reduction itself.",
             "",
             "The next implementation target is therefore:",
             "",
@@ -111,6 +124,7 @@ def build() -> str:
             "- `detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_repair/sentence_repair_metrics.json`",
             "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`",
+            "- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`",
         ]
     )
     return "\n".join(lines) + "\n"

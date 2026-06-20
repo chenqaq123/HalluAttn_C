@@ -222,10 +222,14 @@ Reading:
   substitute claims. Expanding the open-vocabulary audit limit from 32 to 96
   catches later substitutes such as `chickens`. An offline sentence-level
   candidate-acceptance proxy then reduces 96-token gated CHAIRi from `0.2500`
-  to `0.1053` and hallucinated mentions from 8 to 2, but removes 24.6 words
-  per caption on average. The next caption method should therefore use
-  verifier-guided sentence acceptance with constrained rewrite or completion,
-  not fixed token suppression or pure deletion.
+  to `0.1053` and hallucinated mentions from 8 to 2, while removing 24.6 words
+  per caption on average. A concise-faithfulness audit clarifies that this is
+  not merely empty-caption gaming: accepted captions retain `70.83%` of vanilla
+  grounded object mentions, remove `75.00%` of gated hallucinated mentions, and
+  have `0` generic/empty accepted captions under the current threshold. The next
+  caption method should therefore use verifier-guided claim acceptance with
+  constrained rewrite or completion when deletion would remove central supported
+  content, not fixed token suppression or pure deletion.
 
 ## Paper-Safe Claim
 

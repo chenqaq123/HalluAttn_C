@@ -32,9 +32,19 @@ This note is generated from saved caption-side TDEV prototype artifacts. It keep
 | sentence repair | 5 | 0.1786 | 5 | 63.60 | 8.20 | fixes incomplete tails but misses complete substitute claims |
 | sentence acceptance | 5 | 0.1053 | 2 | 47.20 | 24.60 | best hallucination reduction; length drop is acceptable only if core visual content remains |
 
+## Concise-Faithfulness Audit
+
+| Metric | Value | Reading |
+|---|---:|---|
+| retained vanilla grounded mentions | 70.83% | accepted captions keep most supported object mentions |
+| hallucination reduction vs gated | 75.00% | accepted captions remove most gated hallucinated mentions |
+| hallucination reduction vs vanilla | 77.78% | accepted captions improve over the original generated captions |
+| object mention retention vs gated | 59.38% | shorter but not object-empty |
+| generic/empty accepted captions | 0 | no accepted caption is empty/generic under the audit threshold |
+
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The real risk is becoming generic or dropping the main visible content because there is no replacement generator.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The concise-faithfulness audit supports this nuance on the 5-image smoke set: accepted captions retain most grounded object mentions while removing most hallucinated mentions, and none are empty/generic under the current threshold. The remaining risk is larger-scale content preservation, not length reduction itself.
 
 The next implementation target is therefore:
 
@@ -57,3 +67,4 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_decode_gate_multi_image_prefilter/multi_image_prefilter_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_repair/sentence_repair_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`

@@ -1,0 +1,140 @@
+{
+  "acceptance_dir": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_5_iter2_t96_sentence_acceptance",
+  "per_image": [
+    {
+      "accepted_generic_or_empty": 0,
+      "accepted_grounded_mentions": 2,
+      "accepted_hallucinated_mentions": 0,
+      "accepted_object_mentions": 2,
+      "accepted_retained_gated_grounded_mentions": 2,
+      "accepted_retained_vanilla_grounded_mentions": 2,
+      "accepted_words": 47,
+      "gated_grounded_mentions": 3,
+      "gated_hallucinated_mentions": 1,
+      "gated_object_mentions": 4,
+      "gated_words": 70,
+      "image_id": 6213,
+      "removed_words_by_acceptance": 23,
+      "vanilla_grounded_mentions": 3,
+      "vanilla_hallucinated_mentions": 2,
+      "vanilla_object_mentions": 5,
+      "vanilla_words": 70
+    },
+    {
+      "accepted_generic_or_empty": 0,
+      "accepted_grounded_mentions": 3,
+      "accepted_hallucinated_mentions": 0,
+      "accepted_object_mentions": 3,
+      "accepted_retained_gated_grounded_mentions": 3,
+      "accepted_retained_vanilla_grounded_mentions": 3,
+      "accepted_words": 40,
+      "gated_grounded_mentions": 4,
+      "gated_hallucinated_mentions": 3,
+      "gated_object_mentions": 7,
+      "gated_words": 67,
+      "image_id": 12319,
+      "removed_words_by_acceptance": 27,
+      "vanilla_grounded_mentions": 4,
+      "vanilla_hallucinated_mentions": 2,
+      "vanilla_object_mentions": 6,
+      "vanilla_words": 69
+    },
+    {
+      "accepted_generic_or_empty": 0,
+      "accepted_grounded_mentions": 5,
+      "accepted_hallucinated_mentions": 0,
+      "accepted_object_mentions": 5,
+      "accepted_retained_gated_grounded_mentions": 5,
+      "accepted_retained_vanilla_grounded_mentions": 5,
+      "accepted_words": 47,
+      "gated_grounded_mentions": 7,
+      "gated_hallucinated_mentions": 1,
+      "gated_object_mentions": 8,
+      "gated_words": 70,
+      "image_id": 15994,
+      "removed_words_by_acceptance": 23,
+      "vanilla_grounded_mentions": 7,
+      "vanilla_hallucinated_mentions": 1,
+      "vanilla_object_mentions": 8,
+      "vanilla_words": 78
+    },
+    {
+      "accepted_generic_or_empty": 0,
+      "accepted_grounded_mentions": 4,
+      "accepted_hallucinated_mentions": 0,
+      "accepted_object_mentions": 4,
+      "accepted_retained_gated_grounded_mentions": 4,
+      "accepted_retained_vanilla_grounded_mentions": 4,
+      "accepted_words": 46,
+      "gated_grounded_mentions": 6,
+      "gated_hallucinated_mentions": 0,
+      "gated_object_mentions": 6,
+      "gated_words": 76,
+      "image_id": 22596,
+      "removed_words_by_acceptance": 30,
+      "vanilla_grounded_mentions": 5,
+      "vanilla_hallucinated_mentions": 1,
+      "vanilla_object_mentions": 6,
+      "vanilla_words": 79
+    },
+    {
+      "accepted_generic_or_empty": 0,
+      "accepted_grounded_mentions": 3,
+      "accepted_hallucinated_mentions": 2,
+      "accepted_object_mentions": 5,
+      "accepted_retained_gated_grounded_mentions": 3,
+      "accepted_retained_vanilla_grounded_mentions": 3,
+      "accepted_words": 56,
+      "gated_grounded_mentions": 4,
+      "gated_hallucinated_mentions": 3,
+      "gated_object_mentions": 7,
+      "gated_words": 76,
+      "image_id": 23369,
+      "removed_words_by_acceptance": 20,
+      "vanilla_grounded_mentions": 5,
+      "vanilla_hallucinated_mentions": 3,
+      "vanilla_object_mentions": 8,
+      "vanilla_words": 74
+    }
+  ],
+  "summary": {
+    "accepted_hallucination_reduction_vs_gated": 0.75,
+    "accepted_hallucination_reduction_vs_vanilla": 0.7777777777777778,
+    "accepted_object_mention_retention_vs_gated": 0.59375,
+    "accepted_object_mention_retention_vs_vanilla": 0.5757575757575758,
+    "accepted_retained_gated_grounded_rate": 0.7083333333333334,
+    "accepted_retained_vanilla_grounded_rate": 0.7083333333333334,
+    "definition": {
+      "generic_or_empty": "Accepted caption has too few words or too few CHAIR-recognized object mentions under the configured thresholds.",
+      "grounded_mentions": "CHAIR generated object mentions minus CHAIR hallucinated mentions.",
+      "retained_grounded_rate": "Accepted grounded mention overlap with the baseline grounded mentions, counted with multiplicity."
+    },
+    "generic_or_empty_accepted": 0,
+    "generic_or_empty_accepted_rate": 0.0,
+    "grounded_mentions": {
+      "accepted": 17,
+      "gated": 24,
+      "vanilla": 24
+    },
+    "hallucinated_mentions": {
+      "accepted": 2,
+      "gated": 8,
+      "vanilla": 9
+    },
+    "mean_words": {
+      "accepted": 47.2,
+      "gated": 71.8,
+      "vanilla": 74.0
+    },
+    "num_images": 5,
+    "object_mentions": {
+      "accepted": 19,
+      "gated": 32,
+      "vanilla": 33
+    }
+  },
+  "thresholds": {
+    "min_object_mentions_for_nonempty": 1,
+    "min_words_for_nonempty": 8
+  }
+}
