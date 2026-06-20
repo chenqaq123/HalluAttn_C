@@ -72,42 +72,49 @@ Matters `2604.03556`, Region-Aware Attention Recalibration `2605.24957`, HALP
 The next method step should not be another generic caption rewrite. It should be
 one of two target-discriminative routes.
 
-### Route A: Target-Discriminative Decoding Gate
+### Route A: TDEV-Guided Claim Acceptance
 
-Goal: turn TDEV from a post-hoc verifier into a decoding-time object-claim gate.
+Goal: turn TDEV from a post-hoc verifier into a practical object-claim
+acceptance policy for generated captions. The current evidence says this should
+not be framed as a pure token-ban decoder.
 
 Mechanism:
 
-1. Detect candidate object claims during generation using the next-token object
-   vocabulary or a short rolling noun-phrase parser.
-2. For each candidate target, score target evidence and top semantic neighbors
-   with the current evidence backend.
-3. If target evidence is weak or neighbor-dominated, suppress only the object
-   token/phrase branch rather than replacing the completed sentence afterward.
-4. If the model emits a generic fallback or non-object continuation, keep the
-   rest of the caption unchanged.
+1. Generate or keep a candidate sentence/span.
+2. Extract object-like claims, including open-vocabulary route forms.
+3. Map each claim to a canonical target when possible and score
+   target-vs-neighbor evidence with the current backend.
+4. Accept supported claims and reject unsupported claims.
+5. When rejection would delete useful context, run a constrained local repair or
+   regeneration step instead of leaving a hole or generic placeholder.
 
-Why this fits: it intervenes exactly at unsupported object claims, so it is
-closer to the original failure than post-hoc placeholder rewriting. It also gives
-caption-side evidence without pretending generic nouns are visual correction.
+Why this fits: it intervenes exactly at unsupported object claims, so it remains
+aligned with the associated-evidence failure mode. Unlike generic caption
+rewrites, it does not claim success just because object mentions become rarer;
+it explicitly tests whether each candidate claim is target-discriminative under
+related evidence.
 
-Preliminary offline result: sentence-level suppression gives a cleaner output
-than the failed clause heuristic but is too coarse (`-3.01` mean words for only
-`-0.0175` CHAIRi). This confirms that the useful version of Route A must gate
-object-token or object-phrase continuations during decoding, not delete completed
-sentences after generation.
+Latest caption-side prototype summary: `docs/caption_method_route_summary.md` is
+generated from saved artifacts. Token feasibility is high: near-generation-position
+matching succeeds for `98.88%` of all CHAIR object mentions and `98.23%` of
+hallucinated mentions; the TDEV top-5% high-risk slice remains similarly
+locatable (`97.93%`, and `97.66%` for selected hallucinated mentions). A
+100-image prefilter audit selects 126 image-word pairs with `86.51%` CHAIR-label
+hallucination precision, while keeping deny lists narrow (`1.26` words/image;
+p95 `24` token sequences/image).
 
-Token feasibility audit: this next step is technically plausible. On the saved
-16,426 CHAIR object mentions, tokenizer-span matching near `gen_pos` succeeds for
-`98.9%` overall and `98.2%` of hallucinated mentions. Among the TDEV top-5% high
-risk mentions, `97.9%` match near `gen_pos`, including `97.7%` of selected
-hallucinated mentions. The remaining risk is not coverage but decoding policy:
-LLaVA's tokenizer often represents object phrases as multi-token BPE sequences,
-so the gate must track short prefixes and suppress object-phrase continuations,
-not just ban a first token globally.
+The generated-caption smoke tests clarify the policy risk. A 5-image t96 hard
+gate still has CHAIRi `0.2500` and 8 hallucinated mentions because it routes into
+complete substitute/escape claims. Sentence repair improves CHAIRi to `0.1786`
+and 5 hallucinated mentions but misses complete substitutes. Sentence acceptance
+reaches CHAIRi `0.1053` and 2 hallucinated mentions, showing that verifier-guided
+claim rejection targets the right failure mode; however it removes `24.60` words
+on average, so it is a method-direction diagnostic rather than a final caption
+method.
 
-Risk: it requires generation hooks and careful token/object mapping; if too
-slow, report it as a small-scale proof of concept on the 4,977 CHAIR scope.
+Risk: the next step must add constrained repair/regeneration after claim
+rejection. Without replacement, sentence acceptance over-deletes; without claim
+acceptance, token suppression routes into new unsupported claims.
 
 ### Route B: Internal TDEV-Lite Distillation
 
@@ -132,11 +139,11 @@ is call reduction / triage, not detector replacement.
 
 ## Recommended Next Experiment Order
 
-1. **Do Route A as a bounded proof of concept first.** Use a small CHAIR subset
-   where current TDEV identifies high-risk object mentions. Measure CHAIRi,
-   CHAIRs, mean words, object mentions, and manual fluency/error examples. The
-   success condition is not only lower CHAIR; it must avoid generic placeholder
-   artifacts.
+1. **Do Route A as claim acceptance plus constrained repair first.** Use the same
+   high-risk CHAIR subset and report CHAIRi, CHAIRs, mean words, object mentions,
+   rejected claims, repaired spans, and manual fluency/error examples. The success
+   condition is lower hallucination without the mean-word collapse seen in pure
+   sentence acceptance.
 2. **Then improve Route B if time allows.** Distill target-vs-neighbor margin, not
    binary hallucination, and compare against prompt-position and target-length
    routing controls.

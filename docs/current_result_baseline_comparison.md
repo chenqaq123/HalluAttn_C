@@ -23,9 +23,9 @@ It does not yet support a strong standalone caption-mitigation paper.
 - Target-vs-neighbor verification gives the best current POPE tradeoff and is
   much stronger on controlled CHAIR object-mention detection.
 - Caption-side correction is now beyond pure text-edit proxy, but still only at
-  smoke-test scale. The next required method step is a softer/dynamic
-  closed-loop object-claim gate, not more post-hoc deletion or generic noun
-  replacement.
+  smoke-test scale. The next required method step is TDEV-guided claim acceptance
+  with constrained repair/regeneration, not pure token banning, post-hoc deletion,
+  or generic noun replacement.
 
 ## POPE Mitigation and Semantic-Neighbor Controls
 
@@ -250,6 +250,7 @@ The strongest safe claim is:
 - `paper/tables/table_semantic_neighbor_fpr.tex`
 - `paper/tables/table_region_verifier_pope.tex`
 - `paper/tables/table_appendix_caption_proxy.tex`
+- `docs/caption_method_route_summary.md`
 - `detection/baselines/results/tdev_decode_gate_feasibility/decode_gate_feasibility_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_caption_smoke/gated_generation_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_caption_closed_loop_smoke/gated_generation_metrics.json`
