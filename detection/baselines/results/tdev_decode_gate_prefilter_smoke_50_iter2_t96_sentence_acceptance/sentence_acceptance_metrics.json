@@ -1,0 +1,52 @@
+{
+  "audit_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_audit_ov96/closed_loop_example_audit.json",
+  "chair": {
+    "accepted": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance/accepted_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.07731958762886598,
+        "CHAIRs": 0.25,
+        "F1": 0.7601809954751131,
+        "Len": 0.56475,
+        "Precision": 0.8571428571428571,
+        "Recall": 0.6829268292682927
+      },
+      "total_hallucinated_mentions": 15,
+      "total_object_mentions": 194
+    },
+    "gated": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance/gated_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.15441176470588236,
+        "CHAIRs": 0.65,
+        "F1": 0.751937984496124,
+        "Len": 0.8230000000000001,
+        "Precision": 0.7185185185185186,
+        "Recall": 0.7886178861788617
+      },
+      "total_hallucinated_mentions": 42,
+      "total_object_mentions": 272
+    },
+    "vanilla": {
+      "details_file": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance/vanilla_chair_details.json",
+      "overall": {
+        "CHAIRi": 0.21666666666666667,
+        "CHAIRs": 0.825,
+        "F1": 0.6934306569343066,
+        "Len": 0.8255000000000001,
+        "Precision": 0.6291390728476821,
+        "Recall": 0.7723577235772358
+      },
+      "total_hallucinated_mentions": 65,
+      "total_object_mentions": 300
+    }
+  },
+  "examples_json": "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96/gated_generation_examples.json",
+  "mean_accepted_words": 50.7,
+  "mean_gated_words": 74.075,
+  "mean_removed_words_by_acceptance": 23.375,
+  "num_changed": 40,
+  "num_examples": 40,
+  "num_removed_chunks": 63,
+  "scope_note": "Offline sentence-level candidate acceptance proxy. It rejects generated sentences/tails containing residual denied claims or unsupported introduced claims from the closed-loop audit; it does not generate replacements."
+}

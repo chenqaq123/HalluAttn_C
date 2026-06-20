@@ -54,19 +54,22 @@ This note is generated from saved caption-side TDEV prototype artifacts. It keep
 | object mention retention vs gated | 68.75% | less destructive than sentence acceptance |
 | generic/empty repaired captions | 0 | no repaired caption is empty/generic under the audit threshold |
 
-## 20-Image Scaled Smoke Check
+## Scaled Smoke Checks
 
-| Prototype | Images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs gated | Empty/generic | Reading |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| t96 hard gate | 20 | 0.1654 | 22 | 72.00 | -- | -- | -- | larger high-risk generated baseline |
-| sentence acceptance | 20 | 0.0674 | 6 | 48.85 | 72.81% | 66.92% | 1 | reduces hallucination but can delete too much |
-| claim-local repair | 20 | 0.0625 | 6 | 52.35 | 78.95% | 72.18% | 0 | preserves more supported content with the same hallucinated mention count |
+| Scale | Prototype | Images | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Object retention vs gated | Empty/generic | Reading |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| 20-image | t96 hard gate | 20 | 0.1654 | 22 | 72.00 | -- | -- | -- | high-risk generated baseline |
+| 20-image | sentence acceptance | 20 | 0.0674 | 6 | 48.85 | 72.81% | 66.92% | 1 | reduces hallucination but can delete too much |
+| 20-image | claim-local repair | 20 | 0.0625 | 6 | 52.35 | 78.95% | 72.18% | 0 | preserves more supported content with the same hallucinated mention count |
+| 40-image | t96 hard gate | 40 | 0.1544 | 42 | 74.08 | -- | -- | -- | maximum available iter2-prefilter set |
+| 40-image | sentence acceptance | 40 | 0.0773 | 15 | 50.70 | 76.17% | 71.32% | 1 | same hallucination count as repair but less content retention |
+| 40-image | claim-local repair | 40 | 0.0739 | 15 | 53.38 | 80.00% | 74.63% | 0 | best larger-scale prototype tradeoff |
 
-The 20-image check supports the 5-image direction but also narrows the claim. Claim-local repair keeps hallucinated mentions at 6, improves CHAIRi from 0.1654 to 0.0625, and removes the empty-caption case seen in sentence acceptance, but mean length still drops from 72.00 to 52.35 words. This is scaled prototype evidence, not a complete caption mitigation result.
+The scaled checks support the 5-image direction but also narrow the claim. On the 40-image maximum available iter2-prefilter set, claim-local repair keeps hallucinated mentions at 15 like sentence acceptance, improves CHAIRi from 0.1544 to 0.0739, retains more vanilla grounded mentions (80.00% vs. 76.17%), and avoids the empty/generic case. However, hallucination reduction vs. gated drops from 72.73% at 20 images to 64.29% at 40 images, and mean length still falls from 74.08 to 53.38 words. This is scaled prototype evidence, not a complete caption mitigation result.
 
 ## Method Decision
 
-The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects. The new claim-local repair smoke keeps the same hallucination reduction while preserving more grounded content by trimming only speculative or enumerating clauses when a safe prefix remains. The remaining risk is scaling this beyond five high-risk images and replacing deterministic clause trims with a controlled repair/regeneration step when the safe prefix is not enough.
+The practical method should now be framed as **TDEV-guided claim acceptance for faithful concise captioning with constrained local repair**, not as a pure token-ban decoder. The saved runs show that object claims are usually token-locatable and deny lists are narrow, but hard token suppression alone routes the model into new unsupported claims or incomplete fragments. Sentence acceptance catches those unsupported substitutes, which is exactly the target-vs-neighbor criterion we want. Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects; the risk is only when shortening removes supported visible content or collapses into generic captions. The new claim-local repair smoke keeps the same hallucination reduction while preserving more grounded content by trimming only speculative or enumerating clauses when a safe prefix remains. The remaining risk is scaling beyond the current 40-image iter2-prefilter ceiling and replacing deterministic clause trims with a controlled repair/regeneration step when the safe prefix is not enough.
 
 The next implementation target is therefore:
 
@@ -81,7 +84,7 @@ This preserves the paper's motivation: the method does not merely make object cl
 
 ## Paper-Safe Scope
 
-Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to scale the same generated-caption experiment beyond the 5-image smoke set, comparing hard gate, sentence repair, sentence acceptance, and claim-local repair on the same high-risk image set, judged by hallucination reduction and whether concise captions still preserve the main supported scene content.
+Current evidence supports a diagnostic-plus-verification paper with a bounded caption-side prototype. It does not yet support claiming a complete end-to-end caption mitigation method. For ICML, the strongest practical path is to either scale beyond the 40-image iter2-prefilter ceiling with a broader prefilter, or replace deterministic clause trims with controlled regeneration while keeping the same CHAIR and content-preservation audits.
 
 ## Source Artifacts
 
@@ -96,3 +99,8 @@ Current evidence supports a diagnostic-plus-verification paper with a bounded ca
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
 - `detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_claim_repair/claim_repair_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96/gated_generation_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_audit_ov96/closed_loop_example_audit.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json`
+- `detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair/claim_repair_metrics.json`

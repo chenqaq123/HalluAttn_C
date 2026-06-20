@@ -231,13 +231,14 @@ Reading:
   improving CHAIRi to `0.0909`, mean words to `52.40`, and retained vanilla
   grounded mentions to `83.33%` by trimming only detachable unsupported clauses
   when a safe sentence prefix remains. A 20-image scaled smoke check keeps this
-  direction: gated CHAIRi `0.1654` drops to `0.0674` with sentence acceptance and
-  `0.0625` with claim-local repair; both leave 6 hallucinated mentions, but
-  claim-local repair keeps more text (`52.35` vs. `48.85` words), higher retained
-  vanilla grounded mentions (`78.95%` vs. `72.81%`), and avoids the empty/generic
-  caption case (`0` vs. `1`). The next caption method should therefore scale
-  verifier-guided claim acceptance with constrained local repair, not fixed token
-  suppression or pure deletion.
+  direction, and the maximum available iter2-prefilter run reaches 40 images. On
+  that 40-image set, gated CHAIRi `0.1544` drops to `0.0773` with sentence
+  acceptance and `0.0739` with claim-local repair; both leave 15 hallucinated
+  mentions, but claim-local repair keeps more text (`53.38` vs. `50.70` words),
+  higher retained vanilla grounded mentions (`80.00%` vs. `76.17%`), and avoids
+  the empty/generic caption case (`0` vs. `1`). The next caption method should
+  therefore scale verifier-guided claim acceptance with constrained local repair,
+  not fixed token suppression or pure deletion.
 
 ## Paper-Safe Claim
 

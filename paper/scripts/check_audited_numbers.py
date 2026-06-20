@@ -597,6 +597,24 @@ def check_caption_route_summary() -> None:
             / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_20_iter2_t96_claim_repair/claim_repair_metrics.json"
         ).read_text()
     )
+    expanded_acceptance = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_sentence_acceptance/sentence_acceptance_metrics.json"
+        ).read_text()
+    )
+    expanded_concise = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_concise_faithfulness/concise_faithfulness_metrics.json"
+        ).read_text()
+    )
+    expanded_claim_repair = json.loads(
+        (
+            PROJECT_ROOT
+            / "detection/baselines/results/tdev_decode_gate_prefilter_smoke_50_iter2_t96_claim_repair/claim_repair_metrics.json"
+        ).read_text()
+    )
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
@@ -643,58 +661,41 @@ def check_caption_route_summary() -> None:
         if actual != rounded:
             raise AssertionError(f"caption-route-generated:{row_label}: table={actual} expected={rounded}")
 
-    scaled_generated_rows = {
-        "t96 hard gate": [
-            scaled_acceptance["num_examples"],
-            scaled_acceptance["chair"]["gated"]["overall"]["CHAIRi"],
-            scaled_acceptance["chair"]["gated"]["total_hallucinated_mentions"],
-            scaled_acceptance["mean_gated_words"],
-        ],
-        "sentence acceptance": [
-            scaled_acceptance["num_examples"],
-            scaled_acceptance["chair"]["accepted"]["overall"]["CHAIRi"],
-            scaled_acceptance["chair"]["accepted"]["total_hallucinated_mentions"],
-            scaled_acceptance["mean_accepted_words"],
-        ],
-        "claim-local repair": [
-            scaled_claim_repair["num_examples"],
-            scaled_claim_repair["chair"]["repaired"]["overall"]["CHAIRi"],
-            scaled_claim_repair["chair"]["repaired"]["total_hallucinated_mentions"],
-            scaled_claim_repair["mean_repaired_words"],
-        ],
-    }
     scaled_concise_summary = scaled_concise["summary"]
     scaled_claim_summary = scaled_claim_repair["preservation"]["summary"]
-    scaled_extra_values = {
-        "sentence acceptance": [
-            scaled_concise_summary["accepted_retained_vanilla_grounded_rate"] * 100,
-            scaled_concise_summary["accepted_object_mention_retention_vs_gated"] * 100,
-            scaled_concise_summary["generic_or_empty_accepted"],
-        ],
-        "claim-local repair": [
-            scaled_claim_summary["repaired_retained_vanilla_grounded_rate"] * 100,
-            scaled_claim_summary["repaired_object_mention_retention_vs_gated"] * 100,
-            scaled_claim_summary["generic_or_empty_repaired"],
-        ],
-    }
-    for row_label, expected in scaled_generated_rows.items():
-        actual = _numbers_from_markdown_row(summary, row_label)
-        if row_label == "t96 hard gate":
-            rounded = [round(expected[0]), round(expected[1], 4), round(expected[2]), round(expected[3], 2)]
-        else:
-            rounded = [round(expected[0]), round(expected[1], 4), round(expected[2]), round(expected[3], 2)] + [
-                round(scaled_extra_values[row_label][0], 2),
-                round(scaled_extra_values[row_label][1], 2),
-                round(scaled_extra_values[row_label][2]),
-            ]
-        # The row label appears in both the 5-image and 20-image tables. For the
-        # scaled rows, compare against the last matching markdown row.
-        matches = re.findall(rf"^\|\s*{re.escape(row_label)}\s*\|(.+)$", summary, re.MULTILINE)
-        if not matches:
-            raise AssertionError(f"Missing markdown table row: {row_label}")
-        actual = [float(value) for value in re.findall(r"[+-]?(?:\d+\.\d+|\.\d+|\d+)", matches[-1])]
-        if actual != rounded:
-            raise AssertionError(f"caption-route-scaled:{row_label}: table={actual} expected={rounded}")
+    expanded_concise_summary = expanded_concise["summary"]
+    expanded_claim_summary = expanded_claim_repair["preservation"]["summary"]
+
+    _assert_contains(
+        summary,
+        f"| 20-image | t96 hard gate | {scaled_acceptance['num_examples']} | {scaled_acceptance['chair']['gated']['overall']['CHAIRi']:.4f} | {scaled_acceptance['chair']['gated']['total_hallucinated_mentions']} | {scaled_acceptance['mean_gated_words']:.2f} | -- | -- | -- | high-risk generated baseline |",
+        "caption-route:scaled-20-gated-row",
+    )
+    _assert_contains(
+        summary,
+        f"| 20-image | sentence acceptance | {scaled_acceptance['num_examples']} | {scaled_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {scaled_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {scaled_acceptance['mean_accepted_words']:.2f} | {scaled_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {scaled_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {scaled_concise_summary['generic_or_empty_accepted']} | reduces hallucination but can delete too much |",
+        "caption-route:scaled-20-acceptance-row",
+    )
+    _assert_contains(
+        summary,
+        f"| 20-image | claim-local repair | {scaled_claim_repair['num_examples']} | {scaled_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {scaled_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {scaled_claim_repair['mean_repaired_words']:.2f} | {scaled_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {scaled_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {scaled_claim_summary['generic_or_empty_repaired']} | preserves more supported content with the same hallucinated mention count |",
+        "caption-route:scaled-20-claim-repair-row",
+    )
+    _assert_contains(
+        summary,
+        f"| 40-image | t96 hard gate | {expanded_acceptance['num_examples']} | {expanded_acceptance['chair']['gated']['overall']['CHAIRi']:.4f} | {expanded_acceptance['chair']['gated']['total_hallucinated_mentions']} | {expanded_acceptance['mean_gated_words']:.2f} | -- | -- | -- | maximum available iter2-prefilter set |",
+        "caption-route:scaled-40-gated-row",
+    )
+    _assert_contains(
+        summary,
+        f"| 40-image | sentence acceptance | {expanded_acceptance['num_examples']} | {expanded_acceptance['chair']['accepted']['overall']['CHAIRi']:.4f} | {expanded_acceptance['chair']['accepted']['total_hallucinated_mentions']} | {expanded_acceptance['mean_accepted_words']:.2f} | {expanded_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}% | {expanded_concise_summary['accepted_object_mention_retention_vs_gated'] * 100:.2f}% | {expanded_concise_summary['generic_or_empty_accepted']} | same hallucination count as repair but less content retention |",
+        "caption-route:scaled-40-acceptance-row",
+    )
+    _assert_contains(
+        summary,
+        f"| 40-image | claim-local repair | {expanded_claim_repair['num_examples']} | {expanded_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f} | {expanded_claim_repair['chair']['repaired']['total_hallucinated_mentions']} | {expanded_claim_repair['mean_repaired_words']:.2f} | {expanded_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}% | {expanded_claim_summary['repaired_object_mention_retention_vs_gated'] * 100:.2f}% | {expanded_claim_summary['generic_or_empty_repaired']} | best larger-scale prototype tradeoff |",
+        "caption-route:scaled-40-claim-repair-row",
+    )
 
     concise_summary = concise["summary"]
     concise_rows = {
@@ -712,13 +713,13 @@ def check_caption_route_summary() -> None:
 
     _assert_contains(
         summary,
-        "Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects.",
+        "Its length reduction is not inherently bad: concise captions are preferable to long captions that keep inventing objects;",
         "caption-route:length-reduction-nuance",
     )
     claim_summary = claim_repair["preservation"]["summary"]
     _assert_contains(
         summary,
-        "The remaining risk is scaling this beyond five high-risk images",
+        "The remaining risk is scaling beyond the current 40-image iter2-prefilter ceiling",
         "caption-route:scale-risk",
     )
     _assert_contains(
@@ -738,7 +739,7 @@ def check_caption_route_summary() -> None:
     )
     _assert_contains(
         evidence,
-        f"claim-local repair improves it to `{scaled_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{scaled_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{scaled_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{scaled_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
+        f"claim-local repair improves it to `{expanded_claim_repair['chair']['repaired']['overall']['CHAIRi']:.4f}`, keeps hallucinated mentions at `{expanded_claim_repair['chair']['repaired']['total_hallucinated_mentions']}`, raises retained vanilla grounded mentions from `{expanded_concise_summary['accepted_retained_vanilla_grounded_rate'] * 100:.2f}%` to `{expanded_claim_summary['repaired_retained_vanilla_grounded_rate'] * 100:.2f}%`",
         "evidence:caption-claim-repair-scaled",
     )
     _assert_contains(
