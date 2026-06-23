@@ -25,7 +25,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--result_root", default="", help="Required for --mode gate; root containing pope/<split>/<method>/predictions.jsonl")
     p.add_argument("--base_method", default="vanilla")
     p.add_argument("--calibration_split", default="random")
-    p.add_argument("--threshold_mode", choices=["zero", "calibrate_mcc"], default="calibrate_mcc")
+    p.add_argument("--threshold_mode", choices=["zero", "calibrate_mcc", "fixed"], default="calibrate_mcc")
+    p.add_argument("--threshold_value", type=float, default=0.0, help="Used when --threshold_mode fixed")
     return p.parse_args()
 
 
@@ -166,6 +167,9 @@ def main() -> None:
         raise ValueError(f"No calibration rows for split={args.calibration_split}")
     if args.threshold_mode == "zero":
         threshold = 0.0
+        calibration_metrics = metrics(apply_threshold(calibration_rows, args.score_field, threshold, args.mode))
+    elif args.threshold_mode == "fixed":
+        threshold = float(args.threshold_value)
         calibration_metrics = metrics(apply_threshold(calibration_rows, args.score_field, threshold, args.mode))
     else:
         threshold, calibration_metrics = choose_threshold(calibration_rows, args.score_field, args.mode)

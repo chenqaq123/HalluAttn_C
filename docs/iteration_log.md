@@ -72,3 +72,12 @@
 **Evidence/refs:** `docs/experiment_results.md` entries for routes B/C. Route B direct is poor (MCC 0.173, FPR 0.378), and calibrated gate is unchanged from vanilla. Route C has real internal signal (absent AUROC 0.731; direct MCC 0.419), but the useful strict gate trades too much recall for FPR reduction (TPR 0.567, FPR 0.067, related FPR 0.090). Calibrated gate again chooses no suppression.
 
 **Implications / next:** A/B/C should be reported as internal baselines/negative controls, not the headline. The current main claim remains the semantic-neighbor failure mode and target-vs-neighbor verification criterion. To remove the external detector, the next implementation should either move beyond attention-shape features to stronger hidden-state/logit contrast, or pivot to caption-side atomic claim verification where local accept/reject decisions may be easier than a global POPE gate.
+
+## 2026-06-23 — Route D hidden-state contrast becomes the best internal candidate
+**What changed:** Implemented `evaluate_hidden_contrast_probe_pope.py`, a no-external-detector hidden-state target-vs-neighbor contrast probe. It uses object-token hidden states, visual-token mean hidden states, and target-minus-neighbor contrasts from layers 22/31, with image-grouped OOF logistic evaluation. Added `fixed` threshold support to `evaluate_pope_score_subset.py` to save tuned gate operating points.
+
+**Why:** Routes A/B/C showed that final-layer logit-lens evidence and attention-shape features were not strong enough. The next plausible internal reference path was richer hidden-state contrast rather than more attention aggregation.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Hidden-state contrast probe route D". On the same 360 bounded POPE rows, route D reaches intrinsic absent AUROC 0.863 and tuned gate MCC 0.707, TPR 0.778, FPR 0.078, related FPR 0.104. This is weaker than vanilla/A in aggregate MCC but a much better recall/FPR tradeoff than route C strict gating.
+
+**Implications / next:** Route D should become the current internal replacement candidate. It still is supervised and not final. Next work should tune layer/feature choices and derive a smaller deployable score, then re-run on the full POPE subset and check whether the semantic-neighbor FPR gap closes without unacceptable recall loss.

@@ -180,3 +180,26 @@ _(none yet — first new result goes here)_
 | Route C contrastive probe strict gate | related-present neg | 134 | 0.000 | 0.000 | 0.090 | 0.090 |
 
 Bottom line: none of A/B/C currently supports replacing OWLv2-backed TDEV as the main result. A and C can reduce related-present FPR only by sacrificing recall; B is mostly non-discriminative. The next step should not be polishing these exact signals, but either (1) a stronger internal hidden-state/logit contrast beyond attention shape, or (2) caption-side atomic claim generation + internal target-vs-neighbor verification where the decision surface is local rather than a global yes/no gate.
+
+### 2026-06-23 — Hidden-state contrast probe route D, 120-row POPE bounded audit
+- Setup: LLaVA-1.5-7B, same 360-row bounded POPE subset, no external detector. Script: `mitigation/scripts/evaluate_hidden_contrast_probe_pope.py`; evaluator: `mitigation/scripts/evaluate_pope_score_subset.py`. The probe extracts selected-layer hidden states for target and semantic-neighbor prompts: object question-token hidden, visual-token mean hidden, and target-minus-neighbor contrasts over layers 22/31. Readout is image-grouped 5-fold out-of-fold logistic regression, so this remains a supervised diagnostic/ceiling rather than a training-free final method.
+- Artifacts: `mitigation/results/semantic_neighbor_audit/hidden_contrast_probe_120/`.
+- Result: scoring completed for 360/360 rows, failures 0, feature dim 49152. Intrinsic absent-target AUROC is 0.863 and OOF absent detector MCC is 0.536, clearly stronger than the route C attention-shape probe (AUROC 0.731, MCC 0.415). Direct support scoring still over-fires: MCC 0.594, TPR 0.861, FPR 0.272, related FPR 0.313. Calibrated gate gives a tiny improvement over vanilla/A-like behavior: MCC 0.745, TPR 0.850, FPR 0.106, related FPR 0.142. Tuned gate at `support_score > -12.1203` gives the best practical tradeoff so far among internal probes: MCC 0.707, TPR 0.778, FPR 0.078, related FPR 0.104, plain FPR 0.000. Stricter zero-threshold gate gives related FPR 0.075 but TPR drops to 0.633.
+- Interpretation: route D is the strongest internal replacement candidate so far. It proves hidden-state target-vs-neighbor contrast contains substantially more useful evidence than raw attention regions or per-head attention shape. However, it still does not match the original OWLv2-backed TDEV tradeoff or beat vanilla/A on aggregate MCC without recall loss. Keep it as the current best internal diagnostic route and tune it next; do not claim external-detector removal is solved yet.
+- Supersedes: route C as the strongest internal supervised diagnostic.
+
+#### Updated internal-route comparison including hidden contrast
+
+| Method | Subset | Samples | MCC | TPR | FPR | Yes rate |
+|---|---|---:|---:|---:|---:|---:|
+| Vanilla | all | 360 | 0.739 | 0.850 | 0.111 | 0.481 |
+| Vanilla | related-present neg | 134 | 0.000 | 0.000 | 0.149 | 0.149 |
+| Route A IC target gate | all | 360 | 0.745 | 0.850 | 0.106 | 0.478 |
+| Route C attention-shape strict gate | all | 360 | 0.537 | 0.567 | 0.067 | 0.317 |
+| Route C attention-shape strict gate | related-present neg | 134 | 0.000 | 0.000 | 0.090 | 0.090 |
+| **Route D hidden contrast tuned gate** | **all** | **360** | **0.707** | **0.778** | **0.078** | **0.428** |
+| **Route D hidden contrast tuned gate** | **related-present neg** | **134** | **0.000** | **0.000** | **0.104** | **0.104** |
+| Route D hidden contrast strict gate | all | 360 | 0.608 | 0.633 | 0.056 | 0.344 |
+| Route D hidden contrast strict gate | related-present neg | 134 | 0.000 | 0.000 | 0.075 | 0.075 |
+
+Route D is the first internal path that materially improves the related-present FPR while preserving moderate recall. The remaining gap is that the tradeoff is still worse than external TDEV and not yet a clear aggregate improvement over vanilla/A. Next tuning should try lower-dimensional hidden features, layer sweeps, and unsupervised/weakly supervised margins derived from the learned direction so the final method does not rely on supervised POPE labels.
