@@ -334,3 +334,21 @@ Decision: for CHAIR/caption claims, the deployable internal detector should be `
 | Generic rewrite | 10% | 0.738 | 1164 | 424 | 0.1133 | 0.4322 | 7.383 | 0.836 |
 
 Decision: use answer-absence filtering as the CHAIR-side no-external-detector intervention baseline. For paper positioning, report deletion as an upper-bound CHAIR reduction and generic rewrite as the less destructive variant; do not claim it fully solves caption intervention until semantic/fluency preservation is evaluated beyond CHAIR.
+
+### 2026-06-23 — Utility-aware CHAIR intervention selection
+- Setup: Cache-only utility summary over the five completed answer-absence CHAIR intervention runs. New script: `mitigation/scripts/summarize_chair_intervention_utility.py`; artifacts: `mitigation/results/semantic_neighbor_audit/chair_internal_verifier_full/intervention_utility_summary.{csv,json}`. Metrics include token-LCS caption retention, changed-caption rate, CHAIR Recall/F1 deltas, object-mention retention, hallucinated-mention retention, and a preservation gate (`mean_lcs_retention >= 0.995`, `object_mention_retention >= 0.965`, `recall_delta >= -0.011`).
+- Result: the CHAIR-only optimum is still delete top-10 (CHAIRi 0.1074; reduction 0.0265), but it fails the preservation gate because LCS retention is 0.9946, object retention is 0.9577, and Recall drops by 0.0127. Under the preservation gate, the best CHAIRi reduction is generic-rewrite top-10: CHAIRi 0.1133, CHAIRs 0.4322, LCS retention 0.9958, object retention 0.9663, Recall delta -0.0104, F1 delta +0.0127.
+- Interpretation: this changes the recommended main CHAIR intervention row. Delete top-10 is the upper-bound hallucination-removal row; generic-rewrite top-10 is the better paper-facing no-external-detector intervention because it retains more caption/object coverage while still reducing CHAIRi by 15.4% relative and CHAIRs by 12.2% relative. This directly addresses the concern that the earlier CHAIR gain could be mostly aggressive deletion.
+- Supersedes: the previous CHAIR intervention ranking if utility preservation is part of the objective.
+
+#### Utility-aware CHAIR intervention comparison
+
+| Method | Top frac | CHAIRi | CHAIRi red. | CHAIRs | LCS retention | Object retention | Recall delta | Pass gate |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Delete | 1% | 0.1309 | 0.0031 | 0.4786 | 0.9995 | 0.9958 | -0.0006 | yes |
+| Delete | 5% | 0.1204 | 0.0135 | 0.4467 | 0.9974 | 0.9790 | -0.0052 | yes |
+| Delete | 10% | **0.1074** | **0.0265** | **0.4099** | 0.9946 | 0.9577 | -0.0127 | no |
+| Generic rewrite | 5% | 0.1250 | 0.0090 | 0.4639 | 0.9981 | 0.9859 | -0.0035 | yes |
+| **Generic rewrite** | **10%** | **0.1133** | **0.0207** | **0.4322** | **0.9958** | **0.9663** | **-0.0104** | **yes** |
+
+Decision: for the main no-external-detector CHAIR intervention result, prefer generic-rewrite top-10 as the utility-aware operating point. Keep delete top-10 as an upper-bound ablation that shows the maximum CHAIR reduction achievable by aggressive filtering.

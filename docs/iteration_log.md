@@ -145,3 +145,12 @@
 **Evidence/refs:** `docs/experiment_results.md` entry "Answer-absence CHAIR caption intervention". Top-10% deletion reduces CHAIRi from 0.1340 to 0.1074 and CHAIRs from 0.4921 to 0.4099, while changing 1,195 hallucinated mentions and 430 grounded mentions. Generic rewrite top-10 reduces CHAIRi to 0.1133 and CHAIRs to 0.4322 with similar selected precision but a less aggressive edit style.
 
 **Implications / next:** The caption-side no-external-detector path is viable, but the current intervention is a deterministic post-hoc filter/rewrite rather than a generation-time method. The next technical step should improve preservation: compare delete vs generic rewrite qualitatively, add a caption utility/coverage metric, and then decide whether to implement generation-time suppression or keep this as a CHAIR intervention baseline.
+
+## 2026-06-23 — CHAIR intervention operating point selected with utility constraints
+**What changed:** Added `mitigation/scripts/summarize_chair_intervention_utility.py`, a cache-only utility summary for the completed CHAIR intervention runs. It compares CHAIR reduction against caption preservation metrics: token-LCS retention, object-mention retention, CHAIR Recall delta, changed-caption rate, and grounded-mention loss.
+
+**Why:** The previous intervention table showed strong CHAIR reduction, but delete top-10 could be criticized as overly aggressive caption deletion. The proposal needs a no-external-detector method that improves hallucination metrics without hiding a large coverage loss.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Utility-aware CHAIR intervention selection". Delete top-10 remains the CHAIR-only best row (CHAIRi 0.1074) but fails the preservation gate. Generic-rewrite top-10 is the best preserved row: CHAIRi 0.1133, CHAIRs 0.4322, LCS retention 0.9958, object retention 0.9663, Recall delta -0.0104.
+
+**Implications / next:** Use generic-rewrite top-10 as the paper-facing CHAIR intervention operating point, with delete top-10 as an upper-bound ablation. The remaining gap is generation-time integration: current intervention is still post-hoc editing, so the next method step should either implement decoding-time suppression using the same answer-absence score or explicitly position the result as a post-hoc internal claim editor.
