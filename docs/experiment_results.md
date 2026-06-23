@@ -315,3 +315,22 @@ Decision: the current integrated internal design is coherent and shared across P
 
 Decision: for CHAIR/caption claims, the deployable internal detector should be `answer_absence_score` or the answer-only verifier, not hidden-margin TDEV. For POPE, keep hidden+answer; for CHAIR, use direct target yes/no absence. This is an integrated method family with task-specific heads over internal evidence, still with no external detector.
 
+
+### 2026-06-23 — Answer-absence CHAIR caption intervention
+- Setup: Full CHAIR object-mention cache from `detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl`, using the no-external-detector `answer_absence_score` from `chair_internal_verifier_scores.csv`. New script: `mitigation/scripts/evaluate_chair_answer_caption_intervention.py`. The intervention selects the top-scoring object mentions, edits the caption deterministically (`delete` or `generic_noun`), and reruns the official CHAIR evaluator on the same 4,977-image caption set.
+- Result: the score selects hallucinated mentions with high precision. Top-1% delete changes 163 mentions with 0.859 precision and reduces CHAIRi from 0.1340 to 0.1309. Top-10% delete gives the largest CHAIR reduction: CHAIRi 0.1340 -> 0.1074 and CHAIRs 0.4921 -> 0.4099, changing 1,195 hallucinated mentions and 430 grounded mentions. Generic noun rewriting also improves CHAIR while preserving caption length better, but the CHAIR reduction is smaller than deletion.
+- Interpretation: caption-side intervention is feasible without OWLv2 or any external detector. The cleanest result is not a new decoder yet; it is a post-hoc claim filter/rewrite driven by internal answer absence. Deletion is strongest on CHAIR but has a clear faithfulness/coverage cost because some grounded object mentions are removed. Generic rewriting is a more conservative presentation candidate if caption completeness matters.
+- Supersedes: the previous CHAIR detection-only result by adding official CHAIR intervention metrics.
+
+#### CHAIR caption intervention from internal answer-absence score
+
+| Method | Top frac | Selected precision | Changed hall. | Changed grounded | CHAIRi | CHAIRs | Mean object mentions | Mean hall. mentions |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla | - | - | - | - | 0.1340 | 0.4921 | 7.641 | 1.024 |
+| Delete high-risk mention | 1% | 0.860 | 140 | 23 | 0.1309 | 0.4786 | 7.608 | 0.996 |
+| Delete high-risk mention | 5% | 0.769 | 620 | 190 | 0.1204 | 0.4467 | 7.480 | 0.901 |
+| **Delete high-risk mention** | **10%** | **0.738** | **1195** | **430** | **0.1074** | **0.4099** | **7.317** | **0.786** |
+| Generic rewrite | 5% | 0.769 | 595 | 188 | 0.1250 | 0.4639 | 7.532 | 0.941 |
+| Generic rewrite | 10% | 0.738 | 1164 | 424 | 0.1133 | 0.4322 | 7.383 | 0.836 |
+
+Decision: use answer-absence filtering as the CHAIR-side no-external-detector intervention baseline. For paper positioning, report deletion as an upper-bound CHAIR reduction and generic rewrite as the less destructive variant; do not claim it fully solves caption intervention until semantic/fluency preservation is evaluated beyond CHAIR.

@@ -136,3 +136,12 @@
 
 **Implications / next:** The internal method should be task-adaptive but evidence-consistent: POPE uses hidden+answer target-vs-neighbor gating; CHAIR/caption claims use direct answer absence. Next step is caption intervention: delete/rewrite high-risk CHAIR object claims selected by answer absence and rerun official CHAIR, checking CHAIRi/CHAIRs, length, object mentions, and introduced hallucinations.
 
+
+## 2026-06-23 — CHAIR caption intervention works, with a coverage tradeoff
+**What changed:** Added `mitigation/scripts/evaluate_chair_answer_caption_intervention.py`, which uses the internal `answer_absence_score` to select high-risk CHAIR object mentions, edit captions by deletion or generic rewriting, and rerun official CHAIR.
+
+**Why:** CHAIR detection alone was not enough for the proposal. We needed to test whether the internal detector can actually drive an intervention without OWLv2 or another external detector.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Answer-absence CHAIR caption intervention". Top-10% deletion reduces CHAIRi from 0.1340 to 0.1074 and CHAIRs from 0.4921 to 0.4099, while changing 1,195 hallucinated mentions and 430 grounded mentions. Generic rewrite top-10 reduces CHAIRi to 0.1133 and CHAIRs to 0.4322 with similar selected precision but a less aggressive edit style.
+
+**Implications / next:** The caption-side no-external-detector path is viable, but the current intervention is a deterministic post-hoc filter/rewrite rather than a generation-time method. The next technical step should improve preservation: compare delete vs generic rewrite qualitatively, add a caption utility/coverage metric, and then decide whether to implement generation-time suppression or keep this as a CHAIR intervention baseline.
