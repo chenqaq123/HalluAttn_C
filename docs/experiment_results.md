@@ -296,3 +296,22 @@ Current method design: use one shared internal verifier rather than separate sce
 
 Decision: the current integrated internal design is coherent and shared across POPE splits, but not yet strong enough to replace the external detector as the paper's final method. Further POPE-only linear tuning is unlikely to change the story; the next validation should move to CHAIR/caption-side atomic claims and check whether the same internal verifier can support caption intervention without OWLv2.
 
+### 2026-06-23 — CHAIR caption-claim internal verifier without external detector
+- Setup: Full CHAIR object-mention cache from `detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl` (16,426 generated object mentions; 4,009 hallucinated), LLaVA-1.5-7B, no external detector. New scripts: `mitigation/scripts/evaluate_chair_internal_verifier.py` and `mitigation/scripts/evaluate_chair_verifier_scores.py`; artifacts: `mitigation/results/semantic_neighbor_audit/chair_internal_verifier_full/`. Each CHAIR object mention is treated as an atomic caption claim. The scorer prompts the model with the mentioned object and its semantic neighbor, then caches hidden target-vs-neighbor margins plus first-token yes/no answer confidence.
+- Result: unlike POPE, CHAIR caption-claim detection is dominated by answer confidence, not hidden target-vs-neighbor margins. `answer_absence_score = -target_yes_margin` reaches AUROC 0.898 and MCC 0.596 at its full-data threshold (TPR 0.797, FPR 0.155). Image-grouped 5-fold answer-only grid gives AUROC 0.893 and MCC 0.593. Mixed hidden+answer gives AUROC 0.898 and MCC 0.593, essentially no gain over answer absence. Hidden-only is weak: AUROC 0.622 and MCC 0.175. Position-only (`gen_pos`) is lower: AUROC 0.830 and MCC 0.473.
+- Position control: `answer_absence_score` remains strong after generation-position control: within-bin AUROC 0.872, matched-pair AUROC 0.859, residual AUROC 0.782. By comparison, `gen_pos` has within-bin AUROC 0.572, matched-pair AUROC 0.546, residual AUROC 0.522. The existing best position-controlled baseline IC is within-bin 0.686 / matched-pair 0.703 (§A), so answer absence is a substantially stronger internal CHAIR detector.
+- Interpretation: this is the first strong caption-side no-external-detector result. It also clarifies task structure: POPE semantic-neighbor yes/no gating needs target-vs-neighbor hidden/answer contrast, while CHAIR object-mention detection is mostly solved by direct answer-confidence absence. The next intervention step should use this score to filter or rewrite high-risk caption object claims and rerun official CHAIR; do not keep tuning hidden margins for CHAIR.
+- Supersedes: prior expectation that the same hidden-margin verifier would be the main CHAIR signal; answer absence is the CHAIR-side main evidence.
+
+#### CHAIR object-mention detection, no external detector
+
+| Score / verifier | Overall AUROC | Within-bin AUROC | Matched AUROC | Residual AUROC | MCC | TPR | FPR |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Position only (`gen_pos`) | 0.830 | 0.572 | 0.546 | 0.522 | 0.473 | 0.807 | 0.267 |
+| Hidden-only verifier | 0.622 | - | - | - | 0.175 | 0.839 | 0.652 |
+| `answer_absence_score` | **0.898** | **0.872** | **0.859** | **0.782** | **0.596** | 0.797 | 0.155 |
+| Answer-only 5-fold verifier | 0.893 | - | - | - | 0.593 | 0.790 | 0.153 |
+| Mixed hidden+answer 5-fold verifier | 0.898 | 0.872 | 0.859 | 0.781 | 0.593 | 0.792 | 0.154 |
+
+Decision: for CHAIR/caption claims, the deployable internal detector should be `answer_absence_score` or the answer-only verifier, not hidden-margin TDEV. For POPE, keep hidden+answer; for CHAIR, use direct target yes/no absence. This is an integrated method family with task-specific heads over internal evidence, still with no external detector.
+

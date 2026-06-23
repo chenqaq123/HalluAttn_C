@@ -127,3 +127,12 @@
 
 **Implications / next:** The best current no-external-detector method is the mixed hidden+answer verifier. The incremental gain is too small to justify more POPE-only grid search as the main path. Next work should test caption-side use: generate/parse atomic object claims from captions and apply the same internal target-vs-neighbor verifier for CHAIR-style intervention/evaluation.
 
+## 2026-06-23 — CHAIR caption claims work best with answer absence
+**What changed:** Added `mitigation/scripts/evaluate_chair_internal_verifier.py` to score all CHAIR object mentions with internal target/neighbor prompts, and `mitigation/scripts/evaluate_chair_verifier_scores.py` to evaluate image-grouped folds. Ran the full 16,426-mention CHAIR cache in 5 GPU shards.
+
+**Why:** POPE validation showed the internal verifier only gives a small gain. The proposal still needs caption-side evidence without OWLv2/external detectors, ideally on CHAIR object claims.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "CHAIR caption-claim internal verifier without external detector". `answer_absence_score` reaches AUROC 0.898, within-bin AUROC 0.872, matched-pair AUROC 0.859, residual AUROC 0.782, and MCC 0.596. Hidden-only is weak (AUROC 0.622, MCC 0.175). Position-only is lower and collapses under control.
+
+**Implications / next:** The internal method should be task-adaptive but evidence-consistent: POPE uses hidden+answer target-vs-neighbor gating; CHAIR/caption claims use direct answer absence. Next step is caption intervention: delete/rewrite high-risk CHAIR object claims selected by answer absence and rerun official CHAIR, checking CHAIRi/CHAIRs, length, object mentions, and introduced hallucinations.
+
