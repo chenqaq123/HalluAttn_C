@@ -63,3 +63,12 @@
 **Evidence/refs:** `docs/experiment_results.md` entry "Internal IC/logit-lens TDEV route A". On 360 bounded POPE rows, strict IC margin gate reduces related FPR from 0.149 to 0.022 but collapses TPR from 0.850 to 0.267; calibrated target-only gate barely changes vanilla.
 
 **Implications / next:** Do not use route A as the main method. Keep it as a cheap baseline/ablation. Next implementation should prioritize route B (target-vs-neighbor attention-region discriminability) and route C/HaloProbe-style supervised contrastive probe on the related-present subset.
+
+## 2026-06-23 — Routes B/C internal TDEV implemented and rejected as main method
+**What changed:** Implemented `evaluate_attention_region_tdev_pope.py` for target-vs-neighbor attention-region discriminability and `evaluate_contrastive_head_probe_pope.py` for a HaloProbe-style supervised contrastive per-head internal probe. Both run without an external detector and were evaluated on the same 360-row bounded POPE subset as route A.
+
+**Why:** The proposal required testing whether internal VLM evidence can replace the OWLv2-backed verifier while preserving the semantic-neighbor TDEV criterion.
+
+**Evidence/refs:** `docs/experiment_results.md` entries for routes B/C. Route B direct is poor (MCC 0.173, FPR 0.378), and calibrated gate is unchanged from vanilla. Route C has real internal signal (absent AUROC 0.731; direct MCC 0.419), but the useful strict gate trades too much recall for FPR reduction (TPR 0.567, FPR 0.067, related FPR 0.090). Calibrated gate again chooses no suppression.
+
+**Implications / next:** A/B/C should be reported as internal baselines/negative controls, not the headline. The current main claim remains the semantic-neighbor failure mode and target-vs-neighbor verification criterion. To remove the external detector, the next implementation should either move beyond attention-shape features to stronger hidden-state/logit contrast, or pivot to caption-side atomic claim verification where local accept/reject decisions may be easier than a global POPE gate.

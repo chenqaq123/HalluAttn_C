@@ -148,3 +148,35 @@ _(none yet — first new result goes here)_
 - Result: scoring completed for 360/360 rows, failures 0. On the same subset, vanilla has MCC 0.739, TPR 0.850, FPR 0.111, related FPR 0.149, plain FPR 0.000. Calibrated target-only IC gate is nearly unchanged: MCC 0.745, TPR 0.850, FPR 0.106, related FPR 0.142. Calibrated margin gate is exactly unchanged from vanilla because calibration chooses a very low threshold. Strict `target_score > neighbor_score` gate lowers FPR to 0.017 and related FPR to 0.022, but collapses TPR to 0.267 and MCC to 0.358. Direct margin scoring is also too conservative: calibrated direct margin has MCC 0.241, TPR 0.267, FPR 0.083, related FPR 0.097.
 - Interpretation: route A is useful as a cheap internal baseline but not the headline method. Pure final-layer visual logit-lens evidence is not target-discriminative enough; adding the neighbor margin suppresses related false positives only by sacrificing recall. This pushes the next implementation toward route B (attention-region discriminability) and route C/HaloProbe-style supervised contrastive probes.
 - Supersedes: none; this is the first no-external-detector TDEV backend audit.
+
+### 2026-06-23 — Internal attention-region TDEV route B, 120-row POPE bounded audit
+- Setup: LLaVA-1.5-7B, same 360-row bounded POPE subset as route A, no external detector. Script: `mitigation/scripts/evaluate_attention_region_tdev_pope.py`; evaluator: `mitigation/scripts/evaluate_pope_score_subset.py`. Evidence backend compares visual-token attention regions for the target question and top-1 semantic-neighbor question using layers 22 and 31.
+- Artifacts: `mitigation/results/semantic_neighbor_audit/attention_region_tdev_120/`.
+- Result: scoring completed for 360/360 rows, failures 0. Direct combined attention-region score is weak: MCC 0.173, TPR 0.550, FPR 0.378, related FPR 0.418, plain FPR 0.261. Gate-on-vanilla with calibrated threshold is unchanged from vanilla: MCC 0.739, TPR 0.850, FPR 0.111, related FPR 0.149, plain FPR 0.000. JSD-only and concentration-only variants show the same pattern: direct detection is poor and calibrated gate chooses no effective suppression.
+- Interpretation: route B in its current mean-region form is a negative result. Target and semantic-neighbor object-token attention regions overlap too strongly; this does not yield a reliable target-vs-neighbor verifier. Keep as an ablation against the claim that raw attention localization is enough.
+- Supersedes: none.
+
+### 2026-06-23 — Contrastive per-head supervised probe route C, 120-row POPE bounded audit
+- Setup: LLaVA-1.5-7B, same 360-row bounded POPE subset, no external detector. Script: `mitigation/scripts/evaluate_contrastive_head_probe_pope.py`; evaluator: `mitigation/scripts/evaluate_pope_score_subset.py`. The probe extracts per-head attention-shape features for target prompt, semantic-neighbor prompt, and target-minus-neighbor contrast over layers 22/31, then trains an image-grouped 5-fold out-of-fold logistic readout. This is a supervised diagnostic ceiling/foil, not the training-free headline method.
+- Artifacts: `mitigation/results/semantic_neighbor_audit/contrastive_head_probe_120/`.
+- Result: scoring completed for 360/360 rows, failures 0, feature dim 768. Intrinsic absent-target AUROC is 0.731 and OOF absent detector MCC is 0.415. Converted to POPE yes/no support score, direct probe gets MCC 0.419, TPR 0.550, FPR 0.150, related FPR 0.179, plain FPR 0.065. Calibrated gate-on-vanilla is unchanged from vanilla because random-split MCC calibration prefers no suppression. A stricter zero-threshold gate gives MCC 0.537, TPR 0.567, FPR 0.067, related FPR 0.090, plain FPR 0.000.
+- Interpretation: route C confirms internal per-head target-vs-neighbor features contain signal, but the signal is not strong enough to replace the external verifier or to improve vanilla without a large recall loss. It is useful as a HaloProbe-style supervised ceiling/foil and as evidence that simple internal attention probes are not yet the final method.
+- Supersedes: route B as the stronger internal diagnostic, but not as a deployable main method.
+
+#### 2026-06-23 bounded internal-route comparison table
+
+| Method | Subset | Samples | MCC | TPR | FPR | Yes rate |
+|---|---|---:|---:|---:|---:|---:|
+| Vanilla | all | 360 | 0.739 | 0.850 | 0.111 | 0.481 |
+| Vanilla | related-present neg | 134 | 0.000 | 0.000 | 0.149 | 0.149 |
+| Route A IC target gate | all | 360 | 0.745 | 0.850 | 0.106 | 0.478 |
+| Route A strict IC margin gate | all | 360 | 0.358 | 0.267 | 0.017 | 0.142 |
+| Route A strict IC margin gate | related-present neg | 134 | 0.000 | 0.000 | 0.022 | 0.022 |
+| Route B attention-region direct | all | 360 | 0.173 | 0.550 | 0.378 | 0.464 |
+| Route B attention-region gate | all | 360 | 0.739 | 0.850 | 0.111 | 0.481 |
+| Route C contrastive probe direct | all | 360 | 0.419 | 0.550 | 0.150 | 0.350 |
+| Route C contrastive probe direct | related-present neg | 134 | 0.000 | 0.000 | 0.179 | 0.179 |
+| Route C contrastive probe strict gate | all | 360 | 0.537 | 0.567 | 0.067 | 0.317 |
+| Route C contrastive probe strict gate | related-present neg | 134 | 0.000 | 0.000 | 0.090 | 0.090 |
+
+Bottom line: none of A/B/C currently supports replacing OWLv2-backed TDEV as the main result. A and C can reduce related-present FPR only by sacrificing recall; B is mostly non-discriminative. The next step should not be polishing these exact signals, but either (1) a stronger internal hidden-state/logit contrast beyond attention shape, or (2) caption-side atomic claim generation + internal target-vs-neighbor verification where the decision surface is local rather than a global yes/no gate.
