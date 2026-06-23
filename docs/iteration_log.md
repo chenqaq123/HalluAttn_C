@@ -81,3 +81,12 @@
 **Evidence/refs:** `docs/experiment_results.md` entry "Hidden-state contrast probe route D". On the same 360 bounded POPE rows, route D reaches intrinsic absent AUROC 0.863 and tuned gate MCC 0.707, TPR 0.778, FPR 0.078, related FPR 0.104. This is weaker than vanilla/A in aggregate MCC but a much better recall/FPR tradeoff than route C strict gating.
 
 **Implications / next:** Route D should become the current internal replacement candidate. It still is supervised and not final. Next work should tune layer/feature choices and derive a smaller deployable score, then re-run on the full POPE subset and check whether the semantic-neighbor FPR gap closes without unacceptable recall loss.
+
+## 2026-06-23 — D-lite training-free hidden margin implemented
+**What changed:** Implemented `evaluate_hidden_margin_tdev_pope.py`, a deployable no-external-detector and no-supervised-readout hidden-margin scorer. It computes target-vs-neighbor hidden alignment/cross-prompt/separation margins and uses the score as a gate over vanilla.
+
+**Why:** Route D showed strong supervised signal but was not a final method. The next requirement was to distill that signal into a training-free score that could plausibly replace the external detector.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Training-free hidden-margin D-lite". On the 360 bounded POPE rows, zero-threshold D-lite gate reaches MCC 0.670, TPR 0.750, FPR 0.089, related FPR 0.119, plain FPR 0.000. This is weaker than supervised route D but better than route A at reducing related-present FPR without collapsing recall.
+
+**Implications / next:** D-lite is the current best deployable internal candidate, but not sufficient for final claims. Next work should tune its formula/layers against the supervised D ceiling, run full POPE, and only then decide whether external detector removal is viable for the main method.

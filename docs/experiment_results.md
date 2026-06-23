@@ -203,3 +203,22 @@ Bottom line: none of A/B/C currently supports replacing OWLv2-backed TDEV as the
 | Route D hidden contrast strict gate | related-present neg | 134 | 0.000 | 0.000 | 0.075 | 0.075 |
 
 Route D is the first internal path that materially improves the related-present FPR while preserving moderate recall. The remaining gap is that the tradeoff is still worse than external TDEV and not yet a clear aggregate improvement over vanilla/A. Next tuning should try lower-dimensional hidden features, layer sweeps, and unsupervised/weakly supervised margins derived from the learned direction so the final method does not rely on supervised POPE labels.
+
+### 2026-06-23 — Training-free hidden-margin D-lite, 120-row POPE bounded audit
+- Setup: LLaVA-1.5-7B, same 360-row bounded POPE subset, no external detector and no supervised readout. Script: `mitigation/scripts/evaluate_hidden_margin_tdev_pope.py`; evaluator: `mitigation/scripts/evaluate_pope_score_subset.py`. The score uses selected-layer hidden vectors from target and semantic-neighbor prompts: object-token vs visual-mean alignment margin, cross-prompt margin, and small object/visual separation terms. Formula: `hidden_align_margin + hidden_cross_margin + 0.25*hidden_obj_separation + 0.25*hidden_vis_separation`, selecting the worst semantic neighbor.
+- Artifacts: `mitigation/results/semantic_neighbor_audit/hidden_margin_tdev_120/`.
+- Result: scoring completed for 360/360 rows, failures 0. Calibrated gate behaves like the cheap A-style gate: MCC 0.745, TPR 0.850, FPR 0.106, related FPR 0.142. The meaningful training-free operating point is the zero-threshold gate (`hidden_margin_score > 0`): MCC 0.670, TPR 0.750, FPR 0.089, related FPR 0.119, plain FPR 0.000. Strict `hidden_align_margin > 0` lowers related FPR to 0.104 but drops TPR to 0.650 and MCC to 0.595. Direct hidden-margin classification is poor (MCC 0.024 for the combined score), so D-lite should be used as a gate, not a standalone yes/no detector.
+- Interpretation: D-lite is the first training-free, external-detector-free candidate that gives a nontrivial related-FPR reduction without catastrophic recall collapse. It still does not match supervised Route D or OWLv2-backed TDEV, but it is the best deployable internal score so far. Next tuning should optimize the D-lite formula/layers against the supervised D direction, then test full POPE.
+- Supersedes: route A as the stronger training-free internal candidate for semantic-neighbor FPR reduction, but not route D as the supervised ceiling.
+
+#### Current best internal candidates after D-lite
+
+| Method | Supervised | Deployable without external detector | MCC | TPR | FPR | Related FPR | Plain FPR |
+|---|---|---|---:|---:|---:|---:|---:|
+| Vanilla | no | yes | 0.739 | 0.850 | 0.111 | 0.149 | 0.000 |
+| Route A IC target gate | no | yes | 0.745 | 0.850 | 0.106 | 0.142 | 0.000 |
+| **Route D-lite hidden margin zero gate** | **no** | **yes** | **0.670** | **0.750** | **0.089** | **0.119** | **0.000** |
+| Route D hidden contrast tuned gate | yes | no | 0.707 | 0.778 | 0.078 | 0.104 | 0.000 |
+| Route D hidden contrast strict gate | yes | no | 0.608 | 0.633 | 0.056 | 0.075 | 0.000 |
+
+Operational read: A remains best if aggregate MCC is the only objective. D-lite is better if the paper's actual target is reducing the semantic-neighbor related-present false-positive gap while keeping recall above ~0.75. The method is not ready to replace the external detector in the main table until the D-lite tradeoff improves or holds on full POPE.
