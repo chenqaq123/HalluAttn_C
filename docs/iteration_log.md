@@ -99,3 +99,22 @@
 **Evidence/refs:** `docs/experiment_results.md` entry "D-lite cache-only formula sweep". Using random split calibration, the best TPR>=0.85 gate uses weights `[0, 1, -0.5, -0.5]` and threshold `-0.3032`, reaching MCC 0.751, TPR 0.850, FPR 0.100, related FPR 0.134 on the 360-row bounded set.
 
 **Implications / next:** This becomes the current best deployable, no-external-detector candidate. The improvement over route A is small, so the next required step is full-POPE validation with this formula fixed; if it holds, external-detector removal becomes plausible for the main method.
+
+## 2026-06-23 — Full POPE validation rejects D-lite as the main replacement
+**What changed:** Ran `evaluate_hidden_margin_tdev_pope.py` on all 9000 POPE rows in 5 GPU shards, merged the predictions, and evaluated the bounded-calibrated D-lite formula as a gate over vanilla.
+
+**Why:** The previous 360-row bounded audit found a small deployable gain, but it needed full-POPE validation before we could claim the external detector had been replaced.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "D-lite tuned formula full-POPE validation". Fixed formula/threshold gets Macro MCC 0.730, TPR 0.792, FPR 0.069, related FPR 0.093, plain FPR 0.016, adversarial related FPR 0.142. Vanilla is MCC 0.730, TPR 0.813, FPR 0.087, related FPR 0.114, plain FPR 0.028, adversarial related FPR 0.164.
+
+**Implications / next:** D-lite should be reported as an internal no-external-detector ablation, not as the main method. It proves related FPR can be reduced internally, but the recall loss cancels the MCC gain. The next implementation should integrate evidence instead of treating each scenario independently: combine target support, semantic-neighbor contrast, and answer confidence in one shared internal verifier, then validate on full POPE and CHAIR before updating paper tables.
+
+## 2026-06-23 — Cross-split calibration recovers a small internal gain
+**What changed:** Added `mitigation/scripts/cross_split_hidden_margin_verifier.py`, which tunes a shared D-lite hidden-margin formula on two POPE splits and evaluates on the held-out split using the official vanilla prediction files as the gate base.
+
+**Why:** The fixed bounded-threshold D-lite result lowered FPR but lost recall. We needed to separate two possibilities: bad fixed threshold transfer vs. insufficient internal evidence. The first version accidentally used the D-lite cache `prediction` field as the base; after correcting it to read `coco_llava_7b_attention_only/pope/<split>/vanilla/predictions.jsonl`, the gate behaved correctly.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Cross-split calibrated internal hidden-margin verifier". Held-out best-MCC macro is MCC 0.741, TPR 0.811, FPR 0.075, related FPR 0.100, plain FPR 0.021. Vanilla is MCC 0.730, TPR 0.813, FPR 0.087, related FPR 0.114, plain FPR 0.028.
+
+**Implications / next:** The current best internal method is now a shared hidden-margin verifier with cross-split calibration, not the bounded fixed D-lite formula. It still does not match OWLv2-backed TDEV, so the next technical step is to add answer-confidence/yes-logit evidence to the same verifier and then validate on CHAIR/caption claims before promoting it to the paper's last-row main method.
+

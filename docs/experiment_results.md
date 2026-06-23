@@ -241,3 +241,39 @@ Operational read: A remains best if aggregate MCC is the only objective. D-lite 
 | Route D hidden contrast tuned gate | supervised OOF probe | 0.707 | 0.778 | 0.078 | 0.104 | 0.000 |
 
 Next validation gate: rerun D-lite tuned formula on full POPE, ideally with formula fixed from the bounded/random calibration and no further tuning on popular/adversarial/full rows.
+
+### 2026-06-23 — D-lite tuned formula full-POPE validation
+- Setup: Full POPE random/popular/adversarial (9000 rows), LLaVA-1.5-7B, no external detector and no supervised readout. Script: `mitigation/scripts/evaluate_hidden_margin_tdev_pope.py` run in 5 shards, merged under `mitigation/results/semantic_neighbor_audit/hidden_margin_tdev_full/`. The deployed formula is fixed from the bounded/random calibration: `formula_score = hidden_cross_margin - 0.5*hidden_obj_separation - 0.5*hidden_vis_separation`, threshold `-0.3032374829053879`; evaluator: `mitigation/scripts/evaluate_pope_score_subset.py` with vanilla as the base prediction.
+- Result: fixed-formula gate reaches Macro MCC 0.730, TPR 0.792, FPR 0.069, related FPR 0.093, plain FPR 0.016, gap 0.077, adversarial related FPR 0.142. Relative to full vanilla in §D.3 (MCC 0.730, TPR 0.813, FPR 0.087, related FPR 0.114, plain FPR 0.028, gap 0.086, adv. related FPR 0.164), it lowers FPR/related-FPR but loses recall and does **not** improve aggregate MCC. The original zero gate is more conservative (MCC 0.653, TPR 0.686, FPR 0.055, related FPR 0.072). Full-set calibrated formula gives an upper-bound operating point (MCC 0.741, TPR 0.811, FPR 0.075, related FPR 0.099), but this uses full POPE labels for threshold selection and should not be reported as the deployable main result.
+- Interpretation: the bounded-set D-lite gain does not robustly transfer to full POPE. D-lite remains useful evidence that internal hidden target-vs-neighbor margins can suppress semantic-neighbor false positives without OWLv2, but it is not yet a replacement for the external TDEV verifier in the main table. Current paper-safe position: report it as a no-external-detector ablation/negative boundary, and continue with a stronger integrated internal readout rather than claiming detector removal is solved.
+- Supersedes: the bounded-set D-lite tuned formula claim as the preferred deployable candidate; full validation shows it is not a clear main-method improvement.
+
+#### Full POPE no-external-detector D-lite comparison
+
+| Method | Calibration | Macro MCC | TPR | FPR | Related FPR | Plain FPR | Gap | Adv. related FPR |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla | none | 0.730 | 0.813 | 0.087 | 0.114 | 0.028 | 0.086 | 0.164 |
+| D-lite hidden margin zero gate | fixed zero | 0.653 | 0.686 | 0.055 | 0.072 | 0.016 | 0.056 | 0.120 |
+| **D-lite tuned formula gate** | **bounded/random fixed** | **0.730** | **0.792** | **0.069** | **0.093** | **0.016** | **0.077** | **0.142** |
+| D-lite tuned formula gate | full-label calibrated upper bound | 0.741 | 0.811 | 0.075 | 0.099 | 0.021 | 0.078 | 0.147 |
+
+Decision: do **not** put fixed D-lite as the last-row main method in the paper table yet. It is a credible internal ablation because it removes the external detector and reduces semantic-neighbor FPR, but the main-method row still needs either (1) a stronger internal verifier that preserves TPR, or (2) a revised objective/table emphasizing FPR-gap reduction with an explicit recall tradeoff.
+
+### 2026-06-23 — Cross-split calibrated internal hidden-margin verifier
+- Setup: Full POPE 9000 rows, no external detector. Script: `mitigation/scripts/cross_split_hidden_margin_verifier.py`; input cache: `mitigation/results/semantic_neighbor_audit/hidden_margin_tdev_full/hidden_margin_tdev_predictions.csv`; vanilla base predictions are read from `mitigation/results/coco_llava_7b_attention_only/pope/<split>/vanilla/predictions.jsonl`. The verifier tunes a shared linear score over `[hidden_align_margin, hidden_cross_margin, hidden_obj_separation, hidden_vis_separation]` on two POPE splits and evaluates on the held-out split, then reports the concatenated held-out predictions. This avoids full-label threshold leakage while still using POPE labels for calibration.
+- Result: best held-out MCC objective gives Macro MCC 0.741, TPR 0.811, FPR 0.075, related FPR 0.100, plain FPR 0.021, gap 0.079, adversarial related FPR 0.147. Compared with vanilla (MCC 0.730, TPR 0.813, FPR 0.087, related FPR 0.114, plain FPR 0.028, gap 0.086, adv. related FPR 0.164), it preserves recall almost exactly while reducing FPR and the semantic-neighbor FPR gap. The lower-FPR objective with held-out TPR >= 0.80 gives MCC 0.736, TPR 0.802, FPR 0.071, related FPR 0.096, plain FPR 0.017. The TPR >= 0.75 objective gives stronger suppression but too much recall loss: MCC 0.703, TPR 0.751, FPR 0.060, related FPR 0.080.
+- Interpretation: after fixing the base-prediction source, cross-split calibration recovers a small but real no-external-detector improvement over vanilla. This is stronger than the bounded fixed-threshold D-lite result, but still weaker than the original OWLv2-backed hybrid gate+rescue (MCC 0.763, FPR 0.051, related FPR 0.069). It should be positioned as the current internal replacement candidate, not yet the final main method. The next step is to add answer-confidence/yes-logit evidence and validate the same shared verifier on CHAIR-style caption claims.
+- Supersedes: the fixed bounded-threshold D-lite result as the best current internal no-external-detector candidate.
+
+#### Full POPE internal verifier comparison after cross-split calibration
+
+| Method | Calibration | External detector | Macro MCC | TPR | FPR | Related FPR | Plain FPR | Gap | Adv. related FPR |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla | none | no | 0.730 | 0.813 | 0.087 | 0.114 | 0.028 | 0.086 | 0.164 |
+| D-lite tuned formula gate | bounded/random fixed | no | 0.730 | 0.792 | 0.069 | 0.093 | 0.016 | 0.077 | 0.142 |
+| **Cross-split hidden-margin verifier** | **leave-one-split-out** | **no** | **0.741** | **0.811** | **0.075** | **0.100** | **0.021** | **0.079** | **0.147** |
+| Cross-split hidden-margin verifier | held-out TPR >= 0.80 / min FPR | no | 0.736 | 0.802 | 0.071 | 0.096 | 0.017 | 0.079 | 0.143 |
+| Hybrid gate+rescue | full control table | yes / OWLv2 | 0.763 | 0.806 | 0.051 | 0.069 | 0.012 | 0.057 | 0.105 |
+
+Current method design: use one shared internal verifier rather than separate scenario-specific rules. For each target object, construct a semantic-neighbor prompt, extract hidden object/visual vectors from layers 22/31, compute target-vs-neighbor alignment/cross/separation margins, then gate only vanilla `yes` answers whose internal target evidence falls below the calibrated threshold. The method is correlated across scenarios through the same score components and calibration objective, not separately hand-designed per table.
+
