@@ -222,3 +222,22 @@ Route D is the first internal path that materially improves the related-present 
 | Route D hidden contrast strict gate | yes | no | 0.608 | 0.633 | 0.056 | 0.075 | 0.000 |
 
 Operational read: A remains best if aggregate MCC is the only objective. D-lite is better if the paper's actual target is reducing the semantic-neighbor related-present false-positive gap while keeping recall above ~0.75. The method is not ready to replace the external detector in the main table until the D-lite tradeoff improves or holds on full POPE.
+
+### 2026-06-23 — D-lite cache-only formula sweep, 120-row POPE bounded audit
+- Setup: Cache-only tuning on `hidden_margin_tdev_120/hidden_margin_tdev_predictions.csv`, no VLM rerun and no external detector. Script: `mitigation/scripts/tune_hidden_margin_formula.py`. The sweep uses POPE-random as the calibration split, a small interpretable weight grid over `[hidden_align_margin, hidden_cross_margin, hidden_obj_separation, hidden_vis_separation]`, and vanilla predictions as the gate base. Popular/adversarial are therefore not used to select the formula.
+- Artifacts: `mitigation/results/semantic_neighbor_audit/hidden_margin_formula_sweep_small_vanillagate_120/`.
+- Result: best calibrated gate with TPR >= 0.85 uses weights `[0, 1, -0.5, -0.5]` and threshold `-0.3032`. On the full 360-row bounded set it reaches MCC 0.751, TPR 0.850, FPR 0.100, related FPR 0.134, plain FPR 0.000. This improves over A IC target gate (MCC 0.745, FPR 0.106, related FPR 0.142) while preserving vanilla TPR. A lower-FPR calibrated point (`[0.5, -0.5, -0.5, -0.5]`, threshold `-0.1981`) gets MCC 0.735, TPR 0.833, FPR 0.100, related FPR 0.134.
+- Interpretation: this is the first training-free internal D-lite variant that slightly beats route A on aggregate MCC and semantic-neighbor FPR while keeping TPR at 0.850. The gain is small on the 360-row bounded set, so it needs full-POPE validation before replacing the external detector in the main table. Still, this is now the best no-external-detector deployable candidate.
+- Supersedes: the earlier zero-threshold D-lite operating point as the preferred bounded-set deployable candidate.
+
+#### Updated deployable internal candidate table
+
+| Method | Calibration | MCC | TPR | FPR | Related FPR | Plain FPR |
+|---|---|---:|---:|---:|---:|---:|
+| Vanilla | none | 0.739 | 0.850 | 0.111 | 0.149 | 0.000 |
+| Route A IC target gate | random threshold | 0.745 | 0.850 | 0.106 | 0.142 | 0.000 |
+| D-lite hidden margin zero gate | fixed zero | 0.670 | 0.750 | 0.089 | 0.119 | 0.000 |
+| **D-lite tuned formula gate** | **random formula/threshold** | **0.751** | **0.850** | **0.100** | **0.134** | **0.000** |
+| Route D hidden contrast tuned gate | supervised OOF probe | 0.707 | 0.778 | 0.078 | 0.104 | 0.000 |
+
+Next validation gate: rerun D-lite tuned formula on full POPE, ideally with formula fixed from the bounded/random calibration and no further tuning on popular/adversarial/full rows.

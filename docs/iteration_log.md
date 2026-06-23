@@ -90,3 +90,12 @@
 **Evidence/refs:** `docs/experiment_results.md` entry "Training-free hidden-margin D-lite". On the 360 bounded POPE rows, zero-threshold D-lite gate reaches MCC 0.670, TPR 0.750, FPR 0.089, related FPR 0.119, plain FPR 0.000. This is weaker than supervised route D but better than route A at reducing related-present FPR without collapsing recall.
 
 **Implications / next:** D-lite is the current best deployable internal candidate, but not sufficient for final claims. Next work should tune its formula/layers against the supervised D ceiling, run full POPE, and only then decide whether external detector removal is viable for the main method.
+
+## 2026-06-23 — D-lite formula sweep gives the best deployable internal candidate
+**What changed:** Added `tune_hidden_margin_formula.py`, a cache-only formula/threshold sweep for D-lite hidden-margin components. The script now only runs gate sweeps when a real vanilla `base_prediction` CSV is supplied, avoiding accidental self-gating.
+
+**Why:** The initial D-lite zero gate lowered related FPR but lost too much recall. We needed a bounded, calibration-only way to tune the training-free score without rerunning the VLM.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "D-lite cache-only formula sweep". Using random split calibration, the best TPR>=0.85 gate uses weights `[0, 1, -0.5, -0.5]` and threshold `-0.3032`, reaching MCC 0.751, TPR 0.850, FPR 0.100, related FPR 0.134 on the 360-row bounded set.
+
+**Implications / next:** This becomes the current best deployable, no-external-detector candidate. The improvement over route A is small, so the next required step is full-POPE validation with this formula fixed; if it holds, external-detector removal becomes plausible for the main method.
