@@ -46,6 +46,7 @@ Supported framing:
 - TDEV is a target-vs-neighbor verification criterion, currently instantiated with OWLv2 region evidence;
 - the strongest POPE result is a modest hybrid gate-plus-rescue verifier: macro MCC `0.730 -> 0.763`, related FPR `0.114 -> 0.069`;
 - LH-Shape/TDEV-lite evidence is supervised triage/readout evidence, not a standalone mitigation method.
+- verified atomic caption detail is a scoped 100-image prototype, not a complete caption benchmark method.
 
 Avoid claiming:
 

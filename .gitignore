@@ -14,6 +14,9 @@ mitigation/results/
 .mypy_cache/
 .ruff_cache/
 .reviews/
+reviews/
+paper/*.xdv
+paper/aaai27_template/
 
 # Separate paper repository.
 paper_repo/

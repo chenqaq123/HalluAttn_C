@@ -1,0 +1,49 @@
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage[submission]{aaai2027}  % DO NOT CHANGE THIS
+% The serif, sans-serif, and monospaced fonts are loaded automatically by
+% aaai2027.sty. Do not add times/helvet/courier or other font packages.
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{array}
+
+\pdfinfo{
+/TemplateVersion (2027.1)
+}
+
+\setcounter{secnumdepth}{1}
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{TODO:}~#1}}
+
+\title{Looking Is Not Grounding: A Diagnostic Framework for Attention-Based Hallucination Detection and Mitigation in LVLMs}
+
+\author{Anonymous Submission}
+\affiliations{}
+
+\begin{document}
+\maketitle
+
+\input{sections/00_abstract}
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/02_attention_proxy}
+\input{sections/03_diagnostic_protocol}
+\input{sections/04_detection_findings}
+\input{sections/05_mitigation_findings}
+\input{sections/06_associated_evidence_audit}
+\input{sections/06_discussion}
+\input{sections/07_conclusion}
+\input{sections/08_limitations}
+
+\appendix
+\input{sections/10_appendix}
+
+\bibliography{custom}
+
+\end{document}

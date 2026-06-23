@@ -9,8 +9,9 @@ methodology section of a paper.
 > attention-based hallucination detection is strongly confounded by object
 > generation position, and mean-over-head attention aggregation hides much of
 > the signal that survives in late-layer per-head features. Mitigation-side
-> claims (e.g. whether attention/visual-enhancement methods shift the answer
-> prior on POPE) remain hypotheses until reproduced under controlled metrics.
+> experiments now show that attention interventions can shift output behavior
+> (e.g. yes-prior on POPE or object richness in captions) without improving
+> object-level hallucination.
 
 ---
 
@@ -55,50 +56,159 @@ The latest experiments reveal a third confounder:
 
 **Gap statement.** Existing attention detectors often measure *how much* a
 query attends to visual/text tokens, not whether the attention evidence is
-position-controlled, head-specific, and genuinely grounded. Aggregate metrics
-then make this worse: global AUROC can reward generation position, and POPE
-accuracy/F1 can reward a shifted yes/no answer prior. The current project
-therefore treats evaluation confounds and attention aggregation as the central
-objects of study.
+position-controlled, head-specific, and genuinely grounded. Existing
+attention-based mitigation methods often make the symmetric move: they increase
+or re-route visual attention, assuming this will improve grounding. Aggregate
+metrics then make both sides worse: global AUROC can reward generation
+position, and POPE accuracy/F1 can reward a shifted yes/no answer prior.
+
+The current project therefore treats evaluation confounds, attention
+aggregation, and attention intervention as one connected problem:
+
+> **Visual attention allocation is not equivalent to object-level visual
+> evidence verification.**
+
+Attention reveals where computation is routed. Hallucination detection and
+mitigation require a harder property: whether the current object claim is
+supported by image evidence. Existing methods often optimize visibility rather
+than verifiability.
+
+A more concrete failure mode is **associated-evidence grounding**. The model
+may attend to a real visual region that is semantically or contextually related
+to the queried object, while the queried object itself is absent. For example,
+when asked whether a *sink* is present in an image containing a *toilet*, the
+model can route attention to the toilet/bathroom region, activate a
+sink-related language prior through object co-occurrence and embedding
+similarity, and answer "yes". The attention map then looks visually grounded,
+but the evidence is only associated with the claim, not discriminative for the
+target object.
+
+This mechanism refines the thesis:
+
+> Attention may be selective for visually or semantically associated evidence,
+> but hallucination detection and mitigation require target-discriminative
+> evidence.
+
+The newly added reference
+`ref/adavib_adaptively_constraining_information_flow_2502.20750.pdf`
+supports this direction. Bai et al. argue that object hallucination can arise
+from overconfidence in irrelevant visual features when soft visual tokens map
+into the LLM word-embedding space, and they analyze semantic similarity between
+visual tokens and word embeddings. LURE and POPE provide complementary support
+from the data side: co-occurring objects are more likely to be hallucinated.
+Together, these works support our explanation that attention can correctly
+route to visual context while still failing object-level verification.
 
 ---
 
-## 2. Current Claim Structure
+## 2. Unifying Thesis
+
+Detection and mitigation look like separate tasks, but attention-based methods
+for both usually share the same proxy:
+
+    visual attention quality  ≈  visual grounding quality
+
+Detection methods instantiate this proxy by scoring attention distributions:
+PAS and SVAR measure text/visual mass, CVG and concentration measure visual
+shape, and related methods summarize a high-dimensional attention pattern into
+a scalar hallucination score.
+
+Mitigation methods instantiate the same proxy operationally: PAI-attention-only
+pushes visual attention logits upward, ClearSight amplifies mid-layer
+text-to-image attention while suppressing system-prefix attention, and Visual
+Attention Sink redistributes sink mass toward non-sink visual tokens.
+
+Our results suggest the proxy breaks in both directions:
+
+- **Detection:** coarse attention scores can look strong globally while
+  exploiting generation-position confounds rather than object grounding.
+- **Mitigation:** increasing visual influence can increase positive responses
+  or object-rich captions without improving object-presence discrimination.
+- **Diagnosis:** attention is not empty; late-layer per-head features contain
+  signal. The failure is the assumption that simple attention mass, shape, or
+  amplification is already evidence verification.
+
+The associated-evidence mechanism explains why the proxy can fail even when the
+attention map is not obviously wrong. A visual-attention intervention can
+increase attention on a real object or scene region that is correlated with the
+target word. That increased attention can strengthen a plausible but false
+object claim, producing a yes-prior shift or richer caption, while leaving the
+model unable to distinguish "the image contains a toilet" from "the image
+contains a sink". Therefore the relevant question is not only whether visual
+attention increased, but whether the attended evidence is
+**target-discriminative**.
+
+This gives the paper-level story:
+
+    attention as proxy
+      -> proxy breaks under controlled detection evaluation
+      -> interventions based on the proxy also shift behavior without
+         reliable hallucination reduction
+      -> future methods need verification-aware attention analysis
+
+One-sentence thesis:
+
+> Attention reveals where a model looks, but not whether it verifies what it
+> says.
+
+---
+
+## 3. Current Claim Structure
 
 We separate claims into what is already supported by experiments and what
 remains a hypothesis.
 
-### 2.1 Verified Claims
+### 3.1 Verified Claims
 
 1. **Detection scores are position-confounded.** On the current
    LLaVA-1.5-7B / COCO run, object generation position alone reaches AUROC
    0.8304. PAS and SVAR obtain high global AUROC but collapse under
-   within-bin, matched-pair, and residual evaluation.
+   within-bin, matched-pair, and residual evaluation. The same conclusion
+   holds under stronger post-hoc controls: nonlinear residualization and
+   same-object-word matched AUROC.
 2. **Mean-over-head attention is too coarse.** Closed-form shape scores on
    mean-over-head attention mostly fail under position control.
 3. **Attention is not empty.** A supervised diagnostic probe over late-layer
    per-head attention-shape features recovers substantial position-controlled
    signal. This suggests that the failure is not attention itself, but coarse
    aggregation and uncontrolled evaluation.
+4. **Attention interventions do not guarantee grounding improvements.** In the
+   current mitigation run, PAI-attention-only gives no POPE/CHAIR benefit,
+   ClearSight primarily shifts POPE responses toward "yes" with comparable or
+   larger FPR increases, and Visual Attention Sink increases caption object
+   richness together with hallucinated object mentions.
+5. **Mitigation claims must be component-scoped.** PAI is currently evaluated
+   as attention-only, excluding its contrastive/CFG branch. ClearSight and
+   Visual Attention Sink are ported attention interventions. Paper claims
+   should name this scope explicitly.
+6. **Mechanism audit is the next decisive mitigation experiment.** The
+   implemented attention-shift audit records pre/post visual, prefix, and sink
+   attention mass for each POPE sample. This tests whether the interventions
+   change attention as intended and whether those changes align with TP rather
+   than FP behavior.
+7. **Associated visual evidence is a plausible mechanism, not a side note.**
+   The newly added AdaVIB reference analyzes hallucination as overconfidence in
+   irrelevant visual features after visual tokens enter the LLM embedding
+   space. Together with POPE/LURE-style co-occurrence findings and our
+   mitigation audit, this supports a concrete failure mode: attention can route
+   to a real, semantically related region while the answer still lacks
+   target-discriminative evidence. The toilet/sink case is therefore not just
+   anecdotal; it illustrates how attention to a related object can support a
+   false "yes" when the model does not verify the queried object itself.
 
-### 2.2 Hypotheses Still Under Test
+### 3.2 Hypotheses Still Under Test
 
-1. **Mitigation metrics may also be confounded.** On POPE-style yes/no
-   benchmarks, training-free interventions such as visual-signal enhancement
-   or attention amplification may improve aggregate scores by shifting the
-   answer prior toward "yes", rather than by improving visual grounding. This
-   is a plausible diagnostic lens, not a result yet.
-2. **Head-selection mitigation may be a positive counterexample.** Papers that
+1. **Head-selection mitigation may be a positive counterexample.** Papers that
    select or enhance specific heads might align with the per-head diagnostic
    finding. They must be reproduced before we claim that mitigation methods are
    generally flawed.
-3. **A fair training-free per-head detector is not implemented yet.** The
+2. **A fair training-free per-head detector is not implemented yet.** The
    supervised per-head probe is an evidence test / upper bound, not an
    apples-to-apples detector against PAS, SVAR, IC, or GLSim.
 
 ---
 
-## 3. Original Shape Hypothesis
+## 4. Original Shape Hypothesis
 
 > **A grounded object generation produces a visual attention distribution
 > that is (i) concentrated on a small set of content-relevant tokens,
@@ -117,7 +227,7 @@ washed out by averaging.
 
 ---
 
-## 4. De-biasing model and ablations
+## 5. De-biasing model and ablations
 
 Let `a^{(l)}_q ∈ Δ^{|V|}` be the row of layer-*l* attention from query
 position *q* (the object's preceding token) restricted to the visual span
@@ -186,7 +296,7 @@ are more often hallucinated.
 
 ---
 
-## 5. Estimating the null without extra forward passes
+## 6. Estimating the null without extra forward passes
 
 The cleanest estimator of `p_RoPE` would be to run forward passes on
 **noise images** (or all-mean-token replacements), averaging the attention
@@ -227,7 +337,7 @@ A noise-image null is a planned extension (`docs/roadmap.md` once written).
 
 ---
 
-## 6. Scoring families
+## 7. Scoring families
 
 All distributions below are visual-token distributions extracted from one of
 the four branches above. For branches that remove sinks (`sink_only_*` and
@@ -240,7 +350,7 @@ pre-RoPE key L2 norms within the visual span, then clamped to `[3, 30]`.
 
 For a single object mention at query position *q*:
 
-### 6.1 CVG — Counterfactual Visual Grounding
+### 7.1 CVG — Counterfactual Visual Grounding
 
 Closeness between the object query's visual distribution and the
 instruction null:
@@ -268,7 +378,7 @@ across images and does not depend on the generated object word. Local
 generated-token nulls are implementation-level exploratory features and should
 not be part of the main method unless a later ablation justifies them.
 
-### 6.1.1 Position-Calibrated CVG
+### 7.1.1 Position-Calibrated CVG
 
 The row-cache experiments show that instruction-token and uniform nulls can be
 dominated by generation position. In particular, `sink_only_cvg_kl_uniform`
@@ -294,9 +404,9 @@ it only takes nearby non-object generated tokens. Refinements to test:
   tokens from the local null;
 - weight local null rows by distance from the object token;
 - compare deltas in concentration and peak overlap, not only KL/JSD;
-- evaluate only with position-controlled metrics (see §6.5).
+- evaluate only with position-controlled metrics (see §7.5).
 
-### 6.2 Concentration
+### 7.2 Concentration
 
 Shape statistics of the test distribution, no null required:
 
@@ -306,7 +416,7 @@ Shape statistics of the test distribution, no null required:
 
 These test the "concentrated on a small region" property directly.
 
-### 6.3 CLC — Cross-Layer Consistency
+### 7.3 CLC — Cross-Layer Consistency
 
 Stack the per-layer sink-stripped distributions into a matrix
 `P ∈ R^{L × |V|}` (one row per layer). Compute:
@@ -323,7 +433,7 @@ A "mid-late layers only" version restricts to `[L/2−2, L−4]` because
 grounding is typically cleanest in mid-late layers in the literature
 (empirical, layer-range is a hyperparameter).
 
-### 6.4 Branch prefixes and global versions
+### 7.4 Branch prefixes and global versions
 
 For every shape score, the branch name is encoded in the key:
 
@@ -342,7 +452,7 @@ first** (not the scores), then applies the same formula. That is:
 This is structurally different from "average the per-layer scores" and the
 two should *not* be expected to give the same answer.
 
-### 6.5 Evaluation metrics: global vs position-controlled
+### 7.5 Evaluation metrics: global vs position-controlled
 
 Global AUROC is still useful as a diagnostic, but it is insufficient for the
 main claim. AUROC means the probability that a random hallucinated object
@@ -382,13 +492,13 @@ evaluation.
 
 ---
 
-## 7. Fast metric iteration cache
+## 8. Fast metric iteration cache
 
 Changing CVG signs, KL/JSD variants, concentration formulas, CLC aggregation,
 or fusion groups should not require another LLaVA forward pass. Stage 2 can
 therefore save compact caches.
 
-### 7.1 Legacy branch cache
+### 8.1 Legacy branch cache
 
     SAVE_SHAPE_CACHE=1 bash detection/scripts/legacy/run_parallel.sh
 
@@ -409,7 +519,7 @@ This cache is valid for formula-level iteration. It is **not** valid if the
 model, prompt, sink detector, top-mass ratio, or purification operation itself
 changes, because those change the cached rows.
 
-### 7.2 Attention-row cache for current ablations
+### 8.2 Attention-row cache for current ablations
 
 The current experimental path is an explicit two-stage attention-row cache:
 
@@ -449,7 +559,7 @@ The row cache is also shardable:
 
 ---
 
-## 8. Efficiency design
+## 9. Efficiency design
 
 The main computational cost is not CHAIR or score aggregation. It is the
 white-box attention extraction pass. Stage 2 currently runs a teacher-forced
@@ -499,7 +609,7 @@ larger scale.
 
 ---
 
-## 9. Model-agnostic extension for commercial VLMs
+## 10. Model-agnostic extension for commercial VLMs
 
 Commercial VLMs usually do not expose attention maps, hidden states, logits,
 or decoding internals. A naive black-box extension based on image
@@ -545,13 +655,13 @@ surrogate-verifier transfer to commercial VLM outputs.
 
 ---
 
-## 10. Mitigation-side diagnostic: currently a hypothesis
+## 11. Mitigation-side diagnostic
 
-The same evaluation concern may apply to hallucination **mitigation**
-benchmarks. In POPE-style object-existence QA, a method can improve aggregate
-accuracy or F1 by changing the answer prior, not necessarily by improving
-grounding. In particular, an intervention that makes the model answer "yes"
-more often will tend to:
+The same evaluation concern applies to hallucination **mitigation** benchmarks.
+In POPE-style object-existence QA, a method can improve aggregate accuracy or
+F1 by changing the answer prior, not necessarily by improving grounding. In
+particular, an intervention that makes the model answer "yes" more often will
+tend to:
 
 - increase recall / TPR on positive object queries;
 - increase false positives / FPR on negative object queries;
@@ -576,18 +686,43 @@ Interpretation:
 | `ΔFPR >= ΔTPR > 0` | likely yes-bias / threshold shift |
 | `ΔTPR ≈ ΔFPR` | mostly global answer-prior movement |
 
-This section is intentionally conservative. ClearSight, PAI, VCD-style
-methods, and head-selection / head-enhancement methods should be analyzed
-under this protocol before making any paper-facing claim. The current project
-has only the observation that some prior POPE runs appeared to move samples
-one-sidedly toward "yes"; it has not yet reproduced those methods in this
-repository.
+This section is intentionally conservative. The `mitigation/` track now
+implements controlled generation for:
+
+- PAI attention manipulation only, deliberately excluding its contrastive
+  decoding / CFG logits branch;
+- ClearSight Visual Amplification Fusion (VAF);
+- Visual Attention Sink redistribution from *See What You Are Told*;
+- vanilla greedy generation as the matched comparison anchor.
+
+The implementation runs the same method on POPE and CHAIR. On POPE it retains
+per-question outputs and reports yes-rate, TPR, FPR, balanced accuracy, MCC,
+and `Delta TPR - Delta FPR` against vanilla. On CHAIR it regenerates captions
+for the fixed COCO manifest and reports CHAIR scores together with caption
+length, object-mention count, and hallucinated-mention count.
+
+Current mitigation result:
+
+- **PAI-attention-only** gives essentially no benefit. It slightly decreases
+  POPE accuracy/F1 and does not reduce CHAIR.
+- **ClearSight** increases POPE yes-rate by about 3.6 points on average. TPR
+  rises by about 3.5 points, but FPR rises by about 3.8 points, so the net
+  `Delta TPR - Delta FPR` is negative. On adversarial POPE, FPR increases more
+  than TPR and accuracy drops.
+- **Visual Attention Sink** mildly increases yes-rate and FPR on POPE, and on
+  CHAIR it makes captions longer, object mentions more numerous, and
+  hallucinated mentions more frequent.
+
+These results support the unified thesis: increasing or re-routing visual
+attention can change output behavior without improving object-level evidence
+verification. Head-selection / head-enhancement methods remain outside the
+implemented set and may be positive counterexamples.
 
 ---
 
-## 11. Theoretical hook (for a paper)
+## 12. Theoretical hook (for a paper)
 
-Under the generative model in §4:
+Under the generative model in §5:
 
 > **Proposition (informal).** Suppose hallucinated mentions satisfy
 > `π_C = 0` and grounded mentions satisfy `π_C ≥ c_0 > 0`, and that
@@ -608,7 +743,7 @@ and `π_R`. A rigorous proof needs Pinsker plus a tail bound; not done.
 
 ---
 
-## 12. What this is **not**
+## 13. What this is **not**
 
 - Not currently a learned detector — the main closed-form SinkDetect scores
   are training-free. The per-head logistic model is a **diagnostic probe** and
@@ -624,7 +759,7 @@ and `π_R`. A rigorous proof needs Pinsker plus a tail bound; not done.
 
 ---
 
-## 13. Open questions to validate empirically
+## 14. Open questions to validate empirically
 
 These questions must now be answered under position-controlled evaluation, not
 only global AUROC:
@@ -644,6 +779,9 @@ only global AUROC:
    probe without using labels at test time?
 9. Do mitigation methods improve grounding or merely shift the yes/no answer
    prior on POPE-style benchmarks?
+10. When a queried object is absent, does attention concentrate on
+    semantically related objects or scene context more often in false positives
+    than in true negatives?
 
 Answer pattern that would support the design:
 
@@ -655,11 +793,11 @@ Answer pattern that would support the design:
 - CLC or no-RoPE concentration keeps modest but stable signal across position
   bins.
 
-If any of these fail, the design needs revision (see §14).
+If any of these fail, the design needs revision (see §15).
 
 ---
 
-## 14. Likely failure modes and revision paths
+## 15. Likely failure modes and revision paths
 
 - **Instruction null is too close to object null.** Mitigation: switch to
   noise-image null. Cost: small one-time calibration pass; clean theoretical
@@ -697,6 +835,14 @@ If any of these fail, the design needs revision (see §14).
 - **Full attention extraction is too slow.** Mitigation: implement row-level
   visual attention extraction for object/instruction/null query rows, and
   restrict expensive per-head analysis to a small layer set.
+- **Associated-evidence grounding can masquerade as visual grounding.** A
+  method may attend to a real object or scene region that is correlated with the
+  queried object, such as toilet evidence for a sink query, and still answer
+  incorrectly. This failure mode is especially dangerous for both detection and
+  mitigation because the attention map looks visually meaningful. Mitigation:
+  add semantic-neighbor controls, absent-object POPE slices with co-occurring
+  objects, and TP/FP attention audits that distinguish target evidence from
+  merely related evidence.
 - **Mitigation-side critique overreaches.** If head-selection or
   visual-enhancement methods improve TPR without increasing FPR, the story
   should not be "mitigation methods are flawed." It should be "aggregate POPE
@@ -705,7 +851,7 @@ If any of these fail, the design needs revision (see §14).
 
 ---
 
-## 15. Current empirical notes
+## 16. Current empirical notes
 
 Current row-cache run:
 
@@ -739,7 +885,7 @@ uniform-null CVG is not yet evidence of visual grounding detection. The most
 promising direction is no-RoPE plus local position-controlled contrasts, with
 CLC as a complementary weak signal.
 
-### 15.1 Per-head diagnostic: the signal is washed out, not absent
+### 16.1 Per-head diagnostic: the signal is washed out, not absent
 
 The mean-over-heads shape scores above collapse to chance under position
 control. To test whether this is because (a) attention carries no
@@ -777,18 +923,18 @@ Caveat for the paper: the 0.73 probe is **supervised** whereas IC/PAS/SVAR are
 training-free, so "beats IC (0.686)" is not yet an apples-to-apples claim. The
 *scientific* claim (signal exists, deepens with layer, is washed out by
 averaging) is established by the within-probe layer comparison; a fair
-detector comparison requires a training-free variant (§15.2) or giving IC the
+detector comparison requires a training-free variant (§16.2) or giving IC the
 same probe treatment.
 
-### 15.2 LH-Shape: late-layer per-head attention-shape detector (proposed)
+### 16.2 LH-Shape: late-layer per-head attention-shape detector (proposed)
 
-Motivated by §15.1, the constructive method for the paper. **LH-Shape** scores
+Motivated by §16.1, the constructive method for the paper. **LH-Shape** scores
 the *shape* of each late-layer head's visual-attention distribution and
 aggregates, rather than averaging heads first.
 
 - **Features.** For the object query at the last layer (and optionally a small
   late-layer set, e.g. `{22, 31}`), per head `h`: the L1-normalized visual row's
-  entropy, top-`k` mass, and `max_over_mean` (the §15.1 features). Sink removal
+  entropy, top-`k` mass, and `max_over_mean` (the §16.1 features). Sink removal
   optional as an ablation.
 - **Supervised variant (signal ceiling).** Linear probe over the per-head
   feature vector; report position-controlled within-bin / matched-pair /
@@ -818,7 +964,7 @@ features) then `detection/scripts/diagnose_per_head.py` (CPU, position-controlle
 
 ---
 
-## 16. References (from memory; verify before submission)
+## 17. References (from memory; verify before submission)
 
 - Xiao et al., *Efficient Streaming Language Models with Attention Sinks*,
   ICLR 2024.
@@ -830,6 +976,8 @@ features) then `detection/scripts/diagnose_per_head.py` (CPU, position-controlle
 - Leng et al., *Mitigating Object Hallucinations in LVLMs through Visual
   Contrastive Decoding (VCD)*, CVPR 2024.
 - Liu et al., *Paying More Attention to Image (PAI)*, 2024.
+- Bai et al., *Mitigating Hallucinations in Large Vision-Language Models by
+  Adaptively Constraining Information Flow (AdaVIB)*, arXiv 2025.
 - Chuang et al., *DoLa*, ICLR 2024.
 - Abnar & Zuidema, *Attention Rollout*, 2020.
 

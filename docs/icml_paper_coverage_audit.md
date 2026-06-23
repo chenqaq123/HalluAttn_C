@@ -1,6 +1,6 @@
 # ICML Paper Coverage Audit
 
-Date: 2026-06-18
+Date: 2026-06-20
 
 This note checks whether the current paper draft covers the evidence already
 accepted in `docs/icml_evidence_matrix.md`. It is a writing task list, not a new
@@ -18,7 +18,7 @@ practicality/caption results kept scoped.
 | C4. Generic region/object evidence is not enough | Covered in region-verifier POPE table: raw target score over-fires on related negatives. | Main text ready. |
 | C5. TDEV target-vs-neighbor verification is constructive | Covered with hybrid gate-plus-rescue and scoped method text. | Main text ready. |
 | C6. TDEV transfers to CHAIR object-mention detection | Partly covered through OWLv2 region-verifier detection table. | Main text ready, but make clear this is scoring/post-hoc detection. |
-| C7. Caption-side mitigation exists but is proxy/rewrite-based | Covered in appendix table as deterministic proxy correction. | Appendix only unless fluent rewrite/constrained regeneration is added. |
+| C7. Caption-side mitigation exists, but the paper-safe version is verified atomic claim acceptance. | Appendix proxy table is covered; the newer 100-image high-risk verified atomic detail prototype is documented in `docs/caption_method_route_summary.md` but is not yet in the LaTeX draft. | Add as an appendix/prototype table if space allows. Keep scoped: positive caption-side direction, not a full caption benchmark result. |
 | C8. TDEV-lite/LH-Shape practicality | Covered in appendix table with LH-alone failure and routed-TDEV controls. | Keep secondary; label as supervised triage. |
 | C9. Qwen2.5-VL replication | Covered in appendix cross-model robustness table. | Keep secondary; output-level plus OWLv2 evidence only. |
 | C10. Novelty is not external detection or chain verification | Covered in related work and limitations. | Main text ready; keep wording conservative. |
@@ -47,8 +47,9 @@ What the current evidence supports:
 What the current evidence does not support:
 
 1. The method is not a strong standalone hallucination mitigation system.
-2. Caption-side edits are currently proxy post-processing, not fluent
-   generation-time correction.
+2. Caption-side mitigation has moved beyond pure proxy editing, but the best
+   positive result is still a 100-image high-risk verified atomic detail
+   prototype rather than a full natural caption benchmark result.
 3. LH-Shape is useful as a supervised triage/readout signal, not as a
    training-free replacement for TDEV.
 4. The Qwen result is positive but small, so it should be robustness evidence,
@@ -102,29 +103,40 @@ training-free mitigation method and not a replacement for TDEV.
 
 ### 3. Caption-side correction appendix
 
-Status: added to `paper/tables/table_appendix_caption_proxy.tex` and audited by
-`paper/scripts/check_audited_numbers.py`.
+Status: `paper/tables/table_appendix_caption_proxy.tex` covers the older
+4,977-image deterministic proxy rows and is audited by
+`paper/scripts/check_audited_numbers.py`. The stronger verified atomic detail
+prototype is currently documented in `docs/caption_method_route_summary.md`; it
+should be added to the LaTeX appendix only with scoped wording.
 
 Purpose: show that target-discriminative object-mention scoring can support
-caption correction, while not pretending we have a fluent decoder-integrated
-method.
+caption correction, while not pretending we have a full decoder-integrated
+captioning system.
 
-Use current scoped numbers:
+Use the proxy rows as historical/appendix evidence:
 
 | Caption variant | CHAIRi | CHAIRs | Mean words | Scope |
 |---|---:|---:|---:|---|
 | vanilla | 0.1340 | 0.4921 | 89.54 | 4,977-image object-mention scope |
 | neutral rewrite top-5 | 0.1186 | 0.4505 | 89.41 | deterministic local placeholder rewrite |
 | generic noun rewrite top-5 | 0.1186 | 0.4505 | 89.53 | deterministic generic object rewrite |
-| sentence gate top-5 | 0.1165 | 0.4396 | 86.53 | prototype only; too coarse for appendix table unless discussed as negative evidence |
 | deletion top-10 | 0.1048 | 0.4047 | 88.98 | stronger but less natural edit |
 
-Required wording: this is deterministic post-processing/proxy evidence, not
-natural generation or decoding-time mitigation. The generic-noun row is a
-length-preserving stress test, not evidence of fluent visual correction. The
-sentence-gate prototype is more grammatical than clause deletion but too
-length-destructive, so it should be discussed only as a method-direction check
-unless a decode-time object-phrase gate replaces it.
+Use the current high-risk 100-image caption route as prototype evidence:
+
+| Prototype | CHAIRi | Hall. mentions | Mean words | Retained vanilla grounded | Delta grounded | Delta hallucinated | Scope |
+|---|---:|---:|---:|---:|---:|---:|---|
+| claim-local repair | 0.0600 | 27 | 50.74 | 73.47% | -- | -- | deterministic fallback |
+| controlled regen concise | 0.0538 | 12 | 17.75 | 36.47% | -- | -- | negative control: over-compressed |
+| controlled regen detail | 0.0714 | 27 | 39.04 | 60.73% | -- | -- | negative control: worse than repair |
+| verified atomic detail o0.85 | 0.0541 | 27 | 54.63 | 77.49% | +49 | +0 | best current prototype setting |
+
+Required wording: the verified atomic result is the first positive caption-side
+route after negative controls, but it remains selected high-risk 100-image
+evidence. The paper may claim that TDEV-style target-vs-neighbor acceptance can
+recover grounded detail without adding CHAIR hallucinated mentions on this
+prototype set. It should not claim a complete caption mitigation method or a
+benchmark-wide captioning result.
 
 ## Recommended Next Paper Edits
 
@@ -133,20 +145,27 @@ unless a decode-time object-phrase gate replaces it.
 2. Keep the main text focused on the diagnostic protocol, semantic-neighbor
    mechanism, and TDEV verifier. Do not make Qwen/TDEV-lite/caption results carry
    the headline claim.
-3. The highest-value next paper edit is now a fluent caption-side correction
-   subsection only if the method produces natural local rewrites or constrained
-   decoding results; neither the generic-noun proxy nor the sentence gate is
-   enough for that role.
-4. Re-check CAI/CAST/Focus Matters/Region-Aware code before experiment freeze;
-   if official code appears, run only the bounded semantic-neighbor audit first.
+3. Add the verified atomic detail table only as a scoped prototype appendix or
+   short method-direction subsection. It can support the method idea, but should
+   not carry the main paper claim until it is scaled beyond the 100-image
+   high-risk set.
+4. Re-check CAI/CAST/PND/BRACS/Focus Matters/Region-Aware code before experiment
+   freeze; if official code appears, run only the bounded semantic-neighbor
+   audit first. For Woodpecker/LogicCheckGPT/R-CoV-style correction baselines,
+   use the same caption preservation metrics rather than CHAIR alone.
 
 ## Current Readiness Judgment
 
-The current paper draft is coherent for the main ICML story and now contains
-the available secondary evidence package in the appendix. The remaining gap is
-not a missing table; it is method strength. The highest-value experimental edit
-remains fluent caption-side correction or constrained regeneration, but the
-current deterministic rewrite should not be promoted to a main method claim.
-The second gate is external baseline availability: CAI, CAST, Focus Matters, and
-Region-Aware Attention Recalibration should be audited under semantic-neighbor
-controls only if official runnable code appears.
+The current paper draft is coherent for the main ICML story and contains the
+core diagnostic, TDEV, Qwen, and TDEV-lite evidence. It is now slightly behind
+the latest caption-side artifacts: the verified atomic detail prototype is
+stronger than the older deterministic proxy rows and should be represented in
+the appendix if the paper discusses caption mitigation. The remaining gap is
+still method strength and scale, not number consistency. The paper-safe claim is
+that verified atomic acceptance can add grounded detail without adding CHAIR
+hallucinated mentions on a high-risk 100-image prototype; it is not yet a full
+caption benchmark method. The second gate is external baseline availability:
+CAI, CAST, PND, BRACS, Focus Matters, AIR, and Region-Aware methods should be
+audited under semantic-neighbor controls only if official runnable code appears;
+Woodpecker/LogicCheckGPT/R-CoV-style correction baselines need caption
+preservation metrics rather than CHAIR-only comparison.

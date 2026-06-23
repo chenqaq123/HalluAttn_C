@@ -838,6 +838,7 @@ def check_caption_route_summary() -> None:
 
     summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
     evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
+    coverage = (PROJECT_ROOT / "docs/icml_paper_coverage_audit.md").read_text()
     baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
 
     generated_rows = {
@@ -1207,6 +1208,30 @@ def check_caption_route_summary() -> None:
         baseline_note,
         "genericizing claims",
         "baseline-note:caption-baseline-gate",
+    )
+    atomic_o085 = next(variant for variant in atomic_variants if variant["label"] == "o0.85")
+    atomic_o085_select = atomic_o085["select"]
+    atomic_o085_preservation = atomic_o085["preservation"]
+    atomic_o085_gain = atomic_o085["verified_gain"]
+    _assert_contains(
+        coverage,
+        "prototype is currently documented",
+        "coverage:atomic-prototype-status",
+    )
+    _assert_contains(
+        coverage,
+        f"| verified atomic detail o0.85 | {atomic_o085_select['chair']['selected']['overall']['CHAIRi']:.4f} | {atomic_o085_select['chair']['selected']['total_hallucinated_mentions']} | {atomic_o085_select['mean_words']['selected']:.2f} | {atomic_o085_preservation['variant_retained_vanilla_grounded_rate'] * 100:.2f}% | +{atomic_o085_gain['delta_grounded_mentions']} | +{atomic_o085_gain['delta_hallucinated_mentions']} | best current prototype setting |",
+        "coverage:atomic-o085-row",
+    )
+    _assert_contains(
+        coverage,
+        "caption benchmark method",
+        "coverage:caption-scope",
+    )
+    _assert_contains(
+        coverage,
+        "Woodpecker/LogicCheckGPT/R-CoV-style correction baselines need caption",
+        "coverage:correction-baseline-gate",
     )
 
 

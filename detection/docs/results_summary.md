@@ -13,6 +13,10 @@ Dataset/object cache:
 - non-hallucinated: 12417
 - position-only AUROC: 0.8304
 
+Reproduction scope: NLL, Entropy, PAS, and SVAR are direct score
+implementations. IC, GLSim, and Beyond-ADS/CGC are adapted/paper-level
+implementations and should be reported with that qualifier.
+
 ## Main Baselines
 
 | Score | Overall | Within-bin | Matched-pair | Residual | Note |
