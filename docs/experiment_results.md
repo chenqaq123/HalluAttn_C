@@ -141,3 +141,10 @@ Source: [tdev_detector_positioning.md](tdev_detector_positioning.md).
 -->
 
 _(none yet — first new result goes here)_
+
+### 2026-06-23 — Internal IC/logit-lens TDEV route A, 120-row POPE bounded audit
+- Setup: LLaVA-1.5-7B, POPE random/popular/adversarial first 120 rows per split (360 rows total), no external detector. Script: `mitigation/scripts/evaluate_internal_ic_tdev_pope.py`; evaluator: `mitigation/scripts/evaluate_pope_score_subset.py`. Evidence backend projects final visual-token hidden states through the LM head and compares `target_score` against the best top-10 semantic neighbor score.
+- Artifacts: `mitigation/results/semantic_neighbor_audit/internal_ic_tdev_120/`.
+- Result: scoring completed for 360/360 rows, failures 0. On the same subset, vanilla has MCC 0.739, TPR 0.850, FPR 0.111, related FPR 0.149, plain FPR 0.000. Calibrated target-only IC gate is nearly unchanged: MCC 0.745, TPR 0.850, FPR 0.106, related FPR 0.142. Calibrated margin gate is exactly unchanged from vanilla because calibration chooses a very low threshold. Strict `target_score > neighbor_score` gate lowers FPR to 0.017 and related FPR to 0.022, but collapses TPR to 0.267 and MCC to 0.358. Direct margin scoring is also too conservative: calibrated direct margin has MCC 0.241, TPR 0.267, FPR 0.083, related FPR 0.097.
+- Interpretation: route A is useful as a cheap internal baseline but not the headline method. Pure final-layer visual logit-lens evidence is not target-discriminative enough; adding the neighbor margin suppresses related false positives only by sacrificing recall. This pushes the next implementation toward route B (attention-region discriminability) and route C/HaloProbe-style supervised contrastive probes.
+- Supersedes: none; this is the first no-external-detector TDEV backend audit.

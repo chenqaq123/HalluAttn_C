@@ -54,3 +54,12 @@
 5. Add ≥1 modern model (Qwen-VL / InternVL) for the semantic-neighbor headline.
 6. Borrow HaloProbe's *explanation framing* (Simpson's paradox; internal vs.
    external factorization) for the intro — not its experiments.
+
+## 2026-06-23 — Route A internal TDEV baseline implemented and rejected as headline
+**What changed:** Implemented `evaluate_internal_ic_tdev_pope.py` for no-external-detector IC/logit-lens target-vs-neighbor evidence, plus `evaluate_pope_score_subset.py` for bounded direct/gate evaluation.
+
+**Why:** The proposal requires replacing OWLv2 with internal self-contrastive evidence. Route A is the lowest-cost test because it reuses one LLaVA forward and the LM head.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Internal IC/logit-lens TDEV route A". On 360 bounded POPE rows, strict IC margin gate reduces related FPR from 0.149 to 0.022 but collapses TPR from 0.850 to 0.267; calibrated target-only gate barely changes vanilla.
+
+**Implications / next:** Do not use route A as the main method. Keep it as a cheap baseline/ablation. Next implementation should prioritize route B (target-vs-neighbor attention-region discriminability) and route C/HaloProbe-style supervised contrastive probe on the related-present subset.
