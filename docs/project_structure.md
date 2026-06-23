@@ -18,7 +18,7 @@ SinkDetect/
 │   ├── docs/           # POPE/CHAIR interpretation protocol
 │   ├── scripts/        # generation, merge, comparison, audits
 │   └── src/            # intervention and evaluation code
-├── docs/               # project-level design and paper planning
+├── docs/               # living docs (proposal/results/iteration), design, archive/
 ├── paper/              # local paper files/build outputs for this repo
 ├── paper_repo/         # separate paper Git repo; ignored here
 ├── ref/                # local reference PDFs
