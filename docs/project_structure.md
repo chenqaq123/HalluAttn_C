@@ -78,6 +78,7 @@ caches, and local tool settings.
 | `mitigation/scripts/merge_evaluate.py` | shard merge and POPE/CHAIR evaluation |
 | `mitigation/scripts/compare_methods.py` | matched deltas against vanilla |
 | `mitigation/scripts/audit_results.py` | POPE yes-shift and CHAIR caption-style audit |
+| `mitigation/scripts/build_no_external_detector_summary.py` | paper-facing no-external-detector summary from artifacts |
 | `mitigation/scripts/audit_attention_shift.py` | pre/post attention-routing audit |
 | `mitigation/scripts/run_parallel_mitigation.sh` | four-GPU mitigation runner |
 | `mitigation/scripts/run_parallel_attention_audit.sh` | four-GPU attention-audit runner |
@@ -95,6 +96,7 @@ caches, and local tool settings.
 | `detection/baselines/README.md` | baseline set and runner usage |
 | `mitigation/README.md` | mitigation runner and audit usage |
 | `mitigation/docs/evaluation_protocol.md` | mitigation interpretation protocol |
+| `docs/no_external_detector_summary.md` | current internal method selection and no-external-detector main tables |
 
 Avoid duplicating long command explanations across docs. Put project-level
 entry commands in `README.md`, detection execution details in
