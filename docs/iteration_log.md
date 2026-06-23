@@ -118,3 +118,12 @@
 
 **Implications / next:** The current best internal method is now a shared hidden-margin verifier with cross-split calibration, not the bounded fixed D-lite formula. It still does not match OWLv2-backed TDEV, so the next technical step is to add answer-confidence/yes-logit evidence to the same verifier and then validate on CHAIR/caption claims before promoting it to the paper's last-row main method.
 
+## 2026-06-23 — Answer confidence is a weak auxiliary signal, not the main evidence
+**What changed:** Added `mitigation/scripts/evaluate_answer_confidence_tdev_pope.py` and ran it on full POPE in 5 shards. Extended `cross_split_hidden_margin_verifier.py` with train-fold standardization so hidden and answer-logit features can be combined fairly.
+
+**Why:** The previous best internal verifier used only hidden target-vs-neighbor margins. We needed to test whether answer confidence / yes-logit evidence could preserve recall while improving false-positive suppression.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Answer-confidence evidence added to the internal verifier". Answer-only gets MCC 0.721, below hidden-only MCC 0.741. Mixed hidden+answer reaches MCC 0.742, TPR 0.810, FPR 0.073, related FPR 0.097, a small improvement over hidden-only and vanilla but still behind OWLv2-backed hybrid gate+rescue.
+
+**Implications / next:** The best current no-external-detector method is the mixed hidden+answer verifier. The incremental gain is too small to justify more POPE-only grid search as the main path. Next work should test caption-side use: generate/parse atomic object claims from captions and apply the same internal target-vs-neighbor verifier for CHAIR-style intervention/evaluation.
+

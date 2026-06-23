@@ -46,6 +46,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--result_root", default="", help="Root containing pope/<split>/<method>/predictions.jsonl for gate base predictions")
     p.add_argument("--base_method", default="vanilla")
     p.add_argument("--objectives", default="best_mcc,best_mcc_tpr0.80,best_mcc_tpr0.75,min_fpr_tpr0.80,min_fpr_tpr0.75")
+    p.add_argument("--standardize", action="store_true", help="Z-score components per fold using training rows only")
     return p.parse_args()
 
 
@@ -151,6 +152,29 @@ def subset_rows(rows: list[dict], subset: str) -> list[dict]:
 def summarize(rows: list[dict], split_name: str) -> list[dict]:
     return [{"split": split_name, "subset": subset, **metrics(subset_rows(rows, subset))} for subset in SUBSETS]
 
+
+
+def standardization_params(rows: list[dict], components: list[str]) -> dict[str, tuple[float, float]]:
+    params = {}
+    for c in components:
+        vals = [float(r[c]) for r in rows]
+        mean = sum(vals) / len(vals) if vals else 0.0
+        var = sum((v - mean) ** 2 for v in vals) / len(vals) if vals else 0.0
+        std = math.sqrt(var)
+        if std < 1e-12:
+            std = 1.0
+        params[c] = (mean, std)
+    return params
+
+
+def apply_standardization(rows: list[dict], params: dict[str, tuple[float, float]]) -> list[dict]:
+    out = []
+    for row in rows:
+        rr = dict(row)
+        for c, (mean, std) in params.items():
+            rr[c] = (float(row[c]) - mean) / std
+        out.append(rr)
+    return out
 
 def score_row(row: dict, weights: tuple[float, ...], components: list[str]) -> float:
     return sum(w * float(row[c]) for w, c in zip(weights, components))
@@ -263,10 +287,17 @@ def main() -> None:
     for heldout in splits:
         train = [r for r in rows if r["split"] != heldout]
         test = [r for r in rows if r["split"] == heldout]
-        selected = tune(train, components, weights_values, args.mode, objectives)
+        if args.standardize:
+            params = standardization_params(train, components)
+            train_for_tuning = apply_standardization(train, params)
+            test_for_eval = apply_standardization(test, params)
+        else:
+            train_for_tuning = train
+            test_for_eval = test
+        selected = tune(train_for_tuning, components, weights_values, args.mode, objectives)
         for objective, cand in selected.items():
             weights = tuple(cand["weights"])
-            pred = apply_formula(test, weights, float(cand["threshold"]), components, args.mode)
+            pred = apply_formula(test_for_eval, weights, float(cand["threshold"]), components, args.mode)
             test_all = metrics(pred)
             rel = metrics(subset_rows(pred, "negative_related_present"))
             plain = metrics(subset_rows(pred, "negative_absent_plain"))
@@ -319,6 +350,7 @@ def main() -> None:
         "components": components,
         "weight_grid": weights_values,
         "mode": args.mode,
+        "standardize": args.standardize,
         "objectives": objectives,
         "splits": splits,
         "macro": macro_rows,

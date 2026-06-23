@@ -277,3 +277,22 @@ Decision: do **not** put fixed D-lite as the last-row main method in the paper t
 
 Current method design: use one shared internal verifier rather than separate scenario-specific rules. For each target object, construct a semantic-neighbor prompt, extract hidden object/visual vectors from layers 22/31, compute target-vs-neighbor alignment/cross/separation margins, then gate only vanilla `yes` answers whose internal target evidence falls below the calibrated threshold. The method is correlated across scenarios through the same score components and calibration objective, not separately hand-designed per table.
 
+### 2026-06-23 — Answer-confidence evidence added to the internal verifier
+- Setup: Full POPE 9000 rows, no external detector. New script: `mitigation/scripts/evaluate_answer_confidence_tdev_pope.py`; artifacts: `mitigation/results/semantic_neighbor_audit/answer_confidence_tdev_full/`. For each target and semantic-neighbor prompt, the scorer caches first-answer-token yes/no logits and derived margins (`answer_support_score`, `answer_contrast_margin`, `answer_absence_score`, `answer_neighbor_dominance`). The features are merged with the full hidden-margin cache and evaluated by `mitigation/scripts/cross_split_hidden_margin_verifier.py` using leave-one-split-out calibration and train-fold standardization.
+- Result: answer-confidence alone is weaker than hidden-margin evidence: Macro MCC 0.721, TPR 0.796, FPR 0.080, related FPR 0.104. With the TPR >= 0.80 objective it reaches MCC 0.728, TPR 0.808, FPR 0.084. Standardized hidden-only remains MCC 0.741, TPR 0.811, FPR 0.075, related FPR 0.099. Mixed hidden+answer (`hidden_align_margin`, `hidden_cross_margin`, `hidden_obj_separation`, `hidden_vis_separation`, `answer_support_score`, `answer_contrast_margin`) gives the current best internal POPE verifier: Macro MCC 0.742, TPR 0.810, FPR 0.073, related FPR 0.097, plain FPR 0.020, gap 0.077, adversarial related FPR 0.144. The lower-FPR operating point at held-out TPR >= 0.80 gives MCC 0.740, TPR 0.800, FPR 0.067, related FPR 0.089, plain FPR 0.018, adversarial related FPR 0.139.
+- Interpretation: answer confidence is a weak but real auxiliary signal; it does not replace hidden target-vs-neighbor evidence. The best no-external-detector method now slightly improves over vanilla and over hidden-only, but the gain is small and still below OWLv2-backed hybrid gate+rescue (MCC 0.763, FPR 0.051, related FPR 0.069). This should be reported as the current internal verifier, not as a solved replacement.
+- Supersedes: the hidden-only cross-split verifier as the best current no-external-detector POPE result, by a small margin.
+
+#### Full POPE internal verifier after adding answer confidence
+
+| Method | Calibration | Components | External detector | Macro MCC | TPR | FPR | Related FPR | Plain FPR | Gap | Adv. related FPR |
+|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla | none | none | no | 0.730 | 0.813 | 0.087 | 0.114 | 0.028 | 0.086 | 0.164 |
+| Answer-confidence verifier | leave-one-split-out | answer yes/no logits | no | 0.721 | 0.796 | 0.080 | 0.104 | 0.026 | 0.079 | 0.159 |
+| Hidden-margin verifier | leave-one-split-out + train z-score | hidden target-vs-neighbor | no | 0.741 | 0.811 | 0.075 | 0.099 | 0.021 | 0.079 | 0.147 |
+| **Hidden+answer verifier** | **leave-one-split-out + train z-score** | **hidden margins + answer support/contrast** | **no** | **0.742** | **0.810** | **0.073** | **0.097** | **0.020** | **0.077** | **0.144** |
+| Hidden+answer verifier | held-out TPR >= 0.80 / min FPR | hidden margins + answer support/contrast | no | 0.740 | 0.800 | 0.067 | 0.089 | 0.018 | 0.071 | 0.139 |
+| Hybrid gate+rescue | full control table | OWLv2 target/neighbor boxes | yes | 0.763 | 0.806 | 0.051 | 0.069 | 0.012 | 0.057 | 0.105 |
+
+Decision: the current integrated internal design is coherent and shared across POPE splits, but not yet strong enough to replace the external detector as the paper's final method. Further POPE-only linear tuning is unlikely to change the story; the next validation should move to CHAIR/caption-side atomic claims and check whether the same internal verifier can support caption intervention without OWLv2.
+
