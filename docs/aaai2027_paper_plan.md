@@ -2,6 +2,11 @@
 
 Target venue: AAAI 2027 Main Technical Track.
 
+> Status note (2026-06-23): this plan is now background. The current method
+> selection has moved from OWLv2-backed TDEV to no-external VLM-internal
+> verification. Use `docs/proposal.md` and `docs/no_external_detector_summary.md`
+> as the current source of truth for main method rows.
+
 Working title:
 
 > Looking Is Not Verifying: Diagnosing Attention-Based Detection and Mitigation of Object Hallucinations in LVLMs

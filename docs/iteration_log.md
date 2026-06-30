@@ -154,3 +154,106 @@
 **Evidence/refs:** `docs/experiment_results.md` entry "Utility-aware CHAIR intervention selection". Delete top-10 remains the CHAIR-only best row (CHAIRi 0.1074) but fails the preservation gate. Generic-rewrite top-10 is the best preserved row: CHAIRi 0.1133, CHAIRs 0.4322, LCS retention 0.9958, object retention 0.9663, Recall delta -0.0104.
 
 **Implications / next:** Use generic-rewrite top-10 as the paper-facing CHAIR intervention operating point, with delete top-10 as an upper-bound ablation. The remaining gap is generation-time integration: current intervention is still post-hoc editing, so the next method step should either implement decoding-time suppression using the same answer-absence score or explicitly position the result as a post-hoc internal claim editor.
+
+## 2026-06-24 — Full-POPE supervised ceiling confirms structural gap to OWLv2
+**What changed:** Ran the supervised hidden-contrast probe on full 9000-row POPE (two-stage: `evaluate_hidden_contrast_probe_extract.py` for feature extraction + `merge_evaluate_hidden_contrast_probe.py` for OOF). Added threshold sweep to find operating points at comparable recall. Combined with Experiment A findings.
+
+**Why:** Experiment A showed per-layer scalar margins don't help. The remaining question was whether the full 49152-dim hidden state contains more signal than the scalars, and if so, how much better a supervised method could get.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Supervised hidden-contrast probe ceiling, full POPE". OOF absent AUROC is 0.9427 (much higher than the bounded 360-row result of 0.863). At the best-MCC gate threshold: MCC 0.740, TPR 0.798, FPR 0.065, Related FPR 0.088. This is virtually identical to the 6-feature scalar method (MCC 0.742) on aggregate MCC. The supervised ceiling at TPR ≥ 0.80 gives MCC 0.738, FPR 0.074 — no better than current method.
+
+**Implications / next:**
+1. **MCC ceiling is confirmed at ≈ 0.740** for any internal method using current hidden-state features. Adding more dimensions or supervision doesn't raise it.
+2. The gap to OWLv2 (0.763) is structural: internal methods have topped out. Do not invest more effort trying to close this gap through feature engineering.
+3. **The current scalar 6-feature method (MCC 0.742) is already at the achievable ceiling** and should be the final paper method row. It is efficient (no labels needed) and already at the internal limit.
+4. Supervised probe (Exp B) is a useful ablation: shows the hidden-state discriminability is high (AUROC 0.9427) but the gate calibration constraint makes MCC comparable to the scalar method.
+5. **Next priorities (in order)**: (a) multi-model validation — add ≥1 modern model (Qwen-VL or InternVL) for the semantic-neighbor headline; (b) repetition control (free add from HaloProbe); (c) paper writing.
+
+## 2026-06-24 — Per-layer feature decomposition does not improve internal verifier
+**What changed:** Implemented `evaluate_hidden_margin_tdev_v2_pope.py` (per-layer hidden margins for layers 16/22/27/31, answer logits in same forward pass, 18 total features) and `cross_split_logreg_verifier.py` (logistic regression verifier replacing grid search). Ran full 9000-row POPE evaluation in 5 shards.
+
+**Why:** The hypothesis was that the original verifier's 4-scalar aggregation (layers 22+31 averaged) discards per-layer discrimination signal. Separating layers and using logistic regression should let each layer contribute independently.
+
+**Evidence/refs:** `docs/experiment_results.md` entry "Per-layer hidden-margin v2 + answer features, full POPE (Experiment A)". New 18-feature verifier reaches MCC 0.739, which is slightly *worse* than the original 6-feature verifier at MCC 0.742. Per-layer hidden-only (16 features) gives MCC 0.735. Result is consistent across all three ablations (answer-only, hidden-only, combined).
+
+**Implications / next:**
+1. **The MCC 0.742 result is a ceiling for cosine-margin feature families.** More features of the same type do not help.
+2. The gap to OWLv2 (0.742 → 0.763) is structural, not a calibration or dimensionality problem.
+3. The currently running Experiment B (full-POPE supervised probe, OOF logistic regression over high-dim hidden vectors) will establish whether the discriminability limit is in the scalar margin representation or in the hidden states themselves.
+4. If Exp B shows supervised ceiling < 0.760, the path forward is not more POPE tuning but (a) multi-model validation, (b) generation-time integration, or (c) accepting the current verifier.
+5. If Exp B shows supervised ceiling ≥ 0.760, there is room to improve but requires non-linear or projection-based distillation from the full hidden vector.
+
+## 2026-06-23 — Proposal and paper claim gate aligned to no-external method rows
+**What changed:** Updated `docs/proposal.md` and `paper/README.md` so the current paper-facing method is no longer described as OWLv2-backed TDEV. The selected rows now point to `docs/no_external_detector_summary.md`: POPE hidden+answer verifier, CHAIR answer absence, and CHAIR generic-rewrite top-10 intervention. `docs/aaai2027_paper_plan.md` now carries a status note that it is background and that the proposal/no-external summary are authoritative.
+
+**Why:** The implementation has moved past the original design stage. Routes A/B/C were rejected, hidden+answer is the current POPE internal verifier, and CHAIR works best with answer absence plus utility-aware generic rewriting. Leaving the paper gate on OWLv2 would cause table drift and overstate the external-detector result as the method.
+
+**Evidence/refs:** `docs/no_external_detector_summary.md` and `docs/experiment_results.md` entry "Consolidated no-external-detector main rows". POPE internal best-MCC row is MCC 0.742 / related FPR 0.097; OWLv2 remains a stronger external positive control at MCC 0.763 / related FPR 0.069. CHAIR answer absence reaches AUROC 0.898 and generic rewrite top-10 is the preserved intervention row.
+
+**Implications / next:** Future paper edits should use no-external rows as the main method and keep OWLv2 only as a positive control. The remaining method gap is generation-time integration for CHAIR and optional second-model / repetition-control validation, not more OWLv2 table polishing.
+
+## 2026-06-24 — Pivot to a format-general TDEV criterion
+**What changed:**
+- Promoted the method from a POPE-shaped yes/no verifier to a **format-general
+  target-discriminative criterion** that instantiates across yes/no, true/false,
+  and multiple-choice. Only the *contrast set* changes by format; the evidence
+  readout and decision rule are shared.
+- Wrote the full specification in new doc `docs/general_tdev_design.md` and
+  rewired `proposal.md` (thesis v3, §2 moat, §3 method, §4 contribution, §5
+  risks, pointers) to this framing.
+- Reframed the contribution axis from "a marginally better POPE verifier" to
+  "one criterion, many formats, one shared failure mode."
+
+**Why:**
+- The POPE absolute gain is small (MCC 0.742 vs 0.730, +0.012) and structurally
+  capped; selling the method on that number is weak.
+- The strong CHAIR detection (AUROC 0.898) comes from a *different* mechanism —
+  two-stage commit-then-verify inconsistency — that the single-shot POPE format
+  does not exploit. Making the criterion explicit lets that signal be ported.
+- Upcoming evaluations include MCQ and T/F. A POPE-only method does not transfer;
+  generality across formats is now a first-class requirement and is what
+  justifies validating on MME / AMBER / MMBench-SEED.
+- Reviewer-facing: this answers "why only POPE?" and "does it transfer?" up
+  front, and converts a single-dataset observation into a systematic finding.
+
+**Evidence/refs:**
+- `docs/general_tdev_design.md` (full spec, format table, evidence functions,
+  commit-verify wrapper, validation plan).
+- Existing results unchanged: POPE MCC 0.742 (OWLv2 control 0.763), CHAIR detect
+  AUROC 0.898, CHAIR intervene CHAIRi 0.113, Qwen2.5-VL POPE TDEV MCC 0.769.
+
+**Implications / next:**
+1. **Validate generality (new top priority).** Order: MME (yes/no + T/F, lowest
+   cost) → MMBench/SEED-Bench (MCQ) → AMBER (second yes/no neighbor benchmark).
+2. **Resolve the MCQ open question:** does the hidden-margin readout beat argmax,
+   or is the MCQ contribution selective prediction (abstain on small runner-up
+   margin)? Validate before claiming MCQ.
+3. **Port commit-verify to POPE:** caption pre-pass + target-presence feature
+   fused with the direct-query margin; one extra forward pass per question.
+4. Honesty guardrail kept in proposal/design: generality is a complementary axis;
+   it does not raise the POPE number and must not be framed as if it did.
+
+## 2026-06-24 — Concrete method-modification design (preliminary)
+**What changed:** Added `general_tdev_design.md` §5 "Concrete method modifications
+& the unified architecture (preliminary design)": the four unifications (input →
+declarative claim; contrast set → pluggable adapter; evidence → one
+format-agnostic `ClaimScorer`; decision → discriminative margin with four output
+modes `gate`/`argmax+abstain`/`score`/`rank+rewrite`), the architecture diagram,
+and CHAIR shown as the generative instance of the same core. Marked preliminary.
+
+**Why:** The §1–4 framing established *what* the general criterion is; this section
+specifies *how* to refactor the POPE-specific code into it, so the design is
+actionable. CHAIR-as-generative-instance also explains the CHAIR-vs-POPE signal
+gap (commitment present vs absent) and shows the generation front-end is core
+architecture, not a CHAIR detail.
+
+**Evidence/refs:** `docs/general_tdev_design.md` §5. Three open decisions flagged:
+(A) alternative source — external co-occurrence vs self-derived (proposed: both,
+self-derived main + co-occ ablation); (B) claim span — mean-pool vs differentiating
+span (proposed: mean-pool first); (C) MCQ probe — uniform "is this true?" vs native
+option logit (the §3.2 open question).
+
+**Implications / next:** Refactor target is a shared `ClaimScorer` + `ContrastSetBuilder`
+adapters + optional `GenerationFrontEnd`; regression gate = refactored POPE path must
+reproduce MCC 0.742 and CHAIR AUROC 0.898 before any new format is added. Resolve
+decisions A/B/C empirically during the MME/MCQ validation phases.

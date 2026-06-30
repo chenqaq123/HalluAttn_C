@@ -43,10 +43,11 @@ Supported framing:
 - attention mass and simple attention-shape scores are unreliable grounding proxies under position and same-object controls;
 - attention/decoding interventions can change routing, yes rate, or caption object richness without verifying target-object presence;
 - semantic-neighbor negatives expose the key failure mode: associated evidence can be present while the queried target is absent;
-- TDEV is a target-vs-neighbor verification criterion, currently instantiated with OWLv2 region evidence;
-- the strongest POPE result is a modest hybrid gate-plus-rescue verifier: macro MCC `0.730 -> 0.763`, related FPR `0.114 -> 0.069`;
-- LH-Shape/TDEV-lite evidence is supervised triage/readout evidence, not a standalone mitigation method.
-- verified atomic caption detail is a scoped 100-image prototype, not a complete caption benchmark method.
+- TDEV is a target-vs-neighbor verification criterion; the current paper-facing method rows use VLM-internal hidden/answer evidence, not an external detector;
+- the current no-external POPE result is a modest hidden+answer verifier: macro MCC `0.730 -> 0.742`, related FPR `0.114 -> 0.097`;
+- OWLv2 hybrid gate-plus-rescue remains an external positive control, not the headline method: macro MCC `0.763`, related FPR `0.069`;
+- CHAIR object-claim detection uses internal answer absence (`answer_absence_score`) and remains strong under position control;
+- CHAIR caption intervention is a post-hoc internal claim editor; generic rewrite top-10 is the preserved main row, delete top-10 is only an upper-bound ablation.
 
 Avoid claiming:
 
@@ -66,6 +67,7 @@ Avoid claiming:
 | Paper coverage audit | `../docs/icml_paper_coverage_audit.md` |
 | Claim gate | `../docs/claims_alignment_audit.md` |
 | Baseline availability | `../docs/baseline_availability_refresh.md` |
+| No-external method summary | `../docs/no_external_detector_summary.md` |
 | TDEV ablations | `../docs/tdev_ablation_summary.md` |
 | Mechanism figure | `../mitigation/results/pope_mechanism_alignment_full/figure/pope_mechanism_alignment_contact_sheet.png` |
 

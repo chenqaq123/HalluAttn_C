@@ -140,7 +140,40 @@ Source: [tdev_detector_positioning.md](tdev_detector_positioning.md).
 - Supersedes: (if applicable)
 -->
 
-_(none yet — first new result goes here)_
+### 2026-06-24 — Supervised hidden-contrast probe ceiling, full POPE (Experiment B)
+- Setup: LLaVA-1.5-7B, full POPE 9000 rows, no external detector but POPE labels used for OOF calibration. Two-stage pipeline: `evaluate_hidden_contrast_probe_extract.py` (4 shards, GPU 0/3/4/5) extracts full 49152-dim hidden-state features (layers 22+31, obj+vis+diff blocks); `merge_evaluate_hidden_contrast_probe.py` merges shards and runs image-grouped 5-fold OOF logistic regression. Additional threshold sweep run to find operating points.
+- Artifacts: `mitigation/results/semantic_neighbor_audit/hidden_contrast_probe_full/`.
+- Result:
+
+| Operating point | MCC | TPR | FPR | Related FPR | Adv. Related FPR |
+|---|---:|---:|---:|---:|---:|
+| OOF absent AUROC | 0.9427 | — | — | — | — |
+| Supervised gate best-MCC | 0.740 | 0.798 | 0.065 | 0.088 | 0.133 |
+| Supervised gate TPR≥0.80 | 0.738 | 0.807 | 0.074 | 0.098 | 0.145 |
+| Current no-external best (6f scalar) | 0.742 | 0.810 | 0.073 | 0.097 | 0.144 |
+| OWLv2 external positive control | 0.763 | 0.806 | 0.051 | 0.069 | 0.105 |
+| Vanilla | 0.730 | 0.813 | 0.087 | 0.114 | 0.164 |
+
+- Interpretation: The supervised probe with 49152-dim hidden features reaches AUROC 0.9427 (strongly discriminative), but the gate MCC at its best-MCC operating point is 0.740 — **essentially the same as the no-supervision scalar margin method (0.742)**. The supervised probe gets better FPR (0.065 vs 0.073) and better related FPR (0.088 vs 0.097) but at the cost of lower recall (0.798 vs 0.810). MCC is unchanged.
+- **Key conclusion (decisive)**: The internal-method MCC ceiling is ≈ 0.740 regardless of how many hidden-state features are used or how sophisticated the readout is. 49152-dim supervised ≈ 6-dim no-supervision on aggregate MCC. The gap to OWLv2 (MCC 0.763, FPR 0.051) is **structural**: external spatial region detection provides qualitatively different evidence that internal semantic distribution features cannot replicate. There is no viable path to close this gap through better feature engineering alone.
+- Supersedes: earlier hypothesis that per-layer decomposition or supervised readout would significantly improve the verifier. Both experiments (A and B) confirm the ceiling.
+
+### 2026-06-24 — Per-layer hidden-margin v2 + answer features, full POPE (Experiment A)
+- Setup: LLaVA-1.5-7B, full POPE 9000 rows, no external detector. New script: `mitigation/scripts/evaluate_hidden_margin_tdev_v2_pope.py`; run 5 shards (GPU 0,1,3,4,5). Key change: outputs per-layer cosine margins separately for layers 16/22/27/31 (instead of averaging) plus answer yes/no logits extracted in the same forward pass (no extra VLM call). Total features per row: 16 per-layer margin scalars + 2 answer features = 18. Evaluated by new `mitigation/scripts/cross_split_logreg_verifier.py` (logistic regression, leave-one-split-out calibration, replaces grid search).
+- Artifacts: `mitigation/results/semantic_neighbor_audit/hidden_margin_v2_full/`.
+- Result:
+
+| Method | Features | MCC | TPR | FPR | Related FPR | Adv. Related FPR |
+|---|---|---:|---:|---:|---:|---:|
+| Old hidden+answer verifier | 6 | **0.742** | 0.810 | 0.073 | 0.097 | 0.144 |
+| New: answer only | 2 | 0.713 | 0.787 | 0.080 | 0.104 | 0.156 |
+| New: per-layer hidden only | 16 | 0.735 | 0.808 | 0.078 | 0.103 | 0.154 |
+| **New: per-layer hidden+answer** | 18 | 0.739 | 0.806 | 0.073 | 0.097 | 0.142 |
+| OWLv2 external positive control | — | 0.763 | 0.806 | 0.051 | 0.069 | 0.105 |
+
+- Interpretation: Per-layer decomposition (4 layers separately vs. averaged) does NOT improve over the original 6-feature aggregated verifier. MCC 0.739 (18 features) vs. 0.742 (6 features, old method). Adding more layers (16 and 27 on top of 22 and 31) does not add useful signal. The logistic regression is no better than the grid-search linear combination on this feature family.
+- **Key conclusion**: The bottleneck is feature type, not dimensionality. Cosine margin scalars extracted from hidden states form a homogeneous family; adding more of them (per-layer, more layers) hits a ceiling around MCC 0.740. The gap to OWLv2 (MCC 0.763) is likely structural — spatial region detection provides qualitatively different evidence from semantic distribution features.
+- Supersedes: the D-lite formula sweep / cross-split hidden-margin verifier as the definitive test of whether per-layer decomposition helps. It does not.
 
 ### 2026-06-23 — Internal IC/logit-lens TDEV route A, 120-row POPE bounded audit
 - Setup: LLaVA-1.5-7B, POPE random/popular/adversarial first 120 rows per split (360 rows total), no external detector. Script: `mitigation/scripts/evaluate_internal_ic_tdev_pope.py`; evaluator: `mitigation/scripts/evaluate_pope_score_subset.py`. Evidence backend projects final visual-token hidden states through the LM head and compares `target_score` against the best top-10 semantic neighbor score.

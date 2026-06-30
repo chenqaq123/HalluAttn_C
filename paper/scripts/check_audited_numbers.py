@@ -12,6 +12,12 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PAPER_ROOT = PROJECT_ROOT / "paper"
 
 
+def _read_doc(name: str) -> str:
+    path = PROJECT_ROOT / "docs" / name
+    if not path.exists():
+        path = PROJECT_ROOT / "docs" / "archive" / name
+    return path.read_text()
+
 def _numbers_from_row(table_text: str, row_label: str) -> list[float]:
     pattern = re.compile(rf"^{re.escape(row_label)}\s*&(.+?)\\\\", re.MULTILINE)
     match = pattern.search(table_text)
@@ -371,7 +377,7 @@ def check_key_prose_claims() -> None:
     intro = (PAPER_ROOT / "sections/01_introduction.tex").read_text()
     mitigation = (PAPER_ROOT / "sections/05_mitigation_findings.tex").read_text()
     associated = (PAPER_ROOT / "sections/06_associated_evidence_audit.tex").read_text()
-    evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
+    evidence = _read_doc("icml_evidence_matrix.md")
     mechanism = json.loads(
         (PROJECT_ROOT / "mitigation/results/pope_mechanism_alignment_full/pope_mechanism_alignment_summary.json").read_text()
     )
@@ -836,10 +842,10 @@ def check_caption_route_summary() -> None:
             "verified_gain": gain["verified_selected_vs_repaired"]["summary"],
         }
 
-    summary = (PROJECT_ROOT / "docs/caption_method_route_summary.md").read_text()
-    evidence = (PROJECT_ROOT / "docs/icml_evidence_matrix.md").read_text()
-    coverage = (PROJECT_ROOT / "docs/icml_paper_coverage_audit.md").read_text()
-    baseline_note = (PROJECT_ROOT / "docs/baseline_availability_refresh.md").read_text()
+    summary = _read_doc("caption_method_route_summary.md")
+    evidence = _read_doc("icml_evidence_matrix.md")
+    coverage = _read_doc("icml_paper_coverage_audit.md")
+    baseline_note = _read_doc("baseline_availability_refresh.md")
 
     generated_rows = {
         "t96 hard gate": [

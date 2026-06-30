@@ -79,9 +79,15 @@ caches, and local tool settings.
 | `mitigation/scripts/compare_methods.py` | matched deltas against vanilla |
 | `mitigation/scripts/audit_results.py` | POPE yes-shift and CHAIR caption-style audit |
 | `mitigation/scripts/build_no_external_detector_summary.py` | paper-facing no-external-detector summary from artifacts |
+| `mitigation/scripts/evaluate_hidden_margin_tdev_v2_pope.py` | per-layer hidden-margin and answer-feature verifier extraction for POPE |
+| `mitigation/scripts/cross_split_logreg_verifier.py` | leave-one-split-out logistic verifier for cached internal features |
+| `mitigation/scripts/evaluate_hidden_contrast_probe_extract.py` | full hidden-contrast feature extraction shards |
+| `mitigation/scripts/merge_evaluate_hidden_contrast_probe.py` | merge hidden-contrast shards and evaluate supervised ceiling |
 | `mitigation/scripts/audit_attention_shift.py` | pre/post attention-routing audit |
 | `mitigation/scripts/run_parallel_mitigation.sh` | four-GPU mitigation runner |
 | `mitigation/scripts/run_parallel_attention_audit.sh` | four-GPU attention-audit runner |
+| `mitigation/scripts/run_hidden_margin_v2_full.sh` | multi-GPU runner for hidden-margin v2 full POPE audit |
+| `mitigation/scripts/run_hidden_contrast_probe_full.sh` | multi-GPU runner for full hidden-contrast probe audit |
 
 ## Documentation Ownership
 
@@ -90,6 +96,8 @@ caches, and local tool settings.
 | `README.md` | project overview and quick starts |
 | `docs/design.md` | research argument and method design |
 | `docs/aaai2027_paper_plan.md` | paper plan and experiment checklist |
+| `docs/general_tdev_design.md` | format-general target-discriminative evidence design |
+| `docs/current_result_baseline_comparison.md` | audited semantic-neighbor baseline comparison table |
 | `detection/docs/pipeline.md` | detection execution contract |
 | `detection/docs/scores.md` | score formulas and key names |
 | `detection/docs/results_summary.md` | compact baseline results |
