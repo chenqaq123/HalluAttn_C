@@ -263,11 +263,19 @@ is *the same* front-end. The two views converge:
 
 Split the codebase into: a shared `ClaimScorer`, a `ContrastSetBuilder` protocol
 with per-format adapters, a claim-templating helper, and an optional
-`GenerationFrontEnd`. The existing `evaluate_answer_confidence_tdev_pope.py` and
-`evaluate_chair_internal_verifier.py` are reimplemented as wrappers over these
-pieces, which should be behaviour-preserving for the current POPE/CHAIR rows
-(a regression check: the refactored POPE path must reproduce MCC 0.742 and the
-CHAIR path AUROC 0.898 before any new format is added).
+`GenerationFrontEnd`.
+
+**Implementation status (2026-06-30): first refactor landed.**
+`mitigation/src/tdev_core.py` now holds the shared `VisualClaim`, `ContrastSet`,
+existence / true-false / MCQ contrast builders, no-external yes/no answer
+evidence readout, and common object-claim templates.
+`evaluate_answer_confidence_tdev_pope.py` and
+`evaluate_chair_internal_verifier.py` now both use this shared core for
+semantic-neighbor templates, neighbor-table loading, and yes/no evidence. The
+hidden-margin readout is still script-local and should be the next piece to
+move into `ClaimScorer`. The regression gate remains: the refactored POPE path
+must reproduce MCC 0.742 and the CHAIR path AUROC 0.898 before the refactor is
+used for paper-number replacement.
 
 ## 6. What generality buys the paper
 

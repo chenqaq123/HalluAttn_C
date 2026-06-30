@@ -74,6 +74,7 @@ caches, and local tool settings.
 | `mitigation/src/interventions.py` | PAI attention-only, ClearSight VAF, Visual Attention Sink ports |
 | `mitigation/src/data.py` | POPE inputs and fixed CHAIR image manifest |
 | `mitigation/src/evaluation.py` | answer-prior and caption-style metrics |
+| `mitigation/src/tdev_core.py` | shared no-external TDEV claim, contrast-set, and yes/no evidence utilities |
 | `mitigation/scripts/run_task.py` | one method/task/GPU shard generation |
 | `mitigation/scripts/merge_evaluate.py` | shard merge and POPE/CHAIR evaluation |
 | `mitigation/scripts/compare_methods.py` | matched deltas against vanilla |

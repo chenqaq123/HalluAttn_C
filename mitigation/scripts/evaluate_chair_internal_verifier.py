@@ -14,7 +14,6 @@ import csv
 import gc
 import json
 import logging
-import math
 import sys
 from pathlib import Path
 
@@ -29,6 +28,14 @@ sys.path.insert(0, str(PROJECT_ROOT / "detection" / "src"))
 
 from sinkdetect.sink_utils import find_vis_bounds  # noqa: E402
 from sinkdetect.utils import load_model_and_processor  # noqa: E402
+from src.tdev_core import (  # noqa: E402
+    answer_evidence_from_logits,
+    existence_question,
+    first_token_candidates,
+    normalize_object_name,
+    read_neighbor_map,
+    yes_no_prompt,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -63,25 +70,6 @@ def read_jsonl(path: Path) -> list[dict]:
     with path.open("r", encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
 
-
-def read_neighbors(path: Path, top_k: int) -> dict[str, list[str]]:
-    raw = json.loads(path.read_text(encoding="utf-8"))
-    return {obj: [item["object"] for item in items[:top_k]] for obj, items in raw.items()}
-
-
-def normalize_obj(obj: str) -> str:
-    return str(obj).strip().lower().replace("_", " ")
-
-
-def question_for_object(obj: str) -> str:
-    article = "an" if obj[:1].lower() in {"a", "e", "i", "o", "u"} else "a"
-    if obj.endswith("s") and obj not in {"scissors", "skis"}:
-        return f"Are there any {obj} in the image?"
-    return f"Is there {article} {obj} in the image?"
-
-
-def pope_prompt(question: str) -> str:
-    return f"<image>\nUSER: {question} Please just answer yes or no.\nASSISTANT:"
 
 
 def image_path(coco_path: Path, image_id: int) -> Path:
@@ -148,32 +136,9 @@ def cos(a: torch.Tensor, b: torch.Tensor) -> float:
     return float(torch.dot(a.float(), b.float()).item())
 
 
-def first_token_candidates(tokenizer, word: str) -> list[int]:
-    ids = []
-    for text in (word, word.capitalize(), word.upper()):
-        toks = [int(x) for x in tokenizer.encode(text, add_special_tokens=False)]
-        if len(toks) == 1 and toks[0] not in ids:
-            ids.append(toks[0])
-    if not ids:
-        raise ValueError(f"Could not tokenize candidate word {word!r} as single-token variants")
-    return ids
-
-
-def logsumexp_ids(logits: torch.Tensor, ids: list[int]) -> float:
-    vals = logits[torch.tensor(ids, dtype=torch.long, device=logits.device)].float()
-    return float(torch.logsumexp(vals, dim=0).item())
-
-
-def sigmoid(x: float) -> float:
-    if x >= 0:
-        z = math.exp(-x)
-        return 1.0 / (1.0 + z)
-    z = math.exp(x)
-    return z / (1.0 + z)
-
 
 def prompt_features(model, processor, tokenizer, image, obj: str, layers: list[int], policy: str, device: torch.device, image_token_id: int, yes_ids: list[int], no_ids: list[int]) -> tuple[dict[str, torch.Tensor], dict[str, float | int]]:
-    prompt = pope_prompt(question_for_object(obj))
+    prompt = yes_no_prompt(existence_question(obj))
     inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, dtype=torch.float16)
     input_ids_tensor = inputs["input_ids"][0]
     input_ids = [int(x) for x in input_ids_tensor.detach().cpu().tolist()]
@@ -189,18 +154,16 @@ def prompt_features(model, processor, tokenizer, image, obj: str, layers: list[i
         obj_vecs.append(hs[positions].mean(dim=0))
         vis_vecs.append(hs[vis_start:vis_end].mean(dim=0))
     next_logits = outputs.logits[0, -1].float()
-    yes_logit = logsumexp_ids(next_logits, yes_ids)
-    no_logit = logsumexp_ids(next_logits, no_ids)
-    yes_margin = yes_logit - no_logit
+    evidence = answer_evidence_from_logits(next_logits, yes_ids, no_ids)
     vectors = {"obj": mean_norm(obj_vecs).cpu(), "vis": mean_norm(vis_vecs).cpu()}
     info = {
         "token_start": int(start),
         "token_end": int(end),
         "vis_tokens": int(vis_end - vis_start),
-        "yes_logit": yes_logit,
-        "no_logit": no_logit,
-        "yes_margin": yes_margin,
-        "yes_prob": sigmoid(yes_margin),
+        "yes_logit": evidence.yes_logit,
+        "no_logit": evidence.no_logit,
+        "yes_margin": evidence.yes_margin,
+        "yes_prob": evidence.yes_prob,
     }
     del inputs, outputs, next_logits
     return vectors, info
@@ -229,7 +192,7 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     layers = parse_layers(args.layers)
-    neighbors = read_neighbors(Path(args.neighbors_json), args.top_neighbors)
+    neighbors = read_neighbor_map(args.neighbors_json, args.top_neighbors)
     rows = iter_rows(args)
     logger.info("Scoring %d CHAIR object mentions layers=%s top_neighbors=%d", len(rows), layers, args.top_neighbors)
 
@@ -248,8 +211,8 @@ def main() -> None:
     failures: list[dict] = []
     image_cache: dict[int, Image.Image] = {}
     for step, row in enumerate(tqdm(rows, desc="CHAIR internal verifier"), start=1):
-        target = normalize_obj(row["word"])
-        neighbor_list = [normalize_obj(x) for x in neighbors.get(target, [])]
+        target = normalize_object_name(row["word"])
+        neighbor_list = [normalize_object_name(x) for x in neighbors.get(target, [])]
         if not neighbor_list:
             failures.append({"object_id": row.get("object_id"), "image_id": row.get("image_id"), "word": target, "error": "no semantic neighbors"})
             continue

@@ -13,7 +13,6 @@ import csv
 import gc
 import json
 import logging
-import math
 import sys
 from pathlib import Path
 
@@ -26,6 +25,12 @@ sys.path.insert(0, str(PROJECT_ROOT / "detection" / "src"))
 
 from sinkdetect.utils import load_model_and_processor  # noqa: E402
 from src.data import iter_pope_records, load_pope_image  # noqa: E402
+from src.tdev_core import (  # noqa: E402
+    existence_question,
+    first_token_candidates,
+    read_neighbor_map,
+    score_yes_no_question,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -69,66 +74,6 @@ def read_audit_rows(path: Path, splits: list[str]) -> dict[tuple[str, str], dict
     return rows
 
 
-def read_neighbors(path: Path, top_k: int) -> dict[str, list[str]]:
-    raw = json.loads(path.read_text(encoding="utf-8"))
-    return {obj: [item["object"] for item in items[:top_k]] for obj, items in raw.items()}
-
-
-def question_for_object(obj: str) -> str:
-    article = "an" if obj[:1].lower() in {"a", "e", "i", "o", "u"} else "a"
-    if obj.endswith("s") and obj not in {"scissors", "skis"}:
-        return f"Are there any {obj} in the image?"
-    return f"Is there {article} {obj} in the image?"
-
-
-def pope_prompt(question: str) -> str:
-    return f"<image>\nUSER: {question} Please just answer yes or no.\nASSISTANT:"
-
-
-def first_token_candidates(tokenizer, word: str) -> list[int]:
-    ids = []
-    # Use only variants that are themselves a single lexical token. Leading-space
-    # variants often tokenize as a standalone whitespace token followed by the
-    # word; including that shared whitespace token would contaminate yes/no margins.
-    for text in (word, word.capitalize(), word.upper()):
-        toks = [int(x) for x in tokenizer.encode(text, add_special_tokens=False)]
-        if len(toks) == 1 and toks[0] not in ids:
-            ids.append(toks[0])
-    if not ids:
-        raise ValueError(f"Could not tokenize candidate word {word!r} as single-token variants")
-    return ids
-
-
-def logsumexp_ids(logits: torch.Tensor, ids: list[int]) -> float:
-    vals = logits[torch.tensor(ids, dtype=torch.long, device=logits.device)].float()
-    return float(torch.logsumexp(vals, dim=0).item())
-
-
-def sigmoid(x: float) -> float:
-    if x >= 0:
-        z = math.exp(-x)
-        return 1.0 / (1.0 + z)
-    z = math.exp(x)
-    return z / (1.0 + z)
-
-
-def answer_confidence(model, processor, tokenizer, image, question: str, yes_ids: list[int], no_ids: list[int], device: torch.device) -> dict[str, float]:
-    prompt = pope_prompt(question)
-    inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, dtype=torch.float16)
-    with torch.inference_mode():
-        outputs = model.forward(**inputs, output_hidden_states=False, output_attentions=False)
-    next_logits = outputs.logits[0, -1].float()
-    yes_logit = logsumexp_ids(next_logits, yes_ids)
-    no_logit = logsumexp_ids(next_logits, no_ids)
-    margin = yes_logit - no_logit
-    del inputs, outputs, next_logits
-    return {
-        "yes_logit": yes_logit,
-        "no_logit": no_logit,
-        "yes_margin": margin,
-        "yes_prob": sigmoid(margin),
-    }
-
 
 def iter_joined_records(args: argparse.Namespace, splits: list[str], audit_rows: dict[tuple[str, str], dict[str, str]]) -> list[dict]:
     joined = []
@@ -158,7 +103,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     splits = split_list(args.splits)
     audit_rows = read_audit_rows(Path(args.audit_csv), splits)
-    neighbors = read_neighbors(Path(args.neighbors_json), args.top_neighbors)
+    neighbors = read_neighbor_map(args.neighbors_json, args.top_neighbors)
     records = iter_joined_records(args, splits, audit_rows)
     logger.info("Scoring %d rows with answer-confidence TDEV top_neighbors=%d", len(records), args.top_neighbors)
 
@@ -181,13 +126,13 @@ def main() -> None:
         image = None
         try:
             image = load_pope_image(record)
-            target_conf = answer_confidence(model, processor, tokenizer, image, str(record["question"]), yes_ids, no_ids, device)
+            target_conf = score_yes_no_question(model, processor, image, str(record["question"]), yes_ids, no_ids, device)
             neighbor_confs = []
             for neighbor in neighbor_list:
-                conf = answer_confidence(model, processor, tokenizer, image, question_for_object(neighbor), yes_ids, no_ids, device)
-                neighbor_confs.append({"neighbor": neighbor, **conf})
+                conf = score_yes_no_question(model, processor, image, existence_question(neighbor), yes_ids, no_ids, device)
+                neighbor_confs.append({"neighbor": neighbor, **conf.__dict__})
             best_neighbor = max(neighbor_confs, key=lambda item: item["yes_margin"])
-            target_yes_margin = target_conf["yes_margin"]
+            target_yes_margin = target_conf.yes_margin
             neighbor_yes_margin = best_neighbor["yes_margin"]
             contrast_margin = target_yes_margin - neighbor_yes_margin
             neighbor_dominance = neighbor_yes_margin - target_yes_margin
@@ -205,10 +150,10 @@ def main() -> None:
                 "answer_absence_score": absence_score,
                 "answer_contrast_margin": contrast_margin,
                 "answer_neighbor_dominance": neighbor_dominance,
-                "target_yes_logit": target_conf["yes_logit"],
-                "target_no_logit": target_conf["no_logit"],
+                "target_yes_logit": target_conf.yes_logit,
+                "target_no_logit": target_conf.no_logit,
                 "target_yes_margin": target_yes_margin,
-                "target_yes_prob": target_conf["yes_prob"],
+                "target_yes_prob": target_conf.yes_prob,
                 "neighbor_yes_logit": best_neighbor["yes_logit"],
                 "neighbor_no_logit": best_neighbor["no_logit"],
                 "neighbor_yes_margin": neighbor_yes_margin,

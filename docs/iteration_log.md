@@ -257,3 +257,12 @@ option logit (the §3.2 open question).
 adapters + optional `GenerationFrontEnd`; regression gate = refactored POPE path must
 reproduce MCC 0.742 and CHAIR AUROC 0.898 before any new format is added. Resolve
 decisions A/B/C empirically during the MME/MCQ validation phases.
+
+## 2026-06-30 — First shared no-external TDEV core refactor
+**What changed:** Added `mitigation/src/tdev_core.py` with shared `VisualClaim`, `ContrastSet`, existence / true-false / MCQ contrast builders, object-claim templates, yes/no prompt helpers, answer-logit evidence, and the generic target-minus-strongest-alternative margin helper. Refactored `evaluate_answer_confidence_tdev_pope.py` and `evaluate_chair_internal_verifier.py` so both POPE and CHAIR use the same semantic-neighbor templates, neighbor-table loading, object normalization, and answer-evidence readout.
+
+**Why:** The previous implementation had separate POPE and CHAIR code paths, which made the method look scenario-specific. This moves the implementation toward the proposal's unified architecture: task adapters build contrast sets, while the shared no-external core scores claims and applies the discriminative rule.
+
+**Evidence/refs:** `py_compile` passes for `mitigation/src/tdev_core.py`, `evaluate_answer_confidence_tdev_pope.py`, and `evaluate_chair_internal_verifier.py`; a lightweight smoke test covers existence, true/false, MCQ contrast construction, and `target - max(alternative)` margins. During the smoke test, the old object-template edge case that treated `bus` as plural was fixed in the shared core by using an explicit COCO plural-object set (`skis`, `scissors`). Existing result artifacts were not rewritten.
+
+**Implications / next:** This is infrastructure, not a new benchmark result. The next implementation step is to move hidden-margin extraction into a real shared `ClaimScorer`, then add the first non-POPE adapter. The current `/srv/common_dataset` listing does not show MME/MMBench/SEED/AMBER directories, so either those datasets need to be staged or the next validation should use an available MCQ dataset such as BLINK as a format-general smoke test before paper-facing MME/SEED claims.
