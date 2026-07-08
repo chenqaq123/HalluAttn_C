@@ -1,243 +1,141 @@
 # Research Proposal — Looking Is Not Verifying
 
-> Single source of truth for *what we are trying to publish and why*. When this
-> conflicts with older planning docs (`design.md`, `aaai2027_paper_plan.md`,
-> `icml_*`, `tdev_*`), this doc wins. Last major revision: 2026-06-24
-> (pivot to a format-general criterion; full spec in `general_tdev_design.md`).
+> Single source of truth for *what we are trying to publish and why*.
+> **Restart baseline: 2026-07-07.** On this branch (`restart-two-pronged`) the
+> project was reset to its original two-pronged motivation. Only the reproducible
+> detection and mitigation *baselines* were retained; all prior method design
+> (TDEV / semantic-neighbor verifier / no-external-detector family / CHAIR
+> intervention) was torn down and is to be rebuilt from this starting point. The
+> full torn-down history remains on `main`.
 
 ## 1. Thesis
 
-Object hallucination in LVLMs is treated by most methods as an attention
-problem: inspect or amplify visual attention and hallucination should drop.
-This rests on a brittle proxy:
+Object hallucination in LVLMs (LLaVA-1.5-7B baseline) is treated by most methods
+as an **attention problem**: inspect visual attention to *detect* hallucination,
+or amplify visual attention to *mitigate* it. Both rest on one brittle proxy:
 
-    visual attention allocation  ≈  object-level evidence verification
+    visual attention allocation  ≈  target-object evidence verification
 
-We argue the proxy fails, and we sharpen the claim through its evolution:
+**We argue the proxy fails, and it fails in both operational directions.** This
+two-pronged failure is the motivation spine of the project.
 
-- v1 (diagnostic): **Looking is not verifying.** Attention can be plausible but
-  wrong — it can point at a real, semantically *related* region while the
-  *target* object is absent.
-- v2: **Grounding is not enough unless it is target-discriminative under
-  semantic-neighbor controls.** Even a strong, de-confounded grounding signal
-  does not separate "the image supports the target" from "the image supports a
-  plausible neighbor of the target."
-- v3 (current headline): **The target-discriminative criterion is one rule that
-  generalizes across question formats.** The same "stronger evidence for the
-  target than for its strongest alternative" decision instantiates for yes/no,
-  true/false, and multiple-choice — only the source of the *alternative* changes
-  (constructed semantic neighbors for yes/no, the negation for T/F, the explicit
-  options for MCQ). The contribution is this one criterion and the shared failure
-  mode it exposes across formats and datasets, not a single-benchmark score.
+### Prong 1 — Reading attention is unreliable (detection)
 
-One-sentence spine:
+Attention-based detectors look reliable only because their signal is confounded
+by **position / response depth** (a RoPE-driven length effect: tokens deeper in
+the response are both more likely to be hallucinated and to carry a different
+attention geometry). Once we control for generation position — our
+length-controlled *within-bin* metric — mean-over-head attention-shape scores
+**collapse to chance**:
 
-> A visual claim is grounded only when the image provides stronger evidence for
-> the target than for its strongest discriminative alternative — whatever the
-> question format supplies that alternative.
+- `sink_only_conc_top10_mass`: overall AUROC 0.8099 → **within-bin 0.5087**.
+- PAS 0.835 → 0.593, SVAR 0.834 → 0.575 (the position-only baseline alone is 0.830).
 
-## 2. Positioning vs. prior work (what is and is not ours)
+Reading the shape of attention cannot separate a hallucinated token from a
+grounded one once the length confounder is removed.
 
-The space is crowded. We must be explicit about what is background vs. novel.
+**Scope (must state honestly).** The collapse is specific to *mean-over-head
+attention-shape* scores. Not every internal signal dies under the control:
+IC stays at within-bin 0.686, and a late-layer *per-head* supervised probe
+reaches 0.730. So the precise claim is **"attention-shape allocation ≠
+verification,"** not "no internal signal survives length control."
 
-### Background — do NOT pitch as our contribution
+### Prong 2 — Pushing attention is unreliable, and backfires (mitigation)
 
-- **Position/length → more hallucination** is well established (LURE; "Why
-  LVLMs Are More Prone to Hallucinations in Longer Responses", arXiv:2510.20229;
-  "Do More Details…", arXiv:2406.12663).
+Amplifying visual attention does not add *target-object* evidence, so where it
+moves a decision it moves it toward **"yes."** The hard negatives in existence
+questions are **semantic neighbors** (the bathroom-with-a-*toilet* image, asked
+"is there a *sink*?"): attention is already on a real, related region, and
+amplifying it pushes the answer to the wrong "yes." Measured on POPE baselines:
+
+- ClearSight: yes-rate 0.450 → 0.486, related-present FPR 0.114 → 0.160
+  (adversarial 0.164 → 0.223), while Macro MCC *drops* 0.730 → 0.723.
+- Visual Attention Sink shows the same, milder pattern.
+
+Apparent benchmark gains from attention amplification are **over-fitting to the
+benchmark's answer prior**, not improved verification.
+
+**Scope (must state honestly).** This is the attention-*amplification* family.
+A pure attention-only reweight (PAI) is inert (yes-rate 0.446, MCC 0.728) — it
+neither helps nor backfires. The claim is scoped to attention *amplification*,
+not every attention method.
+
+### The two prongs reduce to one root
+
+> Attention allocation is not target-object evidence verification. Reading it
+> (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
+> adds yes-bias.
+
+The constructive answer — a verification criterion that neither reading nor
+amplifying attention provides — is **to be rebuilt** from this starting point
+(see §3).
+
+## 2. Positioning vs. prior work
+
+### Background — not our contribution
+- **Position/length → more hallucination** is well established (LURE;
+  arXiv:2510.20229; arXiv:2406.12663).
 - **Position as a confounder for attention-based detection** is *already
-  published*: **HaloProbe** (Zohrabi, Hasani, Gupta, Soleymani Baghshah, A.
-  Rohrbach, M. Rohrbach; arXiv:2604.06165, Apr 2026). It frames the reversal as
-  **Simpson's paradox**: conditioned on position, hallucinated tokens show
-  comparable/higher image attention; marginalized, correct tokens look higher.
-  It also uses a **per-head attention + confidence** probe, and identifies
-  **object repetition** as a second confounder. It evaluates on 5 models
-  (LLaVA-1.5, Shikra, MiniGPT-4, Qwen3-VL, InternVL3.5) and hits 93.5 AUROC.
-- **Benchmark artifacts in hallucination detection** are also being studied
-  generally (PARALLAX, arXiv:2605.17028).
+  published*: **HaloProbe** (arXiv:2604.06165, Apr 2026), which frames the
+  reversal as **Simpson's paradox**, uses a per-head attention+confidence probe
+  (93.5 AUROC), adds object repetition as a second confounder, and evaluates on
+  5 models. **Implication: Prong 1 is background/motivation, not headline.** We
+  cite HaloProbe and borrow its explanation framing; we do not re-claim it.
+- **Benchmark artifacts in hallucination detection** (PARALLAX, arXiv:2605.17028).
 
-Implication: our **position-confound chapter and per-head diagnostic are no
-longer headline material.** They are largely pre-empted by HaloProbe. We keep
-them as *background that motivates the real question*, and we cite HaloProbe
-explicitly. We borrow HaloProbe's **explanation framing** (Simpson's paradox;
-internal-signal vs. external-confounder factorization) to set up our point —
-but not its experimental burden.
+### What we still own (to be developed on this branch)
+- The **mitigation-side critique** made measurable: the *related-present vs.
+  plain-absent* FPR decomposition that exposes attention-amplification's
+  answer-prior over-fitting — invisible in prior aggregate-POPE tables.
+- A **verification criterion** that is relative to the target's strongest
+  discriminative alternative, rather than reading/amplifying attention.
+  (Design deliberately open — the previous TDEV family was torn down.)
 
-### Our moat — what no prior work does
+## 3. Method design — clean slate
 
-- **Format-general target-discriminative criterion (TDEV).** One decision rule —
-  the image must support the target more than its strongest discriminative
-  alternative — that instantiates across yes/no, true/false, and multiple-choice.
-  Only the *contrast set* changes by format (constructed semantic neighbors;
-  negation; explicit options). Prior confidence/attention methods evaluate target
-  evidence *in isolation*; HaloProbe factors neighbors *out* as noise. We make the
-  decision *relative* to the contrast set and keep it the same across formats.
-  Full spec: [general_tdev_design.md](general_tdev_design.md).
-- **Semantic-neighbor stress test.** We construct POPE/COCO negative subsets
-  where the target is absent but a co-occurring / same-supercategory neighbor is
-  present, and show all attention methods leave an unclosed **related-minus-plain
-  FPR gap**. Empirically, POPE adversarial negatives are 84.8% related-present —
-  the difficulty is structural, not anecdotal. The same alternative-confusion
-  failure mode is what we test for across the other formats/datasets.
-- **Both tasks under matched controls.** Detection (position-controlled) and
-  mitigation (answer-prior controlled, POPE yes-rate/TPR/FPR/MCC) in one
-  framework.
+The prior method superstructure (OWLv2-backed TDEV, internal hidden-margin /
+answer-confidence verifier, CHAIR answer-absence intervention, format-general
+adapter core) has been **removed** from this branch. What survives is only the
+apparatus needed to reproduce the two-pronged critique:
 
-## 3. Method design — format-general no-external-detector family
+- **Detection reproduction:** `detection/baselines/` (NLL, Entropy, IC, GLSim,
+  SVAR, PAS, Beyond-ADS/CGC) under the position/length-controlled metrics defined
+  in [design.md](design.md).
+- **Mitigation reproduction:** `mitigation/baselines/` (vanilla, PAI, ClearSight,
+  VisAttnSink, VCD, DAMRO, OPERA, SPIN) under the POPE/CHAIR behavioral protocol.
 
-### The general method in one place
+The new method is to be designed from the two-pronged motivation. Nothing here
+commits to the previous TDEV instantiation; only the *problem statement* and the
+*baseline evidence* carry over.
 
-The headline method is now a **format-general** instantiation of TDEV, specified
-in full in [general_tdev_design.md](general_tdev_design.md). It factors into
-three parts:
+## 4. Contribution framing (intended)
 
-1. **Contrast-set construction** (the only format-dependent part): enumerate the
-   discriminative alternatives — explicit options for MCQ, the negation for T/F,
-   constructed semantic neighbors for yes/no existence and free-form captions.
-2. **Evidence readout** (format-agnostic): the internal hidden-margin and
-   answer-margin features, generalized to score any candidate claim.
-3. **Discriminative decision rule** (format-agnostic): the target is grounded iff
-   its evidence exceeds the strongest alternative's by a calibrated `τ`.
+Frame as an **analysis + diagnostic-criterion** paper, not a new-detector paper:
 
-An optional **commit-verify two-stage** wrapper (free generation, then
-discriminative verification of each commitment) explains why CHAIR detection is
-strong (AUROC 0.898) and can be ported back to POPE to import the same
-inconsistency signal the single-shot format lacks.
+1. The **two-pronged critique** — attention-based detection and mitigation both
+   fail under matched controls (length control for detection; answer-prior /
+   related-vs-plain control for mitigation).
+2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
+   mitigation failure measurable.
+3. A constructive verification criterion (TBD) that answers both failures.
 
-The rest of this section records the no-external-detector evidence work that the
-general framework is built on.
+Honest guardrails carried over from the tear-down:
+- Prong 1 is pre-empted by HaloProbe → background only.
+- Prong 2 is scoped to attention *amplification* (PAI is inert).
+- Any absolute-gain claim must be reported against the honest baselines here.
 
-### Why the design changed
-
-The original strongest TDEV result used **OWLv2** as an external
-open-vocabulary evidence backend. That remains a useful positive control, but it
-cannot be the headline method: it invites the ``why not just OWLv2?'' critique
-and makes the method look like an external-tool pipeline.
-
-We therefore implemented and validated several internal reference paths. The
-current conclusion is empirical, not aspirational: **the external detector can be
-removed for the current method family, but the internal POPE verifier still
-trails the OWLv2 positive control.**
-
-### Evaluated internal reference paths
-
-| Route | Evidence | Status | Main lesson |
-|---|---|---|---|
-| A | IC / final-layer logit-lens target-vs-neighbor margin | rejected as main | cheap but too conservative or too weak |
-| B | attention-region target-vs-neighbor discriminability | rejected as main | raw attention-region overlap is not sufficiently discriminative |
-| C | contrastive per-head attention-shape probe | diagnostic only | internal signal exists but recall/FPR tradeoff is not enough |
-| D | hidden-state target-vs-neighbor contrast | strongest internal family | hidden+answer evidence gives the best no-external POPE gate |
-
-The current internal method uses task-specific heads over the same broad idea:
-query the VLM itself for target-object support rather than invoking an external
-region detector.
-
-### Confirmed ceiling (2026-06-24)
-
-Two experiments with full POPE (9000 rows) confirm that MCC ≈ 0.740 is the
-internal-method ceiling:
-
-- **Experiment A**: per-layer hidden margins (layers 16/22/27/31 separately,
-  18 features total) with logistic regression → MCC 0.739. No improvement over
-  the existing 6-feature scalar verifier (MCC 0.742).
-- **Experiment B**: full 49152-dim hidden-state features + OOF supervised
-  logistic regression → AUROC 0.9427, gate MCC 0.740. Essentially the same
-  as the scalar method.
-
-The gap to OWLv2 (MCC 0.763, Related FPR 0.069) is **structural**: internal
-semantic distribution features cannot replicate the spatial evidence that an
-external region detector provides. This gap should be reported honestly in the
-paper; do not invest more effort trying to engineer it away.
-
-### Current selected no-external rows
-
-Source of truth: [no_external_detector_summary.md](no_external_detector_summary.md),
-generated by `mitigation/scripts/build_no_external_detector_summary.py` from the
-current artifacts.
-
-| Scenario | Current no-external method | Result summary | Role |
-|---|---|---|---|
-| POPE semantic-neighbor gate | hidden+answer verifier, leave-one-split-out calibration | MCC 0.742, TPR 0.810, FPR 0.073, related FPR 0.097 | main POPE internal row |
-| POPE stricter-FPR ablation | same verifier, `min_fpr_tpr0.80` | MCC 0.740, TPR 0.800, FPR 0.067, related FPR 0.089 | FPR-focused ablation |
-| CHAIR object-claim detection | `answer_absence_score = -target_yes_margin` | AUROC 0.898, within-bin 0.872, MCC 0.596 | main CHAIR detector |
-| CHAIR caption intervention | answer-absence selected generic rewrite top-10 | CHAIRi 0.113, CHAIRs 0.432, LCS retention 0.9958 | main preserved intervention |
-| CHAIR aggressive ablation | answer-absence selected delete top-10 | CHAIRi 0.107, CHAIRs 0.410, but fails preservation gate | upper-bound only |
-
-OWLv2 hybrid gate+rescue remains in tables only as an **external positive
-control** (MCC 0.763, FPR 0.051, related FPR 0.069 on POPE). It should not be
-described as the paper-facing method.
-
-### What this means for the paper
-
-The contribution should now be framed as a **target-discriminative internal
-verification family**, not as an external detector pipeline and not as a fully
-solved hallucination mitigator. The honest claim is:
-
-> Internal target/answer evidence can reduce semantic-neighbor false positives
-> and drive CHAIR claim correction without an external detector, but it still
-> does not fully match a strong external region-verification positive control.
-
-This keeps the novelty centered on the semantic-neighbor criterion and the
-internal target-vs-neighbor evidence readout, while avoiding overclaiming.
-
-## 4. Contribution framing
-
-Frame as an **analysis + diagnostic-criterion** paper, not a new-detector paper.
-The contribution axis is **generality across question formats**, not a
-single-benchmark score:
-
-1. A **format-general target-discriminative criterion (TDEV)**: one decision rule
-   — image support for the target must exceed support for its strongest
-   discriminative alternative — instantiated for yes/no, true/false, and
-   multiple-choice, with only the contrast set changing by format. See
-   [general_tdev_design.md](general_tdev_design.md).
-2. A controlled **semantic-neighbor / alternative-confusion stress test** showing
-   the *same* failure mode recurs across formats and datasets and survives
-   position/repetition de-confounding — current methods over-fire on the
-   strong-alternative subset.
-3. Evidence across **detection and mitigation** under matched controls, with no
-   external detector in the main method rows, OWLv2 retained only as an external
-   positive control, and HaloProbe-style probes as background/diagnostic
-   references.
-
-Honest scope: the POPE absolute gain is modest (MCC 0.742 vs 0.730) and trails
-the OWLv2 control (0.763) at a confirmed structural ceiling. Generality is a
-*complementary* axis — it does not raise that number and must not be framed as if
-it did.
-
-## 5. Known risks / must-dos
-
-- **Format generality is now claimed but not yet tested beyond yes/no + caption.**
-  The generality claim requires validating the criterion on T/F and MCQ. Plan
-  (see [general_tdev_design.md](general_tdev_design.md) §8): **MME first**
-  (yes/no + T/F, lowest cost, closest to POPE), then **MMBench / SEED-Bench**
-  (MCQ — hardest generality claim), then **AMBER** (second yes/no neighbor
-  benchmark). For each, report the discriminative-margin detector/gate and whether
-  the alternative-confusion failure mode appears.
-- **MCQ may reduce to argmax.** If the answer logit carries all the signal, the
-  rule adds nothing; the MCQ contribution must then come from the hidden-margin
-  readout or from selective prediction (abstain on small runner-up margins).
-  Validate before claiming.
-- **Single model.** HaloProbe uses 5. We must add ≥1 modern model (Qwen-VL /
-  InternVL) at least for the semantic-neighbor headline. (Qwen2.5-VL is already
-  done on POPE; extend to the new formats/datasets as they come online.)
-- **HaloProbe head-to-head.** If time permits, run a HaloProbe-style internal
-  probe on our related-present subset; otherwise cite it as motivation and keep
-  our target-vs-neighbor stress test distinct.
-- **Object repetition control.** Add repetition as a second confounder control
-  (free, borrowed from HaloProbe) so detection results are not re-attackable.
-- **Generation-time integration.** CHAIR intervention is currently post-hoc
-  claim editing. A decoding-time or regeneration-time variant would strengthen
-  the method claim.
-- **Keep OWLv2 scoped.** OWLv2 stays only as an external positive control /
-  upper-bound ablation, never the headline method.
+## 5. Known risks / must-dos (rebuild backlog)
+- **Rebuild the constructive method** from the two motivations; do not resurrect
+  the torn-down TDEV code without re-justifying it.
+- **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
+  LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
+  baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).
+- **Prong 1 boundary:** keep it as background; its only forward use is to
+  motivate a *relative* (target-vs-alternative) readout that survives the control.
+- **Object repetition control** (free, borrowed from HaloProbe) for detection.
 
 ## 6. Pointers
-
-- **Format-general method spec: [general_tdev_design.md](general_tdev_design.md).**
-- Why each score is computed: [design.md](design.md), [detection/docs/scores.md](../detection/docs/scores.md).
-- Results so far: [experiment_results.md](experiment_results.md).
-- Current no-external main rows: [no_external_detector_summary.md](no_external_detector_summary.md).
+- Score/metric definitions and the position/length control: [design.md](design.md).
+- Repo layout: [project_structure.md](project_structure.md).
+- Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
-- Older venue plan (background): [aaai2027_paper_plan.md](aaai2027_paper_plan.md).
-- Detector positioning notes (background): [tdev_detector_positioning.md](tdev_detector_positioning.md).

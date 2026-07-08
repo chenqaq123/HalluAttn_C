@@ -16,11 +16,14 @@ them in the same session.
 
 Rules:
 
-- These three docs override older planning docs when they conflict. Background
-  references: `docs/design.md` (score rationale), `docs/aaai2027_paper_plan.md`
-  and `docs/tdev_detector_positioning.md` (still-useful planning/lit-review).
-  Superseded ICML-era plans and working audits live in `docs/archive/` — history
-  only, not the current plan.
+- These three docs are authoritative. Background reference: `docs/design.md`
+  (score / position-length-control metric rationale) and
+  `docs/project_structure.md` (repo layout).
+- **The project was restarted on 2026-07-07 (branch `restart-two-pronged`).**
+  Only the reproducible detection/mitigation baselines were kept; all prior
+  method design (TDEV / semantic-neighbor verifier / no-external-detector family
+  / CHAIR intervention) was torn down and is being rebuilt. That torn-down
+  history — including the old planning/audit docs — lives on the `main` branch.
 - `docs/experiment_results.md` and `docs/iteration_log.md` are append-only logs.
   Never delete past entries; add a new dated entry instead.
 - If a task changes the proposal, record the change as an iteration-log entry too.
@@ -29,9 +32,11 @@ Rules:
 
 SinkDetect studies object hallucination in LVLMs (LLaVA-1.5-7B baseline). The
 thesis: visual attention allocation is not the same as target-object evidence
-verification. The headline contribution is a **semantic-neighbor stress test**
-plus a **target-discriminative evidence verification (TDEV)** criterion. See
-[docs/proposal.md](docs/proposal.md) for the full argument.
+verification, and this proxy fails in **both** operational directions —
+**reading** attention (detection collapses to chance under length control) and
+**pushing** attention (amplification only adds yes-bias / backfires). This
+two-pronged critique is the durable motivation; the constructive method is being
+rebuilt (see [docs/proposal.md](docs/proposal.md)).
 
 ## Repository conventions
 

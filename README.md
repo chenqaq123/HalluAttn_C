@@ -19,13 +19,11 @@ them first.
 
 | Doc | Purpose |
 |---|---|
-| [docs/proposal.md](docs/proposal.md) | **living** — current research proposal: thesis, positioning, headline method design |
+| [docs/proposal.md](docs/proposal.md) | **living** — current research proposal: two-pronged thesis, positioning, method (rebuilding) |
 | [docs/experiment_results.md](docs/experiment_results.md) | **living** — consolidated results, appended on every new experiment |
 | [docs/iteration_log.md](docs/iteration_log.md) | **living** — decision/iteration history |
 | [docs/project_structure.md](docs/project_structure.md) | current repository layout and active entrypoints |
-| [docs/design.md](docs/design.md) | research framing, method design, hypotheses, and open questions |
-| [docs/aaai2027_paper_plan.md](docs/aaai2027_paper_plan.md) | paper-facing experiment and writing plan |
-| [docs/archive/](docs/archive/) | superseded ICML-era plans and working audits (history only) |
+| [docs/design.md](docs/design.md) | score / position-length-control metric rationale |
 | [detection/docs/pipeline.md](detection/docs/pipeline.md) | detection data flow, sharding, cache, and merge contracts |
 | [detection/docs/scores.md](detection/docs/scores.md) | exact score names and sign conventions |
 | [detection/docs/results_summary.md](detection/docs/results_summary.md) | compact baseline result summary |
