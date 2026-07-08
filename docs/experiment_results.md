@@ -46,6 +46,13 @@ Takeaway: PAS/SVAR's high overall AUROC is position-confounded (collapse to
 ~random within-bin). IC is the strongest position-controlled baseline. This is
 the Prong-1 reproduction: attention-mass detectors do not survive length control.
 
+> **Reproduction fidelity (verified 2026-07-08, see §E):** PAS is a line-for-line
+> faithful port of `lanl/pas` — its collapse is genuine. IC (final-layer only, a
+> conservative lower bound), GLSim, NLL, Entropy are faithful. **SVAR here is
+> layer-0 visual-attention mass, not the paper's middle-layer (5–18) SVAR** —
+> relabel or fix. Beyond-ADS/CGC are simplified unsupervised single-layer proxies
+> (`paper_reimplementation`); ADS≈0.503 reflects the proxy, not the method.
+
 ## B. Detection — SinkDetect shape scores & per-head diagnostic (Prong 1)
 
 Source: `experiments/coco_llava_7b_rows`, [design.md §16](design.md).
@@ -80,6 +87,14 @@ yes-rate without improving target-object verification — the Prong-2 reproducti
 The related-present vs. plain-absent FPR decomposition that makes this measurable
 is part of the rebuild backlog (was on `main`; to be re-derived here).
 
+> **Reproduction fidelity (verified 2026-07-08, see §E):** the amplification
+> family that carries Prong 2 — PAI (faithful, inert), ClearSight and VisAttnSink
+> (faithful; both raise yes-rate/FPR, drop MCC) — is sound, and VCD is faithful.
+> Caveats: ClearSight's POPE suppression collapses to ~1 token (enhancement-only
+> on POPE). **SPIN, DAMRO, OPERA are NOT currently valid reproductions** (SPIN
+> prefill-mask bug → always-yes; DAMRO CLS-attention bug; OPERA delegation-only,
+> no results) — do not report their numbers until fixed. Full numbers in §E.
+
 ---
 
 ## E. New results (append below, newest last)
@@ -92,4 +107,53 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - Supersedes: (if applicable)
 -->
 
-_(empty — rebuilt method results start here)_
+### 2026-07-08 — Baseline reproduction verification against source papers
+
+- Setup: audited every retained detection and mitigation baseline against its
+  source paper / official code (6 parallel reviews). Verified our code in
+  `detection/baselines/methods/extract_model_signals.py` and
+  `mitigation/src/{interventions,decoding}.py`. Reproduced numbers read from
+  `mitigation/results/coco_llava_7b_attention_only/audit_pope_macro.csv`,
+  `audit_chair.csv`, and `pope_full_vcd_greedy_audit/audit.json`.
+
+- **Verdicts (fidelity of the port to the paper):**
+
+| Baseline | Paper / code | Verdict | Note |
+|---|---|---|---|
+| NLL, Entropy | standard | ✅ faithful | correct teacher-forcing alignment (hard-abort guard) |
+| IC | arXiv:2410.02762 | ✅ faithful (conservative) | final-layer logit-lens only vs paper's max-over-layers → within-bin 0.686 is a **lower bound** |
+| GLSim | arXiv:2508.19972 | ✅ faithful | formula + LLaVA-1.5 hyperparams (layers 31/32, k=32, w=0.6) match |
+| PAS | arXiv:2511.11502 (`lanl/pas`) | ✅ faithful | matches official line-for-line; **the 0.835→0.593 collapse is a genuine property of PAS, not a bug** |
+| SVAR | arXiv:2411.16724 | ⚠️ relabel | ours is **layer-0** visual-attention mass; paper's SVAR sums middle layers 5–18. Mechanism + position-confound conclusion hold, but the row is not the paper's SVAR — describe as "layer-0 visual attention mass" or fix. |
+| Beyond-ADS/CGC/ADS+CGC | arXiv:2604.04863 | ⚠️ simplified proxy | single-layer, unsupervised; drops blob-mass (ADS), selects top-k by attention not similarity (CGC), fixed 0.5/0.5 avg vs paper's supervised 2L classifier. Near-random 0.503 reflects the proxy, **not** the original method. Already tagged `paper_reimplementation`. |
+| PAI (attn-only) | ECCV 2024 (`LALBJ/PAI`) | ✅ faithful-but-scoped | CFG/logit branch intentionally dropped (documented); attention half matches official exactly |
+| ClearSight/VAF | CVPR 2025 (`ustc-hyin/ClearSight`) | ⚠️ POPE caveat | enhancement half faithful to official code; **on POPE the suppression region collapses to ~1 token** (POPE prompt has no system block) → effectively enhancement-only; no visual-head selection (inherited from official code); suppress=0.95 (code) not 0.9 (paper) |
+| VisAttnSink | ICLR 2025 (`seilk/VisAttnSink`) | ✅ faithful | sink dims 2533/1415, τ=20, ρ=0.5, retain p=0.6 all match; minor layer window 2–31 vs 0–30 |
+| VCD | CVPR 2024 (`DAMO-NLP-SG/VCD`) | ✅ faithful-but-scoped | contrast formula + β-constraint + diffusion noise bit-faithful; greedy (not sampling) and α=0.5 are documented choices |
+| DAMRO | EMNLP 2024 | ❌ likely bug | outlier selection at `decoding.py:285` collapses CLIP's 16 heads into one full-dim head scaled by 1024^-0.5 (should be per-head 64^-0.5); ranks wrong tokens → plausibly explains the negative signal |
+| SPIN | EMNLP 2025 (`YUECHE77/SPIN`) | ❌ bug | `interventions.py:168-189` masks **all** prompt tokens in prefill; official gates only the last position → corrupts KV cache → degenerate always-yes (FPR→0.98) |
+| OPERA | CVPR 2024 (`shikiw/OPERA`) | ❌ not reproduced | pure delegation wrapper (no algorithm code); hard-fails on stock transformers; **no recorded results**; needs the official fork + verified `key_position` |
+
+- **Reproduced numbers we can stand behind (full POPE 9000 + CHAIR 4977 imgs):**
+
+| Method | POPE MCC | yes-rate | TPR | FPR | ΔMCC | CHAIRi | CHAIRs | CHAIR Δwords |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla | 0.731 | 0.450 | 0.813 | 0.087 | — | 0.134 | 0.490 | — |
+| PAI (attn-only) | 0.729 | 0.446 | 0.808 | 0.084 | −0.002 | 0.134 | 0.500 | +0.72 |
+| ClearSight | 0.725 | 0.486 | 0.848 | 0.125 | −0.006 | 0.135 | 0.493 | −1.79 |
+| VisAttnSink | 0.723 | 0.455 | 0.815 | 0.096 | −0.008 | 0.143 | 0.522 | +1.47 |
+
+  (VCD, adversarial-split full audit: MCC 0.668→0.654, FPR 0.145→0.162, yes-rate
+  0.479→0.489 — mild harm, no help. DAMRO/SPIN only have adversarial-120 smokes
+  and are affected by the bugs above; OPERA has none.)
+
+- Interpretation: **Prong 1 is solidly reproduced.** PAS is a line-for-line
+  faithful port and its collapse to chance under length control is a genuine
+  property of the score; IC/GLSim/NLL/Entropy are faithful; the sink shape score
+  0.5087 (§B) is our own. **Prong 2 holds on the faithful amplification family:**
+  PAI is inert, ClearSight and VisAttnSink both raise yes-rate/FPR and drop MCC
+  without CHAIR benefit — exactly the answer-prior over-fit the proposal claims.
+  Caveat to fix before paper: SVAR is layer-0 (relabel), ClearSight's POPE
+  suppression is near-empty (mechanism note), and SPIN/DAMRO/OPERA are not
+  currently valid reproductions.
+- Supersedes: none (first fidelity audit of the retained baselines).

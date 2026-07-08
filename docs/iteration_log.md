@@ -69,3 +69,36 @@
    decomposition (the measurable form of Prong 2) as the first analysis step.
 4. Honesty guardrails carried over: Prong 1 is background (HaloProbe pre-empts);
    Prong 2 is scoped to attention *amplification* (PAI is inert).
+
+## 2026-07-08 — Baseline reproduction verified against source papers
+
+**What changed:** Audited every retained detection and mitigation baseline
+against its source paper / official code (6 parallel reviews). Recorded verdicts,
+the reproduced full-POPE/CHAIR numbers we can stand behind, and the required
+fixes in `experiment_results.md` §E (plus fidelity notes on §A/§C).
+
+**Why:** Before rebuilding the method, the two-pronged critique must rest on
+reproductions that actually match the papers.
+
+**Evidence/refs:** `experiment_results.md` §E (2026-07-08 entry).
+- **Faithful (report as-is):** PAS (line-for-line `lanl/pas`; its length-control
+  collapse is genuine), IC (conservative), GLSim, NLL, Entropy; PAI (attn-only,
+  documented), VisAttnSink, VCD.
+- **Faithful but needs a caveat/relabel:** SVAR is layer-0 mass, not the paper's
+  middle-layer SVAR; ClearSight's POPE suppression region ≈1 token
+  (enhancement-only on POPE); Beyond-ADS/CGC are simplified unsupervised proxies.
+- **Not valid reproductions (bugs / not runnable):** SPIN (prefill masks all
+  prompt tokens → always-yes), DAMRO (CLS-attention collapses CLIP's 16 heads,
+  `decoding.py:285`), OPERA (delegation-only wrapper, no algorithm code, no
+  recorded results, hard-fails on stock transformers).
+
+**Implications / next:**
+1. Prong 1 (PAS/IC + sink shape) and Prong 2 (PAI/ClearSight/VisAttnSink/VCD) are
+   both reproduced well enough to anchor the paper's motivation.
+2. Fix-or-relabel backlog: (a) relabel SVAR as "layer-0 visual attention mass" or
+   implement the middle-layer sum; (b) note ClearSight's POPE suppression scope;
+   (c) footnote IC's single-layer readout. These are cheap and paper-facing.
+3. Repair backlog if these baselines are to be reported: SPIN prefill scope
+   (`interventions.py:168-189`), DAMRO CLS attention (`decoding.py:285`), OPERA
+   official-fork wiring + `key_position` verification. Otherwise drop them from
+   the reportable set (they are not central to the amplification thesis).
