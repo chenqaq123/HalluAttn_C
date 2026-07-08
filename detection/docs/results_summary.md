@@ -21,14 +21,20 @@ implementations and should be reported with that qualifier.
 
 | Score | Overall | Within-bin | Matched-pair | Residual | Note |
 |---|---:|---:|---:|---:|---|
-| PAS | 0.8349 | 0.5928 | 0.5833 | 0.5694 | High overall, but almost entirely position-correlated. |
-| SVAR | 0.8336 | 0.5748 | 0.5759 | 0.5570 | Similar position issue as PAS. |
-| IC | 0.7761 | 0.6856 | 0.7029 | 0.6331 | Strongest position-controlled baseline. |
+| PAS | 0.8349 | 0.5928 | 0.5833 | 0.5694 | High overall, but almost entirely position-correlated. Faithful to `lanl/pas`. |
+| SVAR (layer-0 mass) | 0.8336 | 0.5748 | 0.5759 | 0.5570 | Same position issue as PAS. **Note:** this is layer-0 visual-attention mass, not Jiang et al.'s middle-layer (5–18) summed SVAR — relabel/fix pending. |
+| IC | 0.7761 | 0.6856 | 0.7029 | 0.6331 | Strongest position-controlled baseline. **Note:** final-layer logit-lens only (paper maxes over all layers), so this is a conservative lower bound. |
 | GLSim-local | 0.7724 | 0.5636 | 0.5931 | 0.6006 | Has some residual grounding signal. |
 | Entropy | 0.7206 | 0.6366 | 0.6545 | 0.6335 | Reliable uncertainty baseline after position control. |
 | NLL | 0.7114 | 0.6360 | 0.6524 | 0.6297 | Similar to Entropy. |
 
 ## Beyond Global Scores
+
+Reported as **simplified single-layer unsupervised proxies** (`paper_reimplementation`),
+not the paper's method: ADS drops the foreground/background blob-mass weighting,
+CGC selects top-k patches by attention (not similarity) with a token/patch layer
+offset, and ADS+CGC is a fixed 0.5/0.5 average rather than the paper's supervised
+multi-layer classifier. The near-random ADS reflects this proxy, not the original.
 
 We report the two components and their combined detector:
 

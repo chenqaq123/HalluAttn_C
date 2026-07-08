@@ -13,11 +13,15 @@ hallucination mitigation analysis on LLaVA-1.5-7B.
 | `visattnsink` | See What You Are Told / Visual Attention Sink | sink identification, head filtering, visual attention redistribution port | layers `[2, 32)`, `tau=20`, `rho=0.5`, `summ=0.2`, `p=0.6` |
 | `vcd` | Visual Contrastive Decoding | deterministic greedy port using original/noisy image logits | `alpha=0.5`, `beta=0.1`, `noise_step=500` |
 | `damro` | DAMRO | deterministic greedy port using CLS-selected ViT outlier-token negative logits | `alpha=2.0`, `beta=0.1`, `topk=10` |
-| `opera` | OPERA | guarded official beam-search hook; no greedy approximation | `beam=5`, `scale=50`, `threshold=15`, `attn_candidates=5`, `penalty=1` |
 | `spin` | Image-Guided Head Suppression | controlled HF port of visual-attention top-head routing and non-routed head suppression | layers `[0, 32)`, `routed_heads=0.8`, `small_num_mask=0.1` |
 
+> OPERA was dropped from the runnable set (2026-07-08): its official method is a
+> `transformers`-fork beam-search hook with no local algorithm code, so it cannot
+> be reproduced in this HF stack without vendoring the fork. See
+> `docs/experiment_results.md` §E.
+
 Attention-intervention implementation lives in
-[`mitigation/src/interventions.py`](../src/interventions.py). Decoding-time VCD, DAMRO, and OPERA wrapper
+[`mitigation/src/interventions.py`](../src/interventions.py). Decoding-time VCD and DAMRO
 logic lives in [`mitigation/src/decoding.py`](../src/decoding.py). The ports use
 the HuggingFace `LlavaForConditionalGeneration` stack already used in this
 project, rather than vendoring incompatible LLaVA forks. These are controlled
@@ -51,5 +55,4 @@ or simply shorter, less object-rich captions.
 - [`visattnsink/README.md`](visattnsink/README.md)
 - [`vcd/README.md`](vcd/README.md)
 - [`damro/README.md`](damro/README.md)
-- [`opera/README.md`](opera/README.md)
 - [`spin/README.md`](spin/README.md)

@@ -33,7 +33,7 @@ Source: `detection/baselines/results/coco_llava_7b_baselines/`,
 | Score | Overall | Within-bin | Matched-pair | Residual | Note |
 |---|---:|---:|---:|---:|---|
 | PAS | 0.835 | 0.593 | 0.583 | 0.569 | high overall, almost entirely position-correlated |
-| SVAR | 0.834 | 0.575 | 0.576 | 0.557 | same position issue |
+| SVAR (layer-0 mass) | 0.834 | 0.575 | 0.576 | 0.557 | same position issue; layer-0 mass, not the paper's middle-layer SVAR (relabel) |
 | IC | 0.776 | **0.686** | **0.703** | 0.633 | strongest position-controlled baseline |
 | GLSim-local | 0.772 | 0.564 | 0.593 | 0.601 | some residual signal |
 | Entropy | 0.721 | 0.637 | 0.655 | 0.634 | reliable uncertainty baseline |
@@ -91,9 +91,9 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 > family that carries Prong 2 — PAI (faithful, inert), ClearSight and VisAttnSink
 > (faithful; both raise yes-rate/FPR, drop MCC) — is sound, and VCD is faithful.
 > Caveats: ClearSight's POPE suppression collapses to ~1 token (enhancement-only
-> on POPE). **SPIN, DAMRO, OPERA are NOT currently valid reproductions** (SPIN
-> prefill-mask bug → always-yes; DAMRO CLS-attention bug; OPERA delegation-only,
-> no results) — do not report their numbers until fixed. Full numbers in §E.
+> on POPE). **SPIN and DAMRO were buggy; both were fixed 2026-07-08 and now need a
+> re-run** (their old smoke numbers are invalid). **OPERA was dropped** (fork-only,
+> not reproducible in this stack). Full detail in §E.
 
 ---
 
@@ -157,3 +157,29 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   suppression is near-empty (mechanism note), and SPIN/DAMRO/OPERA are not
   currently valid reproductions.
 - Supersedes: none (first fidelity audit of the retained baselines).
+
+### 2026-07-08 — Fixed SPIN + DAMRO, dropped OPERA (code; re-run pending)
+
+- Setup: acted on the fidelity audit above. Code changes only; no re-run yet.
+- **SPIN** (`mitigation/src/interventions.py` `_spin_head_mask`): now gates heads
+  only at the **last query position** in prefill (+ each decoded token), leaving
+  earlier prompt positions untouched so the KV cache is not corrupted; head count
+  uses truncation `int(routed·H)` (=25 at 0.8) to match official. Unit-tested
+  with dummy tensors: only the last row is masked, 25/32 heads kept, earlier rows
+  all-ones. Fixes the always-yes collapse.
+- **DAMRO** (`mitigation/src/decoding.py` `_select_damro_outlier_features`): CLS
+  attention now uses CLIP's real 16-head form (reshape to heads, per-head scale
+  `head_dim^-0.5`, average CLS→patch attention across heads) instead of one
+  full-dim head scaled by `hidden^-0.5`. Unit-tested: top-10 outlier selection
+  overlaps the old buggy version only 3/10, i.e. it now ranks materially
+  different tokens.
+- **OPERA**: removed from the runnable set (deleted `generate_opera_beam`,
+  `check_opera_support.py`, `mitigation/baselines/opera/`, and all wiring in
+  `run_task.py` / `run_parallel_mitigation.sh`). It is a `transformers`-fork
+  beam-search hook with no local algorithm code and cannot be reproduced in this
+  HF stack without vendoring the fork.
+- Interpretation: SPIN and DAMRO are now **faithful in code** but their previous
+  (buggy) smoke numbers are void — **valid numbers require re-running** them on
+  POPE/CHAIR. Until then, only the faithful set with recorded numbers (vanilla,
+  PAI, ClearSight, VisAttnSink, VCD) should be reported.
+- Supersedes: the "SPIN/DAMRO not valid" status in the 2026-07-08 audit entry (now fixed).

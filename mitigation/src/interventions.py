@@ -159,34 +159,35 @@ class AttentionIntervention(LlamaAttention):
         return weights
 
     def _spin_head_mask(self, weights: torch.Tensor) -> torch.Tensor | None:
+        # Official SPIN (attentionSPIN.py) routes/suppresses heads only at the
+        # LAST query position in prefill (the last prompt token, which emits the
+        # first output token) and at each subsequently generated token
+        # (q_len == 1 during decode). Earlier prompt positions are left untouched
+        # so the prefill KV cache is not corrupted. Gating the whole prompt (the
+        # previous behavior) pushed the model into degenerate always-yes output.
         q_len, kv_len = weights.shape[-2:]
         vis_start = min(self.vis_start, kv_len)
         vis_end = min(self.vis_end, kv_len)
         if vis_end <= vis_start:
             return None
 
-        q_slice = self._text_query_slice(q_len, kv_len)
-        if q_slice.start >= q_slice.stop:
-            return None
-
         bsz, num_heads = weights.shape[:2]
-        keep = max(1, min(num_heads, int(round(self.intervention.spin_routed_heads * num_heads))))
-        visual_mass = weights[:, :, q_slice, vis_start:vis_end].sum(dim=-1).transpose(1, 2)
-        indices = torch.topk(visual_mass, k=keep, dim=-1).indices
-        selected = torch.zeros(
-            (bsz, q_slice.stop - q_slice.start, num_heads),
+        # Truncate (not round) to match official `int(routed_head * num_heads)`.
+        keep = max(1, min(num_heads, int(self.intervention.spin_routed_heads * num_heads)))
+        last = q_len - 1
+        # Route heads by the last query position's image-attention mass.
+        visual_mass = weights[:, :, last, vis_start:vis_end].sum(dim=-1)  # (bsz, num_heads)
+        indices = torch.topk(visual_mass, k=keep, dim=-1).indices          # (bsz, keep)
+        row = torch.full(
+            (bsz, num_heads),
+            float(self.intervention.spin_small_num_mask),
             device=weights.device,
             dtype=weights.dtype,
         )
-        selected.scatter_(-1, indices, 1.0)
-        selected = torch.where(
-            selected > 0,
-            selected,
-            torch.full_like(selected, float(self.intervention.spin_small_num_mask)),
-        )
+        row.scatter_(-1, indices, 1.0)
 
         mask = torch.ones((bsz, q_len, num_heads), device=weights.device, dtype=weights.dtype)
-        mask[:, q_slice, :] = selected
+        mask[:, last, :] = row
         return mask
 
     @deprecate_kwarg("past_key_value", new_name="past_key_values", version="4.58")
@@ -260,7 +261,7 @@ def _default_layers(method: str) -> tuple[int, int]:
 
 
 def install_intervention(model, method: str, device, **kwargs) -> InterventionConfig:
-    if method in {"vanilla", "vcd", "damro", "opera", "nolan"}:
+    if method in {"vanilla", "vcd", "damro", "nolan"}:
         return InterventionConfig(method=method, start_layer=0, end_layer=0)
     start, end = _default_layers(method)
     intervention = InterventionConfig(

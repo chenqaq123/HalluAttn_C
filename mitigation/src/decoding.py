@@ -282,9 +282,21 @@ def _select_damro_outlier_features(
     selected = image_outputs.hidden_states[feature_layer][:, 1:]
     query = store.query
     key = store.key
-    attn = torch.matmul(query, key.transpose(-2, -1)) * (query.shape[-1] ** -0.5)
+    # CLIP ViT-L/14 self-attention is multi-head (16 heads, head_dim 64). Reshape
+    # the raw q/k projections into heads and scale per-head (head_dim ** -0.5),
+    # then average the CLS->patch attention across heads. The previous code
+    # collapsed all 16 heads into one full-dim head scaled by hidden**-0.5, which
+    # ranked the wrong "outlier" tokens and broke DAMRO's contrast branch.
+    attn_module = layer.self_attn
+    bsz, seq_len, hidden = query.shape
+    num_heads = int(getattr(attn_module, "num_heads", None) or model.config.vision_config.num_attention_heads)
+    head_dim = hidden // num_heads
+    scale = float(getattr(attn_module, "scale", head_dim ** -0.5))
+    q = query.view(bsz, seq_len, num_heads, head_dim).transpose(1, 2)
+    k = key.view(bsz, seq_len, num_heads, head_dim).transpose(1, 2)
+    attn = torch.matmul(q, k.transpose(-2, -1)) * scale  # (bsz, heads, seq, seq)
     attn = torch.softmax(attn.float(), dim=-1)
-    cls_attn = attn[:, 0, 1:]
+    cls_attn = attn[:, :, 0, 1:].mean(dim=1)  # mean over heads -> (bsz, seq-1)
     k = max(1, min(int(topk), selected.shape[1]))
     indices = torch.topk(cls_attn, k=k, dim=1).indices
     gather_index = indices.unsqueeze(-1).expand(-1, -1, selected.shape[-1])
@@ -422,68 +434,3 @@ def generate_damro_greedy(
     if not generated:
         return "", outlier_indices
     return processor.decode(generated, skip_special_tokens=True).strip(), outlier_indices
-
-
-def generate_opera_beam(
-    model,
-    processor,
-    inputs: dict[str, torch.Tensor],
-    max_new_tokens: int,
-    image_start: int,
-    image_end: int,
-    num_beams: int = 5,
-    scale_factor: float = 50.0,
-    threshold: int = 15,
-    num_attn_candidates: int = 5,
-    penalty_weights: float = 1.0,
-) -> str:
-    """Generate through the official OPERA beam-search hook when available.
-
-    OPERA's released implementation modifies ``transformers.generate`` and adds
-    an ``opera_decoding`` beam-search path. This wrapper deliberately does not
-    emulate OPERA with a greedy approximation: if the installed transformers
-    package does not contain the official hook, it fails before producing any
-    baseline output.
-    """
-    key_position = {
-        "image_start": int(image_start),
-        "image_end": int(image_end),
-        "response_start": int(inputs["input_ids"].shape[1]),
-    }
-    try:
-        with torch.inference_mode():
-            output_ids = model.generate(
-                **inputs,
-                max_new_tokens=max_new_tokens,
-                do_sample=False,
-                num_beams=int(num_beams),
-                output_attentions=True,
-                pad_token_id=processor.tokenizer.pad_token_id,
-                opera_decoding=True,
-                key_position=key_position,
-                scale_factor=float(scale_factor),
-                threshold=int(threshold),
-                num_attn_candidates=int(num_attn_candidates),
-                penalty_weights=float(penalty_weights),
-            )
-    except (TypeError, ValueError) as exc:
-        message = str(exc)
-        opera_keys = (
-            "opera_decoding",
-            "key_position",
-            "scale_factor",
-            "num_attn_candidates",
-            "penalty_weights",
-        )
-        if any(key in message for key in opera_keys):
-            raise RuntimeError(
-                "OPERA requires the official modified transformers generate() "
-                "implementation from shikiw/OPERA. The current environment "
-                "rejected OPERA-specific generation arguments, so no OPERA "
-                "baseline was produced."
-            ) from exc
-        raise
-    generated = output_ids[0][inputs["input_ids"].shape[1]:]
-    text = processor.decode(generated, skip_special_tokens=True).strip()
-    del output_ids
-    return text

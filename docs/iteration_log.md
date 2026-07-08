@@ -102,3 +102,29 @@ reproductions that actually match the papers.
    (`interventions.py:168-189`), DAMRO CLS attention (`decoding.py:285`), OPERA
    official-fork wiring + `key_position` verification. Otherwise drop them from
    the reportable set (they are not central to the amplification thesis).
+
+## 2026-07-08 — Fixed SPIN + DAMRO, dropped OPERA
+
+**What changed:** Acted on the fidelity audit. Fixed the two local bugs and
+removed OPERA. Code + docs only; no re-run yet.
+- SPIN (`interventions.py` `_spin_head_mask`): gate only the last query position
+  in prefill (+ decoded tokens), truncation head count — unit-tested.
+- DAMRO (`decoding.py` `_select_damro_outlier_features`): CLIP 16-head CLS
+  attention with per-head scaling, averaged over heads — unit-tested (selection
+  changes vs the buggy version).
+- OPERA: deleted `generate_opera_beam`, `check_opera_support.py`,
+  `baselines/opera/`, and all run wiring. Not reproducible without the fork.
+
+**Why:** User chose "fix SPIN + DAMRO, drop OPERA." SPIN/DAMRO bugs were tractable
+local fixes; OPERA needs an external fork and is peripheral to the amplification
+thesis.
+
+**Evidence/refs:** `experiment_results.md` §E (2026-07-08 fix entry). Fixes
+validated with dummy-tensor unit tests; `py_compile` + `bash -n` clean.
+
+**Implications / next:**
+1. **Re-run SPIN and DAMRO** on POPE (and CHAIR) to get valid numbers; only then
+   add them to the reportable table. Until re-run, report only vanilla / PAI /
+   ClearSight / VisAttnSink / VCD.
+2. Paper-facing relabels still pending (SVAR layer-0, ClearSight POPE suppression,
+   IC single-layer) — recorded as caveats, applied as doc relabels only.
