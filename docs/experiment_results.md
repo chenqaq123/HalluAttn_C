@@ -33,25 +33,29 @@ Source: `detection/baselines/results/coco_llava_7b_baselines/`,
 | Score | Overall | Within-bin | Matched-pair | Residual | Note |
 |---|---:|---:|---:|---:|---|
 | PAS | 0.835 | 0.593 | 0.583 | 0.569 | high overall, almost entirely position-correlated |
-| SVAR (layer-0 mass) | 0.834 | 0.575 | 0.576 | 0.557 | same position issue; layer-0 mass, not the paper's middle-layer SVAR (relabel) |
-| IC | 0.776 | **0.686** | **0.703** | 0.633 | strongest position-controlled baseline |
+| SVAR (fixed, layers 5–18) | 0.805 | 0.568 | 0.566 | 0.548 | faithful middle-layer SVAR; **still collapses under length control** |
+| IC | 0.776 | 0.686 | 0.703 | 0.633 | strongest *unsupervised attention/logit* controlled baseline |
 | GLSim-local | 0.772 | 0.564 | 0.593 | 0.601 | some residual signal |
 | Entropy | 0.721 | 0.637 | 0.655 | 0.634 | reliable uncertainty baseline |
 | NLL | 0.711 | 0.636 | 0.652 | 0.630 | ~Entropy |
-| Beyond ADS | 0.503 | 0.511 | 0.515 | 0.501 | near random |
-| Beyond CGC | 0.692 | 0.521 | 0.520 | 0.518 | weak after control |
-| Beyond ADS+CGC | 0.693 | 0.523 | 0.524 | 0.521 | CGC carries the combined score |
+| Beyond ADS (fixed, blob-mass, L16) | 0.688 | 0.554 | 0.559 | 0.537 | attention-dispersion; weak within-bin |
+| Beyond CGC (fixed, sim-topk, best L18) | 0.872 | **0.752** | 0.750 | 0.679 | hidden-state grounding; **survives length control** |
+| Beyond ADS+CGC (fixed, supervised OOF) | 0.890 | **0.793** | 0.784 | 0.748 | strongest controlled detector in the suite |
 
-Takeaway: PAS/SVAR's high overall AUROC is position-confounded (collapse to
-~random within-bin). IC is the strongest position-controlled baseline. This is
-the Prong-1 reproduction: attention-mass detectors do not survive length control.
+Takeaway: the *attention-mass / attention-shape* detectors (PAS, SVAR, ADS) are
+position-confounded and collapse to ~random within-bin — this holds even for the
+**faithful, fixed** SVAR (5–18) and blob-mass ADS, so the Prong-1 critique is
+robust to the reproduction fixes. The scores that survive length control are
+**not attention-based**: they read *grounding / semantic consistency* — IC
+(logit-lens), and especially the fixed **CGC** (token↔patch hidden-state
+similarity, within-bin 0.752) and the supervised **ADS+CGC** (0.793).
 
-> **Reproduction fidelity (verified 2026-07-08, see §E):** PAS is a line-for-line
-> faithful port of `lanl/pas` — its collapse is genuine. IC (final-layer only, a
-> conservative lower bound), GLSim, NLL, Entropy are faithful. **SVAR here is
-> layer-0 visual-attention mass, not the paper's middle-layer (5–18) SVAR** —
-> relabel or fix. Beyond-ADS/CGC are simplified unsupervised single-layer proxies
-> (`paper_reimplementation`); ADS≈0.503 reflects the proxy, not the method.
+> **Reproduction fidelity (verified 2026-07-08; SVAR/Beyond fixed & re-run, see §E):**
+> PAS is a line-for-line faithful port of `lanl/pas`; IC (final-layer, conservative),
+> GLSim, NLL, Entropy faithful. **SVAR, ADS, CGC, ADS+CGC were fixed to the papers
+> and re-run on full COCO** (layer-0 SVAR sanity reproduced the old 0.834 exactly).
+> Fixing SVAR/ADS did not change the Prong-1 conclusion; fixing CGC/ADS+CGC raised
+> them sharply because the semantic grounding signal survives the control.
 
 ## B. Detection — SinkDetect shape scores & per-head diagnostic (Prong 1)
 
@@ -183,3 +187,43 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   POPE/CHAIR. Until then, only the faithful set with recorded numbers (vanilla,
   PAI, ClearSight, VisAttnSink, VCD) should be reported.
 - Supersedes: the "SPIN/DAMRO not valid" status in the 2026-07-08 audit entry (now fixed).
+
+### 2026-07-08 — Fixed SVAR + Beyond-ADS/CGC per the papers, re-run on full COCO
+
+- Setup: LLaVA-1.5-7B, full COCO detection set (16426 mentions, 4009 hallucinated).
+  New scripts `detection/scripts/extract_beyond_svar_features.py` (GPU feature
+  extraction, all 32 layers, 3 shards) + `detection/scripts/evaluate_beyond_svar.py`
+  (offline scoring vs. the same position/length-controlled metrics). Faithful
+  formulas from arXiv:2411.16724 (SVAR) and arXiv:2604.04863 (Beyond).
+  **Pipeline validated:** layer-0 SVAR reproduces the committed reference exactly
+  (overall 0.8336). NOTE: COCO images now live at
+  `/srv/common_dataset/coco-2014-dataset` (the `.env` `/data/...` path is stale/empty).
+- Fixes applied: SVAR now sums VAR over layers **5–18** (was layer-0 only); ADS now
+  uses top-10% foreground + 8-connected **blob mass** `(1−m)·Ĥ_bg`, entropy ÷ log576
+  (was plain single-layer entropy); CGC now ranks top-5% patches **by cosine
+  similarity** at the **same** token/patch layer (was top-k by attention, layer
+  offset); ADS+CGC is now the paper's **supervised** detector — image-grouped OOF
+  over the 64-dim `[per-layer ADS ‖ per-layer CGC]` vector (sklearn HistGradientBoosting;
+  paper uses XGBoost).
+- Result (overall / within-bin / matched / residual AUROC):
+
+| Score | Before (broken) | After (fixed) |
+|---|---|---|
+| SVAR | 0.834 / 0.575 / 0.576 / 0.557 (layer-0) | **0.805 / 0.568 / 0.566 / 0.548** (layers 5–18) |
+| ADS | 0.503 / 0.511 / 0.515 / 0.501 | **0.688 / 0.554 / 0.559 / 0.537** (blob-mass, L16) |
+| CGC | 0.692 / 0.521 / 0.520 / 0.518 | **0.872 / 0.752 / 0.750 / 0.679** (sim-topk, best L18; L16: 0.859/0.723) |
+| ADS+CGC | 0.693 / 0.523 / 0.524 / 0.521 (fixed avg) | **0.890 / 0.793 / 0.784 / 0.748** (supervised OOF; logreg 0.892/0.792) |
+
+- Interpretation: **the two attention-based fixes do not change the Prong-1
+  story** — faithful middle-layer SVAR (within-bin 0.568) and blob-mass ADS
+  (0.554) still collapse under length control, confirming the collapse is a
+  property of attention-mass/shape detection, not our earlier approximations.
+  **The Beyond fixes that matter are the semantic ones:** CGC (token↔patch
+  hidden-state similarity) jumps 0.521→**0.752** within-bin — it *survives* the
+  control — and the supervised ADS+CGC reaches within-bin **0.793**, the strongest
+  controlled detector in the suite. This sharpens Prong 1: what survives length
+  control is grounding/semantic consistency (CGC, IC), not attention allocation.
+- Artifacts: `experiments/beyond_svar_fixed/` (git-ignored: shard{0,1,2}.npz,
+  beyond_svar_metrics.json).
+- Supersedes: the §A Beyond-ADS/CGC "simplified proxy" rows and the SVAR "layer-0"
+  row (now the faithful fixed numbers).

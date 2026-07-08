@@ -22,27 +22,28 @@ implementations and should be reported with that qualifier.
 | Score | Overall | Within-bin | Matched-pair | Residual | Note |
 |---|---:|---:|---:|---:|---|
 | PAS | 0.8349 | 0.5928 | 0.5833 | 0.5694 | High overall, but almost entirely position-correlated. Faithful to `lanl/pas`. |
-| SVAR (layer-0 mass) | 0.8336 | 0.5748 | 0.5759 | 0.5570 | Same position issue as PAS. **Note:** this is layer-0 visual-attention mass, not Jiang et al.'s middle-layer (5–18) summed SVAR — relabel/fix pending. |
+| SVAR (fixed, layers 5–18) | 0.8053 | 0.5678 | 0.5664 | 0.5484 | Faithful middle-layer SVAR (Jiang et al.); still collapses under length control. Old layer-0 mass was 0.8336/0.5749. |
 | IC | 0.7761 | 0.6856 | 0.7029 | 0.6331 | Strongest position-controlled baseline. **Note:** final-layer logit-lens only (paper maxes over all layers), so this is a conservative lower bound. |
 | GLSim-local | 0.7724 | 0.5636 | 0.5931 | 0.6006 | Has some residual grounding signal. |
 | Entropy | 0.7206 | 0.6366 | 0.6545 | 0.6335 | Reliable uncertainty baseline after position control. |
 | NLL | 0.7114 | 0.6360 | 0.6524 | 0.6297 | Similar to Entropy. |
 
-## Beyond Global Scores
+## Beyond Global Scores (fixed to the paper, 2026-07-08)
 
-Reported as **simplified single-layer unsupervised proxies** (`paper_reimplementation`),
-not the paper's method: ADS drops the foreground/background blob-mass weighting,
-CGC selects top-k patches by attention (not similarity) with a token/patch layer
-offset, and ADS+CGC is a fixed 0.5/0.5 average rather than the paper's supervised
-multi-layer classifier. The near-random ADS reflects this proxy, not the original.
-
-We report the two components and their combined detector:
+Now faithful to arXiv:2604.04863: ADS = `(1−m)·Ĥ_bg` with top-10% foreground +
+8-connected blob mass and background entropy ÷ log576; CGC ranks top-5% patches
+**by cosine similarity** at the same token/patch layer; ADS+CGC is the paper's
+**supervised** detector (image-grouped OOF over the 64-dim per-layer `[ADS‖CGC]`
+vector; sklearn HGB, paper uses XGBoost). Computed by
+`detection/scripts/{extract_beyond_svar_features,evaluate_beyond_svar}.py`.
 
 | Score | Overall | Within-bin | Matched-pair | Residual | Interpretation |
 |---|---:|---:|---:|---:|---|
-| ADS | 0.5033 | 0.5109 | 0.5148 | 0.5012 | Attention dispersion alone is near random. |
-| CGC | 0.6917 | 0.5208 | 0.5196 | 0.5181 | Mostly weak after position control. |
-| ADS+CGC | 0.6926 | 0.5226 | 0.5235 | 0.5212 | Combined score does not recover much controlled signal. |
+| ADS (blob-mass, L16) | 0.6883 | 0.5543 | 0.5587 | 0.5374 | Attention dispersion; still weak within-bin (attention-based). |
+| CGC (sim-topk, best L18) | 0.8720 | 0.7516 | 0.7500 | 0.6785 | Hidden-state grounding; **survives length control**. |
+| ADS+CGC (supervised OOF) | 0.8898 | 0.7930 | 0.7842 | 0.7477 | Strongest controlled detector in the suite. |
+
+(Old broken proxies were ADS 0.503/0.511, CGC 0.692/0.521, ADS+CGC 0.693/0.523.)
 
 ## Takeaway
 

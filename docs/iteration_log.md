@@ -128,3 +128,31 @@ validated with dummy-tensor unit tests; `py_compile` + `bash -n` clean.
    ClearSight / VisAttnSink / VCD.
 2. Paper-facing relabels still pending (SVAR layer-0, ClearSight POPE suppression,
    IC single-layer) — recorded as caveats, applied as doc relabels only.
+
+## 2026-07-08 — Fixed SVAR + Beyond-ADS/CGC per the papers and re-ran on full COCO
+
+**What changed:** Reimplemented SVAR and Beyond-ADS/CGC faithfully and re-ran on
+the full 16426-mention detection set. Added `detection/scripts/extract_beyond_svar_features.py`
+(GPU per-layer feature extraction) and `evaluate_beyond_svar.py` (offline scoring).
+Updated `experiment_results.md` §A + §E and `detection/docs/results_summary.md`.
+
+**Why:** The prior SVAR was layer-0 (not Jiang et al.'s middle-layer sum) and the
+Beyond scores were simplified unsupervised proxies. The user asked to fix them to
+the papers and report the corrected numbers.
+
+**Evidence/refs:** `experiment_results.md` §E (2026-07-08 fix+rerun entry).
+Pipeline validated by reproducing the reference layer-0 SVAR exactly (0.8336).
+- SVAR 5–18: 0.805 / within 0.568 — still collapses under length control.
+- ADS blob-mass: 0.688 / 0.554 — still weak within-bin (attention-based).
+- CGC sim-topk: 0.872 / **0.752** — survives the control (semantic).
+- ADS+CGC supervised OOF: 0.890 / **0.793** — strongest controlled detector.
+
+**Implications / next:**
+1. **Prong 1 is sharpened, not weakened:** attention-mass/shape detection (PAS,
+   SVAR, ADS) collapses under length control even when faithfully implemented;
+   what survives is grounding/semantic consistency (CGC, IC, supervised ADS+CGC).
+   Frame CGC/ADS+CGC as *representation* detectors, distinct from the attention
+   critique.
+2. Env note recorded: COCO images moved to `/srv/common_dataset/coco-2014-dataset`;
+   update `.env` COCO_PATH if the detection baselines are re-run.
+3. Remaining relabels (ClearSight POPE suppression, IC single-layer) unchanged.
