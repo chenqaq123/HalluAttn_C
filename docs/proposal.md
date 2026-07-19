@@ -102,7 +102,7 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 13 (2026-07-19):** the first usable constructive version
+**Status after iteration 14 (2026-07-19):** the first usable constructive version
 is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
@@ -128,6 +128,9 @@ but keeping a small grounded box on the full canvas does not provide visual zoom
 Exact crop-and-zoom raises recovery to 4/10 at unchanged 1.0 support precision,
 but loses a full-canvas umbrella recovery. Grounded verification is therefore a
 multi-scale evidence problem, not a choice between one global and one local view.
+A fixed `{1,2,4}` crop pyramid confirms the value of the target-support guard on
+a fresh 120-row window, but requiring one alternative name to repeat across
+scales yields zero actions. The pyramid remains a lead, not an adopted extension.
 
 ### 3.1 Principle and scope
 
@@ -366,6 +369,16 @@ rules out one universal verification scale. The next constructive hypothesis is
 a fixed geometric context pyramid in which every scale is independently
 verified; no scale is selected by grounding scores or downstream labels.
 
+Iteration 14 evaluates that fixed pyramid on fresh rows 2640--2759. All 41 local
+conflicts have valid boxes and 29 receive target support. Only two rows repeat
+the same open C alternative over multiple scales; both are real targets and are
+correctly blocked by target support. No absent row forms the registered
+certificate, so the rule takes zero actions. This rules out lexical alternative
+repetition as the cross-scale invariant. A more defensible invariant is the
+fixed queried hypothesis itself: require negative target margins at multiple
+scales, plus one target-free C alternative that independently passes the strict
+directional identity test.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -406,6 +419,9 @@ test.
 Iteration 13 shows that exact crops recover additional small targets but can
 discard disambiguating context. Candidate acquisition must therefore operate
 over a predefined object-to-context scale space, not one chosen crop.
+Iteration 14 shows that candidate *names* cannot be required to stay identical
+through that scale space. Cross-scale replication should apply to target
+evidence; an alternative remains a separately verified one-view certificate.
 
 ## 4. Contribution framing (intended)
 
@@ -441,6 +457,9 @@ Honest guardrails carried over from the tear-down:
   Exact crops improve support recall to 4/10 at precision 1.0 but lose one
   full-canvas success. The next rule must verify a frozen context pyramid without
   tuning scales or treating scale agreement as proposal confidence.
+  Repeated alternative identity over `{1,2,4}` has zero action coverage on a
+  fresh window. Do not relax scales or aliases there; test repeated target-negative
+  signs plus one explicit open C alternative on separate development data.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

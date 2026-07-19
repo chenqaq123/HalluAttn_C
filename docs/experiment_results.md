@@ -994,3 +994,38 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter13_grounded_crop_actions.jsonl` and
   `experiments/qwen3vl_xev/iter13_grounded_crop_actions_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 14: repeated multiscale alternative has zero coverage
+
+- **Fresh development setup:** POPE-COCO adversarial rows 2640--2759, 120
+  balanced rows / 20 images, untouched when the protocol was committed. Re-run
+  frozen no-RoPE K=3 local conflicts, then ground every conflict target and
+  evaluate unique centered crops at fixed scales `{1,2,4}`.
+- **Baseline / proposal funnel:** baseline `TP/FP/TN/FN = 45/5/55/15`, TPR
+  0.7500, FPR 0.0833, balanced accuracy 0.8333, MCC 0.6761. Forty-one rows have
+  strict local conflicts. All 41 have valid grounding boxes.
+- **Pyramid funnel:** 143 unique crop views (48 scale-1, 48 scale-2, 47 scale-4).
+  Target support occurs on 22/29/23 views respectively and protects 29 distinct
+  rows. A target-free open C alternative passes strict directional verification
+  on 3/2/5 views respectively.
+- **Registered certificate:** only **2/41** rows repeat the same alternative in
+  at least two distinct scales: real `person -> motorcycle` and real
+  `car -> van`, both at scales 2 and 4. Both also have target support and are
+  suppressed. The final action count is **0**, so behavior is identical to
+  baseline and the development gate fails.
+- **Absent-target audit:** absent `car` grounds to a truck and receives a valid
+  open `truck` directional conflict at scale 4, but the open name does not repeat
+  at another scale. Two absent labels (`person`, `traffic light`) receive visual
+  target support. Another absent `person` produces car/trash N identities.
+  Absent `couch` produces flower/vase/table inventories without a strict C
+  directional switch.
+- **Decision:** reject exact alternative-name repetition across scales. It is
+  safe but too dependent on lexical candidate stability. Preserve the fixed
+  pyramid and target-support guard; next test repeated negative target evidence
+  across scales plus one independently verified open C alternative, on a
+  separately pre-registered development replay.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter14_multiregion_dev.jsonl`,
+  `experiments/qwen3vl_xev/iter14_multiregion_dev_summary.json`,
+  `experiments/qwen3vl_xev/iter14_grounded_pyramid_dev.jsonl`, and
+  `experiments/qwen3vl_xev/iter14_grounded_pyramid_dev_summary.json`.

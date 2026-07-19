@@ -172,7 +172,9 @@ view ablation rather than an accepted final rule.
 Iteration 14 adds fixed dyadic `--crop_scales 1,2,4` and
 `analyze_qwen3vl_grounded_pyramid.py`. Its registered action requires the same
 target-free C alternative to pass strict reversed pairwise verification in at
-least two distinct crop views, with no cycle-consistent target support.
+least two distinct crop views, with no cycle-consistent target support. On the
+fresh 120-row development window it yields zero actions and is rejected for
+coverage, while the saved per-scale evidence remains available for follow-up.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

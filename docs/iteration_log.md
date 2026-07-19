@@ -854,3 +854,32 @@ coordinates themselves remain non-evidential.
 **Evidence:** `docs/experiment_results.md` iteration-13 entry;
 `experiments/qwen3vl_xev/iter13_grounded_crop_actions_summary.json`
 (git-ignored).
+
+## 2026-07-19 — XEV iteration 14: repeated alternative identity is too sparse
+
+**What changed:** Added centered dyadic crop expansion, duplicate-view removal,
+and a multiscale certificate requiring one target-free C alternative to pass
+strict reversed pairwise verification in at least two scales of the same
+grounding box. Target support at any scale blocks the action.
+
+**Experiment:** On fresh rows 2640--2759, frozen K=3 verification produces 41
+local-conflict rows. All have grounding boxes and 29 receive target support.
+Only two rows repeat an open alternative across scales; both queried targets are
+real and both are correctly protected by target support. The final method has
+zero actions and fails its coverage gate.
+
+**Diagnosis:** The scale pyramid exposes useful evidence, but target-free
+candidate strings are not stable enough to serve as the replicated unit. The
+clean absent-car case names `truck` and strictly prefers it only at scale 4;
+smaller scales give related closed conflicts or object parts. Conversely, the
+guard prevents multiscale motorcycle/van conflicts from vetoing two real targets.
+
+**Decision / proposal change:** Reject repeated alternative naming, not the
+grounded pyramid or target-support guard. The next certificate should replicate
+negative target evidence across scales and require one target-free C alternative
+with a strict directional switch. This shifts replication to a fixed queried
+hypothesis while retaining explicit alternative identity verification.
+
+**Evidence:** `docs/experiment_results.md` iteration-14 entry;
+`experiments/qwen3vl_xev/iter14_grounded_pyramid_dev_summary.json`
+(git-ignored).

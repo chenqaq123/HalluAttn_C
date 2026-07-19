@@ -1,7 +1,7 @@
 # XEV Iteration 14 Protocol: Multiscale Alternative-Identity Certificate
 
 Date: 2026-07-19
-Status: pre-registered exploratory development protocol
+Status: completed; development gate failed with zero actions
 
 ## Motivation
 
@@ -109,3 +109,25 @@ If the gate fails, separate grounding coverage, target-support protection, and
 repeated-alternative coverage. Do not tune scales, expansion geometry, minimum
 scale count, candidate K, aliases, relation classes, or non-zero margins on this
 window.
+
+## Result
+
+The frozen iteration-11 replay on rows 2640--2759 yields 41 local-conflict rows.
+All 41 return at least one valid grounding box, producing 143 unique crop views:
+48 each at scales 1 and 2 and 47 at scale 4 after duplicate-box removal. Any-scale
+cycle support protects 29/41 rows.
+
+Only two rows repeat the same open C alternative over at least two scales:
+`person -> motorcycle` and `car -> van`, both at scales 2 and 4. Both queried
+targets are real and both rows independently receive cycle-consistent target
+support, so the registered guard suppresses both certificates. No absent-target
+row has a repeated-alternative certificate. The final method takes zero actions,
+changes no metric, and fails the minimum-two-action gate.
+
+The five baseline false positives expose the coverage bottleneck. `car` grounds
+onto a truck: `truck` is named and strictly preferred at scale 4, while closed
+truck/bus alternatives conflict at smaller scales, but the same open phrase does
+not repeat. `person` and `traffic light` each receive visual target support;
+another absent `person` yields car/trash identities classified N; absent `couch`
+yields flowers/vase/table but no strict directional C switch. No rule was relaxed
+on this audit.
