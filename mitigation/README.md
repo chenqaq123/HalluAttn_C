@@ -115,6 +115,8 @@ One-shard smoke test:
 python mitigation/scripts/run_qwen3vl_xev_pope.py \
   --output_file experiments/qwen3vl_xev/smoke.jsonl \
   --limit 1 \
+  --modes target,closed,open \
+  --pairwise_top_k 3 \
   --device cuda:0
 ```
 
@@ -130,11 +132,18 @@ python mitigation/scripts/analyze_qwen3vl_xev_pope.py \
   --output_json experiments/qwen3vl_xev/round1_exact_summary.json
 ```
 
+`--pairwise_top_k 3` enables the iteration-3 counterbalanced pairwise verifier.
+The analyzer defaults to development status; pass
+`--pairwise_evaluation confirmatory` only for a rule and window frozen before
+inference.
+
 The runner is resumable by `question_id`. Outputs and the derived COCO knowledge
 cache remain under git-ignored `experiments/qwen3vl_xev/`. Iteration 1 rejected
 the symmetric keep-minus-drop score, and iteration 2 rejected exact open/closed
 candidate agreement as a zero-coverage veto certificate; see `docs/proposal.md`
-and `docs/experiment_results.md` before changing these formulas.
+and `docs/experiment_results.md` before changing these formulas. Iteration 3's
+pairwise certificate uses only zero-threshold sign gates and is pending a
+disjoint confirmatory run.
 
 ## Attention-Shift Audit
 

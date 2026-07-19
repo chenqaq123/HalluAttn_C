@@ -560,3 +560,30 @@ be selected on iteration 1 and evaluated on a new disjoint window.
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-2 entry;
 `experiments/qwen3vl_xev/iter2_holdout_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 3: froze counterbalanced pairwise certificate
+
+**What changed:** Added target-free open/closed candidate ranking, reversed
+target-vs-alternative prompts on the same clear-region view, a counterbalanced
+preference that exposes common yes-bias, and a pure pairwise identity-certificate
+function. The runner stores directional margins, candidate provenance, relation,
+preference, common bias, and certificates; the analyzer reports both the unsafe
+raw pairwise rule and the gated behavior. Added `--pairwise_top_k` and explicit
+development/confirmatory analysis status, plus focused tests.
+
+**Experiment:** Re-ran the 120-row iteration-1 set as development data with
+top-k=3. Raw pairwise preference below zero vetoes 13 true positives for only 2
+false-positive corrections. Requiring the target keep margin below zero and a C
+relation reduces this to two triggers, both correct (`dining table -> chair` and
+`handbag -> backpack`). FPR falls 0.0667 to 0.0333 with unchanged 0.8333 TPR;
+balanced accuracy rises 0.8833 to 0.9000 and MCC 0.7705 to 0.8072.
+
+**Decision / proposal change:** Promote the conjunction to the first usable XEV
+method candidate, but label it development-only. Freeze candidate top-k=3, the
+target-in-open support guard, C relation, and all zero-threshold signs. A new
+disjoint confirmatory window must meet: >=3 triggers, >=2/3 correction precision,
+FPR decrease, TPR loss <=0.005, and non-decreasing MCC. Do not tune on the closed
+iteration-2 holdout.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-3 entry;
+`experiments/qwen3vl_xev/iter3_dev_summary.json` (git-ignored).

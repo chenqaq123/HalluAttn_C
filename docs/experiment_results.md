@@ -583,3 +583,42 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter2_holdout_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter2_holdout_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 3 development: counterbalanced pairwise certificate
+
+- **Question:** can explicit target-vs-alternative visual discrimination replace
+  the zero-coverage agreement of two candidate inventories while avoiding the
+  yes-bias and coexistence failures of independent existence margins?
+- **Method:** for up to three target-free open/closed candidates with positive
+  keep margin, ask both directions on the same clear-region view: target rather
+  than alternative, and alternative rather than target. Define target preference
+  `v=0.5*(margin_target-first-margin_alternative-first)`. Reversing the pair
+  cancels shared yes/order bias and gives a natural zero threshold. Exact target
+  occurrence in the open inventory suppresses candidate testing. Oracle labels
+  are not used.
+- **Setup:** same 120-row / 20-image POPE-adversarial development set as
+  iteration 1, `Qwen3-VL-8B-Instruct`, one top-30%-mass proposal, closed top-8
+  NPMI plus up to six open phrases, pairwise top-3. Two 4090 shards; mean runtime
+  3.25 s/sample. This reuses the development labels and is not confirmatory.
+- **Ablation / failure:** pairwise `v<0` alone triggers 15 times: only 2 baseline
+  false-positive corrections versus **13 true-positive vetoes**. Behavior falls
+  from balanced accuracy 0.8833 to 0.7917 and MCC 0.7705 to 0.6227. Explicit
+  comparison does not by itself solve region coexistence or proposal mismatch.
+- **Frozen identity-switch certificate:** veto a baseline yes only when (1)
+  target keep margin `<0`, (2) the alternative has semantic relation `C`, and
+  (3) counterbalanced `v<0`. All numeric thresholds are their natural zero; no
+  logit cutoff is fitted. Candidate generation and visual judgment are separate.
+- **Development result:** 2 triggers, both corrections and zero TP vetoes:
+  `dining table -> chair` and `handbag -> backpack`. TP/FP/TN/FN changes from
+  50/4/56/10 to **50/2/58/10**; TPR stays 0.8333, FPR 0.0667 -> **0.0333**,
+  balanced accuracy 0.8833 -> **0.9000**, MCC 0.7705 -> **0.8072**, and yes-rate
+  0.4500 -> 0.4333. The old exact-intersection certificate corrects only the
+  handbag case; pairwise visual discrimination adds the chair case without
+  requiring lexical candidate agreement.
+- **Pre-registered confirmatory gate:** on a new disjoint window, require at
+  least 3 triggers, correction precision >= 2/3, lower FPR, TPR loss <= 0.005,
+  and non-decreasing MCC. Candidate top-k=3, target/open support guard, semantic C
+  filter, and all zero thresholds are frozen before the holdout.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter3_dev_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter3_dev_summary.json`.

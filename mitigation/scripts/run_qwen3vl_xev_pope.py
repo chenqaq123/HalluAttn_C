@@ -26,17 +26,21 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from mitigation.src.data import iter_pope_records, load_pope_image  # noqa: E402
 from mitigation.src.xev import (  # noqa: E402
+    counterbalanced_pairwise_score,
     evidence_margin,
     extract_target,
     identity_switch_certificate,
     lexical_equivalent,
     make_counterfactual_views,
+    pairwise_identity_certificate,
     normalize_phrase,
+    pairwise_question,
     parse_candidate_list,
     parse_relation_labels,
     propose_regions,
     random_bbox_like,
     relative_verification_score,
+    select_pairwise_candidates,
 )
 
 
@@ -69,6 +73,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max_regions", type=int, default=1)
     parser.add_argument("--closed_k", type=int, default=8)
     parser.add_argument("--max_open_candidates", type=int, default=6)
+    parser.add_argument("--pairwise_top_k", type=int, default=0)
     parser.add_argument("--margin_batch_size", type=int, default=4)
     parser.add_argument("--candidate_max_new_tokens", type=int, default=32)
     parser.add_argument("--relation_max_new_tokens", type=int, default=32)
@@ -249,17 +254,26 @@ class Qwen3VLEngine:
         questions = questions or [None] * len(hypotheses)
         if len(questions) != len(hypotheses):
             raise ValueError("questions and hypotheses must have equal length")
+        prompts = [
+            self.question_prompt(hypothesis, question)
+            for hypothesis, question in zip(hypotheses, questions)
+        ]
+        return self._margins_for_prompts(images, prompts, batch_size)
+
+    def _margins_for_prompts(
+        self, images: list, prompts: list[str], batch_size: int
+    ) -> list[float]:
+        if len(images) != len(prompts):
+            raise ValueError("images and prompts must have equal length")
         results: list[float] = []
-        for start in range(0, len(hypotheses), batch_size):
-            batch_hypotheses = hypotheses[start : start + batch_size]
+        for start in range(0, len(prompts), batch_size):
+            batch_prompts = prompts[start : start + batch_size]
             batch_images = images[start : start + batch_size]
-            batch_questions = questions[start : start + batch_size]
-            prompts = [
-                self.question_prompt(hypothesis, question)
-                for hypothesis, question in zip(batch_hypotheses, batch_questions)
-            ]
             inputs = self.processor(
-                text=prompts, images=batch_images, padding=True, return_tensors="pt"
+                text=batch_prompts,
+                images=batch_images,
+                padding=True,
+                return_tensors="pt",
             )
             inputs = self.move_inputs(inputs)
             with torch.inference_mode():
@@ -270,6 +284,47 @@ class Qwen3VLEngine:
             results.extend(float(value) for value in margins.float().cpu())
             del inputs, logits, margins
         return results
+
+    def pairwise_comparisons(
+        self,
+        image,
+        target: str,
+        candidates: list[dict],
+        batch_size: int,
+    ) -> list[dict]:
+        prompts = []
+        for item in candidates:
+            candidate = item["candidate"]
+            prompts.extend(
+                [
+                    self._chat_prompt(
+                        pairwise_question(target, candidate), has_image=True
+                    ),
+                    self._chat_prompt(
+                        pairwise_question(candidate, target), has_image=True
+                    ),
+                ]
+            )
+        margins = self._margins_for_prompts(
+            [image] * len(prompts), prompts, batch_size
+        )
+        comparisons = []
+        for item, target_first, alternative_first in zip(
+            candidates, margins[::2], margins[1::2]
+        ):
+            preference, common_bias = counterbalanced_pairwise_score(
+                target_first, alternative_first
+            )
+            comparisons.append(
+                {
+                    **item,
+                    "target_first_margin": target_first,
+                    "alternative_first_margin": alternative_first,
+                    "target_preference": preference,
+                    "common_yes_bias": common_bias,
+                }
+            )
+        return comparisons
 
     @contextmanager
     def _capture_visual_rows(self, visual_positions: torch.Tensor):
@@ -543,12 +598,39 @@ def process_record(
             batch_size=args.margin_batch_size,
             questions=hypothesis_questions,
         )
+        keep_margin_map = {
+            hypothesis: margin
+            for hypothesis, margin in zip(hypotheses, keep_margins)
+        }
         evidences = {
             hypothesis: evidence_margin(keep_margin, drop_margin)
             for hypothesis, keep_margin, drop_margin in zip(
                 hypotheses, keep_margins, drop_margins
             )
         }
+
+        pairwise_candidates = (
+            select_pairwise_candidates(
+                target=target,
+                candidate_sources=source_candidates,
+                relations=relations,
+                keep_margins=keep_margin_map,
+                limit=args.pairwise_top_k,
+            )
+            if baseline_margin >= 0
+            else []
+        )
+        pairwise_comparisons = engine.pairwise_comparisons(
+            keep,
+            target,
+            pairwise_candidates,
+            batch_size=args.margin_batch_size,
+        )
+        pairwise_certificate = pairwise_identity_certificate(
+            baseline_margin=baseline_margin,
+            target_keep_margin=keep_margin_map[target],
+            comparisons=pairwise_comparisons,
+        )
 
         random_bbox = random_bbox_like(
             proposal.bbox,
@@ -592,10 +674,7 @@ def process_record(
             open_candidates=source_candidates["open"],
             closed_candidates=source_candidates["closed"],
             relations=relations,
-            keep_margins={
-                hypothesis: margin
-                for hypothesis, margin in zip(hypotheses, keep_margins)
-            },
+            keep_margins=keep_margin_map,
             baseline_margin=baseline_margin,
         )
 
@@ -619,6 +698,11 @@ def process_record(
                 "evidence": evidences,
                 "scores": scores,
                 "identity_switch_certificate": certificate,
+                "pairwise_verification": {
+                    "candidate_limit": args.pairwise_top_k,
+                    "comparisons": pairwise_comparisons,
+                    "certificate": pairwise_certificate,
+                },
             }
         )
         keep.close()
@@ -640,12 +724,22 @@ def process_record(
         for region in region_rows
         if region["identity_switch_certificate"] is not None
     ]
+    pairwise_comparisons = [
+        {"region_index": region["index"], **comparison}
+        for region in region_rows
+        for comparison in region["pairwise_verification"]["comparisons"]
+    ]
+    pairwise_certificates = [
+        {"region_index": region["index"], **certificate}
+        for region in region_rows
+        if (certificate := region["pairwise_verification"]["certificate"]) is not None
+    ]
     image.close()
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "score_status": {
             "scores": "rejected-iteration1-keep-minus-drop",
-            "current_diagnostic": "derive same-view dominance with the analyzer",
+            "current_diagnostic": "counterbalanced-pairwise-under-evaluation",
         },
         "question_id": str(record["question_id"]),
         "image_id": image_id,
@@ -662,6 +756,26 @@ def process_record(
         "identity_switch_certificate": (
             max(certificates, key=lambda item: item["excess"]) if certificates else None
         ),
+        "pairwise_verification": {
+            "candidate_limit": args.pairwise_top_k,
+            "minimum_target_preference": (
+                min(
+                    comparison["target_preference"]
+                    for comparison in pairwise_comparisons
+                )
+                if pairwise_comparisons
+                else None
+            ),
+            "comparisons": pairwise_comparisons,
+            "certificate": (
+                min(
+                    pairwise_certificates,
+                    key=lambda item: item["target_preference"],
+                )
+                if pairwise_certificates
+                else None
+            ),
+        },
         "runtime_seconds": time.perf_counter() - started,
     }
 
@@ -716,6 +830,7 @@ def main() -> None:
                 "proposal_mass": args.proposal_mass,
                 "max_regions": args.max_regions,
                 "closed_k": args.closed_k,
+                "pairwise_top_k": args.pairwise_top_k,
                 "modes": sorted(modes),
             }
             output.write(json.dumps(payload) + "\n")

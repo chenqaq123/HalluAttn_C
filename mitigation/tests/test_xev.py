@@ -4,14 +4,18 @@ import numpy as np
 from PIL import Image
 
 from mitigation.src.xev import (
+    counterbalanced_pairwise_score,
     extract_target,
     identity_switch_certificate,
     make_counterfactual_views,
+    pairwise_identity_certificate,
+    pairwise_question,
     parse_candidate_list,
     parse_relation_labels,
     propose_regions,
     random_bbox_like,
     relative_verification_score,
+    select_pairwise_candidates,
 )
 
 
@@ -73,3 +77,44 @@ def test_identity_switch_certificate_requires_open_closed_agreement() -> None:
         )
         is None
     )
+
+
+def test_counterbalanced_pairwise_score_cancels_shared_yes_bias() -> None:
+    preference, common_bias = counterbalanced_pairwise_score(5.0, 9.0)
+    assert (preference, common_bias) == (-2.0, 7.0)
+    assert "handbag" in pairwise_question("Handbag", "Backpack")
+
+
+def test_pairwise_candidate_selection_is_target_free_and_model_ranked() -> None:
+    selected = select_pairwise_candidates(
+        target="handbag",
+        candidate_sources={
+            "open": ["backpack", "person"],
+            "closed": ["suitcase", "backpack"],
+            "oracle": ["car"],
+        },
+        relations={"backpack": "C", "person": "N", "suitcase": "C"},
+        keep_margins={"backpack": 8.0, "person": 3.0, "suitcase": -1.0},
+        limit=2,
+    )
+    assert [row["candidate"] for row in selected] == ["backpack", "person"]
+    assert selected[0]["sources"] == ["closed", "open"]
+
+    guarded = select_pairwise_candidates(
+        target="handbag",
+        candidate_sources={"open": ["handbags", "backpack"], "closed": []},
+        relations={"backpack": "C"},
+        keep_margins={"backpack": 8.0},
+    )
+    assert guarded == []
+
+
+def test_pairwise_identity_certificate_uses_natural_sign_gates() -> None:
+    comparisons = [
+        {"candidate": "paper", "relation": "N", "target_preference": -5.0},
+        {"candidate": "backpack", "relation": "C", "target_preference": -2.0},
+    ]
+    certificate = pairwise_identity_certificate(3.0, -0.75, comparisons)
+    assert certificate is not None
+    assert certificate["candidate"] == "backpack"
+    assert pairwise_identity_certificate(3.0, 0.25, comparisons) is None

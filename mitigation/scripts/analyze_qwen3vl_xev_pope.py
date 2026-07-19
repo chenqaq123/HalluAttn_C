@@ -16,7 +16,10 @@ from sklearn.metrics import average_precision_score, confusion_matrix, roc_auc_s
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from mitigation.src.xev import identity_switch_certificate  # noqa: E402
+from mitigation.src.xev import (  # noqa: E402
+    identity_switch_certificate,
+    pairwise_identity_certificate,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -24,6 +27,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("inputs", nargs="+")
     parser.add_argument("--output_json", required=True)
     parser.add_argument("--matched_tpr", type=float, default=0.80)
+    parser.add_argument(
+        "--pairwise_evaluation",
+        choices=("development", "confirmatory"),
+        default="development",
+    )
     return parser.parse_args()
 
 
@@ -273,6 +281,157 @@ def certificate_diagnostics(
     }
 
 
+def pairwise_diagnostics(
+    rows: list[dict],
+    labels: np.ndarray,
+    baseline: np.ndarray,
+    evaluation: str,
+) -> dict | None:
+    preferences = np.full(len(rows), np.nan, dtype=np.float64)
+    best_comparisons: list[dict | None] = [None] * len(rows)
+    certificate_mask = np.zeros(len(rows), dtype=bool)
+    certificates = []
+    comparison_count = 0
+    for index, row in enumerate(rows):
+        payload = row.get("pairwise_verification", {})
+        comparisons = payload.get("comparisons", [])
+        comparison_count += len(comparisons)
+        if not comparisons:
+            continue
+        best = min(comparisons, key=lambda item: item["target_preference"])
+        preferences[index] = float(best["target_preference"])
+        best_comparisons[index] = best
+        certificate = payload.get("certificate")
+        if certificate is None:
+            region_certificates = []
+            for region in row["regions"]:
+                region_payload = region.get("pairwise_verification", {})
+                derived = pairwise_identity_certificate(
+                    baseline_margin=float(row["baseline_margin"]),
+                    target_keep_margin=float(
+                        region["margins"][row["target"]]["keep"]
+                    ),
+                    comparisons=region_payload.get("comparisons", []),
+                )
+                if derived is not None:
+                    region_certificates.append(
+                        {"region_index": region["index"], **derived}
+                    )
+            if region_certificates:
+                certificate = min(
+                    region_certificates,
+                    key=lambda item: item["target_preference"],
+                )
+        if certificate is not None:
+            certificate_mask[index] = True
+            certificates.append(
+                {
+                    "question_id": row["question_id"],
+                    "image_id": row["image_id"],
+                    "target": row["target"],
+                    "label": row["label"],
+                    **certificate,
+                }
+            )
+    if comparison_count == 0:
+        return None
+
+    baseline_predictions = baseline >= 0
+    baseline_behavior = binary_metrics(labels, baseline_predictions)
+
+    def evaluate(threshold: float) -> dict:
+        trigger_mask = np.isfinite(preferences) & (preferences < threshold)
+        predictions = baseline_predictions.copy()
+        predictions[trigger_mask] = False
+        corrections = int(np.sum(trigger_mask & (labels == 0)))
+        positive_vetoes = int(np.sum(trigger_mask & (labels == 1)))
+        count = int(trigger_mask.sum())
+        return {
+            "threshold": threshold,
+            "trigger_count": count,
+            "false_positive_corrections": corrections,
+            "true_positive_vetoes": positive_vetoes,
+            "correction_precision": corrections / count if count else None,
+            "behavior": binary_metrics(labels, predictions),
+        }
+
+    natural = evaluate(0.0)
+    certificate_predictions = baseline_predictions.copy()
+    certificate_predictions[certificate_mask] = False
+    certificate_corrections = int(np.sum(certificate_mask & (labels == 0)))
+    certificate_positive_vetoes = int(np.sum(certificate_mask & (labels == 1)))
+    certificate_count = int(certificate_mask.sum())
+    certificate_behavior = binary_metrics(labels, certificate_predictions)
+    correction_precision = (
+        certificate_corrections / certificate_count if certificate_count else None
+    )
+    passed = (
+        certificate_count >= 3
+        and correction_precision >= 2 / 3
+        and certificate_behavior["fpr"] < baseline_behavior["fpr"]
+        and certificate_behavior["tpr"] >= baseline_behavior["tpr"] - 0.005
+        and certificate_behavior["mcc"] >= baseline_behavior["mcc"]
+    )
+    examples = []
+    for index in np.where(np.isfinite(preferences) & (preferences < 0))[0]:
+        comparison = best_comparisons[int(index)]
+        examples.append(
+            {
+                "question_id": rows[index]["question_id"],
+                "image_id": rows[index]["image_id"],
+                "target": rows[index]["target"],
+                "label": rows[index]["label"],
+                **comparison,
+            }
+        )
+    return {
+        "status": evaluation,
+        "definition": {
+            "candidate_sources": ["open", "closed"],
+            "target_named_in_open_guard": True,
+            "candidate_keep_margin_min": 0.0,
+            "candidate_limit": max(
+                int(row.get("pairwise_verification", {}).get("candidate_limit", 0))
+                for row in rows
+            ),
+            "target_preference": "0.5 * (target-first margin - alternative-first margin)",
+            "natural_veto": "target_preference < 0",
+        },
+        "scored_rows": int(np.isfinite(preferences).sum()),
+        "comparison_count": comparison_count,
+        "baseline_behavior": baseline_behavior,
+        "natural_zero": natural,
+        "identity_certificate": {
+            "definition": {
+                "baseline_prediction": "yes",
+                "target_keep_margin": "< 0",
+                "candidate_relation": "C",
+                "counterbalanced_target_preference": "< 0",
+                "all_thresholds": 0.0,
+                "action": "veto yes to no",
+            },
+            "trigger_count": certificate_count,
+            "false_positive_corrections": certificate_corrections,
+            "true_positive_vetoes": certificate_positive_vetoes,
+            "correction_precision": correction_precision,
+            "behavior": certificate_behavior,
+            "holdout_gate": {
+                "minimum_triggers": 3,
+                "minimum_correction_precision": 2 / 3,
+                "maximum_tpr_drop": 0.005,
+                "require_fpr_drop": True,
+                "require_non_decreasing_mcc": True,
+                "passed": passed,
+            },
+            "triggers": certificates,
+        },
+        "threshold_sweep": [
+            evaluate(threshold) for threshold in (-8.0, -6.0, -4.0, -2.0, 0.0)
+        ],
+        "natural_zero_triggers": examples,
+    }
+
+
 def region_reformulation_scores(
     rows: list[dict], source: str | None = None
 ) -> dict[str, np.ndarray]:
@@ -373,6 +532,9 @@ def main() -> None:
         },
         "candidate_diagnostics": candidate_diagnostics(rows),
         "identity_switch_certificate": certificate_diagnostics(rows, labels, baseline),
+        "pairwise_verification": pairwise_diagnostics(
+            rows, labels, baseline, args.pairwise_evaluation
+        ),
         "methods": {},
         "posthoc_region_diagnostics": {},
         "calibration_split": {

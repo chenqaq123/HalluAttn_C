@@ -102,13 +102,13 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 2 (2026-07-19):** the method is a working hypothesis,
-not yet a positive result. The first Qwen3-VL pilot rejected the original
-symmetric keep/drop score. A subsequent 480-sample held-out run also rejected a
-high-precision identity-switch certificate based on exact open/closed candidate
-agreement: it produced zero triggers. Same-view target evidence remains strong,
-but neither rejected construction is a usable intervention. This section keeps
-both failures explicit so later iterations do not quietly reuse them.
+**Status after iteration 3 development (2026-07-19):** the first usable method
+candidate is implemented, but is not yet a confirmed result. The original
+symmetric keep/drop score and exact open/closed candidate intersection are both
+rejected. A zero-threshold, counterbalanced pairwise identity certificate
+corrects 2/4 baseline false positives with no true-positive veto on the original
+120-row development set (balanced accuracy 0.8833 -> 0.9000). It is frozen for a
+new disjoint holdout; no positive claim is made until that gate passes.
 
 ### 3.1 Principle and scope
 
@@ -141,7 +141,7 @@ This is **rejected**. On balanced POPE-adversarial, target-only `E` has AUROC
 evidence with a large, asymmetric context-removal effect and reverses the class
 ordering. Oracle candidates cannot repair it (AUROC 0.348).
 
-### 3.3 Same-view criterion and rejected strict certificate
+### 3.3 Same-view criteria: rejected margins, current pairwise certificate
 
 The surviving direction keeps target and alternatives on the **same region view**.
 Let `T(t)` contain the target plus semantic equivalents/more-specific supports,
@@ -174,11 +174,34 @@ window, the certificate triggered **zero times** and changed no behavior. This
 variant is **rejected for zero coverage**. Exact lexical agreement between two
 noisy candidate generators is not evidence verification.
 
-The next criterion must ask an explicit, context-matched discriminative question
-of the clear region -- whether it supports target *rather than* a proposed
-alternative -- instead of inferring exclusivity from two independent existence
-margins. Candidate identity and visual discrimination must remain separate:
-candidate sources propose hypotheses; a pairwise verifier decides between them.
+Iteration 3 implements that explicit comparison. For every proposed alternative
+`a`, ask both directions on the same `I_keep`: whether the main clear-region
+identity is better identified as `t` than `a`, and whether it is better
+identified as `a` than `t`. If their yes/no margins are `m(t>a,R)` and
+`m(a>t,R)`, define the counterbalanced preference
+
+    v_R(t,a) = 0.5 * [m(t>a,R) - m(a>t,R)].
+
+The reversal cancels shared yes-bias and first-mentioned-identity preference;
+`v<0` has a natural meaning rather than a fitted threshold. Candidate identity
+and visual discrimination remain separate: open/closed sources propose up to
+three positive-keep-margin hypotheses, while the pairwise verifier decides. An
+exact target mention in the target-free open inventory acts as a support guard.
+
+Pairwise preference alone is unsafe: on the 120-row development set, `v<0`
+vetoes 13 true positives and only 2 false positives. The current identity-switch
+certificate therefore requires three independent sign/semantic conditions:
+
+    full-image prediction is yes
+    m(t, I_keep) < 0
+    exists a in C(t): v_R(t,a) < 0.
+
+All thresholds are fixed at zero. This conjunction triggers twice on development
+(`dining table -> chair`, `handbag -> backpack`), both true corrections: FPR
+0.0667 -> 0.0333, unchanged TPR 0.8333, balanced accuracy 0.8833 -> 0.9000,
+and MCC 0.7705 -> 0.8072. This is a development result, not confirmation. The
+disjoint holdout must produce at least 3 triggers, correction precision >= 2/3,
+lower FPR, TPR loss <= 0.005, and non-decreasing MCC.
 
 ### 3.4 Candidate universe
 
@@ -220,9 +243,10 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV region/scoring gate:** test explicit pairwise target-vs-alternative
-  questions on the same clear-region view; only then test multi-region proposal
-  recall. Do not revive keep-minus-drop or exact candidate intersection.
+- **XEV confirmatory gate:** evaluate the frozen zero-threshold pairwise
+  certificate on a new disjoint POPE window. Only after it passes test
+  multi-region proposal recall. Do not revive keep-minus-drop or exact candidate
+  intersection.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

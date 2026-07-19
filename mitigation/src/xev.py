@@ -223,6 +223,96 @@ def relative_verification_score(
     return support - penalty, support, penalty
 
 
+def pairwise_question(left: str, right: str) -> str:
+    """Build one direction of a region-local identity comparison."""
+
+    left = normalize_phrase(left)
+    right = normalize_phrase(right)
+    return (
+        "The image has one clear region and blurred context. Focus only on the "
+        "main object identity in the clear region. Is that object better identified "
+        f"as {left} than as {right}? Please answer Yes or No only."
+    )
+
+
+def select_pairwise_candidates(
+    target: str,
+    candidate_sources: dict[str, list[str]],
+    relations: dict[str, str],
+    keep_margins: dict[str, float],
+    limit: int = 3,
+) -> list[dict]:
+    """Rank target-free open/closed proposals for explicit visual comparison."""
+
+    if limit <= 0:
+        return []
+    open_candidates = candidate_sources.get("open", [])
+    if any(lexical_equivalent(target, candidate) for candidate in open_candidates):
+        return []
+
+    source_names: dict[str, set[str]] = {}
+    for source in ("open", "closed"):
+        for candidate in candidate_sources.get(source, []):
+            candidate = normalize_phrase(candidate)
+            if not candidate or lexical_equivalent(target, candidate):
+                continue
+            source_names.setdefault(candidate, set()).add(source)
+
+    ranked = []
+    for candidate, sources in source_names.items():
+        if relations.get(candidate) == "S" or candidate not in keep_margins:
+            continue
+        keep_margin = float(keep_margins[candidate])
+        if keep_margin <= 0:
+            continue
+        ranked.append(
+            {
+                "candidate": candidate,
+                "keep_margin": keep_margin,
+                "sources": sorted(sources),
+                "relation": relations.get(candidate, "N"),
+            }
+        )
+    ranked.sort(key=lambda item: (-item["keep_margin"], item["candidate"]))
+    return ranked[:limit]
+
+
+def counterbalanced_pairwise_score(
+    target_first_margin: float, alternative_first_margin: float
+) -> tuple[float, float]:
+    """Return target preference and shared yes-bias from reversed pair prompts."""
+
+    target_first_margin = float(target_first_margin)
+    alternative_first_margin = float(alternative_first_margin)
+    preference = 0.5 * (target_first_margin - alternative_first_margin)
+    common_bias = 0.5 * (target_first_margin + alternative_first_margin)
+    return preference, common_bias
+
+
+def pairwise_identity_certificate(
+    baseline_margin: float,
+    target_keep_margin: float,
+    comparisons: list[dict],
+) -> dict | None:
+    """Certify a local identity switch using three zero-threshold checks."""
+
+    if baseline_margin < 0 or target_keep_margin >= 0:
+        return None
+    alternatives = [
+        comparison
+        for comparison in comparisons
+        if comparison.get("relation") == "C"
+        and float(comparison["target_preference"]) < 0
+    ]
+    if not alternatives:
+        return None
+    best = min(alternatives, key=lambda item: float(item["target_preference"]))
+    return {
+        **best,
+        "target_keep_margin": float(target_keep_margin),
+    }
+
+
 def identity_switch_certificate(
     target: str,
     open_candidates: list[str],
