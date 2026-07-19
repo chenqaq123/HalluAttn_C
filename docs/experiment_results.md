@@ -1061,3 +1061,38 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter15_grounded_absence_stage1.jsonl` and
   `experiments/qwen3vl_xev/iter15_grounded_absence_stage1_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 15 stage 2: replicated target evidence fails confirmation
+
+- **Protocol correction before result inspection:** the adversarial split ends
+  at index 2999, so the original 480-row range was invalid. The runner was
+  stopped after nine rows before inspecting outputs. A committed amendment used
+  the actual untouched remainder, indices 2760--2999: 240 balanced rows / 40
+  images. The method stayed unchanged; proportional gates required >=2 actions
+  and allowed TPR loss <=0.01.
+- **Frozen local stage:** all 240 rows / question IDs 2761--3000 complete under
+  one no-RoPE proposal. Fourteen rows have strict directional C conflicts: 12
+  true targets and 2 absent targets.
+- **Grounded funnel:** valid box 14/14; any-scale target support 4/14;
+  replicated target-negative evidence 3/14; open C strict alternative 6/14;
+  joint certificate **1/14**.
+- **Action:** the only certificate vetoes a real `vase` as `pot`/`flowerpot`.
+  Its target margin is negative at scales 2 and 4 and the alternatives pass
+  strict reversed-prompt verification, but the relation filter labels these
+  near-equivalent container identities C rather than S. Neither absent conflict
+  (`cup`, `car`) forms the joint certificate. Result: **0 corrections / 1 TP
+  veto**, correction precision 0.
+- **Behavior:** baseline `TP/FP/TN/FN = 108/9/111/12`, TPR 0.9000, FPR 0.0750,
+  balanced accuracy 0.9125, MCC 0.8253. The method gives `107/9/111/13`, TPR
+  0.8917, unchanged FPR 0.0750, balanced accuracy 0.9083, MCC 0.8171. The
+  confirmatory gate fails decisively.
+- **Decision:** reject the replicated target-negative grounded extension. Do not
+  add `vase/pot` aliases or retune relation labels on the final adversarial rows.
+  XEV v1 remains the only constructive version that passed a held-out gate. Any
+  next grounded method must solve semantic equivalence on separate development
+  data and use another benchmark/split for evaluation; no untouched POPE-
+  adversarial rows remain.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter15_stage2_local.jsonl`,
+  `experiments/qwen3vl_xev/iter15_stage2_grounded.jsonl`, and
+  `experiments/qwen3vl_xev/iter15_stage2_summary.json`.

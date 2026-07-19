@@ -102,8 +102,8 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 15 stage 1 (2026-07-19):** the first usable constructive version
-is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
+**Status after iteration 15 stage 2 (2026-07-19):** XEV v1 remains the only
+constructive version confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
 TPR falls only 0.8417 -> 0.8396, balanced accuracy rises 0.8823 -> 0.8844, and
@@ -134,6 +134,10 @@ scales yields zero actions. The pyramid remains a lead, not an adopted extension
 Replicating negative target evidence instead, while retaining one independently
 verified open C alternative, yields 2/2 corrections and no TP vetoes on a
 historical mechanism audit. This is promising but not yet a held-out extension.
+It fails the amended final 240-row confirmation: one action, a real
+`vase -> pot/flowerpot` veto, and no correction. The grounded extension is
+rejected; semantic identity boundaries, not localization, are now the exposed
+bottleneck.
 
 ### 3.1 Principle and scope
 
@@ -391,6 +395,14 @@ blocks the action. On ten historical development conflicts, it corrects absent
 not fresh, the rule must remain a candidate until it passes a separately
 committed 480-row evaluation unchanged.
 
+The actual POPE-adversarial remainder contains 240 rather than 480 rows; this
+boundary was corrected in a committed amendment before result inspection. On
+those 240 rows, 14 strict local conflicts yield only one final action. It vetoes
+a real `vase` because target-free `pot`/`flowerpot` crops pass the visual switch
+and the relation filter treats these near-equivalent names as competing. Metrics
+worsen and the gate fails. No untouched adversarial rows remain, so this failure
+cannot be repaired or revalidated on the same split.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -437,6 +449,10 @@ evidence; an alternative remains a separately verified one-view certificate.
 Iteration 15 stage 1 supports this decomposition: repeated target-negative signs
 plus one explicit alternative recover two historical false positives without a
 real-target veto. Fresh coverage and precision are still unknown.
+Stage 2 rejects that decomposition as a complete method: its only fresh action
+crosses an unstable semantic boundary (`vase` versus `pot/flowerpot`). A future
+grounded branch needs an independently validated equivalence/taxonomy layer;
+spatial evidence alone has reached its limit on this benchmark.
 
 ## 4. Contribution framing (intended)
 
@@ -477,6 +493,8 @@ Honest guardrails carried over from the tear-down:
   signs plus one explicit open C alternative on separate development data.
   That exact conjunction passes a ten-conflict historical mechanism gate with
   2/2 corrections. Freeze it for fresh evaluation before changing any component.
+  It fails the final 240-row confirmation with 0 corrections / 1 TP veto. Reject
+  the extension and do not repair semantic aliases on the closed split.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

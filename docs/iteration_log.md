@@ -927,3 +927,26 @@ remain unchanged.
 
 **Evidence:** dataset length/label-count validation before result inspection;
 `docs/iteration_protocols/xev_iteration_15_stage2_amended.md`.
+
+## 2026-07-19 — XEV iteration 15 stage 2: grounded extension rejected
+
+**Experiment:** The amended final 240-row POPE-adversarial remainder produces 14
+strict local conflicts. All receive grounded pyramids, four receive target
+support, and one reaches the final joint certificate. That action is a real
+`vase`; neither of the two absent conflicts is corrected. TPR, balanced accuracy,
+and MCC fall while FPR is unchanged, so the confirmatory gate fails.
+
+**Diagnosis:** The unique failure is semantically coherent but benchmark-wrong:
+target-free crops name `pot` and `flowerpot`, and the visual pairwise verifier
+strictly prefers them to `vase`. The relation filter labels both as competing C
+identities instead of near-equivalent/support identities. Localization and
+cross-scale signs cannot repair a faulty object-identity boundary.
+
+**Decision / proposal change:** Reject the replicated target-negative extension
+unchanged. Do not add a post-hoc vase/pot alias or alter relation classes on this
+closed final window. Retain XEV v1 as the only held-out constructive method. A
+future grounded branch requires a separately developed semantic-equivalence
+module and evaluation outside POPE adversarial, whose rows are now exhausted.
+
+**Evidence:** `docs/experiment_results.md` iteration-15 stage-2 entry;
+`experiments/qwen3vl_xev/iter15_stage2_summary.json` (git-ignored).

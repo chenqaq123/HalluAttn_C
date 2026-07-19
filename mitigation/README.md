@@ -182,6 +182,9 @@ from the same grounding box and retaining the any-scale target-support guard. It
 passes its historical stage-1 mechanism gate with 2 corrections and 0 TP vetoes;
 fresh evaluation is still required. Use `--evaluation confirmatory` to apply the
 amended final-window FPR/TPR/balanced-accuracy/MCC gate.
+The final 240-row confirmation fails with one action, a real `vase` vetoed as
+`pot`/`flowerpot`, and no correction. This extension is diagnostic-only; XEV v1
+remains the accepted constructive baseline.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

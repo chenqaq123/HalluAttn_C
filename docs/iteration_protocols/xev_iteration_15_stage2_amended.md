@@ -1,7 +1,7 @@
 # XEV Iteration 15 Stage-2 Amended Protocol: Final POPE Remainder
 
 Date: 2026-07-19
-Status: pre-registered confirmatory protocol; supersedes invalid 480-row range
+Status: completed; confirmatory gate failed
 
 ## Amendment Scope
 
@@ -54,3 +54,22 @@ The sample-size-adjusted confirmatory gate requires:
 The action and error counts are the proportional 240-row counterparts of the
 invalid 480-row protocol. No model output informed this adjustment. If any gate
 fails, do not tune the method on this final POPE-adversarial remainder.
+
+## Result
+
+The local stage covers all 240 rows and yields 14 strict directional C conflicts:
+12 real targets and 2 absent targets. All 14 return grounding boxes. Four rows
+receive target support, three have replicated negative target margins, six have
+an open directional alternative, and one satisfies the joint certificate.
+
+That single action is a real `vase` target. At scales 2 and 4 its target margins
+are negative, while target-free `pot` and `flowerpot` alternatives pass strict
+directional verification. The text-only relation filter labels both C rather
+than support/synonym identities. Neither absent conflict row (`cup`, `car`)
+forms the joint certificate.
+
+Baseline `TP/FP/TN/FN = 108/9/111/12` becomes `107/9/111/13`. FPR remains
+0.0750, TPR falls 0.9000 -> 0.8917, balanced accuracy falls 0.9125 -> 0.9083,
+and MCC falls 0.8253 -> 0.8171. Action count 1, correction precision 0, and all
+behavior gates fail. The extension is rejected without post-hoc alias, relation,
+scale, or threshold changes.
