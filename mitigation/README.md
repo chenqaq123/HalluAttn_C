@@ -117,6 +117,9 @@ python mitigation/scripts/run_qwen3vl_xev_pope.py \
   --limit 1 \
   --modes target,closed,open \
   --pairwise_top_k 3 \
+  --global_support_guard \
+  --local_candidate_agreement closed \
+  --global_inventory_repeats 2 \
   --device cuda:0
 ```
 
@@ -133,6 +136,11 @@ python mitigation/scripts/analyze_qwen3vl_xev_pope.py \
 ```
 
 `--pairwise_top_k 3` enables the iteration-3 counterbalanced pairwise verifier.
+The iteration-5 image-level certificate additionally uses
+`--global_support_guard --local_candidate_agreement closed
+--global_inventory_repeats 2`; full-image inventories are generated lazily only
+when a local proposal exists. `--question_ids 42,50` selects exact cases for a
+mechanism audit.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

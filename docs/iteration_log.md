@@ -611,3 +611,29 @@ confirmatory claim.
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-4 entry;
 `experiments/qwen3vl_xev/iter4_holdout_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 5: froze lazy global-support consensus
+
+**What changed:** Added a robust local-identity proposal separate from the veto,
+target-free full-image inventory generation, configurable local candidate
+provenance, lazy evaluation only on local proposals, two-prompt inventory
+consensus, direct question-id selection for mechanism audits, schema-v3 outputs,
+offline diagnostics, and focused tests.
+
+**Mechanism audit:** Tested 10 selected cases spanning five desired corrections
+and five previous TP vetoes. With closed-source local proposals and one global
+inventory, all TP vetoes are suppressed but two absent targets receive false
+support (`bag` for handbag; hallucinated bicycle). The second independently
+worded target-free inventory does not repeat either error. Unanimous support
+therefore retains all five corrections and suppresses all five TP vetoes. A
+full-image pairwise consistency variant was tested and rejected because salience
+made it favor the alternative even when both objects were present.
+
+**Decision / proposal change:** Freeze closed candidate provenance, top-k=3, C,
+local pairwise sign, two inventories of size 12, and unanimous target-support
+consensus. Closed categories are a reliability gate for this pilot, not the
+claimed final vocabulary. Rows 0--119 and 600--1079 are now development-only;
+evaluate unchanged on rows 1080--1559 with the pre-registered iteration-3 gate.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-5 entry;
+`experiments/qwen3vl_xev/iter5_consensus_audit_summary.json` (git-ignored).

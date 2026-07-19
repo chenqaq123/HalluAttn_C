@@ -102,13 +102,15 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 4 (2026-07-19):** there is no confirmed constructive
-method yet. The original symmetric keep/drop score, exact candidate intersection,
-and the iteration-3 single-region pairwise hard veto are all rejected. The last
-looked promising on 120 development rows, then failed on 480 disjoint rows: all
-6 triggers vetoed true positives and corrected no false positives. Pairwise
-comparison remains a useful *local identity* readout, but one attention-selected
-region cannot certify target absence at image level.
+**Status after iteration 5 development (2026-07-19):** there is still no
+confirmed constructive result, but a revised two-level certificate is frozen for
+new holdout evaluation. The original symmetric keep/drop score, exact candidate
+intersection, and single-region pairwise hard veto are rejected. The current
+version treats pairwise comparison only as a local contradiction proposal and
+requires two independent target-free full-image inventories to agree on global
+target support before suppressing that proposal. A selected-case mechanism audit
+is clean (5/5 negative corrections retained, 5/5 positive vetoes suppressed),
+but it is not a representative or confirmatory sample.
 
 ### 3.1 Principle and scope
 
@@ -211,12 +213,24 @@ couch`). TPR falls 0.8250 -> 0.8000, FPR stays 0.0833, balanced accuracy falls
 veto.** Its local comparison may correctly identify another visible object, but
 that does not imply the queried target is absent elsewhere.
 
-The next design must separate local contradiction from global coverage. A local
-pairwise alternative can propose a veto, but a target-free full-image inventory
-must first fail to find any semantic support for the target. This global support
-guard will be evaluated lazily only on preliminary triggers. It replaces the
-invalid assumption that negative target margin in one attention region means
-image-level absence.
+Iteration 5 separates local contradiction from global coverage. A local proposal
+requires a top-3 positive-keep candidate from the closed NPMI inventory, relation
+C, and `v_R(t,a)<0`. Closed candidates are a current high-precision proposal
+gate, not the intended vocabulary boundary; open phrases are still generated
+and may name the same candidate. Only for a local proposal, generate two
+target-free full-image inventories with different prompts. Let `g_j(t)=1` when
+inventory `j` contains a lexical target equivalent or an S relation. The veto is
+
+    local(t,a,R) and not [g_1(t) and g_2(t)].
+
+The conjunction is deliberately conservative: one inventory hallucinated
+`bicycle` for an absent bicycle and one returned generic `bag` for an absent
+handbag, but neither false support repeated in the second inventory. On the 10
+selected prior triggers, both inventories support all 5 true targets and fail
+to jointly support all 5 absent targets, yielding 5 corrections and no TP vetoes.
+Retrospectively this would correct 2/4 development FPs and 3/20 iteration-4 FPs
+without recall loss, but both sets informed the design and are closed. The rule
+must pass unchanged on rows 1080--1559 before adoption.
 
 ### 3.4 Candidate universe
 
@@ -258,9 +272,9 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV global-support gate:** add target-free full-image support search before
-  any local pairwise veto, first auditing all iteration-4 failure triggers. Do not
-  treat one region's negative target margin as image-level absence.
+- **XEV global-support confirmatory gate:** evaluate the frozen two-inventory
+  rule on rows 1080--1559, requiring >=3 triggers, >=2/3 correction precision,
+  lower FPR, TPR loss <=0.005, and non-decreasing MCC. Do not tune on prior rows.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

@@ -313,6 +313,35 @@ def pairwise_identity_certificate(
     }
 
 
+def robust_local_identity_proposal(
+    comparisons: list[dict], required_sources: tuple[str, ...] = ("open", "closed")
+) -> dict | None:
+    """Return a local alternative meeting the requested provenance constraint."""
+
+    required = set(required_sources)
+    alternatives = [
+        comparison
+        for comparison in comparisons
+        if comparison.get("relation") == "C"
+        and required.issubset(comparison.get("sources", []))
+        and float(comparison["target_preference"]) < 0
+    ]
+    if not alternatives:
+        return None
+    return min(alternatives, key=lambda item: float(item["target_preference"]))
+
+
+def inventory_supports_target(
+    target: str, candidates: list[str], relations: dict[str, str]
+) -> bool:
+    """Check a target-free inventory for exact or semantic target support."""
+
+    return any(
+        lexical_equivalent(target, candidate) or relations.get(candidate) == "S"
+        for candidate in candidates
+    )
+
+
 def identity_switch_certificate(
     target: str,
     open_candidates: list[str],

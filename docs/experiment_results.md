@@ -658,3 +658,41 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter4_holdout_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter4_holdout_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 5 development: lazy global-support consensus
+
+- **Failure-directed redesign:** demote local pairwise comparison from a veto to
+  a proposal. A local proposal requires a top-3 positive-keep candidate from the
+  closed NPMI source, C relation, and counterbalanced target preference `<0`.
+  Only then generate two target-free full-image object inventories: a direct
+  inventory and a systematic left-to-right/foreground-to-background inventory
+  that discourages guessing related categories. Cancel the veto only when both
+  inventories contain a lexical target equivalent or an S relation. No target
+  appears in either inventory prompt; no oracle annotations are used.
+- **Selected-case audit:** 10 known local proposals, deliberately comprising 5
+  prior false-positive corrections and 5 prior true-positive vetoes. This is a
+  mechanism audit, not a representative evaluation. Both inventories support all
+  five real targets (`dining table`, `motorcycle`, `spoon`, `bottle`, `bed`) and
+  suppress their vetoes. Neither jointly supports any of the five absent targets
+  (`dining table`, two `handbag` cases, `chair`, `bicycle`), so all five
+  corrections remain. Result: 5 corrections / 0 TP vetoes on the selected set.
+- **Why two inventories:** the first inventory alone falsely supports absent
+  `handbag` via generic `bag` and hallucinates an absent `bicycle`; the second
+  returns neither. Requiring consensus removes both false supports. A tested
+  full-image pairwise consistency check is rejected: it favors the salient
+  alternative on all seven initial cases, including all three real coexisting
+  targets, and would reinstate the TP vetoes.
+- **Retrospective behavior (development only):** on rows 0--119, predicted
+  corrections are qids 42 and 50: TP/FP/TN/FN 50/4/56/10 -> 50/2/58/10, FPR
+  0.0667 -> 0.0333, balanced accuracy 0.8833 -> 0.9000, no recall loss. On the
+  now-open iteration-4 rows 600--1079, predicted corrections are qids 670, 728,
+  and 884: TP/FP/TN/FN 198/20/220/42 -> 198/17/223/42, FPR 0.0833 -> 0.0708,
+  balanced accuracy 0.8708 -> 0.8771, MCC 0.7448 -> 0.7583, no recall loss. These
+  numbers are not confirmatory because both windows informed the rule.
+- **Frozen next test:** local source requirement `closed`, top-k=3, C relation,
+  local pairwise `<0`, two target-free inventories of size 12, unanimous support
+  guard. On rows 1080--1559 require >=3 triggers, correction precision >=2/3,
+  lower FPR, TPR loss <=0.005, and non-decreasing MCC.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter5_consensus_audit_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter5_consensus_audit_summary.json`.

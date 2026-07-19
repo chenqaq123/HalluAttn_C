@@ -30,6 +30,7 @@ from mitigation.src.xev import (  # noqa: E402
     evidence_margin,
     extract_target,
     identity_switch_certificate,
+    inventory_supports_target,
     lexical_equivalent,
     make_counterfactual_views,
     pairwise_identity_certificate,
@@ -40,6 +41,7 @@ from mitigation.src.xev import (  # noqa: E402
     propose_regions,
     random_bbox_like,
     relative_verification_score,
+    robust_local_identity_proposal,
     select_pairwise_candidates,
 )
 
@@ -65,6 +67,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--num_shards", type=int, default=1)
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--start", type=int, default=0)
+    parser.add_argument("--question_ids", default="")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min_pixels", type=int, default=200704)
     parser.add_argument("--max_pixels", type=int, default=200704)
@@ -74,6 +77,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--closed_k", type=int, default=8)
     parser.add_argument("--max_open_candidates", type=int, default=6)
     parser.add_argument("--pairwise_top_k", type=int, default=0)
+    parser.add_argument("--global_support_guard", action="store_true")
+    parser.add_argument(
+        "--local_candidate_agreement",
+        choices=("both", "closed", "any"),
+        default="both",
+    )
+    parser.add_argument("--global_inventory_limit", type=int, default=12)
+    parser.add_argument("--global_inventory_repeats", type=int, default=1)
+    parser.add_argument("--global_candidate_max_new_tokens", type=int, default=64)
     parser.add_argument("--margin_batch_size", type=int, default=4)
     parser.add_argument("--candidate_max_new_tokens", type=int, default=32)
     parser.add_argument("--relation_max_new_tokens", type=int, default=32)
@@ -497,6 +509,33 @@ def open_candidates(
     return parse_candidate_list(raw, limit=limit), raw
 
 
+def global_candidates(
+    engine: Qwen3VLEngine,
+    image,
+    limit: int,
+    max_new_tokens: int,
+    variant: int = 0,
+) -> tuple[list[str], str]:
+    if variant % 2 == 0:
+        prompt = (
+            f"List up to {limit} concrete object identities visibly supported anywhere "
+            "in this image. Include small but recognizable objects. Use singular noun "
+            "phrases at the most specific recognizable level. Do not list attributes, "
+            "parts, scene types, broader classes, or explanations. Return a "
+            "comma-separated list only."
+        )
+    else:
+        prompt = (
+            "Inspect the entire image systematically from left to right and foreground "
+            f"to background. List up to {limit} concrete object identities that you can "
+            "clearly distinguish. Do not guess a related category when its visual "
+            "identity is uncertain. Use specific singular noun phrases, with no parts, "
+            "attributes, scene words, or explanations. Return a comma-separated list only."
+        )
+    raw = engine.generate(prompt, image=image, max_new_tokens=max_new_tokens)
+    return parse_candidate_list(raw, limit=limit), raw
+
+
 def source_score(
     target: str,
     candidates: list[str],
@@ -631,6 +670,14 @@ def process_record(
             target_keep_margin=keep_margin_map[target],
             comparisons=pairwise_comparisons,
         )
+        required_sources = {
+            "both": ("open", "closed"),
+            "closed": ("closed",),
+            "any": (),
+        }[args.local_candidate_agreement]
+        local_identity_proposal = robust_local_identity_proposal(
+            pairwise_comparisons, required_sources=required_sources
+        )
 
         random_bbox = random_bbox_like(
             proposal.bbox,
@@ -702,6 +749,7 @@ def process_record(
                     "candidate_limit": args.pairwise_top_k,
                     "comparisons": pairwise_comparisons,
                     "certificate": pairwise_certificate,
+                    "local_identity_proposal": local_identity_proposal,
                 },
             }
         )
@@ -734,12 +782,60 @@ def process_record(
         for region in region_rows
         if (certificate := region["pairwise_verification"]["certificate"]) is not None
     ]
+    local_identity_proposals = [
+        {"region_index": region["index"], **proposal}
+        for region in region_rows
+        if (proposal := region["pairwise_verification"]["local_identity_proposal"])
+        is not None
+    ]
+    global_inventory = []
+    global_inventory_raw = ""
+    global_inventories: list[list[str]] = []
+    global_inventory_raw_outputs: list[str] = []
+    global_support_votes: list[bool] = []
+    global_relations: dict[str, str] = {}
+    global_relation_metadata: dict = {}
+    global_support_found = False
+    global_certificate = None
+    if args.global_support_guard and local_identity_proposals:
+        for variant in range(args.global_inventory_repeats):
+            inventory, raw = global_candidates(
+                engine,
+                image,
+                limit=args.global_inventory_limit,
+                max_new_tokens=args.global_candidate_max_new_tokens,
+                variant=variant,
+            )
+            global_inventories.append(inventory)
+            global_inventory_raw_outputs.append(raw)
+        global_inventory = list(
+            dict.fromkeys(
+                candidate
+                for inventory in global_inventories
+                for candidate in inventory
+            )
+        )
+        global_inventory_raw = global_inventory_raw_outputs[0]
+        global_relations, global_relation_metadata = relation_filter.classify(
+            target, global_inventory
+        )
+        global_support_votes = [
+            inventory_supports_target(target, inventory, global_relations)
+            for inventory in global_inventories
+        ]
+        global_support_found = all(global_support_votes)
+        best_local_proposal = min(
+            local_identity_proposals,
+            key=lambda item: item["target_preference"],
+        )
+        if not global_support_found:
+            global_certificate = best_local_proposal
     image.close()
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "score_status": {
             "scores": "rejected-iteration1-keep-minus-drop",
-            "current_diagnostic": "counterbalanced-pairwise-under-evaluation",
+            "current_diagnostic": "lazy-global-support-under-evaluation",
         },
         "question_id": str(record["question_id"]),
         "image_id": image_id,
@@ -776,6 +872,21 @@ def process_record(
                 else None
             ),
         },
+        "global_support_verification": {
+            "enabled": args.global_support_guard,
+            "local_candidate_agreement": args.local_candidate_agreement,
+            "evaluated": bool(args.global_support_guard and local_identity_proposals),
+            "local_identity_proposals": local_identity_proposals,
+            "inventory": global_inventory,
+            "inventory_raw": global_inventory_raw,
+            "inventories": global_inventories,
+            "inventory_raw_outputs": global_inventory_raw_outputs,
+            "support_votes": global_support_votes,
+            "relations": global_relations,
+            "relation_filter": global_relation_metadata,
+            "target_support_found": global_support_found,
+            "certificate": global_certificate,
+        },
         "runtime_seconds": time.perf_counter() - started,
     }
 
@@ -787,6 +898,10 @@ def main() -> None:
     unknown = modes - {"target", "random", "closed", "oracle", "open"}
     if unknown:
         raise ValueError(f"Unknown modes: {sorted(unknown)}")
+    if args.global_support_guard and args.pairwise_top_k <= 0:
+        raise ValueError("--global_support_guard requires --pairwise_top_k > 0")
+    if args.global_inventory_repeats <= 0:
+        raise ValueError("--global_inventory_repeats must be positive")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
@@ -804,8 +919,20 @@ def main() -> None:
     )
     if args.start < 0:
         raise ValueError("--start must be non-negative")
-    stop = args.start + args.limit if args.limit > 0 else None
-    rows = all_rows[args.start : stop][args.shard_idx :: args.num_shards]
+    if args.question_ids:
+        requested_ids = {
+            value.strip() for value in args.question_ids.split(",") if value.strip()
+        }
+        selected = [
+            row for row in all_rows if str(row["question_id"]) in requested_ids
+        ]
+        found_ids = {str(row["question_id"]) for row in selected}
+        if missing_ids := sorted(requested_ids - found_ids, key=int):
+            raise ValueError(f"Unknown --question_ids: {missing_ids}")
+    else:
+        stop = args.start + args.limit if args.limit > 0 else None
+        selected = all_rows[args.start : stop]
+    rows = selected[args.shard_idx :: args.num_shards]
     output_path = Path(args.output_file)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     completed = existing_ids(output_path)
@@ -831,6 +958,10 @@ def main() -> None:
                 "max_regions": args.max_regions,
                 "closed_k": args.closed_k,
                 "pairwise_top_k": args.pairwise_top_k,
+                "global_support_guard": args.global_support_guard,
+                "local_candidate_agreement": args.local_candidate_agreement,
+                "global_inventory_limit": args.global_inventory_limit,
+                "global_inventory_repeats": args.global_inventory_repeats,
                 "modes": sorted(modes),
             }
             output.write(json.dumps(payload) + "\n")

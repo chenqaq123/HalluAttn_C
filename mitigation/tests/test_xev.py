@@ -7,6 +7,7 @@ from mitigation.src.xev import (
     counterbalanced_pairwise_score,
     extract_target,
     identity_switch_certificate,
+    inventory_supports_target,
     make_counterfactual_views,
     pairwise_identity_certificate,
     pairwise_question,
@@ -15,6 +16,7 @@ from mitigation.src.xev import (
     propose_regions,
     random_bbox_like,
     relative_verification_score,
+    robust_local_identity_proposal,
     select_pairwise_candidates,
 )
 
@@ -118,3 +120,37 @@ def test_pairwise_identity_certificate_uses_natural_sign_gates() -> None:
     assert certificate is not None
     assert certificate["candidate"] == "backpack"
     assert pairwise_identity_certificate(3.0, 0.25, comparisons) is None
+
+
+def test_global_guard_separates_local_proposal_from_target_support() -> None:
+    comparisons = [
+        {
+            "candidate": "backpack",
+            "relation": "C",
+            "sources": ["closed", "open"],
+            "target_preference": -2.0,
+        },
+        {
+            "candidate": "person",
+            "relation": "N",
+            "sources": ["open"],
+            "target_preference": -5.0,
+        },
+    ]
+    assert robust_local_identity_proposal(comparisons)["candidate"] == "backpack"
+    assert inventory_supports_target("handbag", ["purse"], {"purse": "S"})
+    assert not inventory_supports_target(
+        "handbag", ["backpack"], {"backpack": "C"}
+    )
+    closed_only = robust_local_identity_proposal(
+        [
+            {
+                "candidate": "chair",
+                "relation": "C",
+                "sources": ["closed"],
+                "target_preference": -1.0,
+            }
+        ],
+        required_sources=("closed",),
+    )
+    assert closed_only["candidate"] == "chair"

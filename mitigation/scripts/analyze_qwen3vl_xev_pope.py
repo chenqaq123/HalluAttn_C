@@ -432,6 +432,121 @@ def pairwise_diagnostics(
     }
 
 
+def global_support_diagnostics(
+    rows: list[dict],
+    labels: np.ndarray,
+    baseline: np.ndarray,
+    evaluation: str,
+) -> dict | None:
+    local_mask = np.zeros(len(rows), dtype=bool)
+    inventory_support_mask = np.zeros(len(rows), dtype=bool)
+    certificate_mask = np.zeros(len(rows), dtype=bool)
+    examples = []
+    inventories = []
+    for index, row in enumerate(rows):
+        payload = row.get("global_support_verification")
+        if not payload or not payload.get("enabled", False):
+            continue
+        proposals = payload.get("local_identity_proposals", [])
+        if not proposals:
+            continue
+        local_mask[index] = True
+        inventory_support_mask[index] = bool(
+            payload.get("target_support_found", False)
+        )
+        certificate = payload.get("certificate")
+        if certificate is not None:
+            certificate_mask[index] = True
+        inventories.append(len(payload.get("inventory", [])))
+        examples.append(
+            {
+                "question_id": row["question_id"],
+                "image_id": row["image_id"],
+                "target": row["target"],
+                "label": row["label"],
+                "target_support_found": bool(
+                    payload.get("target_support_found", False)
+                ),
+                "inventory": payload.get("inventory", []),
+                "inventories": payload.get(
+                    "inventories", [payload.get("inventory", [])]
+                ),
+                "support_votes": payload.get(
+                    "support_votes", [payload.get("target_support_found", False)]
+                ),
+                "support_relations": {
+                    candidate: relation
+                    for candidate, relation in payload.get("relations", {}).items()
+                    if relation == "S"
+                },
+                "local_identity_proposals": proposals,
+                "certificate": certificate,
+            }
+        )
+    if not np.any(local_mask):
+        return None
+
+    baseline_predictions = baseline >= 0
+    predictions = baseline_predictions.copy()
+    predictions[certificate_mask] = False
+    corrections = int(np.sum(certificate_mask & (labels == 0)))
+    positive_vetoes = int(np.sum(certificate_mask & (labels == 1)))
+    count = int(certificate_mask.sum())
+    baseline_behavior = binary_metrics(labels, baseline_predictions)
+    behavior = binary_metrics(labels, predictions)
+    correction_precision = corrections / count if count else None
+    passed = (
+        count >= 3
+        and correction_precision >= 2 / 3
+        and behavior["fpr"] < baseline_behavior["fpr"]
+        and behavior["tpr"] >= baseline_behavior["tpr"] - 0.005
+        and behavior["mcc"] >= baseline_behavior["mcc"]
+    )
+    return {
+        "status": evaluation,
+        "definition": {
+            "local_proposal": {
+                "candidate_agreement": sorted(
+                    {
+                        row.get("global_support_verification", {}).get(
+                            "local_candidate_agreement",
+                            row.get("run", {}).get(
+                                "local_candidate_agreement", "both"
+                            ),
+                        )
+                        for row in rows
+                        if row.get("global_support_verification", {}).get(
+                            "enabled", False
+                        )
+                    }
+                ),
+                "conditions": "relation C and pairwise preference < 0",
+            },
+            "global_inventory": "two target-free full-image object lists",
+            "support": "all inventories contain a lexical target equivalent or relation S",
+            "action": "veto local proposal only when global target support is absent",
+        },
+        "local_proposal_count": int(local_mask.sum()),
+        "inventory_support_count": int(np.sum(local_mask & inventory_support_mask)),
+        "mean_inventory_size": float(np.mean(inventories)),
+        "trigger_count": count,
+        "false_positive_corrections": corrections,
+        "true_positive_vetoes": positive_vetoes,
+        "correction_precision": correction_precision,
+        "baseline_behavior": baseline_behavior,
+        "behavior": behavior,
+        "holdout_gate": {
+            "minimum_triggers": 3,
+            "minimum_correction_precision": 2 / 3,
+            "maximum_tpr_drop": 0.005,
+            "require_fpr_drop": True,
+            "require_non_decreasing_mcc": True,
+            "passed": passed,
+        },
+        "examples": examples,
+    }
+
+
 def region_reformulation_scores(
     rows: list[dict], source: str | None = None
 ) -> dict[str, np.ndarray]:
@@ -533,6 +648,9 @@ def main() -> None:
         "candidate_diagnostics": candidate_diagnostics(rows),
         "identity_switch_certificate": certificate_diagnostics(rows, labels, baseline),
         "pairwise_verification": pairwise_diagnostics(
+            rows, labels, baseline, args.pairwise_evaluation
+        ),
+        "global_support_verification": global_support_diagnostics(
             rows, labels, baseline, args.pairwise_evaluation
         ),
         "methods": {},
