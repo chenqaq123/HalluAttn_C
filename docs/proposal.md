@@ -73,11 +73,13 @@ not every attention method.
 > (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
 > adds yes-bias.
 
-The constructive answer is now being rebuilt as **target-causal selectivity
-learning** (see §3): a decision should change when target evidence is removed,
-but remain stable when a visually related distractor is removed. This is a
-training objective over controlled image interventions, not another attention
-readout, attention intervention, crop ensemble, or self-verification loop.
+The constructive answer is now being rebuilt as **Null-Evidence Attention**
+(NEA; see §3). Standard attention can rank available tokens but has no explicit
+target-conditioned outcome for "none of these visual tokens supports the
+query." NEA adds that missing outcome while preserving the model's original
+visual-attention mass. It does not treat raw attention as evidence or amplify
+visual attention; it learns when an already allocated visual branch should
+return bounded null evidence instead of a semantic neighbor.
 
 ## 2. Positioning vs. prior work
 
@@ -96,139 +98,172 @@ readout, attention intervention, crop ensemble, or self-verification loop.
 - The **mitigation-side critique** made measurable: the *related-present vs.
   plain-absent* FPR decomposition that exposes attention-amplification's
   answer-prior over-fitting — invisible in prior aggregate-POPE tables.
-- A **target-selective causal criterion** that distinguishes evidence sensitivity
-  from generic visual dependence: remove the target and the decision must change;
-  remove a related visible object and it must not. The intended contribution is
-  this paired sensitivity/invariance objective, not object removal by itself.
+- A **mass-preserving null-evidence operator**: retain the model's original
+  text/vision allocation, but let the target-conditioned visual branch select a
+  learned, norm-bounded null value when no visual token clears the evidence
+  competition. The intended contribution is the visual rejection path and its
+  measured routing behavior, not attention magnitude or a generic rejection
+  token.
 
-## 3. Constructive direction under test — Target-Causal Selectivity
+## 3. Constructive direction under test — Null-Evidence Attention
 
-**Status after the 2026-07-19 outer-loop review:** the XEV inference-time
-self-verification route is closed. Its nominal held-out change on 960 rows came
-from four actions (three corrections and one new error), a net reduction of only
-two errors. Every attempt to raise coverage failed confirmation, and the final
-240-row test made one true-positive error without correcting a false positive.
-The result is not a meaningful method improvement and is retained only as a
-negative evidence trail in §3.6 and the append-only logs.
+**Status after the second 2026-07-19 outer-loop review:** XEV remains closed, and
+Target-Causal Selectivity (TCS) was cancelled before implementation. TCS relied
+on generated object-removal images, while its four-view classification loss
+already contained most of the proposed sensitivity/invariance behavior. It
+therefore exposed the method to edit shortcuts without establishing that its
+paired regularizer contributed anything beyond counterfactual SFT. The active
+method is now NEA; TCS is retained as a rejected design in §3.6.
 
 ### 3.1 What the failures rule out
 
-Do not continue any method whose decision evidence is produced by asking the
-same LVLM to inspect its own attention-selected or self-grounded derived views.
-The completed sequence has already tested keep/drop, target-vs-alternative
-questions, full-image inventories, multiple attention regions, native target
-grounding, exact crops, and fixed multiscale crops. These variants change what
-the model sees, but not the source of semantic judgment. They therefore preserve
-the same co-occurrence prior and unstable identity boundary (`vase` versus
-`pot/flowerpot`) that caused the original error.
+The new route must satisfy all of the following:
 
-This also excludes three tempting restarts:
+- no answer may be corrected by asking Qwen3-VL to judge another view of its own
+  proposal; XEV already exhausted that information loop;
+- no inpainted or diffusion-edited image is needed for training, because the
+  edit itself can become the absence label;
+- no external detector, SAM-style grounding decoder, or generated candidate
+  inventory is present at inference;
+- no visual-attention mass is amplified; the Prong-2 evidence predicts that
+  amplification raises the yes-rate rather than verifying identity;
+- the added parameters are shared across target words and must transfer to
+  categories never used as training targets.
 
-- reproducing R-CoV-style coordinate/region-description self-verification;
-- promoting an external open-vocabulary detector to the method (already tested
-  as the stronger OWLv2 positive control on `main`, and covered by tool-based
-  correction work such as Pelican);
-- switching to another attention, hidden-state steering, or generic visual-
-  sensitivity objective without target-specific controls.
+### 3.2 The missing outcome: null evidence inside visual attention
 
-### 3.2 New criterion: sensitivity to target, invariance to neighbor
+Consider one selected attention head at the row that predicts the first answer
+token (or, later, an object commitment). Let `V` be visual-token indices and `T`
+all other causal-context indices. Under the original post-RoPE attention, let
+`a_i` be the normalized weight and
 
-For a target object `t`, choose an image `I` that contains both `t` and a
-strongly associated visible object `n`. Construct two minimally edited images:
+    rho = sum_{i in V} a_i
+    o_base = o_T + rho * sum_{i in V} (a_i / rho) v_i.
 
-    I^{-t}: every instance of target t is removed; neighbor n is preserved
-    I^{-n}: neighbor n is removed; target t is preserved
+`rho` is the visual mass the pretrained model already chose. NEA never increases
+it, and it preserves the pretrained conditional distribution
+`a_bar_i = a_i / rho` among real visual tokens. Content logits before multimodal
+RoPE are used only to decide whether the whole visual branch should yield null:
 
-For the first-token existence margin
+    e_vis   = logmeanexp_{i in V}(<q^0, k_i^0> / sqrt(d))
+    z_null  = <q^0, kappa_lh> / sqrt(d) + b_lh
+    g_null  = sigmoid(z_null - e_vis).
 
-    m_theta(t, I) = log p_theta(Yes | q_t, I)
-                    - log p_theta(No | q_t, I),
+`kappa_lh` is one learned null key for layer/head `(l,h)`. The head output becomes
 
-define target sensitivity, neighbor leakage, and target-causal selectivity:
+    g_eff = alpha_lh * g_null,                   0 <= alpha_lh <= 1
+    o_NEA = o_T + rho * [(1 - g_eff) * sum_{i in V} a_bar_i v_i
+                         + g_eff * nu_lh].
 
-    Delta_t = m_theta(t, I) - m_theta(t, I^{-t})
-    Delta_n = m_theta(t, I) - m_theta(t, I^{-n})
-    TCS(t,I,n) = Delta_t - beta * |Delta_n|.
+The original text contribution `o_T` and total visual mass `rho` are unchanged.
+When `alpha_lh=0`, the operator is exactly the vanilla head; NEA does not replace
+the pretrained spatial distribution with a no-RoPE map. `alpha_lh` is initialized
+at zero and projected back to `[0,1]` after each update. `nu_lh` is a learned null
+value whose norm is constrained not to exceed the running median visual-value
+norm for that head. A zero value would merely remove misleading visual content
+and leave the language prior unopposed; the bounded learned value lets the model
+represent "the allocated visual branch contains no support for this target"
+without becoming an unconstrained steering vector.
 
-A target-grounded decision must have large positive `Delta_t` and small
-`|Delta_n|`. This is stronger than "uses the image": a model that answers
-`chair=yes` because it sees a dining table may be highly image-sensitive while
-still having low target selectivity.
+This is not a claim that attention allocation has become verification. The raw
+weights remain an unreliable proxy. The method adds a supervised reject outcome
+that ordinary visual-token allocation lacks, and its null-routing behavior must
+be validated independently of answer accuracy.
 
-### 3.3 Training objective
+### 3.3 Data and optimization
 
-The first implementation is a lightweight Qwen3-VL fine-tuning method, not a
-test-time verifier. COCO/LVIS instance masks and object removal are used only to
-construct training pairs; deployment remains one ordinary model forward with no
-attention extraction, region proposal, candidate vocabulary, external detector,
-or additional verification pass.
+Use only natural images and annotations. For every target category, construct a
+balanced set of:
 
-For each paired triple, optimize four natural decisions:
+- positive images containing the target;
+- **related-present negatives** lacking the target but containing one of its
+  high-NPMI COCO/LVIS neighbors;
+- random negatives lacking both the target and its strong neighbors.
 
-    m_theta(t, I)       > 0        target present
-    m_theta(t, I^{-n})  > 0        target remains after distractor removal
-    m_theta(t, I^{-t})  < 0        target absent after target removal
-    m_theta(t, I_abs)   < 0        natural related-present negative
+No image is edited. The target is supplied by the normal question, so NEA has no
+class-specific output parameters or fixed candidate vocabulary. COCO provides
+the first mechanism pilot; LVIS categories on COCO images are the planned
+open-vocabulary expansion. Category-disjoint evaluation is mandatory.
 
-where `I_abs` contains the associated neighbor `n` but not target `t`. Add the
-paired regularizers
+Freeze Qwen3-VL. The first pilot trains only per-head `kappa`, `b`, `alpha`, and
+`nu` in layers 18--29. Initialize `alpha=0` so the model starts at exact vanilla
+behavior. A routing loss trains `g_null` high for absent targets and low for
+present targets; first-answer binary loss trains the intervention strengths and
+bounded null values. No LoRA or backbone update is allowed in iteration 1.
 
-    L_sens = softplus(delta_s - Delta_t)
-    L_inv  = smooth_l1(Delta_n, 0)
-
-to standard binary answer loss. `L_sens` teaches the model what visual change
-must matter; `L_inv` teaches which correlated visual change must not matter.
-The natural `I_abs` branch prevents the model from solving edited images through
-inpainting artifacts. The initial pilot updates only LoRA adapters in the
-multimodal projector / selected decoder layers and keeps the vision encoder
-frozen.
+At inference, NEA is part of the same forward pass. It requires no attention-map
+post-processing, region proposal, crop, object list, verifier call, or external
+vision model.
 
 ### 3.4 Novelty boundary from the refreshed literature
 
-- **oDPO (NAACL 2025)** already prefers an original image over a target-removed
-  image. Object removal alone is therefore not novel. It has no paired
-  related-object invariance requirement.
-- **VES-RFT (CVPR 2026)** rewards uncertainty change between image and no-image
-  branches. That measures generic visual dependence, not whether the dependence
-  is specific to the queried object.
-- **Causal-LLaVA** deconfounds category representations with learned confounder
-  dictionaries; **CIPHER** learns a low-rank hallucination subspace from
-  diffusion counterfactuals. Neither uses the matched target-removal versus
-  neighbor-removal behavior as the supervision unit.
-- **R-CoV (2026)** uses the LVLM's own coordinates and region descriptions for
-  post-hoc verification. That is the route our XEV evidence rejects.
-- Generic grounding supervision is not sufficient: EMNLP 2024 reports little
-  or no object-hallucination reduction in open caption generation. The proposed
-  criterion supervises decision behavior under controlled interventions rather
-  than localization.
+- **Softmax1 / zero-sink attention** and learned sink tokens already provide a
+  generic no-op path for language-model stability and quantization. We do not
+  claim the null-attention primitive.
+- **PriorTR (2026)** uses an instruction-agnostic null token to estimate an
+  attention prior for visual-token pruning. NEA is target-conditioned, trained
+  on object absence, retains all tokens, and changes semantic evidence flow.
+- **PostAlign (ICLR 2026)** emits `<LOC>` or `<REJ>` and uses a separate visual
+  grounding encoder/mask decoder. **Ground-V** and generalized referring-
+  expression work also train explicit no-target grounding. NEA has no generated
+  rejection token or grounding decoder.
+- **OPV (2026)** reads an object-completion hidden-state probe and rolls decoding
+  back. NEA modifies the visual branch before the answer commitment and must
+  beat a matched residual-adapter control.
+- **SAGE (2026)** treats existing sink tokens as triggers for gradient/attention-
+  based decoding changes. NEA creates a supervised target-conditioned null
+  competitor and never sharpens or broadens total visual attention.
+- External visual evidence methods (VEP, MARINE, Kestrel) obtain identity
+  evidence from another perception model. That is a valid positive control but
+  not this method.
 
-The claim is therefore deliberately narrow: **paired target sensitivity plus
-semantic-neighbor invariance**. We must not claim causal training, object
-removal, DPO, grounding, or visual sensitivity individually as new.
+The narrow intended novelty is therefore **mass-preserving, target-conditioned
+null evidence inside a frozen LVLM's visual attention branch**. If a generic
+hidden residual adapter or answer bias performs equally well, this architectural
+claim fails.
 
 ### 3.5 First validation and kill criteria
 
-Develop on COCO train2017 intervention triples and POPE-popular; reserve
-POPE-random and MME existence for confirmation. POPE-adversarial is exhausted
-for method selection and may be reported only as a closed diagnostic replay.
-Use a category-disjoint split so that at least 20 COCO categories are never used
-as intervention targets during training. ROHE is an auxiliary matched-pair
-diagnostic even though it is not an `lmms-eval` headline task.
+Iteration 1 has a mechanism gate before any behavior claim. On natural COCO
+training images, fit null keys on 60 target categories and evaluate 20 unseen
+categories. The null log-odds must separate positives from related-present
+negatives, outperform both a query-only probe and visual-energy-only score, and
+lose signal both when visual-key energy is shuffled and when present/absent
+images are exchanged and the model is rerun. Otherwise NEA is only another
+hidden probe and is rejected before null values are trained.
 
-The first round must compare: frozen Qwen3-VL, binary SFT on the same examples,
-target-removal-only (`L_sens`, oDPO-like ablation), and full TCS
-(`L_sens + L_inv + I_abs`). Pre-register success before training:
+If the routing gate passes, compare frozen Qwen3-VL, a fixed zero-null route,
+zero-value NEA, a parameter-matched residual adapter, a learned answer-bias
+control, and full bounded-value NEA. POPE-popular is the first behavior task;
+POPE-random or MME existence remains untouched confirmation. POPE-adversarial is
+exhausted and unavailable for development.
 
-1. Full TCS improves held-out-category TCS more than target-removal-only.
-2. On POPE-popular it lowers related-present FPR, loses at most 0.5 TPR points,
-   and increases both balanced accuracy and MCC without a global no-answer
-   collapse.
-3. The direction repeats on at least one untouched task (POPE-random or MME
-   existence) before the method is promoted.
-4. If target-removal-only matches full TCS, or gains come only from a lower
-   yes-rate, the proposed selectivity mechanism is rejected.
+Full NEA advances only if:
 
-### 3.6 Closed route evidence — XEV
+1. null routing transfers to held-out target categories and is specifically high
+   on related-present negatives rather than on all prompts;
+2. related-present FPR falls with at most 0.5 TPR-point loss, while balanced
+   accuracy and MCC increase and overall yes-rate changes by at most one point;
+3. full NEA beats zero-value NEA and the parameter-matched residual adapter at
+   matched TPR, showing that the null route and bounded absence value both matter;
+4. the unchanged method repeats on one untouched task.
+
+If a scalar bias, generic adapter, or zero-value null matches full NEA, reject
+the method rather than adding LoRA, more heads, or a fitted behavior threshold.
+
+### 3.6 Rejected pre-experiment design — TCS
+
+Target-Causal Selectivity proposed target-removal sensitivity and neighbor-
+removal invariance using inpainted triples. It was cancelled before Stage A for
+three reasons. First, four-view binary supervision already enforces the desired
+labels, so the claimed paired regularizer may reduce to ordinary counterfactual
+SFT. Second, target and neighbor removals introduce unequal artifacts and can
+change scene semantics, weakening the causal interpretation. Third, oDPO already
+uses target removal and VISE/VES-RFT occupy nearby perturbation/sensitivity
+training. The design remains documented in its protocol and literature memo but
+must not be implemented as the active method.
+
+### 3.7 Closed route evidence — XEV
 
 Everything below this heading is the preserved design/failure trace and is
 superseded by §§3.1--3.5. Terms such as "current" and "next" describe the state
@@ -549,7 +584,7 @@ spatial evidence alone has reached its limit on this benchmark.
 
 ## 4. Contribution framing (intended)
 
-Frame as an **analysis + causal-selectivity learning** paper, conditional on the
+Frame as an **analysis + null-evidence architecture** paper, conditional on the
 new method passing confirmation:
 
 1. The **two-pronged critique** — attention-based detection and mitigation both
@@ -557,11 +592,11 @@ new method passing confirmation:
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive **target-causal selectivity** criterion: learn decisions that
-   are sensitive to removing the queried target and invariant to removing its
-   visible semantic neighbor. Promote it only if the full paired objective beats
-   target-removal-only and improves an untouched benchmark without yes/no prior
-   collapse.
+3. A constructive **Null-Evidence Attention** operator: preserve the pretrained
+   visual mass but add a supervised target-conditioned reject outcome inside the
+   visual branch. Promote it only if null routing transfers across unseen
+   categories and full NEA beats generic adapter/bias controls on an untouched
+   benchmark without yes/no prior collapse.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
@@ -574,19 +609,27 @@ Honest guardrails carried over from the tear-down:
 - **XEV is closed:** preserve code and append-only evidence for reproducibility,
   but do not tune aliases, candidates, boxes, scales, thresholds, or support
   guards. The 4/960 result is a sparse numerical fluctuation, not the method.
-- **Counterfactual quality:** object removal can leave artifacts or regenerate
-  the category. Require all-instance masks, two removal seeds where feasible,
-  natural related-present negatives, and automatic plus manual quality checks.
-  Report the fraction discarded before any model result.
-- **Shortcut control:** binary SFT, target-removal-only, same-area background
-  removal, and related-neighbor removal are required ablations. Without them an
-  improvement could be edit detection or a generic no-answer shift.
+- **TCS is cancelled:** do not build the LaMa/inpainting pipeline or train the
+  four-view objective. Its protocol is historical, not pending work.
+- **Null-as-probe shortcut:** `z_null` can classify from the multimodal query
+  without competing meaningfully with visual keys. Query-only, energy-only, and
+  key-energy-shuffle plus counterlabel-image-swap controls are mandatory; fail
+  the route if full null odds do not beat the probes and depend on the correct
+  image on unseen categories.
+- **Generic steering shortcut:** a learned null value may become a negative
+  steering vector. Constrain its norm, preserve original visual mass, initialize
+  to exact vanilla, and require gains over matched residual-adapter and answer-
+  bias controls.
 - **Vocabulary transfer:** train/evaluate with category-disjoint target splits.
   COCO-only gains cannot support an open-vocabulary claim; LVIS expansion follows
-  only after a held-out-category pilot succeeds.
-- **Compute:** begin with a small Qwen3-VL LoRA mechanism pilot. Do not launch a
-  full GRPO/DPO run before the direct margin objective changes held-out TCS in the
-  predicted direction.
+  only after the 20-category held-out routing gate succeeds.
+- **Operator compatibility:** Qwen3-VL uses joint decoder self-attention rather
+  than a separate cross-attention block. Implement NEA only on the selected query
+  row under eager attention and verify bit-identical vanilla output when null
+  probability is initialized to zero.
+- **Compute:** begin with cached pre-RoPE query/visual-energy features and train
+  null keys offline. Do not run end-to-end null-value training before routing
+  transfer and both shuffle/swap gates pass.
 - **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
   LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
   baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).
@@ -600,7 +643,9 @@ Honest guardrails carried over from the tear-down:
 - Repo layout: [project_structure.md](project_structure.md).
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
-- Refreshed route audit:
-  [2026-07-19_constructive_route_pivot.md](../literature/2026-07-19_constructive_route_pivot.md).
-- Pre-registered TCS pilot:
+- Current route audit:
+  [2026-07-19_null_evidence_attention_redesign.md](../literature/2026-07-19_null_evidence_attention_redesign.md).
+- Pre-registered NEA pilot:
+  [nea_iteration_1.md](iteration_protocols/nea_iteration_1.md).
+- Rejected TCS design record:
   [tcs_iteration_1.md](iteration_protocols/tcs_iteration_1.md).

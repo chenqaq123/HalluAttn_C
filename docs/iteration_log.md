@@ -992,3 +992,48 @@ held-out target categories and POPE-popular. Full TCS is rejected unless its
 paired selectivity exceeds both controls while improving balanced accuracy/MCC
 without material TPR or yes-rate collapse. No new experimental result was
 produced in this route-review iteration.
+
+## 2026-07-19 — TCS cancelled; Null-Evidence Attention pre-registered
+
+**Design rejection:** Cancelled TCS before implementation. No counterfactual
+image was generated and no model result was inspected. Four-view binary labels
+already impose most of the proposed target-sensitivity/neighbor-invariance
+behavior, making it unclear that the paired regularizer adds a mechanism beyond
+ordinary counterfactual SFT. Unequal inpainting artifacts and scene changes
+further weaken the causal interpretation. The committed TCS protocol is retained
+with cancelled status rather than silently deleted.
+
+**Literature refresh:** Hidden-state object verification is now directly covered
+by OPV; explicit `<REJ>` plus mask/box grounding is covered by ICLR-2026
+PostAlign; no-target grounding is established in Ground-V/GREC; external visual
+evidence is covered by MARINE, VEP, and Kestrel; sink-triggered attention
+modulation is covered by SAGE. Generic null/no-op attention is also established
+by Softmax1/StreamingLLM and related transformer work. The open boundary cannot
+be "add a verifier," "predict rejection," or "add a sink token."
+
+**New hypothesis:** Pre-register Null-Evidence Attention (NEA). At selected
+Qwen3-VL heads, preserve the original post-RoPE visual mass and text contribution,
+but replace the conditional visual distribution with a pre-RoPE content
+competition between real visual keys and one learned null key. When null wins, a
+norm-bounded null value represents absence evidence. This neither reads raw
+attention as verification nor increases visual mass.
+
+**Why it fits the evidence:** Related objects currently win a relative visual
+allocation even when the target is absent; attention amplification then turns
+that proxy into `Yes`. NEA adds the missing "none of these visual tokens" outcome
+inside the existing visual budget. Natural present, related-absent, and random-
+absent images provide supervision without inpainting, candidates, boxes,
+external detectors, or a second model call.
+
+**Gate:** `docs/iteration_protocols/nea_iteration_1.md` requires unseen-category
+null routing to beat query-only and visual-energy-only probes, depend on the
+explicit visual-key energy, and fail after counterlabel image swapping before
+behavior-changing values are trained. An annotation-only feasibility audit fixed
+the neighbor co-occurrence floor at 50 (the original 100 left `bear` and
+`hair drier` without a related neighbor) and doubled held-out rows to 40 per
+target. Full NEA must then beat zero-null, logit-bias, and parameter-matched
+residual-adapter controls on
+POPE-popular with at least ten net corrections, lower related-present FPR,
+non-decreasing MCC/balanced accuracy, and tightly bounded TPR/yes-rate changes.
+Failure closes the route without LoRA or threshold tuning. No new experimental
+result was produced in this design iteration.

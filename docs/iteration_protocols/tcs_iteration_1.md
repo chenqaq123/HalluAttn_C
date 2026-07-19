@@ -1,7 +1,14 @@
 # TCS Iteration 1 Protocol: Intervention Validity and Mechanism Pilot
 
 Date: 2026-07-19
-Status: pre-registered; not started
+Status: cancelled before start; superseded by NEA iteration 1
+
+> Design-review cancellation (2026-07-19): no images were edited and no model
+> result was produced under this protocol. Four-view binary supervision already
+> subsumes much of the proposed sensitivity/invariance behavior, while object
+> removal introduces artifact and causal-validity risks. The active protocol is
+> [nea_iteration_1.md](nea_iteration_1.md). The remainder is retained as the
+> pre-registered historical design.
 
 ## Question
 
