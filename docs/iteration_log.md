@@ -731,3 +731,35 @@ image-level target-support check to protect coexisting targets.
 **Evidence:** `docs/experiment_results.md` iteration-9 entry;
 `experiments/qwen3vl_xev/iter9_{no_rope_dev,raw_control}_summary.json`
 (git-ignored).
+
+## 2026-07-19 — XEV iteration 10: rejected ungrounded global-support union
+
+**What changed:** Added a configurable non-support relation gate so strict local
+identity switches may use open or closed C/N candidates. Added separate
+inventory, region-complement, and union support sources plus analyzer diagnostics
+for each. XEV-v1 defaults remain unchanged for reproducibility.
+
+**Experiment:** On development rows 2520--2639, broadening the local gate raises
+strict conflicts from 1 to 21. The pre-registered complement-or-inventory union
+suppresses 18, but all 3 remaining actions veto true positives. It corrects none
+of 5 baseline false positives; balanced accuracy falls 0.9083 to 0.8833 and MCC
+falls 0.8168 to 0.7684. Inventory-only produces 1 correction / 9 TP vetoes;
+complement-only produces 2 / 4. No threshold was tuned.
+
+**Diagnosis:** The local C restriction was applied at the wrong semantic level,
+but relaxing it reveals the real bottleneck. A target-free full-image inventory
+is still model generation and can reproduce the queried hallucination from scene
+associations, while missing small true targets. A single complement margin is
+not localized evidence and has the opposite failures. Their union protects more
+false positives than true positives.
+
+**Decision / proposal change:** Reject the union support guard while retaining
+the broader gate as a diagnostic. The next method must replace global free-form
+support with multi-region grounded verification: attention proposes diverse
+regions, counterbalanced visual comparisons establish local identity, and an
+image-level veto requires conflict plus no target-supporting region. This follows
+the paper's central rule that attention allocation proposes where to inspect but
+never constitutes evidence.
+
+**Evidence:** `docs/experiment_results.md` iteration-10 entry;
+`experiments/qwen3vl_xev/iter10_local_conflict_dev_summary.json` (git-ignored).

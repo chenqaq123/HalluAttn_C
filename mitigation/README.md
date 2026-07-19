@@ -149,6 +149,12 @@ The iteration-5 image-level certificate additionally uses
 --global_inventory_repeats 2`; full-image inventories are generated lazily only
 when a strict local proposal exists. `--question_ids 42,50` selects exact cases
 for a mechanism audit.
+Iteration 10 adds diagnostic-only alternatives:
+`--local_relation_gate non_support` admits C/N local identities, while
+`--global_support_sources inventories|complement|either` selects the positive
+support source. The `either` development variant failed its pre-registered gate
+and is not an adopted method. Defaults remain `competing` and `inventories` for
+XEV-v1-compatible behavior.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

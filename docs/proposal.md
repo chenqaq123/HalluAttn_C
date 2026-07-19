@@ -102,7 +102,7 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 9 (2026-07-19):** the first usable constructive version
+**Status after iteration 10 (2026-07-19):** the first usable constructive version
 is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
@@ -112,7 +112,11 @@ sparse and small; current evidence supports a high-precision correction
 certificate, not a broad decoding replacement. That held-out result used raw
 post-RoPE attention for localization. The current implementation defaults to a
 pre-RoPE localization map, but its behavior is not yet confirmed and the v1
-held-out claim must remain attributed to the raw map.
+held-out claim must remain attributed to the raw map. A development attempt to
+broaden the local relation gate from C to any non-supporting identity raised
+local proposals from 1 to 21/120, but its complement-or-inventory support guard
+left 3 actions and all 3 vetoed true positives. This variant is rejected: the
+remaining problem is image-level coverage, not local-conflict recall alone.
 
 ### 3.1 Principle and scope
 
@@ -281,6 +285,28 @@ bottleneck is the conjunction of closed-source provenance, C relation, and stric
 directional signs. The next method iteration must improve this proposal recall
 without weakening the independent image-level support check.
 
+Iteration 10 tests exactly that broader local proposal on the iteration-9
+development window. Allowing any open/closed non-S identity with the same strict
+directional switch raises local proposals from 1 to 21. The proposed global
+guard combines `m(t,I_drop)>=0` with unanimous target mentions in two target-free
+full-image inventories. It fails: 18/21 proposals are suppressed, while the
+remaining three are all true-target vetoes (`cell phone`, `backpack`, and
+`handbag`). None of the five baseline false positives is corrected. Inventory
+support is especially misaligned: it often regenerates the queried absent object
+from scene context and misses small real targets. Complement support is
+directionally better but still yields only 2 corrections among 6 actions in a
+post-hoc source ablation. **Reject the support union and do not threshold-tune it.**
+
+The resulting design constraint is sharper. A target-free full-image list is
+still free-form generation, not grounded verification; a single region
+complement is still an ambiguous global view. The next constructive hypothesis
+must cover the image with multiple diverse attention proposals, verify each
+proposal locally with counterbalanced target-vs-alternative questions, and
+aggregate only verified regional identities. Attention continues to propose
+where to inspect and contributes no decision score. A local conflict can support
+a veto only when no independently proposed region provides a positive target
+identity switch.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -305,6 +331,11 @@ Iteration 9 sharpens the diagnosis: no-RoPE increases pairwise-scored rows from
 27 to 31 and negative-preference rows from 21 to 25 on the paired 120-row window,
 but both maps produce only one strict local proposal. Candidate/semantic gating,
 not the position prior, currently determines action coverage.
+Iteration 10 shows that removing those candidate/semantic restrictions is
+sufficient to recover local-conflict coverage (21/120), including candidates
+from the open inventory, but is not sufficient for safe image-level correction.
+Candidate acquisition is therefore no longer the immediate bottleneck; grounded
+multi-region target coverage is.
 
 ## 4. Contribution framing (intended)
 
@@ -327,9 +358,11 @@ Honest guardrails carried over from the tear-down:
 ## 5. Known risks / must-dos (rebuild backlog)
 - **XEV coverage:** preserve XEV v1 as the raw-attention held-out reference and
   report its sparse action rate. Treat no-RoPE as the current unconfirmed
-  localization update. Before broad external validation, replace the low-recall
-  closed+C local gate with a higher-coverage local proposal whose errors remain
-  controlled by an independent image-level target-support check.
+  localization update. Iteration 10 already establishes a higher-coverage local
+  conflict proposal but rejects free-form full-image inventories and one-region
+  complements as its support check. Next test multi-region local verification,
+  with attention used only for diverse proposals and no generated global absence
+  claim.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

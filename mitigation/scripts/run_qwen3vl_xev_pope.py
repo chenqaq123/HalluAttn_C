@@ -26,6 +26,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from mitigation.src.data import iter_pope_records, load_pope_image  # noqa: E402
 from mitigation.src.xev import (  # noqa: E402
+    combine_global_target_support,
     counterbalanced_pairwise_score,
     evidence_margin,
     extract_target,
@@ -96,9 +97,19 @@ def parse_args() -> argparse.Namespace:
         default="preference",
     )
     parser.add_argument(
+        "--local_relation_gate",
+        choices=("competing", "non_support"),
+        default="competing",
+    )
+    parser.add_argument(
         "--global_support_matcher",
         choices=("relations", "aliases"),
         default="relations",
+    )
+    parser.add_argument(
+        "--global_support_sources",
+        choices=("inventories", "complement", "either"),
+        default="inventories",
     )
     parser.add_argument("--global_inventory_limit", type=int, default=12)
     parser.add_argument("--global_inventory_repeats", type=int, default=1)
@@ -731,6 +742,11 @@ def process_record(
             pairwise_comparisons,
             required_sources=required_sources,
             require_directional_switch=(args.local_pairwise_gate == "directional"),
+            allowed_relations=(
+                ("C", "N")
+                if args.local_relation_gate == "non_support"
+                else ("C",)
+            ),
         )
 
         random_bbox = random_bbox_like(
@@ -849,50 +865,61 @@ def process_record(
     global_support_votes: list[bool] = []
     global_relations: dict[str, str] = {}
     global_relation_metadata: dict = {}
+    inventory_support_found = False
+    complement_target_margin: float | None = None
+    complement_support_found = False
     global_support_found = False
     global_certificate = None
     if args.global_support_guard and local_identity_proposals:
-        for variant in range(args.global_inventory_repeats):
-            inventory, raw = global_candidates(
-                engine,
-                image,
-                limit=args.global_inventory_limit,
-                max_new_tokens=args.global_candidate_max_new_tokens,
-                variant=variant,
-            )
-            global_inventories.append(inventory)
-            global_inventory_raw_outputs.append(raw)
-        global_inventory = list(
-            dict.fromkeys(
-                candidate
-                for inventory in global_inventories
-                for candidate in inventory
-            )
-        )
-        global_inventory_raw = global_inventory_raw_outputs[0]
-        if args.global_support_matcher == "relations":
-            global_relations, global_relation_metadata = relation_filter.classify(
-                target, global_inventory
-            )
-            global_support_votes = [
-                inventory_supports_target(target, inventory, global_relations)
-                for inventory in global_inventories
-            ]
-        else:
-            global_support_votes = [
-                inventory_lexically_supports_target(target, inventory)
-                for inventory in global_inventories
-            ]
-        global_support_found = all(global_support_votes)
         best_local_proposal = min(
             local_identity_proposals,
             key=lambda item: item["target_preference"],
+        )
+        local_region = region_rows[int(best_local_proposal["region_index"])]
+        complement_target_margin = float(local_region["margins"][target]["drop"])
+        if args.global_support_sources != "complement":
+            for variant in range(args.global_inventory_repeats):
+                inventory, raw = global_candidates(
+                    engine,
+                    image,
+                    limit=args.global_inventory_limit,
+                    max_new_tokens=args.global_candidate_max_new_tokens,
+                    variant=variant,
+                )
+                global_inventories.append(inventory)
+                global_inventory_raw_outputs.append(raw)
+            global_inventory = list(
+                dict.fromkeys(
+                    candidate
+                    for inventory in global_inventories
+                    for candidate in inventory
+                )
+            )
+            global_inventory_raw = global_inventory_raw_outputs[0]
+            if args.global_support_matcher == "relations":
+                global_relations, global_relation_metadata = relation_filter.classify(
+                    target, global_inventory
+                )
+                global_support_votes = [
+                    inventory_supports_target(target, inventory, global_relations)
+                    for inventory in global_inventories
+                ]
+            else:
+                global_support_votes = [
+                    inventory_lexically_supports_target(target, inventory)
+                    for inventory in global_inventories
+                ]
+            inventory_support_found = all(global_support_votes)
+        global_support_found, complement_support_found = combine_global_target_support(
+            inventory_support_found,
+            complement_target_margin,
+            source=args.global_support_sources,
         )
         if not global_support_found:
             global_certificate = best_local_proposal
     image.close()
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "score_status": {
             "scores": "rejected-iteration1-keep-minus-drop",
             "current_diagnostic": "xev-v1-directional-alias-certificate",
@@ -936,7 +963,9 @@ def process_record(
             "enabled": args.global_support_guard,
             "local_candidate_agreement": args.local_candidate_agreement,
             "local_pairwise_gate": args.local_pairwise_gate,
+            "local_relation_gate": args.local_relation_gate,
             "global_support_matcher": args.global_support_matcher,
+            "global_support_sources": args.global_support_sources,
             "evaluated": bool(args.global_support_guard and local_identity_proposals),
             "local_identity_proposals": local_identity_proposals,
             "inventory": global_inventory,
@@ -944,6 +973,9 @@ def process_record(
             "inventories": global_inventories,
             "inventory_raw_outputs": global_inventory_raw_outputs,
             "support_votes": global_support_votes,
+            "inventory_support_found": inventory_support_found,
+            "complement_target_margin": complement_target_margin,
+            "complement_support_found": complement_support_found,
             "relations": global_relations,
             "relation_filter": global_relation_metadata,
             "target_support_found": global_support_found,
@@ -1024,7 +1056,9 @@ def main() -> None:
                 "global_support_guard": args.global_support_guard,
                 "local_candidate_agreement": args.local_candidate_agreement,
                 "local_pairwise_gate": args.local_pairwise_gate,
+                "local_relation_gate": args.local_relation_gate,
                 "global_support_matcher": args.global_support_matcher,
+                "global_support_sources": args.global_support_sources,
                 "global_inventory_limit": args.global_inventory_limit,
                 "global_inventory_repeats": args.global_inventory_repeats,
                 "modes": sorted(modes),

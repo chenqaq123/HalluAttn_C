@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 
 from mitigation.src.xev import (
+    combine_global_target_support,
     counterbalanced_pairwise_score,
     extract_target,
     identity_switch_certificate,
@@ -180,3 +181,28 @@ def test_directional_switch_and_alias_support_are_strict() -> None:
     ) == strong
     assert inventory_lexically_supports_target("dining table", ["table"])
     assert not inventory_lexically_supports_target("handbag", ["bag"])
+
+
+def test_local_identity_proposal_can_accept_unrelated_region_identity() -> None:
+    comparison = {
+        "candidate": "person",
+        "relation": "N",
+        "sources": ["open"],
+        "target_preference": -4.0,
+        "target_first_margin": -5.0,
+        "alternative_first_margin": 3.0,
+    }
+    assert robust_local_identity_proposal([comparison], required_sources=()) is None
+    proposal = robust_local_identity_proposal(
+        [comparison],
+        required_sources=(),
+        require_directional_switch=True,
+        allowed_relations=("C", "N"),
+    )
+    assert proposal == comparison
+
+
+def test_global_target_support_can_union_complement_and_inventories() -> None:
+    assert combine_global_target_support(False, 0.25, "either") == (True, True)
+    assert combine_global_target_support(True, -0.25, "either") == (True, False)
+    assert combine_global_target_support(False, -0.25, "either") == (False, False)

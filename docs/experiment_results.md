@@ -832,3 +832,44 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter9_{no_rope_dev,raw_control}_shard{0,1}.jsonl` and
   corresponding summaries.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 10: broad local conflicts expose ungrounded global support
+
+- **Pre-registered setup:** POPE-COCO adversarial rows 2520--2639, already a
+  development-only window: 120 balanced rows / 20 images. Use no-RoPE
+  localization and one top-30%-mass proposal. For a baseline Yes with no exact
+  target in the local open inventory, accept any positive-keep open/closed
+  candidate labeled C or N when target-first margin `<0` and alternative-first
+  margin `>0`. Define global target support as complement target margin `>=0` OR
+  unanimous lexical/alias target support in two target-free inventories. All
+  thresholds and the gate were committed in `527c0d3` before inference.
+- **Vanilla anchor:** TP/FP/TN/FN = 54/5/55/6; balanced accuracy **0.9083**,
+  TPR 0.9000, FPR 0.0833, MCC **0.8168**, yes-rate 0.4917.
+- **Coverage result:** 59 baseline-Yes rows -> 31 pairwise-scored -> 25 negative
+  preferences -> **21 broad local conflicts**. Inventory support fires on 11,
+  complement support on 15, and their union on 18. The 3 remaining actions are
+  all true-positive vetoes and correct no baseline false positive. TP/FP/TN/FN
+  becomes 51/5/55/9; balanced accuracy falls to **0.8833**, TPR to 0.8500,
+  FPR remains 0.0833, and MCC falls to **0.7684**. The pre-registered gate fails.
+- **Support-source audit:** with no support guard, the broad local rule would act
+  21 times for 4 corrections / 17 TP vetoes (precision 0.1905). Inventory-only
+  leaves 10 actions for 1 correction / 9 TP vetoes (0.10). Complement-only
+  leaves 6 actions for 2 corrections / 4 TP vetoes (0.3333). The pre-registered
+  union leaves 3 actions for 0 corrections / 3 TP vetoes. These source ablations
+  explain the failure; they are not tuned alternatives.
+- **Mechanism audit:** the inventories falsely repeat absent targets from scene
+  context (for example absent backpack and spoon) while omitting small real
+  targets (for example cell phone). The complement margin protects many real
+  targets but remains an image-level Yes/No judgment and fails on three real
+  small/accessory targets. Thus unioning more nominal support maximizes
+  suppression without making that support grounded.
+- **Decision:** the C-only relation was indeed a proposal-level category error:
+  allowing N raises local coverage 21-fold on this window. But a local conflict
+  does not prove image-level absence, and neither free-form full-image inventory
+  nor one-region complement supplies reliable independent evidence. Reject the
+  support union and do not tune a margin threshold. Next test multi-region local
+  identity verification, where attention only proposes regions and all support
+  must be tied to a verified region.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter10_local_conflict_dev_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter10_local_conflict_dev_summary.json`.

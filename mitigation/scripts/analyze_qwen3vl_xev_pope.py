@@ -439,7 +439,9 @@ def global_support_diagnostics(
     evaluation: str,
 ) -> dict | None:
     local_mask = np.zeros(len(rows), dtype=bool)
+    global_support_mask = np.zeros(len(rows), dtype=bool)
     inventory_support_mask = np.zeros(len(rows), dtype=bool)
+    complement_support_mask = np.zeros(len(rows), dtype=bool)
     certificate_mask = np.zeros(len(rows), dtype=bool)
     examples = []
     inventories = []
@@ -451,8 +453,15 @@ def global_support_diagnostics(
         if not proposals:
             continue
         local_mask[index] = True
+        global_support_mask[index] = bool(payload.get("target_support_found", False))
         inventory_support_mask[index] = bool(
-            payload.get("target_support_found", False)
+            payload.get(
+                "inventory_support_found",
+                payload.get("target_support_found", False),
+            )
+        )
+        complement_support_mask[index] = bool(
+            payload.get("complement_support_found", False)
         )
         certificate = payload.get("certificate")
         if certificate is not None:
@@ -466,6 +475,18 @@ def global_support_diagnostics(
                 "label": row["label"],
                 "target_support_found": bool(
                     payload.get("target_support_found", False)
+                ),
+                "inventory_support_found": bool(
+                    payload.get(
+                        "inventory_support_found",
+                        payload.get("target_support_found", False),
+                    )
+                ),
+                "complement_target_margin": payload.get(
+                    "complement_target_margin"
+                ),
+                "complement_support_found": bool(
+                    payload.get("complement_support_found", False)
                 ),
                 "inventory": payload.get("inventory", []),
                 "inventories": payload.get(
@@ -534,7 +555,21 @@ def global_support_diagnostics(
                         )
                     }
                 ),
-                "conditions": "relation C plus selected pairwise gate",
+                "relation_gate": sorted(
+                    {
+                        row.get("global_support_verification", {}).get(
+                            "local_relation_gate",
+                            row.get("run", {}).get(
+                                "local_relation_gate", "competing"
+                            ),
+                        )
+                        for row in rows
+                        if row.get("global_support_verification", {}).get(
+                            "enabled", False
+                        )
+                    }
+                ),
+                "conditions": "selected relation and pairwise gates",
             },
             "global_inventory": "two target-free full-image object lists",
             "support_matcher": sorted(
@@ -551,11 +586,29 @@ def global_support_diagnostics(
                     )
                 }
             ),
+            "support_sources": sorted(
+                {
+                    row.get("global_support_verification", {}).get(
+                        "global_support_sources",
+                        row.get("run", {}).get(
+                            "global_support_sources", "inventories"
+                        ),
+                    )
+                    for row in rows
+                    if row.get("global_support_verification", {}).get(
+                        "enabled", False
+                    )
+                }
+            ),
             "support": "all inventories must match under the selected matcher",
             "action": "veto local proposal only when global target support is absent",
         },
         "local_proposal_count": int(local_mask.sum()),
         "inventory_support_count": int(np.sum(local_mask & inventory_support_mask)),
+        "complement_support_count": int(
+            np.sum(local_mask & complement_support_mask)
+        ),
+        "global_support_count": int(np.sum(local_mask & global_support_mask)),
         "mean_inventory_size": float(np.mean(inventories)),
         "trigger_count": count,
         "false_positive_corrections": corrections,
@@ -697,7 +750,9 @@ def main() -> None:
                 global_summary["local_proposal_count"] if global_summary else 0
             ),
             "global_support_suppressions": int(
-                global_summary["inventory_support_count"] if global_summary else 0
+                global_summary["global_support_count"]
+                if global_summary
+                else 0
             ),
             "final_actions": int(
                 global_summary["trigger_count"] if global_summary else 0

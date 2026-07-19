@@ -1,7 +1,7 @@
 # XEV Iteration 10 Protocol: Local Identity Conflict, Global Target Support
 
 Date: 2026-07-19
-Status: pre-registered exploratory development protocol
+Status: completed; development gate failed, variant rejected
 
 ## Motivation
 
@@ -64,3 +64,18 @@ development run has:
 If this fails, audit whether complement support or inventory support caused the
 failure. Do not tune non-zero thresholds on these rows.
 
+## Result
+
+The broadened relation gate succeeded only at the proposal-recall objective:
+there were 21 local conflicts instead of one under the XEV-v1 gate. The
+complement-or-inventory union suppressed 18 and left 3 actions, all of which
+vetoed true positives; it corrected none of the 5 baseline false positives.
+Balanced accuracy fell 0.9083 -> 0.8833 and MCC fell 0.8168 -> 0.7684. The
+development gate therefore fails.
+
+The pre-registered source audit shows different but insufficient failure modes:
+inventory-only gives 1 correction / 9 true-positive vetoes among 10 actions;
+complement-only gives 2 corrections / 4 true-positive vetoes among 6 actions;
+their union gives 0 corrections / 3 true-positive vetoes. No non-zero threshold
+was fit. The local broadening is retained as a diagnostic capability, while the
+support union is rejected.

@@ -337,14 +337,16 @@ def robust_local_identity_proposal(
     comparisons: list[dict],
     required_sources: tuple[str, ...] = ("open", "closed"),
     require_directional_switch: bool = False,
+    allowed_relations: tuple[str, ...] = ("C",),
 ) -> dict | None:
     """Return a local alternative meeting the requested provenance constraint."""
 
     required = set(required_sources)
+    allowed = set(allowed_relations)
     alternatives = [
         comparison
         for comparison in comparisons
-        if comparison.get("relation") == "C"
+        if comparison.get("relation") in allowed
         and required.issubset(comparison.get("sources", []))
         and float(comparison["target_preference"]) < 0
         and (
@@ -358,6 +360,25 @@ def robust_local_identity_proposal(
     if not alternatives:
         return None
     return min(alternatives, key=lambda item: float(item["target_preference"]))
+
+
+def combine_global_target_support(
+    inventory_support: bool,
+    complement_margin: float,
+    source: str = "inventories",
+) -> tuple[bool, bool]:
+    """Combine independent full-image and region-complement target support."""
+
+    complement_support = float(complement_margin) >= 0
+    if source == "inventories":
+        support = bool(inventory_support)
+    elif source == "complement":
+        support = complement_support
+    elif source == "either":
+        support = bool(inventory_support) or complement_support
+    else:
+        raise ValueError(f"Unknown global support source: {source}")
+    return support, complement_support
 
 
 def inventory_supports_target(
