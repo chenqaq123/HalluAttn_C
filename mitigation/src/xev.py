@@ -18,6 +18,26 @@ _TARGET_RE = re.compile(
 )
 _LEADING_LIST_MARKER_RE = re.compile(r"^\s*(?:[-*]|\d+[.)])\s*")
 _LEADING_ARTICLE_RE = re.compile(r"^(?:a|an|the)\s+", re.IGNORECASE)
+_TARGET_ALIASES = {
+    "airplane": {"aeroplane", "plane"},
+    "backpack": {"rucksack"},
+    "bicycle": {"bike"},
+    "cell phone": {"mobile phone", "phone"},
+    "couch": {"sofa"},
+    "dining table": {"table"},
+    "fire hydrant": {"hydrant"},
+    "hair drier": {"hair dryer"},
+    "handbag": {"purse"},
+    "motorcycle": {"motorbike"},
+    "potted plant": {"plant"},
+    "refrigerator": {"fridge"},
+    "remote": {"remote control"},
+    "sports ball": {"ball"},
+    "teddy bear": {"teddy"},
+    "traffic light": {"signal light", "stoplight"},
+    "tv": {"television"},
+    "wine glass": {"goblet"},
+}
 
 
 @dataclass(frozen=True)
@@ -314,7 +334,9 @@ def pairwise_identity_certificate(
 
 
 def robust_local_identity_proposal(
-    comparisons: list[dict], required_sources: tuple[str, ...] = ("open", "closed")
+    comparisons: list[dict],
+    required_sources: tuple[str, ...] = ("open", "closed"),
+    require_directional_switch: bool = False,
 ) -> dict | None:
     """Return a local alternative meeting the requested provenance constraint."""
 
@@ -325,6 +347,13 @@ def robust_local_identity_proposal(
         if comparison.get("relation") == "C"
         and required.issubset(comparison.get("sources", []))
         and float(comparison["target_preference"]) < 0
+        and (
+            not require_directional_switch
+            or (
+                float(comparison["target_first_margin"]) < 0
+                and float(comparison["alternative_first_margin"]) > 0
+            )
+        )
     ]
     if not alternatives:
         return None
@@ -338,6 +367,17 @@ def inventory_supports_target(
 
     return any(
         lexical_equivalent(target, candidate) or relations.get(candidate) == "S"
+        for candidate in candidates
+    )
+
+
+def inventory_lexically_supports_target(target: str, candidates: list[str]) -> bool:
+    """Match target-free inventory phrases using an auditable alias table."""
+
+    target = normalize_phrase(target)
+    aliases = {target, *_TARGET_ALIASES.get(target, set())}
+    return any(
+        any(lexical_equivalent(alias, candidate) for alias in aliases)
         for candidate in candidates
     )
 

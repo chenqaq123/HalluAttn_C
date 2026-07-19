@@ -660,3 +660,26 @@ rows and a larger sample for sparse triggers.
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-6 entry;
 `experiments/qwen3vl_xev/iter6_holdout_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 7: froze directional/alias precision repair
+
+**What changed:** Added a strict directional-switch option for local proposals
+and an auditable target-alias matcher for target-free inventories. Added CLI and
+schema metadata selecting pairwise gate and support matcher, with unit tests.
+The alias matcher replaces generated S decisions in the current method and also
+removes their extra inference calls.
+
+**Development result:** Offline replay on all 480 iteration-6 rows removes all
+four prior TP vetoes and retains two FP corrections (`car -> truck`, `backpack ->
+suitcase`). FPR would fall 0.0667 to 0.0583 with unchanged 0.7958 TPR; balanced
+accuracy would rise 0.8646 to 0.8688 and MCC 0.7362 to 0.7455. A two-case
+end-to-end smoke reproduces the expected reject/retain decisions.
+
+**Decision / proposal change:** Freeze closed provenance, top-k=3, C relation,
+strict target-no/alternative-yes directional signs, two target-free inventories,
+and unanimous alias support. Because the replay yields only two triggers in 480
+rows, use 960 untouched rows 1560--2519 for confirmation while retaining the
+minimum-three-trigger gate. All prior windows are development-only.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-7 entry;
+`experiments/qwen3vl_xev/iter7_smoke.jsonl` (git-ignored).

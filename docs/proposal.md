@@ -102,14 +102,14 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 6 (2026-07-19):** there is no confirmed constructive
-result yet. The two-inventory global-support rule also fails on its disjoint
-480-row holdout: all 4 final triggers veto true positives and correct no false
-positives. The selected-case success in iteration 5 did not generalize. Two
-specific components remain under repair: a negative *difference* between reversed
-pairwise margins is too weak to certify a direction switch, and model-generated
-S relations incorrectly treat parts/hypernyms such as wheel/door/bag as target
-support.
+**Status after iteration 7 development (2026-07-19):** no constructive result is
+confirmed yet, but the precision-repaired rule is frozen for a larger holdout.
+The two-inventory iteration-6 rule failed because it accepted weak pairwise
+differences and generated S relations. Requiring an actual directional answer
+switch and matching inventory support only through auditable aliases converts
+the iteration-6 retrospective from 4 TP vetoes / 0 corrections to 0 TP vetoes /
+2 corrections. Because triggers are sparse, confirmation uses 960 untouched
+rows and still requires at least 3 triggers.
 
 ### 3.1 Principle and scope
 
@@ -244,6 +244,16 @@ inventory support must use lexical identity plus an explicit COCO alias table,
 not the unreliable generated S relation. This preserves open-vocabulary
 inventory phrases while making support matching auditable for the POPE pilot.
 
+Iteration 7 implements this repair. The alias table covers only transparent
+surface variants (for example `dining table/table`, `couch/sofa`,
+`motorcycle/motorbike`, `tv/television`) and deliberately excludes generic
+hypernyms such as `bag` for handbag/backpack. On the now-development-only
+iteration-6 window, the four prior TP vetoes fail the directional sign test. Two
+baseline FPs pass it and are no longer falsely suppressed by parts/hypernyms:
+`car -> truck` and `backpack -> suitcase`. Retrospective behavior is FPR 0.0667
+-> 0.0583, unchanged TPR 0.7958, balanced accuracy 0.8646 -> 0.8688, and MCC
+0.7362 -> 0.7455. This is not a held-out result.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -284,10 +294,9 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV precision repair:** require directional pairwise sign reversal and
-  replace model-generated S support with auditable aliases. Re-evaluate all prior
-  failures, then use a larger untouched window because high-precision triggers
-  are sparse.
+- **XEV precision-repair confirmation:** run the frozen directional/alias rule on
+  960 untouched rows (1560--2519), requiring >=3 triggers, >=2/3 correction
+  precision, lower FPR, TPR loss <=0.005, and non-decreasing MCC.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

@@ -30,6 +30,7 @@ from mitigation.src.xev import (  # noqa: E402
     evidence_margin,
     extract_target,
     identity_switch_certificate,
+    inventory_lexically_supports_target,
     inventory_supports_target,
     lexical_equivalent,
     make_counterfactual_views,
@@ -82,6 +83,16 @@ def parse_args() -> argparse.Namespace:
         "--local_candidate_agreement",
         choices=("both", "closed", "any"),
         default="both",
+    )
+    parser.add_argument(
+        "--local_pairwise_gate",
+        choices=("preference", "directional"),
+        default="preference",
+    )
+    parser.add_argument(
+        "--global_support_matcher",
+        choices=("relations", "aliases"),
+        default="relations",
     )
     parser.add_argument("--global_inventory_limit", type=int, default=12)
     parser.add_argument("--global_inventory_repeats", type=int, default=1)
@@ -676,7 +687,9 @@ def process_record(
             "any": (),
         }[args.local_candidate_agreement]
         local_identity_proposal = robust_local_identity_proposal(
-            pairwise_comparisons, required_sources=required_sources
+            pairwise_comparisons,
+            required_sources=required_sources,
+            require_directional_switch=(args.local_pairwise_gate == "directional"),
         )
 
         random_bbox = random_bbox_like(
@@ -816,13 +829,19 @@ def process_record(
             )
         )
         global_inventory_raw = global_inventory_raw_outputs[0]
-        global_relations, global_relation_metadata = relation_filter.classify(
-            target, global_inventory
-        )
-        global_support_votes = [
-            inventory_supports_target(target, inventory, global_relations)
-            for inventory in global_inventories
-        ]
+        if args.global_support_matcher == "relations":
+            global_relations, global_relation_metadata = relation_filter.classify(
+                target, global_inventory
+            )
+            global_support_votes = [
+                inventory_supports_target(target, inventory, global_relations)
+                for inventory in global_inventories
+            ]
+        else:
+            global_support_votes = [
+                inventory_lexically_supports_target(target, inventory)
+                for inventory in global_inventories
+            ]
         global_support_found = all(global_support_votes)
         best_local_proposal = min(
             local_identity_proposals,
@@ -875,6 +894,8 @@ def process_record(
         "global_support_verification": {
             "enabled": args.global_support_guard,
             "local_candidate_agreement": args.local_candidate_agreement,
+            "local_pairwise_gate": args.local_pairwise_gate,
+            "global_support_matcher": args.global_support_matcher,
             "evaluated": bool(args.global_support_guard and local_identity_proposals),
             "local_identity_proposals": local_identity_proposals,
             "inventory": global_inventory,
@@ -960,6 +981,8 @@ def main() -> None:
                 "pairwise_top_k": args.pairwise_top_k,
                 "global_support_guard": args.global_support_guard,
                 "local_candidate_agreement": args.local_candidate_agreement,
+                "local_pairwise_gate": args.local_pairwise_gate,
+                "global_support_matcher": args.global_support_matcher,
                 "global_inventory_limit": args.global_inventory_limit,
                 "global_inventory_repeats": args.global_inventory_repeats,
                 "modes": sorted(modes),

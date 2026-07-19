@@ -726,3 +726,33 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter6_holdout_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter6_holdout_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 7 development: directional/alias precision repair
+
+- **Repair 1, local direction:** replace `target_preference<0` with the stronger
+  natural sign pattern `target-first margin<0` and `alternative-first margin>0`.
+  This requires the model to answer no when target is named first and yes under
+  the reversed alternative, rather than accepting a weak negative difference or
+  two same-direction answers.
+- **Repair 2, global support:** retain the two target-free inventories, but remove
+  generated S labels from the decision. Match only lexical identity and an
+  explicit alias table for transparent COCO surface variants (`table` for dining
+  table, `sofa` for couch, `phone` for cell phone, etc.). Generic `bag` does not
+  support handbag/backpack; wheel/tire/door do not support car. The inventory
+  phrases themselves remain open-vocabulary.
+- **Retrospective development result:** replaying saved directional margins and
+  inventories on the full iteration-6 480 rows produces 4 strict local proposals,
+  2 inventory-supported real targets, and 2 final triggers. Both are baseline FP
+  corrections (`car -> truck`, `backpack -> suitcase`), with zero TP vetoes.
+  TP/FP/TN/FN 191/16/224/49 -> 191/14/226/49; FPR 0.0667 -> **0.0583**,
+  unchanged TPR 0.7958, balanced accuracy 0.8646 -> **0.8688**, MCC 0.7362 ->
+  **0.7455**. This window informed the repair and is not confirmatory.
+- **Cross-case check:** on the 10 iteration-5 mechanism cases, the strict rule
+  retains four known corrections and no TP veto; it drops the ambiguous q42
+  correction because both directional margins are negative. End-to-end smoke
+  confirms old TP q1093 no longer forms a proposal and FP q1178 still does.
+- **Frozen confirmatory setup:** rows 1560--2519 (960 rows / 160 images), closed
+  candidate provenance, top-k=3, C, strict directional signs, two target-free
+  inventories of size 12, unanimous alias support. Gate: >=3 triggers, >=2/3
+  correction precision, lower FPR, TPR loss <=0.005, non-decreasing MCC.
+- **Artifacts (git-ignored):** `experiments/qwen3vl_xev/iter7_smoke.jsonl`.

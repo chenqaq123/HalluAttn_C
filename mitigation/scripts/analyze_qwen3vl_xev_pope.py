@@ -520,10 +520,38 @@ def global_support_diagnostics(
                         )
                     }
                 ),
-                "conditions": "relation C and pairwise preference < 0",
+                "pairwise_gate": sorted(
+                    {
+                        row.get("global_support_verification", {}).get(
+                            "local_pairwise_gate",
+                            row.get("run", {}).get(
+                                "local_pairwise_gate", "preference"
+                            ),
+                        )
+                        for row in rows
+                        if row.get("global_support_verification", {}).get(
+                            "enabled", False
+                        )
+                    }
+                ),
+                "conditions": "relation C plus selected pairwise gate",
             },
             "global_inventory": "two target-free full-image object lists",
-            "support": "all inventories contain a lexical target equivalent or relation S",
+            "support_matcher": sorted(
+                {
+                    row.get("global_support_verification", {}).get(
+                        "global_support_matcher",
+                        row.get("run", {}).get(
+                            "global_support_matcher", "relations"
+                        ),
+                    )
+                    for row in rows
+                    if row.get("global_support_verification", {}).get(
+                        "enabled", False
+                    )
+                }
+            ),
+            "support": "all inventories must match under the selected matcher",
             "action": "veto local proposal only when global target support is absent",
         },
         "local_proposal_count": int(local_mask.sum()),

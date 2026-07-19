@@ -7,6 +7,7 @@ from mitigation.src.xev import (
     counterbalanced_pairwise_score,
     extract_target,
     identity_switch_certificate,
+    inventory_lexically_supports_target,
     inventory_supports_target,
     make_counterfactual_views,
     pairwise_identity_certificate,
@@ -154,3 +155,28 @@ def test_global_guard_separates_local_proposal_from_target_support() -> None:
         required_sources=("closed",),
     )
     assert closed_only["candidate"] == "chair"
+
+
+def test_directional_switch_and_alias_support_are_strict() -> None:
+    weak = {
+        "candidate": "suitcase",
+        "relation": "C",
+        "sources": ["closed", "open"],
+        "target_first_margin": 0.0,
+        "alternative_first_margin": 0.75,
+        "target_preference": -0.375,
+    }
+    strong = {
+        **weak,
+        "target_first_margin": -2.0,
+        "alternative_first_margin": 3.0,
+        "target_preference": -2.5,
+    }
+    assert robust_local_identity_proposal(
+        [weak], require_directional_switch=True
+    ) is None
+    assert robust_local_identity_proposal(
+        [strong], require_directional_switch=True
+    ) == strong
+    assert inventory_lexically_supports_target("dining table", ["table"])
+    assert not inventory_lexically_supports_target("handbag", ["bag"])
