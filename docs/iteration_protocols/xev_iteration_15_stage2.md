@@ -1,7 +1,7 @@
 # XEV Iteration 15 Stage-2 Protocol: Fresh Replicated-Target Evaluation
 
 Date: 2026-07-19
-Status: pre-registered confirmatory protocol
+Status: superseded before result inspection; requested range exceeds dataset end
 
 ## Claim Under Test
 
@@ -72,3 +72,12 @@ protection, replicated-negative coverage, open-alternative coverage, final
 actions, and all baseline/method confusion metrics. If any gate fails, do not
 tune scales, candidate counts, relation classes, aliases, sign thresholds, or
 minimum negative-view count on this window.
+
+## Protocol Correction
+
+The POPE adversarial split contains 3000 rows, so the requested index range
+2760--3239 cannot contain 480 rows. The runner exposed this before analysis by
+reporting a 240-row selection. The run was interrupted after nine rows, without
+reading any saved case output or method result. This protocol is superseded by
+`xev_iteration_15_stage2_amended.md`, which keeps the method unchanged and
+pre-registers the actual 240-row remainder with sample-size-adjusted gates.

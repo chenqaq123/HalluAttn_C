@@ -910,3 +910,20 @@ the historical rows cannot establish generalization.
 **Evidence:** `docs/experiment_results.md` iteration-15 stage-1 entry;
 `experiments/qwen3vl_xev/iter15_grounded_absence_stage1_summary.json`
 (git-ignored).
+
+## 2026-07-19 — XEV iteration 15 stage-2 protocol boundary correction
+
+**Issue:** The pre-registered stage-2 range 2760--3239 assumed 480 remaining
+POPE-adversarial rows, but the split ends at index 2999. The runner reported 240
+selected rows. It was interrupted after nine rows before any saved output or
+method outcome was inspected.
+
+**Correction:** Supersede the invalid range with the actual final remainder,
+indices 2760--2999: 240 balanced rows / 40 images. Keep the model and method
+identical. Scale the minimum action count 3 -> 2 and TPR tolerance 0.005 -> 0.01
+so one tolerated positive error remains one error when positives change from 240
+to 120. Precision, maximum TP-veto count, FPR, balanced-accuracy, and MCC gates
+remain unchanged.
+
+**Evidence:** dataset length/label-count validation before result inspection;
+`docs/iteration_protocols/xev_iteration_15_stage2_amended.md`.
