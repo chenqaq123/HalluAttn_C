@@ -180,7 +180,8 @@ Iteration 15 adds `directional_conflicts` selection and
 two crop views, while requiring one target-free open C directional alternative
 from the same grounding box and retaining the any-scale target-support guard. It
 passes its historical stage-1 mechanism gate with 2 corrections and 0 TP vetoes;
-fresh evaluation is still required.
+fresh evaluation is still required. Use `--evaluation confirmatory` to apply the
+amended final-window FPR/TPR/balanced-accuracy/MCC gate.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

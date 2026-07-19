@@ -26,6 +26,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--source_inputs", nargs="+", required=True)
     parser.add_argument("--output_json", required=True)
     parser.add_argument("--minimum_negative_views", type=int, default=2)
+    parser.add_argument(
+        "--evaluation",
+        choices=("mechanism", "confirmatory"),
+        default="mechanism",
+    )
     return parser.parse_args()
 
 
@@ -135,11 +140,24 @@ def main() -> None:
     corrections = int(np.sum((labels == 0) & baseline & ~predictions))
     positive_vetoes = int(np.sum((labels == 1) & baseline & ~predictions))
     precision = corrections / action_count if action_count else None
-    gate = (
+    mechanism_gate = (
         corrections >= 2
         and positive_vetoes <= 1
         and precision is not None
         and precision >= 2 / 3
+    )
+    confirmatory_gate = (
+        action_count >= 2
+        and precision is not None
+        and precision >= 2 / 3
+        and positive_vetoes <= 1
+        and behavior["fpr"] < baseline_behavior["fpr"]
+        and behavior["tpr"] >= baseline_behavior["tpr"] - 0.01
+        and behavior["balanced_accuracy"] >= baseline_behavior["balanced_accuracy"]
+        and behavior["mcc"] >= baseline_behavior["mcc"]
+    )
+    gate = (
+        confirmatory_gate if args.evaluation == "confirmatory" else mechanism_gate
     )
 
     payload = {
@@ -186,7 +204,12 @@ def main() -> None:
         "false_positive_corrections": corrections,
         "true_positive_vetoes": positive_vetoes,
         "correction_precision": precision,
-        "stage1_gate_passed": gate,
+        "evaluation": args.evaluation,
+        "gate_passed": gate,
+        "stage1_gate_passed": mechanism_gate,
+        "confirmatory_gate_passed": (
+            confirmatory_gate if args.evaluation == "confirmatory" else None
+        ),
         "minimum_negative_views": args.minimum_negative_views,
         "examples": examples,
     }
