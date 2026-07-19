@@ -166,7 +166,9 @@ stage-1 recall gate and is diagnostic-only.
 Iteration 13 can reuse those exact boxes with `--box_inputs`, set
 `--view_mode crop`, and restrict exclusive identity conflicts with
 `--conflict_relations C`. The analyzer accepts `--reference_inputs` for a paired
-funnel comparison against the full-canvas run.
+funnel comparison against the full-canvas run. Exact crop improves true-target
+support from 2/10 to 4/10 at precision 1.0 but fails its recall gate, so it is a
+view ablation rather than an accepted final rule.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

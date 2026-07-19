@@ -102,7 +102,7 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 12 (2026-07-19):** the first usable constructive version
+**Status after iteration 13 (2026-07-19):** the first usable constructive version
 is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
@@ -125,6 +125,9 @@ A target-grounding/re-identification audit then returns valid boxes for all 14
 selected failures with high support precision but only 2/10 true-target recall.
 This variant is also rejected; its coordinate proposals remain a useful lead,
 but keeping a small grounded box on the full canvas does not provide visual zoom.
+Exact crop-and-zoom raises recovery to 4/10 at unchanged 1.0 support precision,
+but loses a full-canvas umbrella recovery. Grounded verification is therefore a
+multi-scale evidence problem, not a choice between one global and one local view.
 
 ### 3.1 Principle and scope
 
@@ -353,6 +356,16 @@ The next test should crop and zoom the grounded box before target-free
 re-identification, and should reserve C for mutually exclusive box identities;
 neither change may be retrofitted to iteration 12.
 
+Iteration 13 performs that frozen paired test. Exact crops recover real
+`wine glass`, `bench`, `cell phone`, and `backpack` with no support on four
+absent targets, improving full-cycle recovery from 2/10 to 4/10 at precision
+1.0. The gate still fails. Moreover, crop support is not a superset of global
+support: the 19x7 umbrella box is recognized on the full-canvas clear view but
+becomes `cloud` when isolated, while a 15x12 cell-phone crop succeeds. This
+rules out one universal verification scale. The next constructive hypothesis is
+a fixed geometric context pyramid in which every scale is independently
+verified; no scale is selected by grounding scores or downstream labels.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -390,6 +403,9 @@ Iteration 12 shows that native target grounding materially improves proposal
 purity by oracle IoU, but the full-canvas clear-region rendering wastes that
 precision. Candidate acquisition on a zoomed object crop is the next bottleneck
 test.
+Iteration 13 shows that exact crops recover additional small targets but can
+discard disambiguating context. Candidate acquisition must therefore operate
+over a predefined object-to-context scale space, not one chosen crop.
 
 ## 4. Contribution framing (intended)
 
@@ -422,6 +438,9 @@ Honest guardrails carried over from the tear-down:
   Native target grounding passes the coordinate sanity audit but its full-canvas
   re-identification cycle has only 2/10 support recall. Next test exact box crops
   as zoomed views and keep grounding output itself proposal-only.
+  Exact crops improve support recall to 4/10 at precision 1.0 but lose one
+  full-canvas success. The next rule must verify a frozen context pyramid without
+  tuning scales or treating scale agreement as proposal confidence.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

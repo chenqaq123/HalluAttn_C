@@ -825,3 +825,32 @@ Grounding coordinates, labels, and box presence remain proposal-only signals.
 **Evidence:** `docs/experiment_results.md` iteration-12 entry;
 `experiments/qwen3vl_xev/iter12_grounded_cycle_actions_summary.json`
 (git-ignored).
+
+## 2026-07-19 — XEV iteration 13: exact crop is useful but not sufficient
+
+**What changed:** Reused iteration-12 boxes exactly, presented each as an
+independent crop, and restricted exclusive-box contradictions to C relations.
+Added reusable saved-box/crop switches and paired funnel reporting while keeping
+iteration-12 defaults intact.
+
+**Experiment:** On the same 10 true-target / 4 absent-target mechanism audit,
+cycle support rises from 2 to 4. Exact crop newly recovers real `bench`,
+`cell phone`, and `backpack`, loses real `umbrella`, and supports no absent
+target. Precision remains 1.0, but true-target support recall is only 4/10, so
+the stage-1 gate fails.
+
+**Diagnosis:** Crop-and-zoom fixes some small-object verification failures but
+can remove the context needed to interpret an under-resolved or imperfect box.
+The 19x7 umbrella proposal changes from `umbrella` on the full-canvas view to
+`cloud` on the crop, while a 15x12 cell-phone proposal succeeds. Neither exact
+crop nor source-pixel area is a sufficient universal view rule.
+
+**Decision / proposal change:** Reject exact crop as the only verifier view.
+Retain grounding as proposal-only and move from single-scale verification to a
+predefined context pyramid. Evidence must still come from target-free identity,
+target margin, and explicit C-alternative checks at the evaluated view; proposal
+coordinates themselves remain non-evidential.
+
+**Evidence:** `docs/experiment_results.md` iteration-13 entry;
+`experiments/qwen3vl_xev/iter13_grounded_crop_actions_summary.json`
+(git-ignored).

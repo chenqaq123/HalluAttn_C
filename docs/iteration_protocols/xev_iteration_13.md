@@ -1,7 +1,7 @@
 # XEV Iteration 13 Protocol: Grounded Crop-and-Zoom Verification
 
 Date: 2026-07-19
-Status: pre-registered exploratory development protocol
+Status: completed; stage-1 gate failed, variant retained only as a view ablation
 
 ## Motivation
 
@@ -81,3 +81,21 @@ Report paired per-condition recovery against iteration 12: target-free target
 name, positive target margin, C-conflict rejection, and full cycle support. If
 the gate fails, do not tune crop padding, box selection, inventory length,
 aliases, candidate K, relation classes, or non-zero margins on these cases.
+
+## Result
+
+All 14 saved box sets are reused exactly. Relative to the full-canvas verifier,
+target-free target recovery changes 5 -> 4 rows, positive target margin changes
+11 -> 9, directional conflict changes 11 -> 3 under the pre-registered C-only
+rule, and full cycle support changes 2 -> 4. The supported real targets are
+`wine glass`, `bench`, `cell phone`, and `backpack`; no absent target receives
+support, so precision remains 1.0. However, 4/10 true-target recovery is below
+the required 8/10 and the gate fails.
+
+The paired failures show that exact crop-and-zoom is complementary rather than
+uniformly better. It newly recovers `bench`, `cell phone`, and `backpack`, but
+loses the full-canvas `umbrella` support because target-free recognition changes
+from `umbrella` to `cloud`. That box is only 19x7 source pixels; `surfboard` is
+43x12. In contrast, a 15x12 `cell phone` box succeeds, so source resolution
+alone does not explain recovery. The amount of surrounding visual context is a
+second variable. No padding or scale was tuned after observing this result.

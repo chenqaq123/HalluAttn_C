@@ -960,3 +960,37 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter12_grounded_cycle_actions.jsonl` and
   `experiments/qwen3vl_xev/iter12_grounded_cycle_actions_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 13: exact crop improves support but remains incomplete
+
+- **Pre-registered paired setup:** reuse the 14 iteration-12 action rows and
+  their parsed pixel boxes exactly. Do not rerun grounding or expand/select boxes.
+  Replace the full-canvas clear-box view with the exact crop, and restrict
+  mutually exclusive pairwise conflicts to C alternatives. Retain target-free
+  alias recovery, positive target margin, and natural zero thresholds.
+- **Paired funnel (full canvas -> exact crop):** valid box 14 -> 14;
+  target-free target recovery 5 -> 4; positive target margin 11 -> 9;
+  directional conflict 11 -> 3 (with the frozen C-only relation gate); full
+  cycle support **2 -> 4**.
+- **Support behavior:** exact crop supports four real targets: `wine glass`,
+  `bench`, `cell phone`, and `backpack`. It adds the latter three but loses the
+  previous `umbrella` support. All four absent targets remain unsupported;
+  support precision is **1.0** and all four prior false-positive corrections are
+  retained.
+- **Gate:** FAIL. The verifier suppresses only **4/10** prior true-positive
+  vetoes versus the required 8/10, leaving six TP vetoes. No broader development
+  replay is run.
+- **Scale audit:** exact crop sizes range from 8x11 to 640x480 source pixels.
+  The lost `umbrella` box is 19x7 and target-free recognition changes from
+  `umbrella` on the full-canvas clear view to `cloud` on the exact crop. The
+  unrecovered `surfboard` is 43x12. Yet a 15x12 `cell phone` crop succeeds, so
+  crop resolution is not a sufficient explanation; object identity also depends
+  on surrounding context and box alignment.
+- **Decision:** reject exact crop as the sole verifier view, without adding
+  padding or changing scales on these cases. Retain its three new true-target
+  recoveries and the full-canvas `umbrella` recovery as evidence that the views
+  are complementary. Next test a frozen geometric context pyramid rather than
+  choosing one scale post hoc.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter13_grounded_crop_actions.jsonl` and
+  `experiments/qwen3vl_xev/iter13_grounded_crop_actions_summary.json`.
