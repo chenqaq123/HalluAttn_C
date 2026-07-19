@@ -637,3 +637,26 @@ evaluate unchanged on rows 1080--1559 with the pre-registered iteration-3 gate.
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-5 entry;
 `experiments/qwen3vl_xev/iter5_consensus_audit_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 6: rejected generated-inventory absence
+
+**Experiment:** Ran the frozen iteration-5 rule on disjoint rows 1080--1559.
+Among 480 rows, 11 local proposals invoke the double-inventory guard, 7 are
+suppressed, and all 4 remaining triggers veto true positives. TPR falls 0.7958
+to 0.7792, FPR remains 0.0667, balanced accuracy falls 0.8646 to 0.8563, and MCC
+falls 0.7362 to 0.7211. The confirmatory gate fails with zero corrections.
+
+**Diagnosis:** Negative counterbalanced preference alone accepts weak ties and
+cases where both directional questions answer no or both answer yes. Separately,
+the S relation marks object parts/hypernyms (wheel, tire, door, generic bag) as
+target support and suppresses genuine baseline-FP corrections.
+
+**Decision / proposal change:** Reject generated-inventory absence as an
+image-level certificate. Preserve the target-free inventories only as positive
+support. Require the stronger natural directional signs (target-first `<0`,
+alternative-first `>0`) and use an explicit COCO alias map instead of generated
+S labels. This window is now development data; any next claim needs untouched
+rows and a larger sample for sparse triggers.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-6 entry;
+`experiments/qwen3vl_xev/iter6_holdout_summary.json` (git-ignored).

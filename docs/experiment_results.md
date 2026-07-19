@@ -696,3 +696,33 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter5_consensus_audit_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter5_consensus_audit_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 6: inventory-consensus rule fails holdout
+
+- **Frozen setup:** POPE-adversarial rows 1080--1559, disjoint 480 rows / 80
+  images, 240 yes / 240 no. Closed local candidate provenance, top-k=3, C,
+  local pairwise preference `<0`, two target-free inventories of size 12, and
+  unanimous lexical/S support. All code and gates were fixed in commit `ea2411f`
+  before inference. Mean runtime 2.90 s/sample on two 4090 shards.
+- **Vanilla anchor:** margin AUROC **0.9286**, AUPRC 0.9428; TP/FP/TN/FN =
+  191/16/224/49; balanced accuracy **0.8646**, TPR 0.7958, FPR 0.0667, MCC
+  0.7362, yes-rate 0.4313.
+- **Confirmatory result:** 11 local proposals, 7 unanimous inventory supports,
+  and 4 final triggers. All four are TP vetoes and none correct an FP. TP/FP/TN/FN
+  becomes 187/16/224/53; TPR **0.7792**, unchanged FPR 0.0667, balanced accuracy
+  **0.8563**, MCC **0.7211**. The pre-registered gate fails.
+- **Failures:** `backpack -> suitcase`, `traffic light -> train`, `train -> car`,
+  and `handbag -> backpack`. Their pairwise directions are respectively
+  `(0.0,0.75)`, `(0.0,5.25)`, `(-8.5,-0.5)`, and `(1.0,5.0)` for
+  target-first/alternative-first margins. All have negative *differences*, but
+  none exhibits the strict target-no / alternative-yes directional switch.
+- **Support-filter diagnosis:** two baseline FPs have strong directional local
+  switches but are incorrectly suppressed: absent car is "supported" by
+  wheel/tire/door, and absent backpack by generic bag. The model-generated S
+  relation is therefore not a reliable support matcher.
+- **Decision:** reject two-inventory absence as sufficient evidence. Require the
+  strict directional sign switch and replace generated S support with a fixed,
+  auditable COCO alias matcher. Rows 1080--1559 become development-only.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter6_holdout_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter6_holdout_summary.json`.

@@ -102,15 +102,14 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 5 development (2026-07-19):** there is still no
-confirmed constructive result, but a revised two-level certificate is frozen for
-new holdout evaluation. The original symmetric keep/drop score, exact candidate
-intersection, and single-region pairwise hard veto are rejected. The current
-version treats pairwise comparison only as a local contradiction proposal and
-requires two independent target-free full-image inventories to agree on global
-target support before suppressing that proposal. A selected-case mechanism audit
-is clean (5/5 negative corrections retained, 5/5 positive vetoes suppressed),
-but it is not a representative or confirmatory sample.
+**Status after iteration 6 (2026-07-19):** there is no confirmed constructive
+result yet. The two-inventory global-support rule also fails on its disjoint
+480-row holdout: all 4 final triggers veto true positives and correct no false
+positives. The selected-case success in iteration 5 did not generalize. Two
+specific components remain under repair: a negative *difference* between reversed
+pairwise margins is too weak to certify a direction switch, and model-generated
+S relations incorrectly treat parts/hypernyms such as wheel/door/bag as target
+support.
 
 ### 3.1 Principle and scope
 
@@ -232,6 +231,19 @@ Retrospectively this would correct 2/4 development FPs and 3/20 iteration-4 FPs
 without recall loss, but both sets informed the design and are closed. The rule
 must pass unchanged on rows 1080--1559 before adoption.
 
+It does not pass. On rows 1080--1559, 11 local proposals invoke the guard; 7 are
+suppressed and the remaining 4 are all true positives (`backpack -> suitcase`,
+`traffic light -> train`, `train -> car`, `handbag -> backpack`). TPR falls
+0.7958 -> 0.7792, FPR stays 0.0667, balanced accuracy falls 0.8646 -> 0.8563,
+and MCC falls 0.7362 -> 0.7211. **Reject absence from two generated inventories
+as image-level absence evidence.**
+
+The next local criterion must require an actual directional answer switch,
+`m(t>a,R)<0` and `m(a>t,R)>0`, not merely their difference below zero. Global
+inventory support must use lexical identity plus an explicit COCO alias table,
+not the unreliable generated S relation. This preserves open-vocabulary
+inventory phrases while making support matching auditable for the POPE pilot.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -272,9 +284,10 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV global-support confirmatory gate:** evaluate the frozen two-inventory
-  rule on rows 1080--1559, requiring >=3 triggers, >=2/3 correction precision,
-  lower FPR, TPR loss <=0.005, and non-decreasing MCC. Do not tune on prior rows.
+- **XEV precision repair:** require directional pairwise sign reversal and
+  replace model-generated S support with auditable aliases. Re-evaluate all prior
+  failures, then use a larger untouched window because high-precision triggers
+  are sparse.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.
