@@ -1037,3 +1037,42 @@ POPE-popular with at least ten net corrections, lower related-present FPR,
 non-decreasing MCC/balanced accuracy, and tightly bounded TPR/yes-rate changes.
 Failure closes the route without LoRA or threshold tuning. No new experimental
 result was produced in this design iteration.
+
+## 2026-07-19 — NEA cancelled; existential set evidence pre-registered
+
+**Design rejection:** Cancelled NEA before Stage A. No NEA inference, routing
+fit, or null-value training was run. Although the null key/value was located
+inside an attention head, its behavior still formed an absence-conditioned
+correction to the ordinary answer. Its distinction from contrastive or
+calibrated decoding was therefore primarily architectural placement rather than
+a different decision principle.
+
+**Literature audit:** The replacement search also rejected several nearby
+routes. OPPO already optimizes ordered visual-evidence strength and derives local
+visual sensitivity; *Same Attention, Different Truths* reads and injects visual-
+token logits; CausalLens and query-guided visual-focus methods reinforce selected
+patches; Slot-MLLM occupies object-centric tokenization; LPFV verifies sampled
+caption candidates. These boundaries are recorded in
+`literature/2026-07-19_existential_evidence_redesign.md`.
+
+**New hypothesis:** Replace compulsory relative allocation with
+**Existential Evidence Aggregation (EEA)**. A shared open-vocabulary matcher
+produces unnormalized target-patch compatibility, and a patch-count-normalized
+smooth maximum approximates "at least one patch supports this target." A related
+object may win attention while still failing this absolute match. The first
+pilot is diagnostic only; any later EEA head is a training objective and is
+removed when evaluating ordinary single-forward answers.
+
+**Novelty guardrail:** Multiple-instance learning, smooth-max pooling,
+patch-text matching, and weakly supervised localization are prior art. The
+intended claim exists only if the same matcher with existential pooling beats
+relative softmax, global pooling, and top-attention-patch controls on unseen
+targets, then improves ordinary model behavior beyond answer-only SFT.
+
+**Gate:** `docs/iteration_protocols/eea_iteration_0.md` freezes Qwen3-VL and
+tests 60 training versus 20 held-out COCO targets. The primary control holds the
+image patches fixed while swapping the queried identity between one visible
+object and one related absent object. EEA must reach 0.75 macro AUROC, beat every
+matched pooling control by 0.05, pass the same-image ordering test, and lose
+signal under image/patch swaps. Failure closes the route before LoRA. No new
+experimental result was produced in this design iteration.

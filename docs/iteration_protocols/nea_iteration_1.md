@@ -1,7 +1,13 @@
 # NEA Iteration 1 Protocol: Null Routing Before Null Values
 
 Date: 2026-07-19
-Status: pre-registered; not started
+Status: cancelled before start; superseded by EEA iteration 0
+
+> Historical protocol only. No model inference or training was run under this
+> protocol. NEA was cancelled because its learned null branch is functionally an
+> absence-conditioned correction to the ordinary answer and is not sufficiently
+> distinct from contrastive/calibrated decoding. The active protocol is
+> [eea_iteration_0.md](eea_iteration_0.md).
 
 ## Question
 

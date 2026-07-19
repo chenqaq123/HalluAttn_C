@@ -73,13 +73,15 @@ not every attention method.
 > (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
 > adds yes-bias.
 
-The constructive answer is now being rebuilt as **Null-Evidence Attention**
-(NEA; see §3). Standard attention can rank available tokens but has no explicit
-target-conditioned outcome for "none of these visual tokens supports the
-query." NEA adds that missing outcome while preserving the model's original
-visual-attention mass. It does not treat raw attention as evidence or amplify
-visual attention; it learns when an already allocated visual branch should
-return bounded null evidence instead of a semantic neighbor.
+The constructive answer is now being rebuilt as **Existential Evidence
+Aggregation** (EEA; see §3). The key correction is not another attention route
+or a second decoding distribution. Object existence is a set predicate:
+"there exists at least one visual element that matches the target." Softmax
+attention instead answers a compulsory relative-choice question -- which token
+should receive the available mass -- and therefore always produces a winner,
+even when every token is a poor absolute match. EEA learns unnormalized,
+target-patch compatibility and aggregates it with a smooth existential operator
+during training. The deployed model uses an ordinary single forward pass.
 
 ## 2. Positioning vs. prior work
 
@@ -98,22 +100,25 @@ return bounded null evidence instead of a semantic neighbor.
 - The **mitigation-side critique** made measurable: the *related-present vs.
   plain-absent* FPR decomposition that exposes attention-amplification's
   answer-prior over-fitting — invisible in prior aggregate-POPE tables.
-- A **mass-preserving null-evidence operator**: retain the model's original
-  text/vision allocation, but let the target-conditioned visual branch select a
-  learned, norm-bounded null value when no visual token clears the evidence
-  competition. The intended contribution is the visual rejection path and its
-  measured routing behavior, not attention magnitude or a generic rejection
-  token.
+- A constructive reframing from **relative allocation to absolute set
+  verification**: use a shared open-vocabulary patch matcher and a smooth
+  existential aggregation loss to teach the model that a related patch is not
+  target evidence merely because it wins a relative attention competition. The
+  intended contribution is the set-level evidence objective and its transfer to
+  unseen target categories, not multiple-instance learning or patch matching in
+  isolation.
 
-## 3. Constructive direction under test — Null-Evidence Attention
+## 3. Constructive direction under test — Existential Evidence Aggregation
 
-**Status after the second 2026-07-19 outer-loop review:** XEV remains closed, and
-Target-Causal Selectivity (TCS) was cancelled before implementation. TCS relied
-on generated object-removal images, while its four-view classification loss
-already contained most of the proposed sensitivity/invariance behavior. It
-therefore exposed the method to edit shortcuts without establishing that its
-paired regularizer contributed anything beyond counterfactual SFT. The active
-method is now NEA; TCS is retained as a rejected design in §3.6.
+**Status after the third 2026-07-19 outer-loop review:** XEV remains closed; TCS
+and NEA were both cancelled before implementation. NEA put a learned null branch
+in the same head as the visual branch, but its behavior still reduced to
+subtracting a learned absence-conditioned contribution from the ordinary
+answer. Recent work also occupies evidence-strength preference training, visual
+sensitivity, query-guided patch reinforcement, and visual-token logit injection.
+Changing the location of the subtraction is not a defensible method boundary.
+The active hypothesis is EEA. It is pre-registered only through a cheap
+frozen-feature mechanism gate; no mitigation claim exists yet.
 
 ### 3.1 What the failures rule out
 
@@ -125,133 +130,141 @@ The new route must satisfy all of the following:
   edit itself can become the absence label;
 - no external detector, SAM-style grounding decoder, or generated candidate
   inventory is present at inference;
+- no image/no-image, strong/weak-view, or clean/corrupted logit difference is
+  used at decoding time;
 - no visual-attention mass is amplified; the Prong-2 evidence predicts that
   amplification raises the yes-rate rather than verifying identity;
-- the added parameters are shared across target words and must transfer to
-  categories never used as training targets.
+- the added parameters are shared across target words, and both the mechanism
+  score and behavior change must transfer to categories never used as training
+  targets;
+- the final deployed model must use its ordinary answer distribution in one
+  forward pass. Any auxiliary evidence head is training-only.
 
-### 3.2 The missing outcome: null evidence inside visual attention
+### 3.2 The operator mismatch: relative choice versus existential truth
 
-Consider one selected attention head at the row that predicts the first answer
-token (or, later, an object commitment). Let `V` be visual-token indices and `T`
-all other causal-context indices. Under the original post-RoPE attention, let
-`a_i` be the normalized weight and
+Let `t` be the queried object phrase and `v_i` the `N` visual patch states from a
+frozen Qwen3-VL layer before the answer is generated. A shared low-rank matcher
+produces **unnormalized** compatibility logits:
 
-    rho = sum_{i in V} a_i
-    o_base = o_T + rho * sum_{i in V} (a_i / rho) v_i.
+    u_t = normalize(W_t * embed(t))
+    u_i = normalize(W_v * RMS(v_i))
+    s_i(t, I) = <u_t, u_i> / tau_s + b(u_t).
 
-`rho` is the visual mass the pretrained model already chose. NEA never increases
-it, and it preserves the pretrained conditional distribution
-`a_bar_i = a_i / rho` among real visual tokens. Content logits before multimodal
-RoPE are used only to decide whether the whole visual branch should yield null:
+`embed(t)` is formed from the input embeddings of the target phrase, before it
+has seen the image. The verifier therefore cannot hide the answer in an
+image-conditioned query state. There are no category-specific output weights.
 
-    e_vis   = logmeanexp_{i in V}(<q^0, k_i^0> / sqrt(d))
-    z_null  = <q^0, kappa_lh> / sqrt(d) + b_lh
-    g_null  = sigmoid(z_null - e_vis).
+Standard attention would normalize `s_i` over patches and retain only relative
+allocation. EEA instead preserves their absolute level and approximates the
+existential predicate with a resolution-stable smooth maximum:
 
-`kappa_lh` is one learned null key for layer/head `(l,h)`. The head output becomes
+    E(t, I) = tau_e * logmeanexp_i(s_i(t, I) / tau_e).
 
-    g_eff = alpha_lh * g_null,                   0 <= alpha_lh <= 1
-    o_NEA = o_T + rho * [(1 - g_eff) * sum_{i in V} a_bar_i v_i
-                         + g_eff * nu_lh].
+Duplicating every patch leaves `E` unchanged. A present target can be certified
+by one high-match patch; an absent target requires every patch match to remain
+low. A toilet may be the best relative match for a queried sink while still
+failing the sink's absolute compatibility boundary. That is precisely the case
+that attention amplification cannot express.
 
-The original text contribution `o_T` and total visual mass `rho` are unchanged.
-When `alpha_lh=0`, the operator is exactly the vanilla head; NEA does not replace
-the pretrained spatial distribution with a no-RoPE map. `alpha_lh` is initialized
-at zero and projected back to `[0,1]` after each update. `nu_lh` is a learned null
-value whose norm is constrained not to exceed the running median visual-value
-norm for that head. A zero value would merely remove misleading visual content
-and leave the language prior unopposed; the bounded learned value lets the model
-represent "the allocated visual branch contains no support for this target"
-without becoming an unconstrained steering vector.
+The first pilot trains the EEA head only as a diagnostic. If that mechanism gate
+passes, a second iteration may train a parameter-matched Qwen3-VL LoRA with
 
-This is not a claim that attention allocation has become verification. The raw
-weights remain an unreliable proxy. The method adds a supervised reject outcome
-that ordinary visual-token allocation lacks, and its null-routing behavior must
-be validated independently of answer accuracy.
+    L_full = L_answer + lambda_set * BCE(E(t, I), y)
+             + lambda_agree * SmoothL1(m_answer, stopgrad(E(t, I))).
 
-### 3.3 Data and optimization
+The answer-only LoRA is the primary control. EEA is an auxiliary training
+objective, not a runtime score: the auxiliary matcher is removed for behavior
+evaluation, and `m_answer` comes from the ordinary model logits in one forward
+pass. Full EEA is useful only if the resulting ordinary model beats answer-only
+SFT and matched auxiliary-pooling controls on held-out categories.
 
-Use only natural images and annotations. For every target category, construct a
-balanced set of:
+### 3.3 Natural-image supervision and open-vocabulary contract
 
-- positive images containing the target;
-- **related-present negatives** lacking the target but containing one of its
-  high-NPMI COCO/LVIS neighbors;
-- random negatives lacking both the target and its strong neighbors.
+Use only natural COCO images and image-level annotations. For every target,
+construct balanced present, related-present-negative, and random-negative rows.
+Related negatives contain a high-NPMI semantic neighbor but not the target; they
+are the primary stress case rather than an after-the-fact diagnostic.
 
-No image is edited. The target is supplied by the normal question, so NEA has no
-class-specific output parameters or fixed candidate vocabulary. COCO provides
-the first mechanism pilot; LVIS categories on COCO images are the planned
-open-vocabulary expansion. Category-disjoint evaluation is mandatory.
+The normal question supplies `t`; no candidate inventory is generated. COCO-80
+is only the first source of image-level labels, not the output vocabulary. Sort
+categories by ID and reserve every fourth category as an unseen target. Neither
+the target-side matcher nor any tuning loss sees those 20 targets as labels.
+LVIS-on-COCO is considered only after this category-disjoint gate passes.
 
-Freeze Qwen3-VL. The first pilot trains only per-head `kappa`, `b`, `alpha`, and
-`nu` in layers 18--29. Initialize `alpha=0` so the model starts at exact vanilla
-behavior. A routing loss trains `g_null` high for absent targets and low for
-present targets; first-answer binary loss trains the intervention strengths and
-bounded null values. No LoRA or backbone update is allowed in iteration 1.
-
-At inference, NEA is part of the same forward pass. It requires no attention-map
-post-processing, region proposal, crop, object list, verifier call, or external
-vision model.
+This design is object-existence-specific in its first form. Attribute support
+would require conditioning the attribute match on an independently established
+entity region; it is not claimed by the object pilot.
 
 ### 3.4 Novelty boundary from the refreshed literature
 
-- **Softmax1 / zero-sink attention** and learned sink tokens already provide a
-  generic no-op path for language-model stability and quantization. We do not
-  claim the null-attention primitive.
-- **PriorTR (2026)** uses an instruction-agnostic null token to estimate an
-  attention prior for visual-token pruning. NEA is target-conditioned, trained
-  on object absence, retains all tokens, and changes semantic evidence flow.
-- **PostAlign (ICLR 2026)** emits `<LOC>` or `<REJ>` and uses a separate visual
-  grounding encoder/mask decoder. **Ground-V** and generalized referring-
-  expression work also train explicit no-target grounding. NEA has no generated
-  rejection token or grounding decoder.
-- **OPV (2026)** reads an object-completion hidden-state probe and rolls decoding
-  back. NEA modifies the visual branch before the answer commitment and must
-  beat a matched residual-adapter control.
-- **SAGE (2026)** treats existing sink tokens as triggers for gradient/attention-
-  based decoding changes. NEA creates a supervised target-conditioned null
-  competitor and never sharpens or broadens total visual attention.
-- External visual evidence methods (VEP, MARINE, Kestrel) obtain identity
-  evidence from another perception model. That is a valid positive control but
-  not this method.
+- **Multiple-instance learning and weakly supervised localization** already
+  model an image as a bag of patches under image-level presence labels. EEA does
+  not claim MIL, smooth-max pooling, or patch-text matching individually.
+- **OPPO (2026)** contrasts stronger, anchored, and weaker visual views and
+  proves a lower bound on local visual sensitivity. EEA has one natural image,
+  no evidence-strength ordering, no DPO objective, and no decoding contrast.
+- **Same Attention, Different Truths (CVPR 2026)** decodes high-attention visual
+  states with a logit lens, then masks or injects visual-token logits at
+  inference. EEA never chooses a patch by attention and removes its auxiliary
+  head at inference.
+- **CausalLens, PADE/AIR, TSR-MLLM, and Q-Zoom** identify and reinforce
+  query-relevant patches. They remain selection/allocation methods; EEA tests
+  whether the best absolute patch match clears an existence boundary and never
+  reinforces the selected patch.
+- **LPFV self-validation** verifies objects from sampled captions and selects or
+  aggregates candidate captions. EEA uses no sampled caption, candidate
+  inventory, or second model query.
+- **Slot-MLLM** changes visual tokenization to object-centric slots. EEA keeps
+  native tokens and asks only whether a shared set operator can expose
+  transferable target evidence.
+- Box/mask-grounding methods and external visual verifiers remain valid positive
+  controls, but they use supervision or perception modules excluded here.
 
-The narrow intended novelty is therefore **mass-preserving, target-conditioned
-null evidence inside a frozen LVLM's visual attention branch**. If a generic
-hidden residual adapter or answer bias performs equally well, this architectural
-claim fails.
+The narrow intended novelty is therefore **an absolute, open-vocabulary
+patch-set existence objective that distills into the ordinary LVLM forward**.
+If smooth existential pooling does not beat relative softmax pooling, a global
+visual pool, and answer-only SFT on unseen targets, the claim fails.
 
 ### 3.5 First validation and kill criteria
 
-Iteration 1 has a mechanism gate before any behavior claim. On natural COCO
-training images, fit null keys on 60 target categories and evaluate 20 unseen
-categories. The null log-odds must separate positives from related-present
-negatives, outperform both a query-only probe and visual-energy-only score, and
-lose signal both when visual-key energy is shuffled and when present/absent
-images are exchanged and the model is rerun. Otherwise NEA is only another
-hidden probe and is rejected before null values are trained.
+Iteration 0 is deliberately diagnostic. Freeze Qwen3-VL, cache native visual
+states, and fit the same shared matcher with four aggregators: EEA smooth max,
+softmax-weighted average, global mean pooling, and top-attention-patch pooling.
+Evaluate once on 20 unseen COCO targets. In addition to image swapping, use a
+**same-image target swap**: pair one present object with one related absent
+object in the same image and require the evidence ordering to flip while the
+patch set is unchanged.
 
-If the routing gate passes, compare frozen Qwen3-VL, a fixed zero-null route,
-zero-value NEA, a parameter-matched residual adapter, a learned answer-bias
-control, and full bounded-value NEA. POPE-popular is the first behavior task;
-POPE-random or MME existence remains untouched confirmation. POPE-adversarial is
-exhausted and unavailable for development.
+The route advances to LoRA only if EEA:
 
-Full NEA advances only if:
+1. reaches at least 0.75 category-macro AUROC on present versus related absent;
+2. exceeds every relative/global pooling control by at least 0.05 AUROC with a
+   paired bootstrap interval above zero;
+3. reaches at least 0.65 accuracy on the same-image target-swap ordering and
+   loses at least 0.15 AUROC when images are swapped across labels;
+4. leaves no more than five of twenty held-out targets below 0.60 AUROC.
 
-1. null routing transfers to held-out target categories and is specifically high
-   on related-present negatives rather than on all prompts;
-2. related-present FPR falls with at most 0.5 TPR-point loss, while balanced
-   accuracy and MCC increase and overall yes-rate changes by at most one point;
-3. full NEA beats zero-value NEA and the parameter-matched residual adapter at
-   matched TPR, showing that the null route and bounded absence value both matter;
-4. the unchanged method repeats on one untouched task.
+If Stage A passes, pre-register a separate training iteration with answer-only
+LoRA, EEA-LoRA, and parameter-matched auxiliary controls. POPE-popular is the
+development behavior task; POPE-random or MME existence stays untouched.
+POPE-adversarial is exhausted. No answer threshold may be fit on evaluation
+data. A behavior method advances only with lower related-present FPR, at most
+0.5 TPR-point loss, higher MCC and balanced accuracy, bounded yes-rate change,
+and at least ten net corrected baseline errors.
 
-If a scalar bias, generic adapter, or zero-value null matches full NEA, reject
-the method rather than adding LoRA, more heads, or a fitted behavior threshold.
+### 3.6 Rejected pre-experiment design — NEA
 
-### 3.6 Rejected pre-experiment design — TCS
+Null-Evidence Attention proposed a learned null key/value inside selected
+visual-attention heads while preserving the original visual mass. It was
+cancelled before Stage A. Although implemented inside a head, its behavioral
+effect is still a learned absence-conditioned subtraction from the ordinary
+answer, so its distinction from contrastive/calibrated decoding is mainly where
+the correction is applied. Generic null/sink attention is established prior
+art, and the learned null value can become an unconstrained answer-steering
+direction. The retained protocol documents the rejected design; it must not be
+implemented as the active method.
+
+### 3.7 Rejected pre-experiment design — TCS
 
 Target-Causal Selectivity proposed target-removal sensitivity and neighbor-
 removal invariance using inpainted triples. It was cancelled before Stage A for
@@ -263,7 +276,7 @@ uses target removal and VISE/VES-RFT occupy nearby perturbation/sensitivity
 training. The design remains documented in its protocol and literature memo but
 must not be implemented as the active method.
 
-### 3.7 Closed route evidence — XEV
+### 3.8 Closed route evidence — XEV
 
 Everything below this heading is the preserved design/failure trace and is
 superseded by §§3.1--3.5. Terms such as "current" and "next" describe the state
@@ -584,7 +597,7 @@ spatial evidence alone has reached its limit on this benchmark.
 
 ## 4. Contribution framing (intended)
 
-Frame as an **analysis + null-evidence architecture** paper, conditional on the
+Frame as an **analysis + set-verification training** paper, conditional on the
 new method passing confirmation:
 
 1. The **two-pronged critique** — attention-based detection and mitigation both
@@ -592,11 +605,12 @@ new method passing confirmation:
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive **Null-Evidence Attention** operator: preserve the pretrained
-   visual mass but add a supervised target-conditioned reject outcome inside the
-   visual branch. Promote it only if null routing transfers across unseen
-   categories and full NEA beats generic adapter/bias controls on an untouched
-   benchmark without yes/no prior collapse.
+3. A constructive **Existential Evidence Aggregation** objective: preserve
+   absolute target-patch compatibility, aggregate the visual tokens as a set,
+   and distill that objective into an ordinary single-forward LVLM. Promote it
+   only if the frozen mechanism transfers across unseen categories, beats
+   relative/global pooling, and EEA-LoRA later beats answer-only SFT on an
+   untouched benchmark without yes/no prior collapse.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
@@ -611,25 +625,25 @@ Honest guardrails carried over from the tear-down:
   guards. The 4/960 result is a sparse numerical fluctuation, not the method.
 - **TCS is cancelled:** do not build the LaMa/inpainting pipeline or train the
   four-view objective. Its protocol is historical, not pending work.
-- **Null-as-probe shortcut:** `z_null` can classify from the multimodal query
-  without competing meaningfully with visual keys. Query-only, energy-only, and
-  key-energy-shuffle plus counterlabel-image-swap controls are mandatory; fail
-  the route if full null odds do not beat the probes and depend on the correct
-  image on unseen categories.
-- **Generic steering shortcut:** a learned null value may become a negative
-  steering vector. Constrain its norm, preserve original visual mass, initialize
-  to exact vanilla, and require gains over matched residual-adapter and answer-
-  bias controls.
+- **NEA is cancelled:** do not implement null keys/values or run its Stage A.
+  The retained protocol is historical, not pending work.
+- **Detector relabeling risk:** EEA is structurally an internal open-vocabulary
+  patch verifier. Do not claim novelty for MIL or matching; the claim survives
+  only if the set operator beats relative/global pooling and its training loss
+  improves the ordinary model beyond answer-only SFT.
+- **Target/query shortcut:** form the target representation from pre-decoder
+  input embeddings, balance labels within category, and require same-image
+  present-versus-related-target swaps. Do not use an image-conditioned answer
+  state as the target embedding in iteration 0.
+- **Absolute-score calibration:** train one shared matcher and one shared
+  target-conditioned bias; no per-category thresholds or held-out calibration.
+  Patch duplication must leave the log-mean-exp score unchanged.
 - **Vocabulary transfer:** train/evaluate with category-disjoint target splits.
   COCO-only gains cannot support an open-vocabulary claim; LVIS expansion follows
-  only after the 20-category held-out routing gate succeeds.
-- **Operator compatibility:** Qwen3-VL uses joint decoder self-attention rather
-  than a separate cross-attention block. Implement NEA only on the selected query
-  row under eager attention and verify bit-identical vanilla output when null
-  probability is initialized to zero.
-- **Compute:** begin with cached pre-RoPE query/visual-energy features and train
-  null keys offline. Do not run end-to-end null-value training before routing
-  transfer and both shuffle/swap gates pass.
+  only after the 20-category held-out EEA gate succeeds.
+- **Compute:** begin with cached frozen visual states and train the shared EEA
+  head offline. Do not start LoRA until the smooth-max mechanism beats every
+  pre-registered pooling control on unseen targets.
 - **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
   LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
   baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).
@@ -644,8 +658,10 @@ Honest guardrails carried over from the tear-down:
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
 - Current route audit:
-  [2026-07-19_null_evidence_attention_redesign.md](../literature/2026-07-19_null_evidence_attention_redesign.md).
-- Pre-registered NEA pilot:
+  [2026-07-19_existential_evidence_redesign.md](../literature/2026-07-19_existential_evidence_redesign.md).
+- Pre-registered EEA mechanism pilot:
+  [eea_iteration_0.md](iteration_protocols/eea_iteration_0.md).
+- Rejected NEA design record:
   [nea_iteration_1.md](iteration_protocols/nea_iteration_1.md).
 - Rejected TCS design record:
   [tcs_iteration_1.md](iteration_protocols/tcs_iteration_1.md).
