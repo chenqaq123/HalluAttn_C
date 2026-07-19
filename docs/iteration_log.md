@@ -950,3 +950,45 @@ module and evaluation outside POPE adversarial, whose rows are now exhausted.
 
 **Evidence:** `docs/experiment_results.md` iteration-15 stage-2 entry;
 `experiments/qwen3vl_xev/iter15_stage2_summary.json` (git-ignored).
+
+## 2026-07-19 — Outer-loop route review: XEV closed, TCS pre-registered
+
+**Evidence review:** Reinterpreted the nominal 960-row XEV held-out result at
+the action-count level: four interventions produced three corrections and one
+new error, for a net change of only two errors. Subsequent coverage expansions
+did not confirm the effect, and the final untouched 240 POPE-adversarial rows
+produced one action that changed a true positive to a false negative. This is
+not evidence of a useful mitigation method.
+
+**Route diagnosis:** The failure is shared by keep/drop regions, generated
+alternatives, full-image inventories, native grounding, exact crops, and
+multiscale crops. All ask the same Qwen3-VL model to judge derived views selected
+from its own representations. Better localization does not add an independent
+object-identity signal, so the loop preserves the co-occurrence prior and
+unstable category boundary it is meant to correct. XEV is closed as a route;
+there will be no further alias, threshold, crop, proposal, or verifier-prompt
+tuning.
+
+**Literature audit:** Checked the rebuilt direction against recent primary work.
+R-CoV directly occupies same-model coordinate/region-description verification;
+oDPO already uses target-object removal; VES-RFT uses generic image/no-image
+sensitivity; Causal-LLaVA and CIPHER cover broader causal deconfounding and
+counterfactual representation steering. Therefore none of self-verification,
+object removal, visual sensitivity, or causal training alone is a defensible
+novelty claim. The dated audit is in
+`literature/2026-07-19_constructive_route_pivot.md`.
+
+**Proposal change:** Pivoted the constructive method to Target-Causal
+Selectivity (TCS). For a queried target and visible semantic neighbor, training
+must increase answer sensitivity to target removal while enforcing invariance to
+neighbor removal. A natural related-present negative and matched-background edit
+control artifact shortcuts and global `No` bias. Inference is the unmodified
+single model forward; masks and inpainting are training-data construction only.
+
+**Next gate:** Pre-registered `docs/iteration_protocols/tcs_iteration_1.md`.
+Stage A audits counterfactual validity and frozen-model margins before training.
+Stage B compares natural SFT, four-view SFT, target-removal-only, and full TCS on
+held-out target categories and POPE-popular. Full TCS is rejected unless its
+paired selectivity exceeds both controls while improving balanced accuracy/MCC
+without material TPR or yes-rate collapse. No new experimental result was
+produced in this route-review iteration.

@@ -19,6 +19,7 @@ SinkDetect/
 │   ├── scripts/        # generation, merge, comparison, audits
 │   └── src/            # intervention and evaluation code
 ├── docs/               # living docs (proposal/results/iteration), design, archive/
+├── literature/         # dated literature audits that support route decisions
 ├── paper/              # local paper files/build outputs for this repo
 ├── paper_repo/         # separate paper Git repo; ignored here
 ├── ref/                # local reference PDFs
@@ -103,6 +104,7 @@ caches, and local tool settings.
 | `mitigation/README.md` | mitigation runner and audit usage |
 | `mitigation/docs/evaluation_protocol.md` | mitigation interpretation protocol |
 | `docs/no_external_detector_summary.md` | current internal method selection and no-external-detector main tables |
+| `literature/` | dated prior-work audits and novelty-boundary memos |
 
 Avoid duplicating long command explanations across docs. Put project-level
 entry commands in `README.md`, detection execution details in

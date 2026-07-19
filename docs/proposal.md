@@ -73,11 +73,11 @@ not every attention method.
 > (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
 > adds yes-bias.
 
-The constructive answer — a verification criterion that neither reading nor
-amplifying attention provides — is being rebuilt as **region-grounded
-target-vs-alternative verification** (see §3). Its first Qwen3-VL pilot has
-already rejected one tempting but invalid causal score; the alternative-
-competition mechanism remains under test rather than established.
+The constructive answer is now being rebuilt as **target-causal selectivity
+learning** (see §3): a decision should change when target evidence is removed,
+but remain stable when a visually related distractor is removed. This is a
+training objective over controlled image interventions, not another attention
+readout, attention intervention, crop ensemble, or self-verification loop.
 
 ## 2. Positioning vs. prior work
 
@@ -96,50 +96,143 @@ competition mechanism remains under test rather than established.
 - The **mitigation-side critique** made measurable: the *related-present vs.
   plain-absent* FPR decomposition that exposes attention-amplification's
   answer-prior over-fitting — invisible in prior aggregate-POPE tables.
-- A **verification criterion** that is relative to the target's strongest
-  discriminative alternative, rather than reading/amplifying attention.
-  (Design deliberately open — the previous TDEV family was torn down.)
+- A **target-selective causal criterion** that distinguishes evidence sensitivity
+  from generic visual dependence: remove the target and the decision must change;
+  remove a related visible object and it must not. The intended contribution is
+  this paired sensitivity/invariance objective, not object removal by itself.
 
-## 3. Constructive method under test — XEV
+## 3. Constructive direction under test — Target-Causal Selectivity
 
-**Status after iteration 15 stage 2 (2026-07-19):** XEV v1 remains the only
-constructive version confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
-rows, the precision-repaired certificate triggers 4 times: 3 false-positive
-corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
-TPR falls only 0.8417 -> 0.8396, balanced accuracy rises 0.8823 -> 0.8844, and
-MCC rises 0.7671 -> 0.7719. It passes every pre-registered gate. The effect is
-sparse and small; current evidence supports a high-precision correction
-certificate, not a broad decoding replacement. That held-out result used raw
-post-RoPE attention for localization. The current implementation defaults to a
-pre-RoPE localization map, but its behavior is not yet confirmed and the v1
-held-out claim must remain attributed to the raw map. A development attempt to
-broaden the local relation gate from C to any non-supporting identity raised
-local proposals from 1 to 21/120, but its complement-or-inventory support guard
-left 3 actions and all 3 vetoed true positives. This variant is rejected: the
-remaining problem is image-level coverage, not local-conflict recall alone.
-Residual top-3 attention coverage improves support recall but still leaves 10
-true-positive vetoes for 4 corrections on the 120-row development window. The
-variant is rejected: coarse attention boxes are not object-pure enough to make
-candidate-relative local comparisons globally consistent.
-A target-grounding/re-identification audit then returns valid boxes for all 14
-selected failures with high support precision but only 2/10 true-target recall.
-This variant is also rejected; its coordinate proposals remain a useful lead,
-but keeping a small grounded box on the full canvas does not provide visual zoom.
-Exact crop-and-zoom raises recovery to 4/10 at unchanged 1.0 support precision,
-but loses a full-canvas umbrella recovery. Grounded verification is therefore a
-multi-scale evidence problem, not a choice between one global and one local view.
-A fixed `{1,2,4}` crop pyramid confirms the value of the target-support guard on
-a fresh 120-row window, but requiring one alternative name to repeat across
-scales yields zero actions. The pyramid remains a lead, not an adopted extension.
-Replicating negative target evidence instead, while retaining one independently
-verified open C alternative, yields 2/2 corrections and no TP vetoes on a
-historical mechanism audit. This is promising but not yet a held-out extension.
-It fails the amended final 240-row confirmation: one action, a real
-`vase -> pot/flowerpot` veto, and no correction. The grounded extension is
-rejected; semantic identity boundaries, not localization, are now the exposed
-bottleneck.
+**Status after the 2026-07-19 outer-loop review:** the XEV inference-time
+self-verification route is closed. Its nominal held-out change on 960 rows came
+from four actions (three corrections and one new error), a net reduction of only
+two errors. Every attempt to raise coverage failed confirmation, and the final
+240-row test made one true-positive error without correcting a false positive.
+The result is not a meaningful method improvement and is retained only as a
+negative evidence trail in §3.6 and the append-only logs.
 
-### 3.1 Principle and scope
+### 3.1 What the failures rule out
+
+Do not continue any method whose decision evidence is produced by asking the
+same LVLM to inspect its own attention-selected or self-grounded derived views.
+The completed sequence has already tested keep/drop, target-vs-alternative
+questions, full-image inventories, multiple attention regions, native target
+grounding, exact crops, and fixed multiscale crops. These variants change what
+the model sees, but not the source of semantic judgment. They therefore preserve
+the same co-occurrence prior and unstable identity boundary (`vase` versus
+`pot/flowerpot`) that caused the original error.
+
+This also excludes three tempting restarts:
+
+- reproducing R-CoV-style coordinate/region-description self-verification;
+- promoting an external open-vocabulary detector to the method (already tested
+  as the stronger OWLv2 positive control on `main`, and covered by tool-based
+  correction work such as Pelican);
+- switching to another attention, hidden-state steering, or generic visual-
+  sensitivity objective without target-specific controls.
+
+### 3.2 New criterion: sensitivity to target, invariance to neighbor
+
+For a target object `t`, choose an image `I` that contains both `t` and a
+strongly associated visible object `n`. Construct two minimally edited images:
+
+    I^{-t}: every instance of target t is removed; neighbor n is preserved
+    I^{-n}: neighbor n is removed; target t is preserved
+
+For the first-token existence margin
+
+    m_theta(t, I) = log p_theta(Yes | q_t, I)
+                    - log p_theta(No | q_t, I),
+
+define target sensitivity, neighbor leakage, and target-causal selectivity:
+
+    Delta_t = m_theta(t, I) - m_theta(t, I^{-t})
+    Delta_n = m_theta(t, I) - m_theta(t, I^{-n})
+    TCS(t,I,n) = Delta_t - beta * |Delta_n|.
+
+A target-grounded decision must have large positive `Delta_t` and small
+`|Delta_n|`. This is stronger than "uses the image": a model that answers
+`chair=yes` because it sees a dining table may be highly image-sensitive while
+still having low target selectivity.
+
+### 3.3 Training objective
+
+The first implementation is a lightweight Qwen3-VL fine-tuning method, not a
+test-time verifier. COCO/LVIS instance masks and object removal are used only to
+construct training pairs; deployment remains one ordinary model forward with no
+attention extraction, region proposal, candidate vocabulary, external detector,
+or additional verification pass.
+
+For each paired triple, optimize four natural decisions:
+
+    m_theta(t, I)       > 0        target present
+    m_theta(t, I^{-n})  > 0        target remains after distractor removal
+    m_theta(t, I^{-t})  < 0        target absent after target removal
+    m_theta(t, I_abs)   < 0        natural related-present negative
+
+where `I_abs` contains the associated neighbor `n` but not target `t`. Add the
+paired regularizers
+
+    L_sens = softplus(delta_s - Delta_t)
+    L_inv  = smooth_l1(Delta_n, 0)
+
+to standard binary answer loss. `L_sens` teaches the model what visual change
+must matter; `L_inv` teaches which correlated visual change must not matter.
+The natural `I_abs` branch prevents the model from solving edited images through
+inpainting artifacts. The initial pilot updates only LoRA adapters in the
+multimodal projector / selected decoder layers and keeps the vision encoder
+frozen.
+
+### 3.4 Novelty boundary from the refreshed literature
+
+- **oDPO (NAACL 2025)** already prefers an original image over a target-removed
+  image. Object removal alone is therefore not novel. It has no paired
+  related-object invariance requirement.
+- **VES-RFT (CVPR 2026)** rewards uncertainty change between image and no-image
+  branches. That measures generic visual dependence, not whether the dependence
+  is specific to the queried object.
+- **Causal-LLaVA** deconfounds category representations with learned confounder
+  dictionaries; **CIPHER** learns a low-rank hallucination subspace from
+  diffusion counterfactuals. Neither uses the matched target-removal versus
+  neighbor-removal behavior as the supervision unit.
+- **R-CoV (2026)** uses the LVLM's own coordinates and region descriptions for
+  post-hoc verification. That is the route our XEV evidence rejects.
+- Generic grounding supervision is not sufficient: EMNLP 2024 reports little
+  or no object-hallucination reduction in open caption generation. The proposed
+  criterion supervises decision behavior under controlled interventions rather
+  than localization.
+
+The claim is therefore deliberately narrow: **paired target sensitivity plus
+semantic-neighbor invariance**. We must not claim causal training, object
+removal, DPO, grounding, or visual sensitivity individually as new.
+
+### 3.5 First validation and kill criteria
+
+Develop on COCO train2017 intervention triples and POPE-popular; reserve
+POPE-random and MME existence for confirmation. POPE-adversarial is exhausted
+for method selection and may be reported only as a closed diagnostic replay.
+Use a category-disjoint split so that at least 20 COCO categories are never used
+as intervention targets during training. ROHE is an auxiliary matched-pair
+diagnostic even though it is not an `lmms-eval` headline task.
+
+The first round must compare: frozen Qwen3-VL, binary SFT on the same examples,
+target-removal-only (`L_sens`, oDPO-like ablation), and full TCS
+(`L_sens + L_inv + I_abs`). Pre-register success before training:
+
+1. Full TCS improves held-out-category TCS more than target-removal-only.
+2. On POPE-popular it lowers related-present FPR, loses at most 0.5 TPR points,
+   and increases both balanced accuracy and MCC without a global no-answer
+   collapse.
+3. The direction repeats on at least one untouched task (POPE-random or MME
+   existence) before the method is promoted.
+4. If target-removal-only matches full TCS, or gains come only from a lower
+   yes-rate, the proposed selectivity mechanism is rejected.
+
+### 3.6 Closed route evidence — XEV
+
+Everything below this heading is the preserved design/failure trace and is
+superseded by §§3.1--3.5. Terms such as "current" and "next" describe the state
+at that historical iteration; they are not active instructions.
 
 **XEV (eXclusive-alternative Evidence Verification)** asks whether a proposed
 visual region supports the queried target more strongly than a locally
@@ -159,7 +252,7 @@ Yes/No margin; removing RoPE changes only region localization. A `raw` map remai
 available for controlled ablation. Each proposal has a clear-region view
 `I_keep`, a region-removed view `I_drop`, and a random same-area control.
 
-### 3.2 Rejected iteration-1 score
+#### XEV iteration 1: rejected keep/drop score
 
 The initial score treated
 
@@ -173,7 +266,7 @@ This is **rejected**. On balanced POPE-adversarial, target-only `E` has AUROC
 evidence with a large, asymmetric context-removal effect and reverses the class
 ordering. Oracle candidates cannot repair it (AUROC 0.348).
 
-### 3.3 Same-view criteria: rejected margins, current pairwise certificate
+#### XEV iterations 2--15: self-verification evidence trail
 
 The surviving direction keeps target and alternatives on the **same region view**.
 Let `T(t)` contain the target plus semantic equivalents/more-specific supports,
@@ -403,7 +496,7 @@ and the relation filter treats these near-equivalent names as competing. Metrics
 worsen and the gate fails. No untouched adversarial rows remain, so this failure
 cannot be repaired or revalidated on the same split.
 
-### 3.4 Candidate universe
+#### XEV candidate-universe audit
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
 separated:
@@ -456,53 +549,50 @@ spatial evidence alone has reached its limit on this benchmark.
 
 ## 4. Contribution framing (intended)
 
-Frame as an **analysis + diagnostic-criterion** paper, not a new-detector paper:
+Frame as an **analysis + causal-selectivity learning** paper, conditional on the
+new method passing confirmation:
 
 1. The **two-pronged critique** — attention-based detection and mitigation both
    fail under matched controls (length control for detection; answer-prior /
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive target-vs-alternative verification criterion that is accepted
-   only if it improves the related-present failure mode without trading away
-   plain-negative FPR or target recall.
+3. A constructive **target-causal selectivity** criterion: learn decisions that
+   are sensitive to removing the queried target and invariant to removing its
+   visible semantic neighbor. Promote it only if the full paired objective beats
+   target-removal-only and improves an untouched benchmark without yes/no prior
+   collapse.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
 - Prong 2 is scoped to attention *amplification* (PAI is inert).
 - Any absolute-gain claim must be reported against the honest baselines here.
+- If the new objective fails its confirmation gates, remove the constructive
+  claim and submit the work as an analysis paper; do not revive XEV.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV coverage:** preserve XEV v1 as the raw-attention held-out reference and
-  report its sparse action rate. Treat no-RoPE as the current unconfirmed
-  localization update. Iteration 10 already establishes a higher-coverage local
-  conflict proposal but rejects free-form full-image inventories and one-region
-  complements as its support check. Iteration 11 also rejects residual top-3
-  attention rectangles: they improve coverage but remain multi-object and yield
-  inconsistent local identities. Next test a target-focused or class-agnostic
-  object proposal that remains proposal-only; do not use attention mass,
-  proposal confidence, or generated inventory presence as decision evidence.
-  Native target grounding passes the coordinate sanity audit but its full-canvas
-  re-identification cycle has only 2/10 support recall. Next test exact box crops
-  as zoomed views and keep grounding output itself proposal-only.
-  Exact crops improve support recall to 4/10 at precision 1.0 but lose one
-  full-canvas success. The next rule must verify a frozen context pyramid without
-  tuning scales or treating scale agreement as proposal confidence.
-  Repeated alternative identity over `{1,2,4}` has zero action coverage on a
-  fresh window. Do not relax scales or aliases there; test repeated target-negative
-  signs plus one explicit open C alternative on separate development data.
-  That exact conjunction passes a ten-conflict historical mechanism gate with
-  2/2 corrections. Freeze it for fresh evaluation before changing any component.
-  It fails the final 240-row confirmation with 0 corrections / 1 TP veto. Reject
-  the extension and do not repair semantic aliases on the closed split.
-- **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
-  frozen until oracle/closed dominance improves held-out behavior, not only the
-  related-negative slice.
+- **XEV is closed:** preserve code and append-only evidence for reproducibility,
+  but do not tune aliases, candidates, boxes, scales, thresholds, or support
+  guards. The 4/960 result is a sparse numerical fluctuation, not the method.
+- **Counterfactual quality:** object removal can leave artifacts or regenerate
+  the category. Require all-instance masks, two removal seeds where feasible,
+  natural related-present negatives, and automatic plus manual quality checks.
+  Report the fraction discarded before any model result.
+- **Shortcut control:** binary SFT, target-removal-only, same-area background
+  removal, and related-neighbor removal are required ablations. Without them an
+  improvement could be edit detection or a generic no-answer shift.
+- **Vocabulary transfer:** train/evaluate with category-disjoint target splits.
+  COCO-only gains cannot support an open-vocabulary claim; LVIS expansion follows
+  only after a held-out-category pilot succeeds.
+- **Compute:** begin with a small Qwen3-VL LoRA mechanism pilot. Do not launch a
+  full GRPO/DPO run before the direct margin objective changes held-out TCS in the
+  predicted direction.
 - **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
   LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
   baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).
 - **Prong 1 boundary:** keep it as background; its only forward use is to
-  motivate a *relative* (target-vs-alternative) readout that survives the control.
+  motivate evidence criteria that survive confound controls. Do not claim all
+  internal signals fail.
 - **Object repetition control** (free, borrowed from HaloProbe) for detection.
 
 ## 6. Pointers
@@ -510,3 +600,7 @@ Honest guardrails carried over from the tear-down:
 - Repo layout: [project_structure.md](project_structure.md).
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
+- Refreshed route audit:
+  [2026-07-19_constructive_route_pivot.md](../literature/2026-07-19_constructive_route_pivot.md).
+- Pre-registered TCS pilot:
+  [tcs_iteration_1.md](iteration_protocols/tcs_iteration_1.md).
