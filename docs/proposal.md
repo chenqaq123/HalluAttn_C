@@ -102,7 +102,7 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 10 (2026-07-19):** the first usable constructive version
+**Status after iteration 11 (2026-07-19):** the first usable constructive version
 is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
@@ -117,6 +117,10 @@ broaden the local relation gate from C to any non-supporting identity raised
 local proposals from 1 to 21/120, but its complement-or-inventory support guard
 left 3 actions and all 3 vetoed true positives. This variant is rejected: the
 remaining problem is image-level coverage, not local-conflict recall alone.
+Residual top-3 attention coverage improves support recall but still leaves 10
+true-positive vetoes for 4 corrections on the 120-row development window. The
+variant is rejected: coarse attention boxes are not object-pure enough to make
+candidate-relative local comparisons globally consistent.
 
 ### 3.1 Principle and scope
 
@@ -307,6 +311,25 @@ where to inspect and contributes no decision score. A local conflict can support
 a veto only when no independently proposed region provides a positive target
 identity switch.
 
+Iteration 11 tests that multi-region hypothesis without global generation. It
+extracts three spatially distinct residual no-RoPE proposals and uses mirrored
+strict pairwise directions for local target support. The second proposal helps:
+among true-positive conflict rows, support recall rises from 0.292 at K=1 to
+0.750 at K=2. But K=3 adds conflicts without adding support, and the final rule
+still makes 14 actions with only 4 corrections and 10 true-positive vetoes
+(precision 0.286). TPR falls 0.9000 -> 0.7333 and MCC 0.8168 -> 0.7402.
+
+This failure exposes a deeper structural issue than proposal count. Five of the
+ten vetoed real targets are explicitly named by a target-free regional inventory,
+and eight have positive target keep margin in at least one proposal, yet no
+region passes the strict target-support direction. Ten rows even produce target
+support against one candidate and target conflict against another candidate in
+the same box. Attention-selected rectangles contain multiple valid identities;
+there is no single "main object" for a candidate-relative tournament to recover.
+**Reject residual multi-region attention coverage.** The next proposal mechanism
+must produce target-focused or object-pure regions before local verification;
+adding more coarse attention boxes or tuning pairwise margins is not justified.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -336,6 +359,10 @@ sufficient to recover local-conflict coverage (21/120), including candidates
 from the open inventory, but is not sufficient for safe image-level correction.
 Candidate acquisition is therefore no longer the immediate bottleneck; grounded
 multi-region target coverage is.
+Iteration 11 then shows that residual top-K attention coverage alone does not
+provide that grounding. It always returns three boxes and evaluates 436 pairwise
+comparisons, but the third box adds no target-support row. The immediate
+bottleneck is proposal purity and target coverage, not candidate quantity.
 
 ## 4. Contribution framing (intended)
 
@@ -360,9 +387,11 @@ Honest guardrails carried over from the tear-down:
   report its sparse action rate. Treat no-RoPE as the current unconfirmed
   localization update. Iteration 10 already establishes a higher-coverage local
   conflict proposal but rejects free-form full-image inventories and one-region
-  complements as its support check. Next test multi-region local verification,
-  with attention used only for diverse proposals and no generated global absence
-  claim.
+  complements as its support check. Iteration 11 also rejects residual top-3
+  attention rectangles: they improve coverage but remain multi-object and yield
+  inconsistent local identities. Next test a target-focused or class-agnostic
+  object proposal that remains proposal-only; do not use attention mass,
+  proposal confidence, or generated inventory presence as decision evidence.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

@@ -1,7 +1,7 @@
 # XEV Iteration 11 Protocol: Multi-Region Grounded Coverage
 
 Date: 2026-07-19
-Status: pre-registered exploratory development protocol
+Status: completed; development gate failed, variant rejected
 
 ## Motivation
 
@@ -83,3 +83,22 @@ Advance to a separately committed confirmatory protocol only if K=3 has:
 If the gate fails, separate proposal-coverage failure from verifier failure. Do
 not tune non-zero pairwise thresholds, proposal mass, proposal count, or region
 size on these rows.
+
+## Result
+
+All 120 rows receive exactly three proposals. K=1 produces 28 conflict rows and
+21 actions: 4 false-positive corrections / 17 true-positive vetoes. K=2 raises
+true-positive conflict support from 0.292 to 0.750 and reduces the actions to 4
+corrections / 10 true-positive vetoes. K=3 raises conflict rows from 45 to 49 but
+adds no target-support row and changes no final action. Final correction
+precision is 0.286; TPR falls 0.9000 -> 0.7333, balanced accuracy 0.9083 ->
+0.8583, and MCC 0.8168 -> 0.7402. The gate fails.
+
+The failure has both proposal and verifier components. Among the ten remaining
+true-positive vetoes, five have an exact target alias in at least one target-free
+regional open inventory and eight have a positive target keep margin somewhere,
+yet none receives strict pairwise target support. Across the full window, ten
+rows produce both a target-support switch and a target-conflict switch against
+different alternatives in the same region. The attention boxes are therefore
+not object-pure, and candidate-relative pairwise directions do not define one
+consistent regional identity. No parameter or threshold was changed post hoc.

@@ -873,3 +873,52 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter10_local_conflict_dev_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter10_local_conflict_dev_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 11: residual multi-region verification still backfires
+
+- **Pre-registered setup:** the same development-only POPE-adversarial rows
+  2520--2639 (120 balanced rows / 20 images). Iteratively extract up to three
+  no-RoPE top-30%-mass connected proposals, suppressing each selected grid box
+  plus its dilation halo before the next extraction. For every region, compare
+  the target against up to three positive-keep open/closed C/N candidates. A
+  strict target-no/alternative-yes switch is conflict; the exact mirrored signs
+  are target support. Veto a baseline Yes only with any conflict and no support
+  across the available proposal prefix. No inventories, complement margin,
+  generated S decision, oracle annotation, or fitted threshold is used.
+- **Sanity checks:** all 120 rows produce exactly three proposals; 436 pairwise
+  comparisons are evaluated with zero relation parse failures. The baseline
+  exactly reproduces iteration 10: TP/FP/TN/FN = 54/5/55/6, balanced accuracy
+  0.9083, TPR 0.9000, FPR 0.0833, and MCC 0.8168. Mean runtime is 8.10 s/row on
+  two RTX 4090s.
+- **Paired proposal-prefix result:**
+
+  | prefix | conflict rows | target-support rows | TP-conflict support | actions | FP corrections | TP vetoes | precision |
+  |---|---:|---:|---:|---:|---:|---:|---:|
+  | K=1 | 28 | 32 | 0.292 | 21 | 4 | 17 | 0.190 |
+  | K=2 | 45 | 45 | 0.750 | 14 | 4 | 10 | 0.286 |
+  | K=3 | 49 | 45 | 0.773 | 14 | 4 | 10 | 0.286 |
+
+- **Behavior at K=3:** TP/FP/TN/FN becomes 44/1/59/16. FPR improves 0.0833 ->
+  0.0167, but TPR collapses 0.9000 -> **0.7333**; balanced accuracy falls to
+  **0.8583** and MCC to **0.7402**. Every recall/precision/aggregate gate fails.
+  The third proposal adds four conflict rows and no target-support row.
+- **Failure decomposition:** five of the ten vetoed true targets have an exact
+  target alias in at least one regional target-free open inventory (`wine glass`,
+  `umbrella`, `bench`, `surfboard`, or `backpack`), and eight have positive target
+  keep margin somewhere. Thus at least half are not simple target-candidate
+  recall failures. Ten rows have a target-support direction against one candidate
+  and a conflict direction against another candidate in the same region. A coarse
+  attention rectangle contains multiple objects, so candidate-relative pairwise
+  answers do not form one consistent region identity.
+- **False-positive audit:** all five baseline FPs form a conflict; four are
+  corrected. One absent backpack receives false regional support against `wall`
+  and is suppressed. Mirroring the directional signs therefore does not make
+  positive support intrinsically grounded.
+- **Decision:** reject residual multi-region attention coverage and do not tune
+  K, mass, region size, or pairwise thresholds. Multi-region search partly fixes
+  coverage but not proposal purity or verifier consistency. The next iteration
+  must obtain target-focused or object-pure proposals, with proposal confidence
+  still excluded from the final decision.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter11_multiregion_dev_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter11_multiregion_dev_summary.json`.

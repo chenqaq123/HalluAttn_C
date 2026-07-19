@@ -384,11 +384,15 @@ def pairwise_diagnostics(
                 **comparison,
             }
         )
+    regional_mode = any(
+        row.get("run", {}).get("global_support_sources") == "regions"
+        for row in rows
+    )
     return {
         "status": evaluation,
         "definition": {
             "candidate_sources": ["open", "closed"],
-            "target_named_in_open_guard": True,
+            "target_named_in_open_guard": not regional_mode,
             "candidate_keep_margin_min": 0.0,
             "candidate_limit": max(
                 int(row.get("pairwise_verification", {}).get("candidate_limit", 0))
@@ -442,6 +446,7 @@ def global_support_diagnostics(
     global_support_mask = np.zeros(len(rows), dtype=bool)
     inventory_support_mask = np.zeros(len(rows), dtype=bool)
     complement_support_mask = np.zeros(len(rows), dtype=bool)
+    regional_support_mask = np.zeros(len(rows), dtype=bool)
     certificate_mask = np.zeros(len(rows), dtype=bool)
     examples = []
     inventories = []
@@ -462,6 +467,9 @@ def global_support_diagnostics(
         )
         complement_support_mask[index] = bool(
             payload.get("complement_support_found", False)
+        )
+        regional_support_mask[index] = bool(
+            payload.get("regional_support_found", False)
         )
         certificate = payload.get("certificate")
         if certificate is not None:
@@ -488,6 +496,12 @@ def global_support_diagnostics(
                 "complement_support_found": bool(
                     payload.get("complement_support_found", False)
                 ),
+                "regional_support_found": bool(
+                    payload.get("regional_support_found", False)
+                ),
+                "regional_target_supports": payload.get(
+                    "regional_target_supports", []
+                ),
                 "inventory": payload.get("inventory", []),
                 "inventories": payload.get(
                     "inventories", [payload.get("inventory", [])]
@@ -506,6 +520,17 @@ def global_support_diagnostics(
         )
     if not np.any(local_mask):
         return None
+
+    support_sources = sorted(
+        {
+            row.get("global_support_verification", {}).get(
+                "global_support_sources",
+                row.get("run", {}).get("global_support_sources", "inventories"),
+            )
+            for row in rows
+            if row.get("global_support_verification", {}).get("enabled", False)
+        }
+    )
 
     baseline_predictions = baseline >= 0
     predictions = baseline_predictions.copy()
@@ -571,7 +596,14 @@ def global_support_diagnostics(
                 ),
                 "conditions": "selected relation and pairwise gates",
             },
-            "global_inventory": "two target-free full-image object lists",
+            "global_inventory": (
+                "not used"
+                if support_sources == ["regions"]
+                else "two target-free full-image object lists"
+            ),
+            "regional_verification": (
+                "strict target-first positive and alternative-first negative"
+            ),
             "support_matcher": sorted(
                 {
                     row.get("global_support_verification", {}).get(
@@ -586,21 +618,12 @@ def global_support_diagnostics(
                     )
                 }
             ),
-            "support_sources": sorted(
-                {
-                    row.get("global_support_verification", {}).get(
-                        "global_support_sources",
-                        row.get("run", {}).get(
-                            "global_support_sources", "inventories"
-                        ),
-                    )
-                    for row in rows
-                    if row.get("global_support_verification", {}).get(
-                        "enabled", False
-                    )
-                }
+            "support_sources": support_sources,
+            "support": (
+                "any strict target-supporting region"
+                if support_sources == ["regions"]
+                else "selected inventory/complement support rule"
             ),
-            "support": "all inventories must match under the selected matcher",
             "action": "veto local proposal only when global target support is absent",
         },
         "local_proposal_count": int(local_mask.sum()),
@@ -609,6 +632,9 @@ def global_support_diagnostics(
             np.sum(local_mask & complement_support_mask)
         ),
         "global_support_count": int(np.sum(local_mask & global_support_mask)),
+        "regional_support_count": int(
+            np.sum(local_mask & regional_support_mask)
+        ),
         "mean_inventory_size": float(np.mean(inventories)),
         "trigger_count": count,
         "false_positive_corrections": corrections,
@@ -625,6 +651,88 @@ def global_support_diagnostics(
             "passed": passed,
         },
         "examples": examples,
+    }
+
+
+def regional_coverage_diagnostics(
+    rows: list[dict],
+    labels: np.ndarray,
+    baseline: np.ndarray,
+) -> dict | None:
+    """Replay the grounded regional rule for every available proposal prefix."""
+
+    enabled = any(
+        row.get("global_support_verification", {}).get("global_support_sources")
+        == "regions"
+        for row in rows
+    )
+    if not enabled:
+        return None
+
+    baseline_predictions = baseline >= 0
+    max_regions = max(len(row.get("regions", [])) for row in rows)
+    proposal_counts = [len(row.get("regions", [])) for row in rows]
+    prefixes = []
+    for region_limit in range(1, max_regions + 1):
+        conflict_mask = np.zeros(len(rows), dtype=bool)
+        support_mask = np.zeros(len(rows), dtype=bool)
+        pairwise_count = 0
+        for index, row in enumerate(rows):
+            for region in row.get("regions", [])[:region_limit]:
+                payload = region.get("pairwise_verification", {})
+                pairwise_count += len(payload.get("comparisons", []))
+                conflict_mask[index] |= (
+                    payload.get("local_identity_proposal") is not None
+                )
+                support_mask[index] |= payload.get("local_target_support") is not None
+
+        action_mask = baseline_predictions & conflict_mask & ~support_mask
+        predictions = baseline_predictions.copy()
+        predictions[action_mask] = False
+        action_count = int(action_mask.sum())
+        corrections = int(np.sum(action_mask & (labels == 0)))
+        true_positive_vetoes = int(np.sum(action_mask & (labels == 1)))
+        true_conflicts = conflict_mask & (labels == 1)
+        false_conflicts = conflict_mask & (labels == 0)
+        prefixes.append(
+            {
+                "region_limit": region_limit,
+                "rows_with_conflict": int(conflict_mask.sum()),
+                "rows_with_target_support": int(support_mask.sum()),
+                "pairwise_comparison_count": pairwise_count,
+                "tp_conflict_support_rate": (
+                    float(np.sum(true_conflicts & support_mask) / true_conflicts.sum())
+                    if np.any(true_conflicts)
+                    else None
+                ),
+                "fp_conflict_false_support_rate": (
+                    float(np.sum(false_conflicts & support_mask) / false_conflicts.sum())
+                    if np.any(false_conflicts)
+                    else None
+                ),
+                "action_count": action_count,
+                "false_positive_corrections": corrections,
+                "true_positive_vetoes": true_positive_vetoes,
+                "correction_precision": (
+                    corrections / action_count if action_count else None
+                ),
+                "behavior": binary_metrics(labels, predictions),
+            }
+        )
+
+    return {
+        "definition": {
+            "conflict": "target-first < 0 and alternative-first > 0",
+            "target_support": "target-first > 0 and alternative-first < 0",
+            "action": "baseline Yes and any conflict and no target support",
+            "thresholds": 0.0,
+        },
+        "proposal_count": {
+            "minimum": int(min(proposal_counts)),
+            "maximum": int(max(proposal_counts)),
+            "mean": float(np.mean(proposal_counts)),
+        },
+        "prefixes": prefixes,
     }
 
 
@@ -715,6 +823,7 @@ def main() -> None:
     global_summary = global_support_diagnostics(
         rows, labels, baseline, args.pairwise_evaluation
     )
+    regional_summary = regional_coverage_diagnostics(rows, labels, baseline)
     baseline_yes = baseline >= 0
     payload = {
         "inputs": args.inputs,
@@ -737,6 +846,7 @@ def main() -> None:
         "identity_switch_certificate": certificate_diagnostics(rows, labels, baseline),
         "pairwise_verification": pairwise_summary,
         "global_support_verification": global_summary,
+        "regional_coverage_verification": regional_summary,
         "coverage_funnel": {
             "baseline_yes": int(baseline_yes.sum()),
             "baseline_false_positives": int(

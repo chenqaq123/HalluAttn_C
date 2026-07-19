@@ -763,3 +763,35 @@ never constitutes evidence.
 
 **Evidence:** `docs/experiment_results.md` iteration-10 entry;
 `experiments/qwen3vl_xev/iter10_local_conflict_dev_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 11: rejected coarse multi-region attention coverage
+
+**What changed:** Added residual diverse region proposals, strict mirrored
+regional target-support certificates, and analyzer replay for every K=1/2/3
+proposal prefix. Exact target mention in an open regional inventory no longer
+short-circuits pairwise verification in regional-support mode. Existing connected
+proposal and XEV-v1 paths remain available.
+
+**Experiment:** On development rows 2520--2639, every sample receives three
+regions and the baseline exactly reproduces. K=1 makes 21 actions (4 corrections
+/ 17 TP vetoes). K=2 raises TP-conflict support from 0.292 to 0.750 and reduces
+the result to 4 / 10. K=3 adds four conflict rows but no support or action change.
+Final precision is 0.286; TPR falls 0.9000 to 0.7333, balanced accuracy to 0.8583,
+and MCC to 0.7402. The pre-registered gate fails.
+
+**Diagnosis:** The failure is partly target coverage and partly region identity.
+Five of ten vetoed real targets are already named in a regional open inventory,
+and eight have positive keep margin in some region, but strict pairwise support
+is absent. Ten rows support the target against one candidate and conflict with it
+against another candidate in the same region. Residual attention boxes are
+spatially distinct but still multi-object; a binary candidate-relative test has
+no unique regional identity to recover.
+
+**Decision / proposal change:** Reject the variant without threshold tuning.
+Attention remains admissible as a proposal source, but increasing K cannot be the
+constructive contribution. The next proposal must be target-focused or
+class-agnostic and object-pure, after which the verifier can be retested. Scores
+or confidences from that proposal stage must not become decision evidence.
+
+**Evidence:** `docs/experiment_results.md` iteration-11 entry;
+`experiments/qwen3vl_xev/iter11_multiregion_dev_summary.json` (git-ignored).

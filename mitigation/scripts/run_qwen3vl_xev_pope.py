@@ -40,10 +40,12 @@ from mitigation.src.xev import (  # noqa: E402
     pairwise_question,
     parse_candidate_list,
     parse_relation_labels,
+    propose_diverse_regions,
     propose_regions,
     random_bbox_like,
     relative_verification_score,
     robust_local_identity_proposal,
+    robust_local_target_support,
     select_pairwise_candidates,
 )
 
@@ -82,6 +84,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--proposal_mass", type=float, default=0.30)
     parser.add_argument("--max_regions", type=int, default=1)
+    parser.add_argument(
+        "--proposal_strategy",
+        choices=("connected", "diverse"),
+        default="connected",
+    )
     parser.add_argument("--closed_k", type=int, default=8)
     parser.add_argument("--max_open_candidates", type=int, default=6)
     parser.add_argument("--pairwise_top_k", type=int, default=0)
@@ -108,7 +115,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--global_support_sources",
-        choices=("inventories", "complement", "either"),
+        choices=("inventories", "complement", "either", "regions"),
         default="inventories",
     )
     parser.add_argument("--global_inventory_limit", type=int, default=12)
@@ -641,7 +648,12 @@ def process_record(
     attention, baseline_margin, attention_metadata = engine.attention_and_margin(
         image, target, record["question"]
     )
-    proposals = propose_regions(
+    proposal_fn = (
+        propose_diverse_regions
+        if args.proposal_strategy == "diverse"
+        else propose_regions
+    )
+    proposals = proposal_fn(
         attention,
         image.size,
         mass_fraction=args.proposal_mass,
@@ -718,6 +730,10 @@ def process_record(
                 relations=relations,
                 keep_margins=keep_margin_map,
                 limit=args.pairwise_top_k,
+                block_on_open_target=not (
+                    args.global_support_guard
+                    and args.global_support_sources == "regions"
+                ),
             )
             if baseline_margin >= 0
             else []
@@ -748,6 +764,7 @@ def process_record(
                 else ("C",)
             ),
         )
+        local_target_support = robust_local_target_support(pairwise_comparisons)
 
         random_bbox = random_bbox_like(
             proposal.bbox,
@@ -820,6 +837,7 @@ def process_record(
                     "comparisons": pairwise_comparisons,
                     "certificate": pairwise_certificate,
                     "local_identity_proposal": local_identity_proposal,
+                    "local_target_support": local_target_support,
                 },
             }
         )
@@ -858,6 +876,12 @@ def process_record(
         if (proposal := region["pairwise_verification"]["local_identity_proposal"])
         is not None
     ]
+    regional_target_supports = [
+        {"region_index": region["index"], **support}
+        for region in region_rows
+        if (support := region["pairwise_verification"]["local_target_support"])
+        is not None
+    ]
     global_inventory = []
     global_inventory_raw = ""
     global_inventories: list[list[str]] = []
@@ -868,6 +892,7 @@ def process_record(
     inventory_support_found = False
     complement_target_margin: float | None = None
     complement_support_found = False
+    regional_support_found = False
     global_support_found = False
     global_certificate = None
     if args.global_support_guard and local_identity_proposals:
@@ -876,8 +901,14 @@ def process_record(
             key=lambda item: item["target_preference"],
         )
         local_region = region_rows[int(best_local_proposal["region_index"])]
-        complement_target_margin = float(local_region["margins"][target]["drop"])
-        if args.global_support_sources != "complement":
+        if args.global_support_sources == "regions":
+            regional_support_found = bool(regional_target_supports)
+            global_support_found = regional_support_found
+        else:
+            complement_target_margin = float(
+                local_region["margins"][target]["drop"]
+            )
+        if args.global_support_sources in {"inventories", "either"}:
             for variant in range(args.global_inventory_repeats):
                 inventory, raw = global_candidates(
                     engine,
@@ -910,16 +941,19 @@ def process_record(
                     for inventory in global_inventories
                 ]
             inventory_support_found = all(global_support_votes)
-        global_support_found, complement_support_found = combine_global_target_support(
-            inventory_support_found,
-            complement_target_margin,
-            source=args.global_support_sources,
-        )
+        if args.global_support_sources != "regions":
+            global_support_found, complement_support_found = (
+                combine_global_target_support(
+                    inventory_support_found,
+                    complement_target_margin,
+                    source=args.global_support_sources,
+                )
+            )
         if not global_support_found:
             global_certificate = best_local_proposal
     image.close()
     return {
-        "schema_version": 5,
+        "schema_version": 6,
         "score_status": {
             "scores": "rejected-iteration1-keep-minus-drop",
             "current_diagnostic": "xev-v1-directional-alias-certificate",
@@ -976,6 +1010,8 @@ def process_record(
             "inventory_support_found": inventory_support_found,
             "complement_target_margin": complement_target_margin,
             "complement_support_found": complement_support_found,
+            "regional_target_supports": regional_target_supports,
+            "regional_support_found": regional_support_found,
             "relations": global_relations,
             "relation_filter": global_relation_metadata,
             "target_support_found": global_support_found,
@@ -996,6 +1032,10 @@ def main() -> None:
         raise ValueError("--global_support_guard requires --pairwise_top_k > 0")
     if args.global_inventory_repeats <= 0:
         raise ValueError("--global_inventory_repeats must be positive")
+    if args.max_regions <= 0:
+        raise ValueError("--max_regions must be positive")
+    if not 0 < args.proposal_mass <= 1:
+        raise ValueError("--proposal_mass must be in (0, 1]")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
@@ -1050,6 +1090,7 @@ def main() -> None:
                 "seed": args.seed,
                 "proposal_mass": args.proposal_mass,
                 "max_regions": args.max_regions,
+                "proposal_strategy": args.proposal_strategy,
                 "attention_map": args.attention_map,
                 "closed_k": args.closed_k,
                 "pairwise_top_k": args.pairwise_top_k,

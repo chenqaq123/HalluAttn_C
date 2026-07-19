@@ -15,10 +15,12 @@ from mitigation.src.xev import (
     pairwise_question,
     parse_candidate_list,
     parse_relation_labels,
+    propose_diverse_regions,
     propose_regions,
     random_bbox_like,
     relative_verification_score,
     robust_local_identity_proposal,
+    robust_local_target_support,
     select_pairwise_candidates,
 )
 
@@ -206,3 +208,41 @@ def test_global_target_support_can_union_complement_and_inventories() -> None:
     assert combine_global_target_support(False, 0.25, "either") == (True, True)
     assert combine_global_target_support(True, -0.25, "either") == (True, False)
     assert combine_global_target_support(False, -0.25, "either") == (False, False)
+
+
+def test_diverse_regions_suppress_previous_attention_box() -> None:
+    attention = np.zeros((8, 8), dtype=np.float32)
+    attention[1, 1] = 0.6
+    attention[6, 6] = 0.3
+    attention[1, 6] = 0.1
+    proposals = propose_diverse_regions(
+        attention,
+        (80, 80),
+        mass_fraction=0.3,
+        max_regions=3,
+        dilation=0,
+    )
+    assert [proposal.grid_bbox for proposal in proposals] == [
+        (1, 1, 2, 2),
+        (6, 6, 7, 7),
+        (6, 1, 7, 2),
+    ]
+    assert abs(sum(proposal.attention_mass for proposal in proposals) - 1.0) < 1e-6
+
+
+def test_regional_target_support_mirrors_directional_conflict() -> None:
+    target_support = {
+        "candidate": "person",
+        "relation": "N",
+        "sources": ["open"],
+        "target_preference": 4.0,
+        "target_first_margin": 5.0,
+        "alternative_first_margin": -3.0,
+    }
+    ambiguous = {
+        **target_support,
+        "target_first_margin": 5.0,
+        "alternative_first_margin": 1.0,
+    }
+    assert robust_local_target_support([target_support]) == target_support
+    assert robust_local_target_support([ambiguous]) is None

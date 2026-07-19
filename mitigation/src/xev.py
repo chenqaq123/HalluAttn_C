@@ -190,6 +190,56 @@ def propose_regions(
     return proposals
 
 
+def propose_diverse_regions(
+    attention: np.ndarray,
+    image_size: tuple[int, int],
+    mass_fraction: float = 0.30,
+    max_regions: int = 3,
+    dilation: int = 1,
+) -> list[RegionProposal]:
+    """Extract spatially distinct proposals by suppressing each selected box."""
+
+    values = np.asarray(attention, dtype=np.float64)
+    if values.ndim != 2 or values.size == 0:
+        raise ValueError(f"Expected a non-empty 2D attention map, got {values.shape}")
+    values = np.nan_to_num(values, nan=0.0, posinf=0.0, neginf=0.0)
+    values = np.maximum(values, 0.0)
+    if float(values.sum()) <= 0:
+        values = np.ones_like(values)
+    normalized = values / float(values.sum())
+    residual = normalized.copy()
+    proposals: list[RegionProposal] = []
+
+    for _ in range(max(0, max_regions)):
+        if float(residual.sum()) <= 0:
+            break
+        proposal = propose_regions(
+            residual,
+            image_size,
+            mass_fraction=mass_fraction,
+            max_regions=1,
+            dilation=dilation,
+        )[0]
+        x0, y0, x1, y1 = proposal.grid_bbox
+        original_mass = float(normalized[y0:y1, x0:x1].sum())
+        proposals.append(
+            RegionProposal(
+                bbox=proposal.bbox,
+                grid_bbox=proposal.grid_bbox,
+                attention_mass=original_mass,
+            )
+        )
+
+        padding = max(0, dilation)
+        sx0 = max(0, x0 - padding)
+        sy0 = max(0, y0 - padding)
+        sx1 = min(residual.shape[1], x1 + padding)
+        sy1 = min(residual.shape[0], y1 + padding)
+        residual[sy0:sy1, sx0:sx1] = 0.0
+
+    return proposals
+
+
 def make_counterfactual_views(
     image: Image.Image,
     bbox: tuple[int, int, int, int],
@@ -261,13 +311,16 @@ def select_pairwise_candidates(
     relations: dict[str, str],
     keep_margins: dict[str, float],
     limit: int = 3,
+    block_on_open_target: bool = True,
 ) -> list[dict]:
     """Rank target-free open/closed proposals for explicit visual comparison."""
 
     if limit <= 0:
         return []
     open_candidates = candidate_sources.get("open", [])
-    if any(lexical_equivalent(target, candidate) for candidate in open_candidates):
+    if block_on_open_target and any(
+        lexical_equivalent(target, candidate) for candidate in open_candidates
+    ):
         return []
 
     source_names: dict[str, set[str]] = {}
@@ -360,6 +413,28 @@ def robust_local_identity_proposal(
     if not alternatives:
         return None
     return min(alternatives, key=lambda item: float(item["target_preference"]))
+
+
+def robust_local_target_support(
+    comparisons: list[dict],
+    required_sources: tuple[str, ...] = (),
+    allowed_relations: tuple[str, ...] = ("C", "N"),
+) -> dict | None:
+    """Return a region-level target identity supported in both prompt orders."""
+
+    required = set(required_sources)
+    allowed = set(allowed_relations)
+    supports = [
+        comparison
+        for comparison in comparisons
+        if comparison.get("relation") in allowed
+        and required.issubset(comparison.get("sources", []))
+        and float(comparison["target_first_margin"]) > 0
+        and float(comparison["alternative_first_margin"]) < 0
+    ]
+    if not supports:
+        return None
+    return max(supports, key=lambda item: float(item["target_preference"]))
 
 
 def combine_global_target_support(

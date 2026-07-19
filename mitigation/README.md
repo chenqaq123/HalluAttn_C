@@ -155,6 +155,10 @@ Iteration 10 adds diagnostic-only alternatives:
 support source. The `either` development variant failed its pre-registered gate
 and is not an adopted method. Defaults remain `competing` and `inventories` for
 XEV-v1-compatible behavior.
+Iteration 11 adds `--proposal_strategy diverse --max_regions 3` and
+`--global_support_sources regions`. This residual multi-region variant uses
+strict regional pairwise directions instead of inventories, but it failed its
+development gate and is retained only for proposal/verifier diagnostics.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.
