@@ -587,3 +587,27 @@ iteration-2 holdout.
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-3 entry;
 `experiments/qwen3vl_xev/iter3_dev_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 4: rejected single-region pairwise hard veto
+
+**Experiment:** Ran the frozen iteration-3 rule on a new 480-row / 80-image
+POPE-adversarial window (rows 600--1079). Baseline balanced accuracy is 0.8708
+with 0.8250 TPR, 0.0833 FPR, and 0.7448 MCC. The certificate triggers six times;
+all six veto true positives and none correct false positives. TPR falls to
+0.8000, FPR is unchanged, balanced accuracy falls to 0.8583, and MCC to 0.7216.
+
+**Diagnosis:** A target-conditioned attention proposal can land on another real
+object while the queried target exists elsewhere. Pairwise comparison then
+correctly describes the selected region but cannot establish image-level target
+absence. C-relation errors for hypernyms/associated objects add another failure
+mode. Conversely, several baseline false positives have good local alternatives
+but positive target keep margins, so tightening that margin is not a solution.
+
+**Decision / proposal change:** Reject the single-region hard veto and demote
+pairwise preference to local evidence only. The next iteration must add an
+independent target-free, full-image support guard before any veto. Audit the six
+false triggers and candidate false positives first, then use a new window for any
+confirmatory claim.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-4 entry;
+`experiments/qwen3vl_xev/iter4_holdout_summary.json` (git-ignored).

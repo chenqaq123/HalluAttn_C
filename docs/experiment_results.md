@@ -622,3 +622,39 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter3_dev_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter3_dev_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 4: pairwise hard veto fails confirmatory holdout
+
+- **Frozen setup:** iteration-3 code and rule without modification on disjoint
+  POPE-COCO adversarial rows 600--1079: 480 rows, 240 yes / 240 no, 80 unique
+  images. This window overlaps neither rows 0--119 (development) nor 120--599
+  (iteration-2 holdout). One top-30%-mass region, open+closed candidates,
+  pairwise top-k=3, exact target-in-open guard, target keep `<0`, relation C, and
+  counterbalanced preference `<0`. All thresholds and the success gate were
+  fixed before inference. Two 4090 shards; mean runtime 2.89 s/sample.
+- **Vanilla anchor:** margin AUROC **0.9314**, AUPRC 0.9459; TP/FP/TN/FN =
+  198/20/220/42; balanced accuracy **0.8708**, TPR 0.8250, FPR 0.0833, MCC
+  0.7448, yes-rate 0.4542.
+- **Confirmatory result:** the certificate triggers 6 times and **all 6 are true-
+  positive vetoes**; it corrects 0 false positives (precision 0). TP/FP/TN/FN
+  becomes 192/20/220/48; TPR falls to 0.8000, FPR is unchanged, balanced accuracy
+  falls to **0.8583**, MCC to **0.7216**, and yes-rate to 0.4417. Every substantive
+  pre-registered gate fails; reject the single-region hard veto.
+- **Failure cases:** `motorcycle -> car`, `skateboard -> fence`, `spoon -> knife`,
+  `truck -> vehicle`, `car -> concrete curb`, and `bed -> couch`. Four are
+  coexisting/associated identities in a region that does not cover the real
+  target; two also expose C-relation errors (`vehicle` is a hypernym and curb is
+  associated with car). The pairwise margins can be locally coherent while the
+  image-level absence inference is wrong.
+- **False-positive audit:** among the baseline's 20 FPs, several have plausible
+  pairwise alternatives (`chair -> couch`, `handbag -> backpack`, `bicycle ->
+  motorcycle`) but are blocked because target keep margin is positive. Thus
+  tightening the one-region target gate trades recall and precision rather than
+  solving coverage.
+- **Decision:** retain counterbalanced pairwise comparison only as a local
+  identity test. Replace single-region negative target margin with a target-free
+  full-image support guard, evaluated lazily on preliminary local triggers. A
+  local alternative cannot by itself prove image-level absence.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter4_holdout_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter4_holdout_summary.json`.

@@ -102,13 +102,13 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 3 development (2026-07-19):** the first usable method
-candidate is implemented, but is not yet a confirmed result. The original
-symmetric keep/drop score and exact open/closed candidate intersection are both
-rejected. A zero-threshold, counterbalanced pairwise identity certificate
-corrects 2/4 baseline false positives with no true-positive veto on the original
-120-row development set (balanced accuracy 0.8833 -> 0.9000). It is frozen for a
-new disjoint holdout; no positive claim is made until that gate passes.
+**Status after iteration 4 (2026-07-19):** there is no confirmed constructive
+method yet. The original symmetric keep/drop score, exact candidate intersection,
+and the iteration-3 single-region pairwise hard veto are all rejected. The last
+looked promising on 120 development rows, then failed on 480 disjoint rows: all
+6 triggers vetoed true positives and corrected no false positives. Pairwise
+comparison remains a useful *local identity* readout, but one attention-selected
+region cannot certify target absence at image level.
 
 ### 3.1 Principle and scope
 
@@ -203,6 +203,21 @@ and MCC 0.7705 -> 0.8072. This is a development result, not confirmation. The
 disjoint holdout must produce at least 3 triggers, correction precision >= 2/3,
 lower FPR, TPR loss <= 0.005, and non-decreasing MCC.
 
+It fails that holdout decisively. On POPE-adversarial rows 600--1079, the frozen
+rule triggers 6 times, all on true positives (`motorcycle -> car`, `skateboard ->
+fence`, `spoon -> knife`, `truck -> vehicle`, `car -> concrete curb`, `bed ->
+couch`). TPR falls 0.8250 -> 0.8000, FPR stays 0.0833, balanced accuracy falls
+0.8708 -> 0.8583, and MCC falls 0.7448 -> 0.7216. **Reject the single-region hard
+veto.** Its local comparison may correctly identify another visible object, but
+that does not imply the queried target is absent elsewhere.
+
+The next design must separate local contradiction from global coverage. A local
+pairwise alternative can propose a veto, but a target-free full-image inventory
+must first fail to find any semantic support for the target. This global support
+guard will be evaluated lazily only on preliminary triggers. It replaces the
+invalid assumption that negative target margin in one attention region means
+image-level absence.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -243,10 +258,9 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV confirmatory gate:** evaluate the frozen zero-threshold pairwise
-  certificate on a new disjoint POPE window. Only after it passes test
-  multi-region proposal recall. Do not revive keep-minus-drop or exact candidate
-  intersection.
+- **XEV global-support gate:** add target-free full-image support search before
+  any local pairwise veto, first auditing all iteration-4 failure triggers. Do not
+  treat one region's negative target margin as image-level absence.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.
