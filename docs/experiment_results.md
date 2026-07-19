@@ -470,3 +470,78 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   (+5.53pt); accuracy 83.27%→82.27% (−1.00pt), precision 84.70%→80.75%,
   MCC 0.666→0.646. ClearSight acts as a one-directional no→yes intervention;
   its extra false positives outnumber corrected false negatives by 30.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 1: symmetric keep/drop evidence fails
+
+- **Question:** can an attention-proposed region verify a target by contrasting
+  target evidence against open-vocabulary / COCO / oracle alternatives? This is
+  the first constructive-method pilot after the 2026-07-07 restart.
+- **Setup:** `Qwen3-VL-8B-Instruct`, local copy at
+  `/home/chenguanxu/models/Qwen3-VL-8B-Instruct`, Transformers 4.57.6, bf16 eager
+  attention. POPE-COCO adversarial first 120 rows = 60 yes / 60 no, 20 unique
+  images. One proposal/question from Qwen text layers 18–29, mean over heads and
+  layers, top-30%-cumulative visual-attention components, fixed 200704 image
+  pixels (roughly 187–256 merged visual tokens). `I_keep` keeps the proposal
+  clear and blurs the rest; `I_drop` does the complement; a random same-area box
+  is retained as control. Two 4090 shards, 3.65 s/sample mean. Planned score:
+  `E(h,R)=m(h,I_keep)-m(h,I_drop)` and target support minus strongest positive
+  competing `E`. Candidate sources: COCO-80 train NPMI top-8 (`closed`),
+  target-free clear-region inventory (`open`), and COCO GT-present objects
+  (`oracle`, ceiling only), all passed through an S/C/N semantic relation filter.
+  Target/full/keep/drop prompts reuse each POPE question exactly; only alternative
+  hypotheses use generated existence-question templates.
+- **Vanilla full-image anchor:** margin AUROC **0.9346**, AUPRC 0.9460; TP/FP/TN/FN
+  = 50/4/56/10, accuracy = balanced accuracy **0.8833**, FPR 0.0667, MCC 0.7705,
+  yes-rate 0.450.
+- **Planned keep-minus-drop score fails and reverses ordering:**
+
+  | score | AUROC | AUPRC | mean yes | mean no |
+  |---|---:|---:|---:|---:|
+  | target-only `E` | **0.3432** | 0.4485 | -1.217 | 4.246 |
+  | random same-area `E` | **0.1808** | 0.3654 | -8.604 | 1.685 |
+  | closed relative `E` | 0.4079 | 0.4884 | -3.638 | -0.275 |
+  | open relative `E` | 0.4032 | 0.4861 | -0.533 | 3.348 |
+  | oracle relative `E` | **0.3483** | 0.4446 | -1.675 | 3.658 |
+
+- **Root cause from saved-margin decomposition:** `m(target,I_keep)` by itself is
+  directionally valid (AUROC **0.8383**, means yes/no 4.129/−5.946), and target
+  removal `m(full)-m(drop)` is weaker but valid (AUROC **0.7314**, means
+  4.021/0.269). Their symmetric difference is invalid because `I_keep` removes
+  most context while `I_drop` preserves most context: `keep-full` is −5.238 on
+  positives but +3.977 on negatives. The contrast therefore measures isolated-
+  region yes-bias/context loss as much as target evidence. **Reject
+  `m_keep-m_drop` as the XEV evidence definition.**
+- **Post-hoc mechanism diagnostic (not a pre-registered method result):** on the
+  same keep view, penalize an alternative only when it outranks target support:
+  `d=max(0,m_alt-m_target)`, score `m_target-d`.
+
+  | candidate source | AUROC | all-neg FPR @ matched 80% TPR | related-present FPR |
+  |---|---:|---:|---:|
+  | target keep margin (no candidates) | **0.8383** | 0.3500 | 0.5000 |
+  | closed dominance-gated | 0.8339 | **0.3167** | **0.2500** |
+  | oracle dominance-gated | 0.8207 | 0.3333 | **0.2500** |
+  | open dominance-gated | 0.8175 | 0.3500 | 0.4375 |
+
+  Ties make the achieved closed/oracle/open TPR 0.8167. The alternative mechanism
+  cuts the 16-example related-present FPR slice, but does not improve overall
+  ranking. Subtracting competitor excess from the full-image baseline also fails
+  the held-out behavior gate: closed/oracle test balanced accuracy **0.8333** vs
+  vanilla **0.8571**; open is unchanged at 0.8571. This is not yet a mitigation.
+- **Candidate diagnosis:** open generation yields 4.625 phrases/region and all 120
+  relation responses parse successfully (217 C / 1415 N / 40 S labels across
+  source unions). On the 16 oracle-related negative rows, closed candidates cover
+  **81.25%** of GT competing identities and produce alternative dominance in
+  62.5%; open candidates cover only **31.25%** (dominance 50.0%). The exact target
+  appears in the target-free open inventory on 48.33% of positives vs 5.0% of
+  negatives. Open vocabulary is feasible, but candidate/proposal recall is not
+  yet competitive with the closed diagnostic.
+- **Kill-criterion decision:** oracle dominance loses 0.0176 AUROC vs target keep,
+  but lowers related-present FPR by 0.25 at matched TPR. Therefore the narrow
+  alternative-confusion lead survives, while **candidate expansion is frozen**:
+  fix context matching, proposal recall, and dominance gating with closed/oracle
+  candidates before spending compute on broader open-vocabulary acquisition.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/round1_exact_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/round1_exact_summary.json`. Reproducible code:
+  `mitigation/src/xev.py`, `mitigation/scripts/run_qwen3vl_xev_pope.py`, and
+  `mitigation/scripts/analyze_qwen3vl_xev_pope.py`.

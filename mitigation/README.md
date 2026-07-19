@@ -31,15 +31,15 @@ mitigation/
 │   ├── run_task.py             # one task, method, and GPU shard
 │   ├── merge_evaluate.py       # merge shards and calculate metrics
 │   ├── compare_methods.py      # deltas against vanilla
-│   ├── audit_two_stage_calibration.py # OWLv2 TDEV calibration sensitivity
-│   ├── audit_hybrid_calibration.py # hybrid OWLv2 TDEV calibration sensitivity
-│   ├── evaluate_hybrid_region_rule.py # asymmetric OWLv2 TDEV gate/rescue rule
+│   ├── run_qwen3vl_xev_pope.py # Qwen3-VL XEV extraction/pilot runner
+│   ├── analyze_qwen3vl_xev_pope.py # offline XEV score and behavior analysis
 │   └── run_parallel_mitigation.sh
 └── src/
     ├── data.py                 # POPE/CHAIR input handling
     ├── decoding.py             # VCD/DAMRO-style decoding utilities
     ├── evaluation.py           # yes-shift and caption analyses
-    └── interventions.py        # attention/head method ports
+    ├── interventions.py        # attention/head method ports
+    └── xev.py                  # region/candidate/relative-evidence primitives
 ```
 
 ## Run
@@ -100,6 +100,39 @@ The audit keeps the paper-facing diagnostics separate from generation:
 
 The key quantity for POPE is `delta_tpr_minus_delta_fpr`. A positive recall
 delta is not evidence of mitigation if FPR rises by the same amount or more.
+
+## Qwen3-VL XEV Pilot
+
+The constructive XEV pilot uses Qwen3-VL and a newer Transformers version than
+the LLaVA reproduction environment. Keep it isolated; the first run used Python
+3.10 with `transformers==4.57.6`, `pyarrow`, `scipy`, and `scikit-learn`. The
+checkpoint is expected at `/home/chenguanxu/models/Qwen3-VL-8B-Instruct` by
+default.
+
+One-shard smoke test:
+
+```bash
+python mitigation/scripts/run_qwen3vl_xev_pope.py \
+  --output_file experiments/qwen3vl_xev/smoke.jsonl \
+  --limit 1 \
+  --device cuda:0
+```
+
+The 120-row iteration-1 pilot used two processes with `--num_shards 2`, matching
+`--limit 120`, and `--shard_idx 0/1` on `cuda:0/1`. Analyze any completed shards
+without loading the model:
+
+```bash
+python mitigation/scripts/analyze_qwen3vl_xev_pope.py \
+  experiments/qwen3vl_xev/round1_exact_shard0.jsonl \
+  experiments/qwen3vl_xev/round1_exact_shard1.jsonl \
+  --output_json experiments/qwen3vl_xev/round1_exact_summary.json
+```
+
+The runner is resumable by `question_id`. Outputs and the derived COCO knowledge
+cache remain under git-ignored `experiments/qwen3vl_xev/`. Iteration 1 rejected
+the symmetric keep-minus-drop score; see `docs/proposal.md` and
+`docs/experiment_results.md` before changing its formulas.
 
 ## Attention-Shift Audit
 

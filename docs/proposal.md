@@ -74,8 +74,10 @@ not every attention method.
 > adds yes-bias.
 
 The constructive answer — a verification criterion that neither reading nor
-amplifying attention provides — is **to be rebuilt** from this starting point
-(see §3).
+amplifying attention provides — is being rebuilt as **region-grounded
+target-vs-alternative verification** (see §3). Its first Qwen3-VL pilot has
+already rejected one tempting but invalid causal score; the alternative-
+competition mechanism remains under test rather than established.
 
 ## 2. Positioning vs. prior work
 
@@ -98,22 +100,88 @@ amplifying attention provides — is **to be rebuilt** from this starting point
   discriminative alternative, rather than reading/amplifying attention.
   (Design deliberately open — the previous TDEV family was torn down.)
 
-## 3. Method design — clean slate
+## 3. Constructive method under test — XEV
 
-The prior method superstructure (OWLv2-backed TDEV, internal hidden-margin /
-answer-confidence verifier, CHAIR answer-absence intervention, format-general
-adapter core) has been **removed** from this branch. What survives is only the
-apparatus needed to reproduce the two-pronged critique:
+**Status after iteration 1 (2026-07-19):** the method is a working hypothesis,
+not yet a positive result. The first 120-sample Qwen3-VL pilot rejected the
+original symmetric keep/drop score, while preserving a narrower signal for
+alternative dominance on related-present negatives. This section records the
+current design and the rejected variant so that later iterations do not quietly
+reuse it.
 
-- **Detection reproduction:** `detection/baselines/` (NLL, Entropy, IC, GLSim,
-  SVAR, PAS, Beyond-ADS/CGC) under the position/length-controlled metrics defined
-  in [design.md](design.md).
-- **Mitigation reproduction:** `mitigation/baselines/` (vanilla, PAI, ClearSight,
-  VisAttnSink, VCD, DAMRO, OPERA, SPIN) under the POPE/CHAIR behavioral protocol.
+### 3.1 Principle and scope
 
-The new method is to be designed from the two-pronged motivation. Nothing here
-commits to the previous TDEV instantiation; only the *problem statement* and the
-*baseline evidence* carry over.
+**XEV (eXclusive-alternative Evidence Verification)** asks whether a proposed
+visual region supports the queried target more strongly than a locally
+incompatible object identity. Attention is allowed only to generate high-recall
+region proposals; its magnitude is never treated as object evidence.
+
+For an object hypothesis `h`, image/view `I`, and yes/no question `q_h`, define
+the model-native margin
+
+    m(h, I) = log p(Yes | q_h, I) - log p(No | q_h, I).
+
+The implementation captures the first-answer-token attention row from Qwen3-VL
+layers 18–29, averages heads/layers, and turns the top 30% cumulative visual mass
+into connected proposals. Each proposal has a clear-region view `I_keep`, a
+region-removed view `I_drop`, and a random same-area control.
+
+### 3.2 Rejected iteration-1 score
+
+The initial score treated
+
+    E(h, R) = m(h, I_keep) - m(h, I_drop)
+
+as region evidence, then subtracted the strongest positive alternative `E`.
+This is **rejected**. On balanced POPE-adversarial, target-only `E` has AUROC
+0.343 (random-region control 0.181), despite the full-image margin reaching
+0.935. The problem is structural: `I_keep` removes most global context while
+`I_drop` preserves it. The keep-minus-drop contrast therefore mixes target
+evidence with a large, asymmetric context-removal effect and reverses the class
+ordering. Oracle candidates cannot repair it (AUROC 0.348).
+
+### 3.3 Current working criterion
+
+The next iteration keeps target and alternatives on the **same region view**.
+Let `T(t)` contain the target plus semantic equivalents/more-specific supports,
+and `C(t)` contain only competing whole-object identities (not hypernyms, parts,
+attributes, agents, associated objects, or unrelated objects):
+
+    u_R(t) = max_{h in T(t)} m(h, I_keep)
+    c_R(t) = max_{a in C(t)} m(a, I_keep)
+    d_R(t) = max(0, c_R(t) - u_R(t))
+    s_R(t) = u_R(t) - d_R(t).
+
+The dominance gate `d_R` matters: an alternative is not penalized merely because
+it is visible elsewhere or coexists with the target; it must locally outrank the
+target. In the iteration-1 post-hoc diagnostic, this reduces related-present FPR
+at matched 80% TPR from 0.50 (target-only keep margin) to 0.25 with closed/oracle
+candidates. It does **not** improve overall AUROC or held-out POPE behavior, so it
+is a mechanism lead, not a claimed method gain. Any behavior correction
+
+    m_final(t) = m(t, I_full) - lambda * max_R d_R(t)
+
+must pass held-out TPR/FPR and MCC gates before being adopted.
+
+### 3.4 Candidate universe
+
+XEV is **not limited to COCO categories**. Candidate sources are deliberately
+separated:
+
+- `closed`: top COCO-80 train-set NPMI neighbors, used as a reproducible
+  diagnostic baseline;
+- `open`: target-free object phrases generated from the clear region, followed
+  by an S/C/N semantic relation filter;
+- `oracle`: COCO ground-truth objects present in the image, used only as a
+  ceiling and kill criterion.
+
+Iteration 1 shows that vocabulary size is not yet the bottleneck. The open
+inventory returns 4.63 phrases/region with zero relation-output parse failures,
+but covers only 31.25% of oracle competing identities on related negatives,
+versus 81.25% for the closed diagnostic. More importantly, even oracle candidates
+do not improve overall behavior. Therefore candidate expansion is frozen until
+the region/scoring ceiling is fixed; open vocabulary remains the intended final
+scope, not the next engineering target.
 
 ## 4. Contribution framing (intended)
 
@@ -124,7 +192,9 @@ Frame as an **analysis + diagnostic-criterion** paper, not a new-detector paper:
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive verification criterion (TBD) that answers both failures.
+3. A constructive target-vs-alternative verification criterion that is accepted
+   only if it improves the related-present failure mode without trading away
+   plain-negative FPR or target recall.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
@@ -132,8 +202,12 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **Rebuild the constructive method** from the two motivations; do not resurrect
-  the torn-down TDEV code without re-justifying it.
+- **XEV region/scoring gate:** replace the rejected symmetric keep/drop score
+  with context-matched local competition; test proposal recall and multi-region
+  aggregation before scaling beyond the pilot.
+- **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
+  frozen until oracle/closed dominance improves held-out behavior, not only the
+  related-negative slice.
 - **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
   LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
   baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).

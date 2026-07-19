@@ -499,3 +499,40 @@ styling. Re-rendered from the existing mass-based cache without model loading.
 
 **Refs:** `mitigation/scripts/hcvr_lcvr_intervention.py`;
 `mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-19 — XEV iteration 1 on Qwen3-VL: rejected symmetric keep/drop evidence
+
+**What changed:** Established the first constructive-method implementation after
+the restart. Added `mitigation/src/xev.py` (POPE target parsing, cumulative-mass
+region proposals, matched keep/drop and random views, candidate/relation parsing,
+relative scores), `run_qwen3vl_xev_pope.py` (Qwen3-VL first-answer attention-row
+capture, COCO knowledge cache, closed/open/oracle candidates, S/C/N relation
+filter, resumable JSONL shards), `analyze_qwen3vl_xev_pope.py`, and focused unit
+tests. Copied `Qwen3-VL-8B-Instruct` to `/home/chenguanxu/models/` and used an
+isolated Transformers-4.57.6 environment so the LLaVA Transformers-4.48.1 setup
+was not modified. Fixed a smoke-test failure mode by chunking relation prompts to
+8 candidates (the original 12-label response hit the 32-token cap) and added a
+conservative rule for target-as-modifier phrases such as `snowboard boot`.
+
+**Experiment:** Ran a two-GPU, 120-row balanced POPE-COCO adversarial pilot (20
+images, 60 yes/60 no, one attention proposal). Full-image Qwen3 is strong (AUROC
+0.9346, balanced accuracy 0.8833). The planned
+`E=m(keep)-m(drop)` target score reverses the labels (AUROC 0.3432; random control
+0.1808), and oracle candidates do not rescue it (0.3483). Saved-margin analysis
+shows `m(keep)` alone is 0.8383 and `m(full)-m(drop)` is 0.7314: subtracting the
+complement mixes two views with very different retained context and creates the
+reversal.
+
+**Decision / proposal change:** Formally reject symmetric keep-minus-drop as
+XEV's evidence definition. Preserve the narrower hypothesis that a *locally
+dominant* mutually exclusive alternative is useful: a post-hoc same-view
+dominance gate lowers related-present FPR at matched 80% TPR from 0.50 to 0.25
+with closed/oracle candidates, but loses overall AUROC and does not improve
+held-out behavior. Update `docs/proposal.md` accordingly. The next iteration
+must fix context-matched region scoring and proposal recall, using closed/oracle
+candidates as diagnostic ceilings. Freeze open-vocabulary expansion until that
+ceiling improves overall held-out behavior; current open coverage of oracle
+related alternatives is only 31.25% vs 81.25% for closed candidates.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 entry; generated artifacts
+under git-ignored `experiments/qwen3vl_xev/`.
