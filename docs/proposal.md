@@ -102,14 +102,17 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 8 (2026-07-19):** the first usable constructive version
+**Status after iteration 9 (2026-07-19):** the first usable constructive version
 is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
 TPR falls only 0.8417 -> 0.8396, balanced accuracy rises 0.8823 -> 0.8844, and
 MCC rises 0.7671 -> 0.7719. It passes every pre-registered gate. The effect is
 sparse and small; current evidence supports a high-precision correction
-certificate, not a broad decoding replacement.
+certificate, not a broad decoding replacement. That held-out result used raw
+post-RoPE attention for localization. The current implementation defaults to a
+pre-RoPE localization map, but its behavior is not yet confirmed and the v1
+held-out claim must remain attributed to the raw map.
 
 ### 3.1 Principle and scope
 
@@ -123,10 +126,13 @@ the model-native margin
 
     m(h, I) = log p(Yes | q_h, I) - log p(No | q_h, I).
 
-The implementation captures the first-answer-token attention row from Qwen3-VL
-layers 18–29, averages heads/layers, and turns the top 30% cumulative visual mass
-into connected proposals. Each proposal has a clear-region view `I_keep`, a
-region-removed view `I_drop`, and a random same-area control.
+The implementation captures the first-answer-token Q/K from Qwen3-VL layers
+18–29 before multimodal RoPE, recomputes the localization-only attention row,
+averages heads/layers, and turns the top 30% cumulative visual mass into connected
+proposals. The original post-RoPE forward still produces the model answer and
+Yes/No margin; removing RoPE changes only region localization. A `raw` map remains
+available for controlled ablation. Each proposal has a clear-region view
+`I_keep`, a region-removed view `I_drop`, and a random same-area control.
 
 ### 3.2 Rejected iteration-1 score
 
@@ -263,6 +269,18 @@ pre-registered gate passes: 4 triggers >=3, precision 0.75 >=2/3, FPR decreases,
 TPR drop is 0.0021 <=0.005, and MCC increases. **Adopt this frozen rule as XEV
 v1**, while reporting the single support-recall failure and low 0.42% action rate.
 
+Iteration 9 audits that low action rate rather than treating it as an attention
+localization failure. The v1 funnel is 441 baseline-yes rows -> 242 rows with a
+pairwise comparison -> 176 negative-preference rows -> 7 strict local proposals
+-> 3 global-support suppressions -> 4 actions. On a paired 120-row development
+window, no-RoPE changes localization materially (only 42/120 proposal boxes are
+identical to raw; mean box IoU 0.628), but raw and no-RoPE both yield one strict
+local proposal, which global support suppresses, and zero actions. Therefore
+no-RoPE is retained as localization hygiene, not a coverage fix. The dominant
+bottleneck is the conjunction of closed-source provenance, C relation, and strict
+directional signs. The next method iteration must improve this proposal recall
+without weakening the independent image-level support check.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -283,6 +301,10 @@ do not improve overall behavior. Therefore candidate expansion is frozen until
 the region/scoring ceiling is fixed; open vocabulary remains the intended final
 scope, not the next engineering target. Exact open/closed intersection is also
 too sparse to serve as a certificate (zero triggers on 480 held-out rows).
+Iteration 9 sharpens the diagnosis: no-RoPE increases pairwise-scored rows from
+27 to 31 and negative-preference rows from 21 to 25 on the paired 120-row window,
+but both maps produce only one strict local proposal. Candidate/semantic gating,
+not the position prior, currently determines action coverage.
 
 ## 4. Contribution framing (intended)
 
@@ -303,9 +325,11 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV v1 scaling:** preserve the frozen rule and report its sparse action rate.
-  Next validate across POPE random/popular and at least one additional modern
-  LVLM before changing inventory size or candidate provenance.
+- **XEV coverage:** preserve XEV v1 as the raw-attention held-out reference and
+  report its sparse action rate. Treat no-RoPE as the current unconfirmed
+  localization update. Before broad external validation, replace the low-recall
+  closed+C local gate with a higher-coverage local proposal whose errors remain
+  controlled by an independent image-level target-support check.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

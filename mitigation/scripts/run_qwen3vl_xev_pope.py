@@ -73,6 +73,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min_pixels", type=int, default=200704)
     parser.add_argument("--max_pixels", type=int, default=200704)
     parser.add_argument("--attention_layers", default="18:30")
+    parser.add_argument(
+        "--attention_map",
+        choices=("no_rope", "raw"),
+        default="no_rope",
+        help="Attention map used only for region localization.",
+    )
     parser.add_argument("--proposal_mass", type=float, default=0.30)
     parser.add_argument("--max_regions", type=int, default=1)
     parser.add_argument("--closed_k", type=int, default=8)
@@ -233,6 +239,7 @@ class Qwen3VLEngine:
         self.merge_size = int(self.processor.image_processor.merge_size)
         layer_count = int(self.model.config.text_config.num_hidden_layers)
         self.attention_layers = parse_layer_range(args.attention_layers, layer_count)
+        self.attention_map = args.attention_map
 
     def _single_token_id(self, text: str) -> int:
         ids = self.processor.tokenizer.encode(text, add_special_tokens=False)
@@ -351,26 +358,59 @@ class Qwen3VLEngine:
 
     @contextmanager
     def _capture_visual_rows(self, visual_positions: torch.Tensor):
-        original = modeling_qwen3_vl.eager_attention_forward
+        original_attention = modeling_qwen3_vl.eager_attention_forward
+        original_rope = modeling_qwen3_vl.apply_rotary_pos_emb
         rows: dict[int, torch.Tensor] = {}
         wanted_layers = self.attention_layers
+        pre_rope_qk: tuple[torch.Tensor, torch.Tensor] | None = None
+
+        def wrapped_rope(query, key, cos, sin, *args, **kwargs):
+            nonlocal pre_rope_qk
+            pre_rope_qk = (query, key)
+            return original_rope(query, key, cos, sin, *args, **kwargs)
 
         def wrapped(module, query, key, value, attention_mask, *args, **kwargs):
-            output, weights = original(
+            nonlocal pre_rope_qk
+            output, weights = original_attention(
                 module, query, key, value, attention_mask, *args, **kwargs
             )
             if isinstance(module, modeling_qwen3_vl.Qwen3VLTextAttention):
                 layer_index = int(module.layer_idx)
                 if layer_index in wanted_layers:
                     indices = visual_positions.to(weights.device)
-                    rows[layer_index] = weights[0, :, -1, indices].float().mean(0).cpu()
+                    if self.attention_map == "raw":
+                        visual_row = weights[0, :, -1, indices].float().mean(0)
+                    else:
+                        if pre_rope_qk is None:
+                            raise RuntimeError(
+                                f"Missing pre-RoPE Q/K for attention layer {layer_index}"
+                            )
+                        pre_query, pre_key = pre_rope_qk
+                        key_states = modeling_qwen3_vl.repeat_kv(
+                            pre_key, module.num_key_value_groups
+                        )
+                        no_rope_logits = torch.matmul(
+                            pre_query[:, :, -1:, :].float(),
+                            key_states.transpose(2, 3).float(),
+                        ) * float(module.scaling)
+                        if attention_mask is not None:
+                            no_rope_logits += attention_mask[
+                                :, :, -1:, : key_states.shape[-2]
+                            ].float()
+                        no_rope_weights = torch.softmax(no_rope_logits, dim=-1)
+                        visual_row = no_rope_weights[0, :, -1, indices].mean(0)
+                    rows[layer_index] = visual_row.cpu()
+                pre_rope_qk = None
             return output, weights
 
         modeling_qwen3_vl.eager_attention_forward = wrapped
+        if self.attention_map == "no_rope":
+            modeling_qwen3_vl.apply_rotary_pos_emb = wrapped_rope
         try:
             yield rows
         finally:
-            modeling_qwen3_vl.eager_attention_forward = original
+            modeling_qwen3_vl.eager_attention_forward = original_attention
+            modeling_qwen3_vl.apply_rotary_pos_emb = original_rope
 
     def attention_and_margin(
         self, image, target: str, question: str
@@ -406,6 +446,7 @@ class Qwen3VLEngine:
             (logits[self.yes_token_id] - logits[self.no_token_id]).float().cpu()
         )
         metadata = {
+            "map_type": self.attention_map,
             "grid_thw": [int(value) for value in grid_thw],
             "attention_grid": [grid_height, grid_width],
             "layers": sorted(self.attention_layers),
@@ -851,7 +892,7 @@ def process_record(
             global_certificate = best_local_proposal
     image.close()
     return {
-        "schema_version": 3,
+        "schema_version": 4,
         "score_status": {
             "scores": "rejected-iteration1-keep-minus-drop",
             "current_diagnostic": "xev-v1-directional-alias-certificate",
@@ -977,6 +1018,7 @@ def main() -> None:
                 "seed": args.seed,
                 "proposal_mass": args.proposal_mass,
                 "max_regions": args.max_regions,
+                "attention_map": args.attention_map,
                 "closed_k": args.closed_k,
                 "pairwise_top_k": args.pairwise_top_k,
                 "global_support_guard": args.global_support_guard,

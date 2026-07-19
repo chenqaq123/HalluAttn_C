@@ -122,6 +122,7 @@ python mitigation/scripts/run_qwen3vl_xev_pope.py \
   --local_pairwise_gate directional \
   --global_support_matcher aliases \
   --global_inventory_repeats 2 \
+  --attention_map no_rope \
   --device cuda:0
 ```
 
@@ -138,6 +139,10 @@ python mitigation/scripts/analyze_qwen3vl_xev_pope.py \
 ```
 
 `--pairwise_top_k 3` enables the iteration-3 counterbalanced pairwise verifier.
+`--attention_map no_rope` is the current default: it recomputes the localization
+row from pre-RoPE Q/K without changing the model forward or Yes/No logits. Use
+`--attention_map raw` only for the post-RoPE ablation and exact XEV-v1
+reproduction.
 The iteration-5 image-level certificate additionally uses
 `--global_support_guard --local_candidate_agreement closed
 --local_pairwise_gate directional --global_support_matcher aliases

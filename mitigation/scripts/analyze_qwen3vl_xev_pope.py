@@ -656,6 +656,13 @@ def main() -> None:
         dev_mask = np.arange(len(rows)) % 2 == 0
     test_mask = ~dev_mask
 
+    pairwise_summary = pairwise_diagnostics(
+        rows, labels, baseline, args.pairwise_evaluation
+    )
+    global_summary = global_support_diagnostics(
+        rows, labels, baseline, args.pairwise_evaluation
+    )
+    baseline_yes = baseline >= 0
     payload = {
         "inputs": args.inputs,
         "primary_score_status": "rejected-iteration1-keep-minus-drop",
@@ -671,16 +678,39 @@ def main() -> None:
         ),
         "baseline": {
             "ranking": ranking_metrics(labels, baseline),
-            "behavior": binary_metrics(labels, baseline >= 0),
+            "behavior": binary_metrics(labels, baseline_yes),
         },
         "candidate_diagnostics": candidate_diagnostics(rows),
         "identity_switch_certificate": certificate_diagnostics(rows, labels, baseline),
-        "pairwise_verification": pairwise_diagnostics(
-            rows, labels, baseline, args.pairwise_evaluation
-        ),
-        "global_support_verification": global_support_diagnostics(
-            rows, labels, baseline, args.pairwise_evaluation
-        ),
+        "pairwise_verification": pairwise_summary,
+        "global_support_verification": global_summary,
+        "coverage_funnel": {
+            "baseline_yes": int(baseline_yes.sum()),
+            "baseline_false_positives": int(
+                np.sum(baseline_yes & (labels == 0))
+            ),
+            "pairwise_scored_rows": int(pairwise_summary["scored_rows"]),
+            "negative_preference_rows": int(
+                pairwise_summary["natural_zero"]["trigger_count"]
+            ),
+            "strict_local_proposals": int(
+                global_summary["local_proposal_count"] if global_summary else 0
+            ),
+            "global_support_suppressions": int(
+                global_summary["inventory_support_count"] if global_summary else 0
+            ),
+            "final_actions": int(
+                global_summary["trigger_count"] if global_summary else 0
+            ),
+            "false_positive_corrections": int(
+                global_summary["false_positive_corrections"]
+                if global_summary
+                else 0
+            ),
+            "true_positive_vetoes": int(
+                global_summary["true_positive_vetoes"] if global_summary else 0
+            ),
+        },
         "methods": {},
         "posthoc_region_diagnostics": {},
         "calibration_split": {

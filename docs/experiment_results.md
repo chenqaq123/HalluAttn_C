@@ -787,3 +787,48 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter8_holdout_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter8_holdout_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 9: no-RoPE localization and coverage audit
+
+- **Question:** does removing the multimodal RoPE position prior from attention
+  localization fix XEV v1's very low 4/960 action rate?
+- **Implementation:** capture each selected text layer's Q/K immediately before
+  RoPE and recompute the first-answer-token attention distribution over the full
+  causal row. Only the map used for region proposal changes; the original
+  post-RoPE forward still produces hidden states and logits. `--attention_map
+  no_rope` is now the default, `raw` is retained for ablation, outputs use schema
+  v4, and the analyzer now emits a consolidated `coverage_funnel`.
+- **Faithfulness smoke:** on qid 2294, raw and no-RoPE baseline margins are both
+  0.25 while the proposal moves from `[40,480,320,640]` to `[0,0,200,80]`. Across
+  the seven iteration-8 strict-local cases, all baseline margins remain identical;
+  3/7 boxes are unchanged, 3 expand modestly, and qid 2294 has zero box overlap.
+- **Paired development setup:** POPE-adversarial rows 2520--2639, 120 balanced
+  rows / 20 images, otherwise the frozen XEV-v1 directional/alias configuration.
+  Run both raw and no-RoPE maps on the exact same rows. This is a localization and
+  coverage audit, not a confirmatory behavior test.
+- **Localization effect:** only 42/120 proposal boxes are exactly identical;
+  raw/no-RoPE box IoU has mean 0.628 and median 0.670, with 15/120 disjoint boxes.
+  All 120 baseline margins are exactly identical. RoPE removal therefore changes
+  localization materially without changing the base model decision.
+- **Coverage funnel:** baseline behavior is TP/FP/TN/FN = 54/5/55/6 for both.
+
+  | stage | raw | no-RoPE |
+  |---|---:|---:|
+  | baseline Yes | 59 | 59 |
+  | pairwise-scored rows | 27 | 31 |
+  | negative-preference rows | 21 | 25 |
+  | strict closed+C+directional local proposals | 1 | 1 |
+  | suppressed by global target support | 1 | 1 |
+  | final actions | **0** | **0** |
+
+- **Interpretation:** no-RoPE slightly increases broad pairwise coverage but does
+  not pass the strict local certificate more often. The earlier 4/960 result is
+  sparse because its funnel contracts 441 baseline Yes -> 242 pairwise-scored ->
+  176 negative preference -> 7 strict local -> 4 final actions. The coverage
+  bottleneck is the closed-source + C-relation + strict-direction conjunction,
+  not the position prior or final global guard. Keep no-RoPE as localization
+  hygiene, but do not claim it improves behavior. XEV v1's held-out numbers remain
+  tied to the raw map until the no-RoPE variant is separately confirmed.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter9_{no_rope_dev,raw_control}_shard{0,1}.jsonl` and
+  corresponding summaries.

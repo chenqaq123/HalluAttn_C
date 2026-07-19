@@ -703,3 +703,31 @@ validation across POPE splits and models, not another in-window threshold change
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-8 entry;
 `experiments/qwen3vl_xev/iter8_holdout_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 9: removed RoPE from localization and audited sparse coverage
+
+**What changed:** Added a Qwen3-VL localization-only no-RoPE path. The runner
+captures pre-RoPE Q/K, recomputes the last-query attention row without modifying
+the model forward, defaults `--attention_map` to `no_rope`, retains `raw` for
+ablation, records map type under schema v4, and exposes a consolidated analyzer
+coverage funnel.
+
+**Experiment:** A faithfulness smoke keeps the qid-2294 baseline margin exactly
+0.25 while moving its proposal. On paired POPE-adversarial rows 2520--2639,
+no-RoPE changes proposal geometry substantially (42/120 exact boxes, mean IoU
+0.628, 15 disjoint), but raw and no-RoPE both yield one strict local proposal,
+one global-support suppression, and zero final actions. No-RoPE raises broad
+pairwise-scored rows 27 -> 31 and negative preferences 21 -> 25 without improving
+the strict stage.
+
+**Decision / proposal change:** Keep no-RoPE as the default localization hygiene
+fix, but do not transfer XEV v1's raw-map held-out claim to it. The 4/960 action
+rate is caused by the closed provenance + C relation + strict directional gate:
+the v1 funnel is 441 baseline Yes -> 242 pairwise -> 176 negative preference -> 7
+strict local proposals -> 4 actions. The next iteration must increase local
+proposal recall instead of adding another hard gate; retain an independent
+image-level target-support check to protect coexisting targets.
+
+**Evidence:** `docs/experiment_results.md` iteration-9 entry;
+`experiments/qwen3vl_xev/iter9_{no_rope_dev,raw_control}_summary.json`
+(git-ignored).
