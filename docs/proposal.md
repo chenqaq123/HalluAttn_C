@@ -102,7 +102,7 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 14 (2026-07-19):** the first usable constructive version
+**Status after iteration 15 stage 1 (2026-07-19):** the first usable constructive version
 is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
@@ -131,6 +131,9 @@ multi-scale evidence problem, not a choice between one global and one local view
 A fixed `{1,2,4}` crop pyramid confirms the value of the target-support guard on
 a fresh 120-row window, but requiring one alternative name to repeat across
 scales yields zero actions. The pyramid remains a lead, not an adopted extension.
+Replicating negative target evidence instead, while retaining one independently
+verified open C alternative, yields 2/2 corrections and no TP vetoes on a
+historical mechanism audit. This is promising but not yet a held-out extension.
 
 ### 3.1 Principle and scope
 
@@ -379,6 +382,15 @@ fixed queried hypothesis itself: require negative target margins at multiple
 scales, plus one target-free C alternative that independently passes the strict
 directional identity test.
 
+Iteration 15 stage 1 freezes that conjunction. A box must have negative target
+margins at two or more scales and at least one target-free open C alternative
+with a strict directional switch; any scale with cycle-consistent target support
+blocks the action. On ten historical development conflicts, it corrects absent
+`handbag` and `bicycle` with no TP veto. In the 480-row replay, FPR falls 0.0833
+-> 0.0750 at unchanged TPR and MCC rises 0.7448 -> 0.7538. Because these rows are
+not fresh, the rule must remain a candidate until it passes a separately
+committed 480-row evaluation unchanged.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -422,6 +434,9 @@ over a predefined object-to-context scale space, not one chosen crop.
 Iteration 14 shows that candidate *names* cannot be required to stay identical
 through that scale space. Cross-scale replication should apply to target
 evidence; an alternative remains a separately verified one-view certificate.
+Iteration 15 stage 1 supports this decomposition: repeated target-negative signs
+plus one explicit alternative recover two historical false positives without a
+real-target veto. Fresh coverage and precision are still unknown.
 
 ## 4. Contribution framing (intended)
 
@@ -460,6 +475,8 @@ Honest guardrails carried over from the tear-down:
   Repeated alternative identity over `{1,2,4}` has zero action coverage on a
   fresh window. Do not relax scales or aliases there; test repeated target-negative
   signs plus one explicit open C alternative on separate development data.
+  That exact conjunction passes a ten-conflict historical mechanism gate with
+  2/2 corrections. Freeze it for fresh evaluation before changing any component.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

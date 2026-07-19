@@ -1,7 +1,7 @@
 # XEV Iteration 15 Protocol: Replicated Target-Negative Evidence
 
 Date: 2026-07-19
-Status: pre-registered exploratory mechanism protocol
+Status: stage-1 mechanism gate passed; fresh stage 2 requires a separate protocol
 
 ## Motivation
 
@@ -80,3 +80,19 @@ Report valid boxes, target-support protection, repeated-negative coverage,
 open-C alternative coverage, and final actions separately. If the gate fails,
 do not tune scales, minimum negative-view count, candidate K, relation classes,
 aliases, or non-zero margins on these ten rows.
+
+## Stage-1 Result
+
+All ten saved conflict rows return valid boxes. Six rows receive any-scale target
+support, two have target-negative margins in at least two scales, four have an
+open C strict directional alternative somewhere, and two satisfy the joint
+certificate. The two actions are absent `handbag -> backpack` and absent
+`bicycle -> motorcycle`; both are corrections. No real target is vetoed, giving
+2/2 correction precision and passing every stage-1 gate.
+
+On the historical 480-row replay, baseline `TP/FP/TN/FN = 198/20/220/42`
+becomes `198/18/222/42`: TPR remains 0.8250, FPR falls 0.0833 -> 0.0750,
+balanced accuracy rises 0.8708 -> 0.8750, and MCC rises 0.7448 -> 0.7538.
+These are development numbers. The real `truck` row without target support does
+not form the joint certificate and remains unchanged. No parameter was changed
+after inference.

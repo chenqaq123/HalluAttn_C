@@ -883,3 +883,30 @@ hypothesis while retaining explicit alternative identity verification.
 **Evidence:** `docs/experiment_results.md` iteration-14 entry;
 `experiments/qwen3vl_xev/iter14_grounded_pyramid_dev_summary.json`
 (git-ignored).
+
+## 2026-07-19 — XEV iteration 15 stage 1: replicated target-negative gate passes
+
+**What changed:** Moved the replicated unit from generated alternative names to
+the fixed queried target. The new certificate requires at least two negative
+target-margin crop views from one grounding box, plus one target-free open C
+strict directional alternative from that box. Any-scale target support blocks
+the action.
+
+**Experiment:** On ten historical development conflicts, all rows have valid
+boxes, six receive target support, and two satisfy the joint certificate. Both
+actions correct absent targets (`handbag -> backpack`, `bicycle -> motorcycle`)
+with no real-target veto. The pre-registered mechanism gate passes.
+
+**Interpretation:** The positive result addresses iteration 14's lexical
+instability without dropping independent alternative verification. Cross-scale
+negative target evidence supplies replication; one explicit target-free
+alternative supplies visual identity. The guard and full conjunction matter:
+neither target-support absence nor one alternative conflict alone is an action.
+
+**Decision / proposal change:** Retain the rule unchanged and pre-register a
+fresh 480-row stage 2. Treat the current FPR/MCC improvement as development-only;
+the historical rows cannot establish generalization.
+
+**Evidence:** `docs/experiment_results.md` iteration-15 stage-1 entry;
+`experiments/qwen3vl_xev/iter15_grounded_absence_stage1_summary.json`
+(git-ignored).

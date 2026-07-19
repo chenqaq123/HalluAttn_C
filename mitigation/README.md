@@ -178,7 +178,9 @@ coverage, while the saved per-scale evidence remains available for follow-up.
 Iteration 15 adds `directional_conflicts` selection and
 `analyze_qwen3vl_grounded_absence.py`. It replicates negative target margins over
 two crop views, while requiring one target-free open C directional alternative
-from the same grounding box and retaining the any-scale target-support guard.
+from the same grounding box and retaining the any-scale target-support guard. It
+passes its historical stage-1 mechanism gate with 2 corrections and 0 TP vetoes;
+fresh evaluation is still required.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

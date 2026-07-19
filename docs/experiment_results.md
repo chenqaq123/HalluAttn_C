@@ -1029,3 +1029,35 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   `experiments/qwen3vl_xev/iter14_multiregion_dev_summary.json`,
   `experiments/qwen3vl_xev/iter14_grounded_pyramid_dev.jsonl`, and
   `experiments/qwen3vl_xev/iter14_grounded_pyramid_dev_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 15 stage 1: replicated target-negative certificate passes
+
+- **Pre-registered mechanism setup:** reuse the ten one-region strict
+  directional C-conflict rows from the now-development-only iteration-4 window
+  (rows 600--1079): seven real targets / three absent targets. Generate fresh
+  target grounding and fixed `{1,2,4}` crops. Require negative target margin at
+  at least two unique views of one box, one target-free open C strict directional
+  alternative at any view of that box, and no cycle-consistent target support
+  anywhere.
+- **Funnel:** valid grounding 10/10; any-scale target support 6/10; replicated
+  target-negative evidence 2/10; open directional alternative 4/10; joint
+  certificate **2/10**.
+- **Actions:** two absent targets are corrected: `handbag -> backpack` and
+  `bicycle -> motorcycle`. Both alternatives are target-free open candidates and
+  pass strict reversed-prompt C verification. There are **0 true-positive
+  vetoes**, so correction precision is **1.0** and the stage-1 gate passes.
+- **Historical 480-row replay:** baseline `TP/FP/TN/FN = 198/20/220/42`
+  becomes `198/18/222/42`. TPR is unchanged at 0.8250; FPR falls 0.0833 ->
+  0.0750; balanced accuracy rises 0.8708 -> 0.8750; MCC rises 0.7448 -> 0.7538.
+  These are development-only numbers because the rows and labels predate the
+  rule.
+- **Safety audit:** six of seven real conflict targets receive target support.
+  Real `truck` receives no target support but also lacks the registered joint
+  certificate, so it is not vetoed. The absent `chair` case also remains
+  unchanged because it lacks the joint certificate.
+- **Decision:** retain the exact rule and advance to a separately committed
+  480-row fresh-window protocol. Do not change scales, negative-view count,
+  relation gate, aliases, candidate K, or thresholds.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter15_grounded_absence_stage1.jsonl` and
+  `experiments/qwen3vl_xev/iter15_grounded_absence_stage1_summary.json`.
