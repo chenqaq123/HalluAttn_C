@@ -119,8 +119,9 @@ python mitigation/scripts/run_qwen3vl_xev_pope.py \
 ```
 
 The 120-row iteration-1 pilot used two processes with `--num_shards 2`, matching
-`--limit 120`, and `--shard_idx 0/1` on `cuda:0/1`. Analyze any completed shards
-without loading the model:
+`--limit 120`, and `--shard_idx 0/1` on `cuda:0/1`. Use `--start N` before
+sharding to select a disjoint contiguous evaluation window. Analyze any
+completed shards without loading the model:
 
 ```bash
 python mitigation/scripts/analyze_qwen3vl_xev_pope.py \
@@ -131,8 +132,9 @@ python mitigation/scripts/analyze_qwen3vl_xev_pope.py \
 
 The runner is resumable by `question_id`. Outputs and the derived COCO knowledge
 cache remain under git-ignored `experiments/qwen3vl_xev/`. Iteration 1 rejected
-the symmetric keep-minus-drop score; see `docs/proposal.md` and
-`docs/experiment_results.md` before changing its formulas.
+the symmetric keep-minus-drop score, and iteration 2 rejected exact open/closed
+candidate agreement as a zero-coverage veto certificate; see `docs/proposal.md`
+and `docs/experiment_results.md` before changing these formulas.
 
 ## Attention-Shift Audit
 

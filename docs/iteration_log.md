@@ -536,3 +536,27 @@ related alternatives is only 31.25% vs 81.25% for closed candidates.
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 entry; generated artifacts
 under git-ignored `experiments/qwen3vl_xev/`.
+
+## 2026-07-19 — XEV iteration 2: rejected exact candidate-agreement certificate
+
+**What changed:** Added a pure identity-switch certificate and unit tests, stored
+region/question certificates in the Qwen3 runner, added `--start` for disjoint
+contiguous evaluation windows, and extended the analyzer with frozen holdout
+success gates and correction diagnostics.
+
+**Experiment:** Fixed the rule and margin threshold on iteration 1, then ran a
+confirmatory 480-row / 80-image POPE-adversarial window starting at row 120. The
+baseline reaches AUROC 0.9480 and balanced accuracy 0.8688. The strict
+certificate produces zero triggers, so it changes neither the 0.0625 FPR nor the
+0.8000 TPR and fails the pre-registered minimum-trigger gate. Target keep margin
+still reaches AUROC 0.8815, isolating the failure to candidate confirmation.
+
+**Decision / proposal change:** Reject exact lexical intersection between open
+and closed candidate inventories as a verification certificate. It is too sparse
+to be usable. Keep candidate acquisition separate from verification and move to
+an explicit same-view, pairwise target-vs-alternative visual judgment. The
+iteration-2 holdout is closed to further threshold selection; the next rule must
+be selected on iteration 1 and evaluated on a new disjoint window.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-2 entry;
+`experiments/qwen3vl_xev/iter2_holdout_summary.json` (git-ignored).

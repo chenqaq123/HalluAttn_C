@@ -28,6 +28,7 @@ from mitigation.src.data import iter_pope_records, load_pope_image  # noqa: E402
 from mitigation.src.xev import (  # noqa: E402
     evidence_margin,
     extract_target,
+    identity_switch_certificate,
     lexical_equivalent,
     make_counterfactual_views,
     normalize_phrase,
@@ -59,6 +60,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--shard_idx", type=int, default=0)
     parser.add_argument("--num_shards", type=int, default=1)
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min_pixels", type=int, default=200704)
     parser.add_argument("--max_pixels", type=int, default=200704)
@@ -585,6 +587,18 @@ def process_record(
                     allow_support=(source == "open"),
                 )
 
+        certificate = identity_switch_certificate(
+            target=target,
+            open_candidates=source_candidates["open"],
+            closed_candidates=source_candidates["closed"],
+            relations=relations,
+            keep_margins={
+                hypothesis: margin
+                for hypothesis, margin in zip(hypotheses, keep_margins)
+            },
+            baseline_margin=baseline_margin,
+        )
+
         region_rows.append(
             {
                 "index": region_index,
@@ -604,6 +618,7 @@ def process_record(
                 },
                 "evidence": evidences,
                 "scores": scores,
+                "identity_switch_certificate": certificate,
             }
         )
         keep.close()
@@ -620,6 +635,11 @@ def process_record(
         region["scores"].get("oracle", {}).get("alternative_count", 0) > 0
         for region in region_rows
     )
+    certificates = [
+        region["identity_switch_certificate"]
+        for region in region_rows
+        if region["identity_switch_certificate"] is not None
+    ]
     image.close()
     return {
         "schema_version": 1,
@@ -639,6 +659,9 @@ def process_record(
         "regions": region_rows,
         "scores": aggregate_scores,
         "oracle_related_present": oracle_related_present,
+        "identity_switch_certificate": (
+            max(certificates, key=lambda item: item["excess"]) if certificates else None
+        ),
         "runtime_seconds": time.perf_counter() - started,
     }
 
@@ -655,16 +678,20 @@ def main() -> None:
 
     coco_root = Path(args.coco_root)
     knowledge = build_coco_knowledge(coco_root, Path(args.knowledge_cache))
-    rows = list(
+    all_rows = list(
         iter_pope_records(
             args.pope_dir,
             coco_root,
             args.pope_split,
-            shard_idx=args.shard_idx,
-            num_shards=args.num_shards,
-            limit=args.limit,
+            shard_idx=0,
+            num_shards=1,
+            limit=0,
         )
     )
+    if args.start < 0:
+        raise ValueError("--start must be non-negative")
+    stop = args.start + args.limit if args.limit > 0 else None
+    rows = all_rows[args.start : stop][args.shard_idx :: args.num_shards]
     output_path = Path(args.output_file)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     completed = existing_ids(output_path)
@@ -684,6 +711,7 @@ def main() -> None:
             payload["run"] = {
                 "model_path": args.model_path,
                 "split": args.pope_split,
+                "start": args.start,
                 "seed": args.seed,
                 "proposal_mass": args.proposal_mass,
                 "max_regions": args.max_regions,

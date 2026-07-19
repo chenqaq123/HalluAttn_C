@@ -102,12 +102,13 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 1 (2026-07-19):** the method is a working hypothesis,
-not yet a positive result. The first 120-sample Qwen3-VL pilot rejected the
-original symmetric keep/drop score, while preserving a narrower signal for
-alternative dominance on related-present negatives. This section records the
-current design and the rejected variant so that later iterations do not quietly
-reuse it.
+**Status after iteration 2 (2026-07-19):** the method is a working hypothesis,
+not yet a positive result. The first Qwen3-VL pilot rejected the original
+symmetric keep/drop score. A subsequent 480-sample held-out run also rejected a
+high-precision identity-switch certificate based on exact open/closed candidate
+agreement: it produced zero triggers. Same-view target evidence remains strong,
+but neither rejected construction is a usable intervention. This section keeps
+both failures explicit so later iterations do not quietly reuse them.
 
 ### 3.1 Principle and scope
 
@@ -140,9 +141,9 @@ This is **rejected**. On balanced POPE-adversarial, target-only `E` has AUROC
 evidence with a large, asymmetric context-removal effect and reverses the class
 ordering. Oracle candidates cannot repair it (AUROC 0.348).
 
-### 3.3 Current working criterion
+### 3.3 Same-view criterion and rejected strict certificate
 
-The next iteration keeps target and alternatives on the **same region view**.
+The surviving direction keeps target and alternatives on the **same region view**.
 Let `T(t)` contain the target plus semantic equivalents/more-specific supports,
 and `C(t)` contain only competing whole-object identities (not hypernyms, parts,
 attributes, agents, associated objects, or unrelated objects):
@@ -163,6 +164,22 @@ is a mechanism lead, not a claimed method gain. Any behavior correction
 
 must pass held-out TPR/FPR and MCC gates before being adopted.
 
+Iteration 2 tested a deliberately high-precision hard-veto certificate: require
+the full-image answer to be yes; require one candidate to occur in the exact
+intersection of target-free open proposals and closed COCO-NPMI proposals; label
+it a competing identity; require positive candidate keep margin and at least a
+6-logit candidate-over-target excess; then veto yes to no. The threshold was
+fixed on iteration 1 before evaluation. On a disjoint 480-row POPE-adversarial
+window, the certificate triggered **zero times** and changed no behavior. This
+variant is **rejected for zero coverage**. Exact lexical agreement between two
+noisy candidate generators is not evidence verification.
+
+The next criterion must ask an explicit, context-matched discriminative question
+of the clear region -- whether it supports target *rather than* a proposed
+alternative -- instead of inferring exclusivity from two independent existence
+margins. Candidate identity and visual discrimination must remain separate:
+candidate sources propose hypotheses; a pairwise verifier decides between them.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -175,13 +192,14 @@ separated:
 - `oracle`: COCO ground-truth objects present in the image, used only as a
   ceiling and kill criterion.
 
-Iteration 1 shows that vocabulary size is not yet the bottleneck. The open
+Iterations 1--2 show that vocabulary size is not yet the bottleneck. The open
 inventory returns 4.63 phrases/region with zero relation-output parse failures,
 but covers only 31.25% of oracle competing identities on related negatives,
 versus 81.25% for the closed diagnostic. More importantly, even oracle candidates
 do not improve overall behavior. Therefore candidate expansion is frozen until
 the region/scoring ceiling is fixed; open vocabulary remains the intended final
-scope, not the next engineering target.
+scope, not the next engineering target. Exact open/closed intersection is also
+too sparse to serve as a certificate (zero triggers on 480 held-out rows).
 
 ## 4. Contribution framing (intended)
 
@@ -202,9 +220,9 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV region/scoring gate:** replace the rejected symmetric keep/drop score
-  with context-matched local competition; test proposal recall and multi-region
-  aggregation before scaling beyond the pilot.
+- **XEV region/scoring gate:** test explicit pairwise target-vs-alternative
+  questions on the same clear-region view; only then test multi-region proposal
+  recall. Do not revive keep-minus-drop or exact candidate intersection.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

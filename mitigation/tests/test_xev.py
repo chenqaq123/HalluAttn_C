@@ -5,6 +5,7 @@ from PIL import Image
 
 from mitigation.src.xev import (
     extract_target,
+    identity_switch_certificate,
     make_counterfactual_views,
     parse_candidate_list,
     parse_relation_labels,
@@ -47,3 +48,28 @@ def test_relative_score_only_penalizes_positive_alternative_evidence() -> None:
     score, support, penalty = relative_verification_score(1.0, [1.2], [-0.5, 0.4])
     assert abs(score - 0.8) < 1e-9
     assert (support, penalty) == (1.2, 0.4)
+
+
+def test_identity_switch_certificate_requires_open_closed_agreement() -> None:
+    certificate = identity_switch_certificate(
+        target="handbag",
+        open_candidates=["backpack", "person"],
+        closed_candidates=["backpack", "suitcase"],
+        relations={"backpack": "C", "person": "N"},
+        keep_margins={"handbag": -0.75, "backpack": 11.25},
+        baseline_margin=3.375,
+    )
+    assert certificate is not None
+    assert certificate["alternative"] == "backpack"
+
+    assert (
+        identity_switch_certificate(
+            target="handbag",
+            open_candidates=["handbag", "backpack"],
+            closed_candidates=["backpack"],
+            relations={"backpack": "C"},
+            keep_margins={"handbag": -0.75, "backpack": 11.25},
+            baseline_margin=3.375,
+        )
+        is None
+    )

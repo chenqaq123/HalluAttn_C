@@ -6,11 +6,17 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sys
 from collections import Counter
 from pathlib import Path
 
 import numpy as np
 from sklearn.metrics import average_precision_score, confusion_matrix, roc_auc_score
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from mitigation.src.xev import identity_switch_certificate  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -182,6 +188,91 @@ def candidate_diagnostics(rows: list[dict]) -> dict:
     }
 
 
+def certificate_diagnostics(
+    rows: list[dict], labels: np.ndarray, baseline: np.ndarray
+) -> dict:
+    certificates = []
+    trigger_mask = np.zeros(len(rows), dtype=bool)
+    for row_index, row in enumerate(rows):
+        certificate = row.get("identity_switch_certificate")
+        if certificate is None:
+            region_certificates = []
+            for region in row["regions"]:
+                keep_margins = {
+                    candidate: float(values["keep"])
+                    for candidate, values in region["margins"].items()
+                }
+                derived = identity_switch_certificate(
+                    target=row["target"],
+                    open_candidates=region["candidate_sources"].get("open", []),
+                    closed_candidates=region["candidate_sources"].get("closed", []),
+                    relations=region["relations"],
+                    keep_margins=keep_margins,
+                    baseline_margin=float(row["baseline_margin"]),
+                )
+                if derived is not None:
+                    region_certificates.append(derived)
+            if region_certificates:
+                certificate = max(region_certificates, key=lambda item: item["excess"])
+        if certificate is None:
+            continue
+        trigger_mask[row_index] = True
+        certificates.append(
+            {
+                "question_id": row["question_id"],
+                "image_id": row["image_id"],
+                "target": row["target"],
+                "label": row["label"],
+                **certificate,
+            }
+        )
+
+    baseline_predictions = baseline >= 0
+    veto_predictions = baseline_predictions.copy()
+    veto_predictions[trigger_mask] = False
+    baseline_behavior = binary_metrics(labels, baseline_predictions)
+    veto_behavior = binary_metrics(labels, veto_predictions)
+    false_positive_corrections = int(np.sum(trigger_mask & (labels == 0)))
+    true_positive_vetoes = int(np.sum(trigger_mask & (labels == 1)))
+    trigger_count = int(trigger_mask.sum())
+    correction_precision = (
+        false_positive_corrections / trigger_count if trigger_count else None
+    )
+    usable = (
+        trigger_count >= 3
+        and correction_precision >= 2 / 3
+        and veto_behavior["fpr"] < baseline_behavior["fpr"]
+        and veto_behavior["tpr"] >= baseline_behavior["tpr"] - 0.005
+        and veto_behavior["mcc"] >= baseline_behavior["mcc"]
+    )
+    return {
+        "definition": {
+            "baseline_prediction": "yes",
+            "candidate_membership": "exact intersection(open, closed)",
+            "semantic_relation": "C",
+            "target_exactly_in_open": False,
+            "alternative_margin_min": 0.0,
+            "alternative_minus_target_min": 6.0,
+            "action": "veto yes to no",
+        },
+        "trigger_count": trigger_count,
+        "false_positive_corrections": false_positive_corrections,
+        "true_positive_vetoes": true_positive_vetoes,
+        "correction_precision": correction_precision,
+        "baseline_behavior": baseline_behavior,
+        "certificate_behavior": veto_behavior,
+        "holdout_gate": {
+            "minimum_triggers": 3,
+            "minimum_correction_precision": 2 / 3,
+            "maximum_tpr_drop": 0.005,
+            "require_fpr_drop": True,
+            "require_non_decreasing_mcc": True,
+            "passed": usable,
+        },
+        "triggers": certificates,
+    }
+
+
 def region_reformulation_scores(
     rows: list[dict], source: str | None = None
 ) -> dict[str, np.ndarray]:
@@ -281,6 +372,7 @@ def main() -> None:
             "behavior": binary_metrics(labels, baseline >= 0),
         },
         "candidate_diagnostics": candidate_diagnostics(rows),
+        "identity_switch_certificate": certificate_diagnostics(rows, labels, baseline),
         "methods": {},
         "posthoc_region_diagnostics": {},
         "calibration_split": {

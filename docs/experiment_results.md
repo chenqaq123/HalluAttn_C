@@ -545,3 +545,41 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   `experiments/qwen3vl_xev/round1_exact_summary.json`. Reproducible code:
   `mitigation/src/xev.py`, `mitigation/scripts/run_qwen3vl_xev_pope.py`, and
   `mitigation/scripts/analyze_qwen3vl_xev_pope.py`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 2: strict identity-switch certificate has zero coverage
+
+- **Pre-registered hypothesis:** a high-precision false-positive veto may be
+  possible when a target-free open inventory and the closed COCO-NPMI inventory
+  independently name the same competing identity. The rule, fixed using only
+  iteration 1, requires: baseline margin >= 0; target absent from the open
+  inventory; an exact open/closed candidate intersection labeled C; candidate
+  keep margin > 0; and candidate-minus-target keep margin >= 6.0. The action is
+  a hard yes-to-no veto. The holdout gate required at least 3 triggers, >= 2/3
+  correction precision, lower FPR, TPR loss <= 0.005, and non-decreasing MCC.
+- **Confirmatory setup:** `Qwen3-VL-8B-Instruct`, POPE-COCO adversarial rows
+  120--599, disjoint from iteration 1 and aligned to image boundaries: 480 rows,
+  240 yes / 240 no, 80 unique images. Same attention layers, top-30% cumulative
+  mass proposal, fixed 200704 pixels, one region, and exact prompts as iteration
+  1. Closed/open candidates were extracted; oracle candidates were omitted.
+  Two 4090 shards completed in 12.1 minutes; mean runtime 2.88 s/sample.
+- **Vanilla anchor:** margin AUROC **0.9480**, AUPRC 0.9566; TP/FP/TN/FN =
+  192/15/225/48; balanced accuracy **0.8688**, TPR 0.8000, FPR 0.0625, MCC
+  0.7446, yes-rate 0.4313.
+- **Certificate result:** **0 triggers**, 0 false-positive corrections, and 0
+  true-positive vetoes. All behavior metrics are unchanged; the pre-registered
+  gate fails its minimum-trigger condition. Reject exact open/closed lexical
+  agreement as a usable certificate.
+- **Diagnostic:** same-view target keep margin remains informative on the larger
+  window (AUROC **0.8815**, AUPRC 0.9072), while keep-minus-drop remains reversed
+  (target AUROC 0.4038; closed 0.4653; open 0.4152). The failure is candidate
+  confirmation coverage, not absence of local target signal. Open generation
+  averages 4.648 phrases/region with zero relation parse failures; exact target
+  occurrence is 35.83% on positives vs 3.75% on negatives.
+- **Decision:** preserve same-view local verification, but replace independent
+  existence-margin comparison with an explicit target-vs-alternative visual
+  question. Candidate generators remain proposal mechanisms only. Do not relax
+  the rejected certificate using this holdout; select the next rule on iteration
+  1 and evaluate it on a new disjoint window.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter2_holdout_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter2_holdout_summary.json`.

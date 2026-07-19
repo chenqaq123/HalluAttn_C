@@ -223,6 +223,48 @@ def relative_verification_score(
     return support - penalty, support, penalty
 
 
+def identity_switch_certificate(
+    target: str,
+    open_candidates: list[str],
+    closed_candidates: list[str],
+    relations: dict[str, str],
+    keep_margins: dict[str, float],
+    baseline_margin: float,
+    min_excess: float = 6.0,
+) -> dict | None:
+    """Return a high-precision certificate that a visible peer outranks target."""
+
+    if baseline_margin < 0:
+        return None
+    if any(lexical_equivalent(target, candidate) for candidate in open_candidates):
+        return None
+
+    closed = set(closed_candidates)
+    alternatives = [
+        candidate
+        for candidate in open_candidates
+        if candidate in closed
+        and relations.get(candidate) == "C"
+        and candidate in keep_margins
+    ]
+    if not alternatives or target not in keep_margins:
+        return None
+
+    alternative = max(alternatives, key=lambda candidate: keep_margins[candidate])
+    alternative_margin = float(keep_margins[alternative])
+    target_margin = float(keep_margins[target])
+    excess = alternative_margin - target_margin
+    if alternative_margin <= 0 or excess < min_excess:
+        return None
+    return {
+        "alternative": alternative,
+        "alternative_margin": alternative_margin,
+        "target_margin": target_margin,
+        "excess": excess,
+        "min_excess": float(min_excess),
+    }
+
+
 def load_json(path: str | Path) -> dict:
     import json
 
