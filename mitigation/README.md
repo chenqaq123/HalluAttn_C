@@ -169,6 +169,10 @@ Iteration 13 can reuse those exact boxes with `--box_inputs`, set
 funnel comparison against the full-canvas run. Exact crop improves true-target
 support from 2/10 to 4/10 at precision 1.0 but fails its recall gate, so it is a
 view ablation rather than an accepted final rule.
+Iteration 14 adds fixed dyadic `--crop_scales 1,2,4` and
+`analyze_qwen3vl_grounded_pyramid.py`. Its registered action requires the same
+target-free C alternative to pass strict reversed pairwise verification in at
+least two distinct crop views, with no cycle-consistent target support.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

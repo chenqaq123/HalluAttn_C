@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mitigation.src.data import iter_pope_records, load_pope_image  # noqa: E402
 from mitigation.src.xev import (  # noqa: E402
+    expand_box,
     inventory_lexically_supports_target,
     lexical_equivalent,
     make_counterfactual_views,
@@ -50,6 +51,11 @@ def parse_args() -> argparse.Namespace:
         "--view_mode",
         choices=("clear_canvas", "crop"),
         default="clear_canvas",
+    )
+    parser.add_argument(
+        "--crop_scales",
+        default="1",
+        help="Comma-separated centered crop scales; only valid in crop mode",
     )
     parser.add_argument(
         "--conflict_relations",
@@ -118,6 +124,15 @@ def grounding_prompt(target: str) -> str:
     )
 
 
+def parse_crop_scales(spec: str) -> tuple[float, ...]:
+    scales = tuple(float(value.strip()) for value in spec.split(",") if value.strip())
+    if not scales or any(scale < 1 for scale in scales):
+        raise ValueError("--crop_scales must contain values >= 1")
+    if len(set(scales)) != len(scales):
+        raise ValueError("--crop_scales must not contain duplicates")
+    return scales
+
+
 def crop_candidates(
     engine: Qwen3VLEngine,
     image,
@@ -135,7 +150,11 @@ def crop_candidates(
     return parse_candidate_list(raw, limit=limit), raw
 
 
-def saved_boxes(row: dict, image_size: tuple[int, int], limit: int) -> list[tuple[int, int, int, int]]:
+def saved_boxes(
+    row: dict,
+    image_size: tuple[int, int],
+    limit: int,
+) -> list[tuple[int, int, int, int]]:
     width, height = image_size
     boxes = []
     for values in row.get("grounding_boxes", []):
@@ -186,103 +205,124 @@ def process_row(
     ]
 
     region_rows = []
-    for index, bbox in enumerate(boxes):
-        drop = None
+    crop_scales = parse_crop_scales(args.crop_scales)
+    for proposal_index, grounding_bbox in enumerate(boxes):
         if args.view_mode == "crop":
-            keep = image.crop(bbox).convert("RGB")
-            generated_candidates, candidate_raw = crop_candidates(
-                engine,
-                keep,
-                limit=args.max_open_candidates,
-                max_new_tokens=args.candidate_max_new_tokens,
-            )
+            view_specs = []
+            seen_boxes = set()
+            for scale in crop_scales:
+                view_bbox = expand_box(grounding_bbox, image.size, scale)
+                if view_bbox in seen_boxes:
+                    continue
+                seen_boxes.add(view_bbox)
+                view_specs.append((scale, view_bbox))
         else:
-            keep, drop = make_counterfactual_views(image, bbox)
-            generated_candidates, candidate_raw = open_candidates(
-                engine,
-                keep,
-                limit=args.max_open_candidates,
-                max_new_tokens=args.candidate_max_new_tokens,
-            )
-        candidate_sources = {
-            "closed": closed_candidates,
-            "open": generated_candidates,
-        }
-        all_candidates = list(
-            dict.fromkeys(
-                candidate
-                for candidates in candidate_sources.values()
-                for candidate in candidates
-                if not lexical_equivalent(candidate, target)
-            )
-        )
-        relations, relation_metadata = relation_filter.classify(target, all_candidates)
-        hypotheses = [target, *all_candidates]
-        keep_margins = engine.margins(
-            [keep] * len(hypotheses),
-            hypotheses,
-            batch_size=args.margin_batch_size,
-            questions=[source["question"], *([None] * len(all_candidates))],
-        )
-        keep_margin_map = dict(zip(hypotheses, keep_margins))
-        allowed_relations = ("C",) if args.conflict_relations == "C" else ("C", "N")
-        pairwise_sources = {
-            source_name: [
-                candidate
-                for candidate in candidates
-                if relations.get(candidate, "N") in allowed_relations
-            ]
-            for source_name, candidates in candidate_sources.items()
-        }
-        pairwise_candidates = select_pairwise_candidates(
-            target=target,
-            candidate_sources=pairwise_sources,
-            relations=relations,
-            keep_margins=keep_margin_map,
-            limit=args.pairwise_top_k,
-            block_on_open_target=False,
-        )
-        comparisons = engine.pairwise_comparisons(
-            keep,
-            target,
-            pairwise_candidates,
-            batch_size=args.margin_batch_size,
-        )
-        conflict = robust_local_identity_proposal(
-            comparisons,
-            required_sources=(),
-            require_directional_switch=True,
-            allowed_relations=allowed_relations,
-        )
-        target_named = inventory_lexically_supports_target(
-            target, generated_candidates
-        )
-        target_margin = float(keep_margin_map[target])
-        cycle_support = target_named and target_margin > 0 and conflict is None
-        region_rows.append(
-            {
-                "index": index,
-                "bbox": list(bbox),
-                "view_mode": args.view_mode,
-                "view_size": list(keep.size),
-                "target_free_candidates": generated_candidates,
-                "target_free_raw": candidate_raw,
-                "target_named": target_named,
-                "target_margin": target_margin,
-                "relations": relations,
-                "relation_filter": relation_metadata,
-                "candidate_keep_margins": {
-                    candidate: float(keep_margin_map[candidate])
-                    for candidate in all_candidates
-                },
-                "pairwise_comparisons": comparisons,
-                "directional_conflict": conflict,
-                "cycle_support": cycle_support,
+            view_specs = [(1.0, grounding_bbox)]
+
+        for crop_scale, bbox in view_specs:
+            drop = None
+            if args.view_mode == "crop":
+                keep = image.crop(bbox).convert("RGB")
+                generated_candidates, candidate_raw = crop_candidates(
+                    engine,
+                    keep,
+                    limit=args.max_open_candidates,
+                    max_new_tokens=args.candidate_max_new_tokens,
+                )
+            else:
+                keep, drop = make_counterfactual_views(image, bbox)
+                generated_candidates, candidate_raw = open_candidates(
+                    engine,
+                    keep,
+                    limit=args.max_open_candidates,
+                    max_new_tokens=args.candidate_max_new_tokens,
+                )
+            candidate_sources = {
+                "closed": closed_candidates,
+                "open": generated_candidates,
             }
-        )
-        keep.close()
-        if drop is not None:
-            drop.close()
+            all_candidates = list(
+                dict.fromkeys(
+                    candidate
+                    for candidates in candidate_sources.values()
+                    for candidate in candidates
+                    if not lexical_equivalent(candidate, target)
+                )
+            )
+            relations, relation_metadata = relation_filter.classify(
+                target, all_candidates
+            )
+            hypotheses = [target, *all_candidates]
+            keep_margins = engine.margins(
+                [keep] * len(hypotheses),
+                hypotheses,
+                batch_size=args.margin_batch_size,
+                questions=[source["question"], *([None] * len(all_candidates))],
+            )
+            keep_margin_map = dict(zip(hypotheses, keep_margins))
+            allowed_relations = (
+                ("C",) if args.conflict_relations == "C" else ("C", "N")
+            )
+            pairwise_sources = {
+                source_name: [
+                    candidate
+                    for candidate in candidates
+                    if relations.get(candidate, "N") in allowed_relations
+                ]
+                for source_name, candidates in candidate_sources.items()
+            }
+            pairwise_candidates = select_pairwise_candidates(
+                target=target,
+                candidate_sources=pairwise_sources,
+                relations=relations,
+                keep_margins=keep_margin_map,
+                limit=args.pairwise_top_k,
+                block_on_open_target=False,
+            )
+            comparisons = engine.pairwise_comparisons(
+                keep,
+                target,
+                pairwise_candidates,
+                batch_size=args.margin_batch_size,
+            )
+            conflict = robust_local_identity_proposal(
+                comparisons,
+                required_sources=(),
+                require_directional_switch=True,
+                allowed_relations=allowed_relations,
+            )
+            target_named = inventory_lexically_supports_target(
+                target, generated_candidates
+            )
+            target_margin = float(keep_margin_map[target])
+            cycle_support = target_named and target_margin > 0 and conflict is None
+            region_rows.append(
+                {
+                    "index": len(region_rows),
+                    "proposal_index": proposal_index,
+                    "grounding_bbox": list(grounding_bbox),
+                    "crop_scale": crop_scale,
+                    "bbox": list(bbox),
+                    "view_mode": args.view_mode,
+                    "view_size": list(keep.size),
+                    "target_free_candidates": generated_candidates,
+                    "target_free_raw": candidate_raw,
+                    "target_named": target_named,
+                    "target_margin": target_margin,
+                    "relations": relations,
+                    "relation_filter": relation_metadata,
+                    "candidate_keep_margins": {
+                        candidate: float(keep_margin_map[candidate])
+                        for candidate in all_candidates
+                    },
+                    "pairwise_comparisons": comparisons,
+                    "directional_conflict": conflict,
+                    "cycle_support": cycle_support,
+                }
+            )
+            keep.close()
+            if drop is not None:
+                drop.close()
 
     image.close()
     cycle_support = any(region["cycle_support"] for region in region_rows)
@@ -309,6 +349,7 @@ def process_row(
             "max_open_candidates": args.max_open_candidates,
             "pairwise_top_k": args.pairwise_top_k,
             "view_mode": args.view_mode,
+            "crop_scales": list(crop_scales),
             "conflict_relations": args.conflict_relations,
             "model_path": args.model_path,
         },
@@ -319,6 +360,9 @@ def main() -> None:
     args = parse_args()
     if args.max_grounding_boxes <= 0:
         raise ValueError("--max_grounding_boxes must be positive")
+    crop_scales = parse_crop_scales(args.crop_scales)
+    if args.view_mode != "crop" and crop_scales != (1.0,):
+        raise ValueError("--crop_scales other than 1 requires --view_mode crop")
     source_rows = [row for row in read_rows(args.inputs) if is_selected(row, args.selection)]
     box_rows = read_rows(args.box_inputs) if args.box_inputs else []
     box_by_id = {str(row["question_id"]): row for row in box_rows}

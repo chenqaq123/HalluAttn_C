@@ -6,6 +6,7 @@ from PIL import Image
 from mitigation.src.xev import (
     combine_global_target_support,
     counterbalanced_pairwise_score,
+    expand_box,
     extract_target,
     identity_switch_certificate,
     inventory_lexically_supports_target,
@@ -258,3 +259,9 @@ def test_grounding_box_parser_uses_normalized_json_and_discards_labels() -> None
     ```'''
     assert parse_grounding_boxes(raw, (200, 100)) == [(20, 20, 120, 80)]
     assert parse_grounding_boxes("no box found", (200, 100)) == []
+
+
+def test_expand_box_uses_centered_dyadic_scales_and_image_clipping() -> None:
+    assert expand_box((20, 10, 40, 30), (100, 80), 1) == (20, 10, 40, 30)
+    assert expand_box((20, 10, 40, 30), (100, 80), 2) == (10, 0, 50, 40)
+    assert expand_box((0, 0, 10, 10), (100, 80), 4) == (0, 0, 25, 25)

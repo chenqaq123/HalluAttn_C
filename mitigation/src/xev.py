@@ -179,6 +179,31 @@ def parse_grounding_boxes(
     return boxes
 
 
+def expand_box(
+    bbox: tuple[int, int, int, int],
+    image_size: tuple[int, int],
+    scale: float,
+) -> tuple[int, int, int, int]:
+    """Expand a pixel box about its center and clip it to the image."""
+
+    if scale < 1:
+        raise ValueError("scale must be at least 1")
+    width, height = image_size
+    x0, y0, x1, y1 = bbox
+    if not (0 <= x0 < x1 <= width and 0 <= y0 < y1 <= height):
+        raise ValueError("bbox must be valid and inside the image")
+    center_x = 0.5 * (x0 + x1)
+    center_y = 0.5 * (y0 + y1)
+    half_width = 0.5 * (x1 - x0) * scale
+    half_height = 0.5 * (y1 - y0) * scale
+    return (
+        max(0, math.floor(center_x - half_width)),
+        max(0, math.floor(center_y - half_height)),
+        min(width, math.ceil(center_x + half_width)),
+        min(height, math.ceil(center_y + half_height)),
+    )
+
+
 def propose_regions(
     attention: np.ndarray,
     image_size: tuple[int, int],
