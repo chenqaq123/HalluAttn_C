@@ -41,7 +41,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("inputs", nargs="+", help="Iteration-11 JSONL files")
     parser.add_argument("--output_file", required=True)
-    parser.add_argument("--selection", choices=("actions", "conflicts"), default="actions")
+    parser.add_argument(
+        "--selection",
+        choices=("actions", "conflicts", "directional_conflicts"),
+        default="actions",
+    )
     parser.add_argument(
         "--box_inputs",
         nargs="+",
@@ -104,10 +108,22 @@ def has_local_conflict(row: dict) -> bool:
     )
 
 
+def has_directional_conflict(row: dict) -> bool:
+    comparisons = row.get("pairwise_verification", {}).get("comparisons", [])
+    return any(
+        comparison.get("relation") == "C"
+        and float(comparison["target_first_margin"]) < 0
+        and float(comparison["alternative_first_margin"]) > 0
+        for comparison in comparisons
+    )
+
+
 def is_selected(row: dict, selection: str) -> bool:
     if selection == "actions":
         return row.get("global_support_verification", {}).get("certificate") is not None
-    return has_local_conflict(row)
+    if selection == "conflicts":
+        return has_local_conflict(row)
+    return has_directional_conflict(row)
 
 
 def completed_ids(path: Path) -> set[str]:
@@ -326,7 +342,7 @@ def process_row(
 
     image.close()
     cycle_support = any(region["cycle_support"] for region in region_rows)
-    local_conflict = has_local_conflict(source)
+    local_conflict = has_local_conflict(source) or has_directional_conflict(source)
     return {
         "schema_version": 1,
         "question_id": str(source["question_id"]),
