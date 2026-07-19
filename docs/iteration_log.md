@@ -156,3 +156,346 @@ Pipeline validated by reproducing the reference layer-0 SVAR exactly (0.8336).
 2. Env note recorded: COCO images moved to `/srv/common_dataset/coco-2014-dataset`;
    update `.env` COCO_PATH if the detection baselines are re-run.
 3. Remaining relabels (ClearSight POPE suppression, IC single-layer) unchanged.
+
+## 2026-07-08 — Official-repo audit + three new 2026 attention detectors (SAE/LaSCD/TVER)
+
+**What changed:**
+- Diffed the fixed detection scores against the **official GitHub repos** (not just
+  the papers). Found the "CGC survives length control (0.752)" result was an
+  indexing artifact: we read the object hidden state at `token_pos+1`, but the
+  official `token-grounding-detector` reads the *generating* row (`token_pos`).
+  Fixed → faithful CGC within-bin **0.752 → 0.574** (it also collapses).
+- Confirmed **single-layer ADS ≈ 0.5 is by design** (the paper's ADS is a supervised
+  per-layer-*vector* classifier, no length control; our supervised overall 0.865 ≈
+  paper 0.88), so it is not a reproduction bug.
+- Ran a 4-venue proceedings sweep (CVPR/ICCV/ECCV, ACL/EMNLP/NAACL, NeurIPS/ICML/ICLR,
+  surveys+citation graph). Field is **saturated**; only one clean new unsupervised
+  attention detector surfaced (**TVER**, ICCV 2025).
+- Added three new faithful 2026 attention detectors to the length-controlled table:
+  **SAE** (arXiv:2603.16558, true version with Mask2Former-Swin-L segmentation; seg-free
+  kept as ablation), **LaSCD** (arXiv:2605.11559, `lascd_raw` = official `_deco_layer_energy`),
+  **TVER** (arXiv:2507.00898, ONLY, layer-0 `H(text)/H(vis)`). Plus supervised
+  ADS-only / CGC-only as the faithful multi-layer Prong-1 test.
+
+**Why:** the user asked to (a) explain the ADS≈0.5 result against the repo and
+(b) broaden the comparison with published, unsupervised, attention-based detectors,
+reproducing each faithfully from paper + code.
+
+**Evidence/refs:** `experiment_results.md` §A (updated table) + §E (2026-07-08
+repo-audit entry). Repos: `tuandung2812alt3/token-grounding-detector`,
+`macovaseas/LaSCD`, `zifuwan/ONLY`. Artifacts `experiments/beyond_svar_v3/`.
+
+**Key numbers (within-bin AUROC):** TVER 0.566 (overall 0.830 = position baseline),
+SAE-true 0.575, LaSCD 0.500 (chance), CGC 0.574; supervised ADS 0.664 / CGC 0.669 /
+ADS+CGC 0.719; IC 0.686.
+
+**Implications / next:**
+1. **Prong 1 is airtight and reproduction-faithful:** every unsupervised single-score
+   attention detector collapses under length control — PAS, SVAR, ADS, **SAE (even
+   with its real segmenter)**, **LaSCD (chance)**, **TVER (overall = position baseline)**.
+2. **Reframe the "survivor" claim:** it is NOT "grounding survives, attention dies"
+   (the faithful CGC also collapses). What retains within-bin signal is **supervised
+   multi-layer pooling** (≤0.719) and the single logit-lens **IC** (0.686). Update
+   proposal §positioning accordingly.
+3. New dependency: Mask2Former-Swin-L at `experiments/mask2former_swinL/` (git-ignored,
+   for the true SAE). New feature/eval keys: `sae_seg`, `lascd_raw/norm`, `tver`.
+4. Re-sweep ACL 2026 once camera-ready posts (not public at search time).
+
+## 2026-07-08 — LaSCD review: why it's near-chance as a detector (off-label, not a bug)
+
+**What changed:** Reviewed LaSCD against `macovaseas/LaSCD` + paper after it scored
+near-chance. Confirmed our `_deco_layer_energy` reproduction is verbatim-faithful;
+the weakness is a **fundamental usage mismatch**, and corrected how we report it.
+
+**Findings (repo + paper, quoted in §E):**
+- LaSCD's energy `E^(l)` is a **within-token, cross-layer selector**: per decoding
+  step it takes `argmax_l E` = premature/hallucinating layer and `argmin_l E` = GT
+  layer, feeding the contrastive-decoding logit remap (Eq. 4→7). The repo never
+  thresholds or compares E across tokens; the paper reports **no per-sample AUROC**
+  (only Fig. 3 layer-level evidence).
+- The implemented **raw** energy is mass-weighted (Eq. 3). Cross-token it becomes a
+  **visual-attention-mass proxy that anti-correlates** with hallucination (grounded
+  > hallu; per-layer overall AUROC 0.2–0.4). The paper explicitly concedes (App. A)
+  the score "combines the spatial-shape term with the visual-attention mass" and uses
+  Theorem 1 only as a geometric explanation of the *shape* component at fixed mass.
+- The fair test (mass-**normalized** shape energy, LaSCD's own band L11–28) has the
+  correct sign but is near-chance: mean 0.559/0.522, best layer 0.589/0.569.
+
+**Why:** the user asked to review LaSCD's poor result against paper + GitHub.
+
+**Change applied:** `evaluate_beyond_svar.py` now reports LaSCD as the mass-normalized
+shape energy (mean L11–28 + peak-min gap + best layer) and flags the raw energy as a
+mass proxy. Docs §A/§E + `results_summary.md` updated. No re-extraction needed
+(`lascd_norm` already saved).
+
+**Implication:** LaSCD stays in the Prong-1 "attention collapses" set, but the honest
+framing is "off-label as a detector" — its energy was only ever validated as a layer
+diagnostic / decoding driver, so near-chance detection is expected, not a repro error.
+
+## 2026-07-13 — H3 qualitative attention figures; case 1 fails the residual-concentration criterion
+
+**What changed:** Added `mitigation/scripts/visualize_qualitative_attention.py`,
+which renders the H3 qualitative cases (object co-occurrence spec §5.4) offline
+from the saved npz artifacts — five-panel layout (image+bbox / vanilla
+localization / ClearSight localization on a shared scale / positive matched
+residual / measurements), plus per-layer (9–14) supplements and an exact-values
+sidecar. Overlay style follows `MM2026/Hallu_Sink_Correlation/show_attention_map.ipynb`
+(24×24 patch map, nearest-upsampled, semi-transparent over the processed image),
+with `magma` + value-modulated opacity + p99.5-capped scales instead of jet.
+Also wrote the spec-required result `README.md` that was missing.
+
+**Why:** user request — visualize sample-case attention distributions for the
+mitigation experiment following the MM2026 notebook example.
+
+**Evidence/refs:** `experiment_results.md` §E (2026-07-13);
+`mitigation/results/object_cooccurrence_prior/qualitative_cases_attention.{pdf,png}`.
+
+**Implications / next:**
+1. The figure makes the saved measurements visible and exposes a selection
+   problem: **case 2 (truck/car) fits the H3 mechanism (97.3% of the positive
+   residual in-region) but case 1 (chair/dining-table) does not (2.3%
+   in-region; related-region mass decreases under ClearSight)**. Re-select
+   case 1 from the saved 72-candidate pool or present it under the spec §5.1
+   fallback framing.
+2. H2 (paired difference-in-differences + bootstrap) remains the pending
+   quantitative half of the co-occurrence experiment.
+
+## 2026-07-14 — Clean-map visualization (position prior + sink tokens removed)
+
+**What changed:** Per the user's clarified request, the qualitative attention
+visualization now features a **clean** attention map — RoPE position prior removed
+(no-RoPE recomputation) and detected sink tokens deleted — reproducing the
+sink/position machinery of `MM2026/Hallu_Sink_Correlation/utils/AttnAdapter.py`.
+Added `mitigation/scripts/extract_qualitative_sink_attention.py` (a fresh vanilla
+forward that captures pre-RoPE key norms, detected sinks, no-RoPE and purified
+attention; reuses the repo's pure-torch `sink_utils` and asserts a faithfulness
+gate against the saved `vanilla_attention`), and extended
+`visualize_qualitative_attention.py` with `render_clean_figure`.
+
+**Why:** user request — "用去掉位置先验与sink token的干净的attention map进行可视化".
+
+**Evidence/refs:** `experiment_results.md` §E (2026-07-14);
+`mitigation/results/object_cooccurrence_prior/qualitative_cases_clean_attention.{pdf,png}`
+and its README section.
+
+**Implications / next:**
+1. On the clean map, case 2 (truck/car) shows the related-object mass fraction
+   rising raw→no-RoPE→clean (0.318→0.519→0.573), i.e. removing position prior +
+   sinks concentrates attention on the semantic neighbour — a cleaner Prong-2
+   illustration than raw attention. Case 1 stays flat (unchanged selection caveat).
+2. Env/repro note captured: only `latentGuard` (transformers 4.48.1) is usable
+   here, so the extraction is deliberately self-contained (no `DetectionAdapter`
+   import, which needs tfm 5.x); model cache is `/srv/common_model/huggingface`.
+3. H2 quantitative half still pending.
+
+## 2026-07-14 — Consolidated the qualitative visualization to a clean 3-image triptych
+
+**What changed:** Per the user's request to cut complexity ("我只需要三张图"),
+the qualitative attention visualization is now a single **clean** map (RoPE
+position prior removed + detected sink tokens deleted) rendered as three images
+per case — original / attention map / overlay — by
+`mitigation/scripts/visualize_clean_triptych.py`. Removed the earlier
+non-clean visualizer `mitigation/scripts/visualize_qualitative_attention.py` and
+its result files (`qualitative_cases.{pdf,png}`,
+`qualitative_cases_attention.{pdf,png}` + data json, per-layer supplements), and
+also the multi-panel clean analysis figure `qualitative_cases_clean_attention.*`
+it produced. Kept the clean pipeline: `extract_qualitative_sink_attention.py`
+(clean/sink data) + the triptych renderer + the base/sink npz.
+
+**Why:** user request — delete the previous non-clean attention-map visualizations
+and keep only the clean 3-image output.
+
+**Evidence/refs:** `mitigation/results/object_cooccurrence_prior/README.md`
+(rewritten to match) and `qualitative_case_{1,2}_clean*.png`.
+
+**Note:** the underlying data/faithfulness (2026-07-14 clean-map entry above) is
+unchanged; only the figure surface was simplified. The multi-panel clean analysis
+figure can be regenerated from the sink npz if ever needed (git history holds the
+removed script).
+
+## 2026-07-14 — Clean-map case gallery for selection (24 bare triptychs)
+
+**What changed:** Added `mitigation/scripts/generate_case_triptychs.py`, which
+rebuilds the candidate pool from source (POPE-adversarial related-present
+negatives with vanilla=no & ClearSight=yes — 76 in total; ranked by best
+related-present co-occurrence rank asc, then qid) and renders one **bare** figure
+per case — `[ original | clean attention map | overlay ]` horizontally
+concatenated, nothing else (no titles/axes/colorbars/boxes). Clean map = no-RoPE +
+sink-deleted, layers 9–14, first-answer-token row. Output:
+`mitigation/results/object_cooccurrence_prior/case_gallery/` (24 PNGs +
+`gallery_manifest.csv`).
+
+**Why:** user asked for more cases to choose from, each figure containing only the
+image triptych.
+
+**Provenance recovered (answering "where do the examples come from"):** the two
+original cases (qid 1788 chair/dining-table, 2728 truck/car) are POPE-adversarial
+`negative_related_present` negatives; answers from
+`coco_llava_7b_attention_only/pope/adversarial/{vanilla,clearsight}/predictions.jsonl`,
+rows from `semantic_neighbor_audit/adversarial_semantic_neighbor_rows.csv`,
+co-occurrence from `semantic_neighbor_audit/cooccurrence_neighbors.json`. The new
+generator makes this pool reproducible (the original selection script was lost).
+
+**Next:** user picks cases from the gallery; chosen ones become the H3 figure set.
+
+## 2026-07-14 — Pinned the 14 selected cases into a reproducible regenerator
+
+**What changed:** The user selected 14 cases from the gallery; the other 86 PNGs
+were deleted. Added `mitigation/scripts/regenerate_selected_cases.py` — a
+self-contained script that pins those 14 (split, qid, image_id, target, question)
+and rebuilds them into `case_gallery/` with identical filenames/format/location.
+All color/appearance knobs are in a single STYLE block at the top of the file
+(colormap, overlay alpha + gamma curve, scale-cap percentile, separator px/color,
+optional map background) so figure styling can be tweaked without touching the
+attention compute. Verified: reproduces the kept gallery to within ±1 gray level
+on <0.01% of pixels (GPU float16 nondeterminism only).
+
+**Why:** user wants a one-command regenerator for the final 14 and will adjust
+figure colors themselves.
+
+**Refs:** `case_gallery/gallery_manifest.csv` (the 14 cases, all vanilla=no →
+ClearSight=yes semantic-neighbor flips across adversarial/popular/random).
+
+**Update (same day):** split `regenerate_selected_cases.py` into a cache + render
+pipeline so figure re-styling needs no GPU. First run computes the 14 clean maps +
+processed images once and caches them to
+`case_gallery/selected_cases_cache.npz` (torch/model imported lazily only then);
+every subsequent run reads the cache and re-renders in ~2.5 s with no model loaded
+(RSS ~130 MB). `--refresh` recomputes the cache. All appearance is in the STYLE
+block, so a color change is just an edit + re-run. Verified the cache-hit render
+reproduces the gallery and that a cmap/separator change takes effect from cache
+alone.
+
+## 2026-07-14 — HCVR/LCVR amplification: reproduced Fig. 4, found the asymmetry
+
+**What changed:** Added `mitigation/scripts/hcvr_lcvr_intervention.py` (cache +
+render, GPU once then restyle offline) to test the paper's HCVR↑→"yes" /
+LCVR↑→"no" claim on case 1268. Regions are the top/bottom quantile of the CLEAN
+map (no-RoPE + sinks removed, sinks excluded); intervention is a **post-softmax,
+no-renorm** multiply of the region's attention columns via a gated monkeypatch of
+tfm-4.48 `eager_attention_forward`. Ran two quantile splits (25/25, 10/50).
+
+**Finding:** HCVR amplification pushes P(yes) ~+30% (robust); LCVR amplification
+moves P(no) only ~3–4% and reverses to yes-bias at high factors. Both regions,
+pushed hard, add yes-bias — the paper's symmetry fails in magnitude. **top 25% /
+bottom 25% is the better split** (equal HCVR effect, cleaner+larger LCVR trend,
+balanced region sizes, matches the paper). This is a clean Prong-2 datapoint:
+*pushing* attention injects answer bias rather than verifying target evidence.
+
+**Figure style (per user):** all 4 figures are bare — no titles, tight margins;
+fig1/fig2 render the region as a **binary** highlight (every in-region patch = 1);
+fig3/fig4 **share one x-axis** with equal intervals whose ticks end in 0/5.
+
+**Why:** the user is building the Prong-2 "pushing attention backfires / only adds
+yes-bias" evidence; this single-case reproduction quantifies exactly that.
+
+**Refs:** `docs/experiment_results.md` 2026-07-14 HCVR/LCVR entry; artifacts under
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_{t25_b25,t10_b50}/`.
+
+## 2026-07-14 — HCVR/LCVR: switched region definition to cumulative-score (mass)
+
+**What changed:** Added `--select_by {count,mass}` to `hcvr_lcvr_intervention.py`.
+Previously HCVR/LCVR were the top/bottom fraction of *tokens*; `mass` makes them the
+smallest high/low token sets whose cumulative clean-attention *score* reaches the
+fraction. Output dirs are now tagged with the mode (`…_count`, `…_mass`).
+
+**Why (user's point, correct):** on a spike-ish map, top-25%-of-tokens already holds
+47.7% of the mass while bottom-25%-of-tokens holds only 10.8%, so a same-factor
+amplification injects ~4.4× more absolute mass into HCVR — confounding the HCVR≫LCVR
+asymmetry with "HCVR just had more mass." Mass-based equalizes both at 25.1% mass; the
+asymmetry survives unchanged (HCVR +31% yes vs LCVR +4% no), so it is genuinely about
+credibility/location, not injected mass. Adopt `--select_by mass` for the paper figure.
+
+**Refs:** `docs/experiment_results.md` 2026-07-14 region-definition entry;
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-15 — Restyled the mass-based HCVR/LCVR figures
+
+**What changed:** Updated `mitigation/scripts/hcvr_lcvr_intervention.py` so the
+binary HCVR/LCVR overlays in fig1/fig2 use deep blue (`#08306b`), and removed the
+x/y axis titles from the fig3/fig4 amplification plots while retaining ticks,
+axes, curves, and legends. Re-rendered the PNG/PDF artifacts from the existing
+mass-based cache; no model inference or attention recomputation was performed.
+
+**Why:** User requested a cleaner paper-facing visual style.
+
+**Refs:** `mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-15 — Unified HCVR/LCVR figure typography
+
+**What changed:** Set the Matplotlib font family for all four mass-based
+HCVR/LCVR figures to the locally installed `Comic Sans MS`, then re-rendered the
+PNG/PDF artifacts from the existing cache without loading the model.
+
+**Why:** User requested consistent Comic Sans MS typography across the figure set.
+
+**Refs:** `mitigation/scripts/hcvr_lcvr_intervention.py`;
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-15 — Audited ClearSight's paired prediction shift on POPE adversarial
+
+**What changed:** Paired all 3000 vanilla and ClearSight predictions by
+`question_id` and recorded the answer distribution, transition matrix, and
+label-conditioned outcome changes in `experiment_results.md`.
+
+**Why:** User requested the before/after prediction distribution rather than
+aggregate metrics alone.
+
+**Evidence:** ClearSight changes 136 predictions, all in the no→yes direction:
+53 false negatives are corrected, while 83 true negatives become false positives.
+Yes-rate rises 47.93%→52.47%, while accuracy falls 83.27%→82.27%.
+
+**Refs:** `mitigation/results/coco_llava_7b_attention_only/pope/adversarial/{vanilla,clearsight}/predictions.jsonl`.
+
+## 2026-07-15 — Set HCVR/LCVR overlay opacity to 0.80
+
+**What changed:** Increased the fig1/fig2 navy overlay opacity from `0.65` to
+`0.80` and re-rendered the mass-based figures from the existing cache.
+
+**Why:** User requested an approximately 0.8 opacity for a more solid overlay.
+
+**Refs:** `mitigation/scripts/hcvr_lcvr_intervention.py`;
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-15 — Increased HCVR/LCVR overlay solidity
+
+**What changed:** Corrected the styling direction and raised the fig1/fig2 navy
+overlay opacity from `0.25` to `0.65`, making the selected regions substantially
+more solid while retaining some source-image detail. Re-rendered from cache only.
+
+**Why:** User clarified that the desired effect was a more solid, less transparent overlay.
+
+**Refs:** `mitigation/scripts/hcvr_lcvr_intervention.py`;
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-15 — Further reduced HCVR/LCVR overlay opacity
+
+**What changed:** Reduced the fig1/fig2 navy overlay opacity from `0.35` to
+`0.25` and re-rendered from the existing mass-based cache without model loading.
+
+**Why:** User requested a further reduction in opacity.
+
+**Refs:** `mitigation/scripts/hcvr_lcvr_intervention.py`;
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-15 — Reduced HCVR/LCVR overlay opacity
+
+**What changed:** Reduced the fig1/fig2 navy region-overlay opacity from `0.50`
+to `0.35`, retaining `#001f3f` and all other styling. Re-rendered from the
+existing mass-based cache without model loading.
+
+**Why:** User requested a lighter, less opaque overlay so the source image remains clearer.
+
+**Refs:** `mitigation/scripts/hcvr_lcvr_intervention.py`;
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.
+
+## 2026-07-15 — Darkened the HCVR/LCVR region overlays
+
+**What changed:** Darkened the binary region-overlay color in fig1/fig2 from
+`#08306b` to navy `#001f3f`, retaining the existing opacity and all other figure
+styling. Re-rendered from the existing mass-based cache without model loading.
+
+**Why:** User requested a darker blue overlay.
+
+**Refs:** `mitigation/scripts/hcvr_lcvr_intervention.py`;
+`mitigation/results/object_cooccurrence_prior/hcvr_lcvr_1268_t25_b25_mass/`.

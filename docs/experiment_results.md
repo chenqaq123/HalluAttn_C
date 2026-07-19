@@ -38,24 +38,49 @@ Source: `detection/baselines/results/coco_llava_7b_baselines/`,
 | GLSim-local | 0.772 | 0.564 | 0.593 | 0.601 | some residual signal |
 | Entropy | 0.721 | 0.637 | 0.655 | 0.634 | reliable uncertainty baseline |
 | NLL | 0.711 | 0.636 | 0.652 | 0.630 | ~Entropy |
-| Beyond ADS (fixed, blob-mass, L16) | 0.688 | 0.554 | 0.559 | 0.537 | attention-dispersion; weak within-bin |
-| Beyond CGC (fixed, sim-topk, best L18) | 0.872 | **0.752** | 0.750 | 0.679 | hidden-state grounding; **survives length control** |
-| Beyond ADS+CGC (fixed, supervised OOF) | 0.890 | **0.793** | 0.784 | 0.748 | strongest controlled detector in the suite |
+| **TVER** (ICCV'25 ONLY, layer 0) | 0.830 | 0.566 | 0.544 | 0.519 | H(text attn)/H(vis attn); unsup; **overall ≈ position-only 0.830**, collapses |
+| **SAE — true** (Mask2Former, best L10) | 0.783 | 0.575 | 0.579 | 0.529 | 2026 unsup attention×segmentation; reproduces overall≈paper 0.766, **collapses** |
+| SAE — seg-free skeleton (best L16) | 0.792 | 0.608 | 0.589 | 0.539 | dispersion proxy, **not** the paper's SAE (no segmenter) |
+| Beyond ADS (1-layer, L16) | 0.688 | 0.555 | 0.559 | 0.538 | attention-dispersion; 1-layer is *diagnostic only* (paper's ADS = supervised vector) |
+| Beyond CGC (faithful, best L31) | 0.728 | 0.574 | 0.605 | 0.600 | repr grounding; **collapses** — old 0.872/0.752 was a `token_pos+1` indexing bug |
+| **LaSCD** (norm shape-energy, mean L11–28) | 0.559 | 0.522 | — | — | attention 2D-Laplacian shape; near-chance (best layer 0.589/0.569). Raw energy is a *mass proxy* (anti-correlated); see note. |
+| ADS-only **supervised** (32-layer OOF) | 0.840 | 0.664 | 0.657 | 0.619 | multi-layer *attention* pooling partly survives |
+| CGC-only **supervised** (32-layer OOF) | 0.837 | 0.669 | 0.676 | 0.656 | multi-layer *repr* pooling |
+| Beyond ADS+CGC **supervised** (OOF) | 0.866 | 0.719 | 0.724 | 0.674 | suite ceiling; barely exceeds single-score IC (0.686) |
 
-Takeaway: the *attention-mass / attention-shape* detectors (PAS, SVAR, ADS) are
-position-confounded and collapse to ~random within-bin — this holds even for the
-**faithful, fixed** SVAR (5–18) and blob-mass ADS, so the Prong-1 critique is
-robust to the reproduction fixes. The scores that survive length control are
-**not attention-based**: they read *grounding / semantic consistency* — IC
-(logit-lens), and especially the fixed **CGC** (token↔patch hidden-state
-similarity, within-bin 0.752) and the supervised **ADS+CGC** (0.793).
+Takeaway (v3, all faithful to official repos — see §E 2026-07-08 repo-audit entry):
+**every unsupervised *single-score attention* detector collapses under length
+control** — PAS, SVAR, ADS, **the faithfully-reproduced 2026 SAE (with its real
+Mask2Former segmenter)**, **LaSCD (near-chance, see note)**, and the newest
+**TVER (ICCV 2025)**, whose overall AUROC (0.830) sits *exactly on the position-only
+baseline* (0.8304).
 
-> **Reproduction fidelity (verified 2026-07-08; SVAR/Beyond fixed & re-run, see §E):**
-> PAS is a line-for-line faithful port of `lanl/pas`; IC (final-layer, conservative),
-> GLSim, NLL, Entropy faithful. **SVAR, ADS, CGC, ADS+CGC were fixed to the papers
-> and re-run on full COCO** (layer-0 SVAR sanity reproduced the old 0.834 exactly).
-> Fixing SVAR/ADS did not change the Prong-1 conclusion; fixing CGC/ADS+CGC raised
-> them sharply because the semantic grounding signal survives the control.
+> **LaSCD is a special case (reviewed against `macovaseas/LaSCD` + paper):** its
+> energy is a *within-token cross-layer selector* (argmax=premature/argmin=GT layer,
+> feeding contrastive decoding), never a cross-token detector — the repo/paper report
+> **no per-sample AUROC**. The implemented *raw* energy is mass-weighted (Eq. 3), so
+> cross-token it degenerates into a visual-mass proxy that *anti-correlates* with
+> hallucination (grounded > hallu, overall < 0.5); Theorem 1 (fixed mass) is about the
+> mass-*normalized* shape energy, which has the right sign but is near-chance (mean
+> L11–28 0.559/0.522, best layer 0.589/0.569). So LaSCD's weakness is an **off-label
+> mismatch, not a reproduction bug** — our `lascd_raw` reproduces `_deco_layer_energy`
+> verbatim.
+
+The earlier "CGC survives (0.752)" was an indexing artifact
+(reading the object token's own hidden state at `token_pos+1` instead of the
+generating row `token_pos` the official code uses); the faithful CGC also collapses
+(0.574). What retains moderate within-bin signal is **not any single attention
+readout**: the single logit-lens **IC** (0.686) and **supervised 32-layer pooling**
+of ADS/CGC (0.664/0.669), ceiling at supervised **ADS+CGC 0.719**.
+
+> **Reproduction fidelity (verified 2026-07-08 against official GitHub repos, see §E):**
+> ADS/CGC diffed vs `tuandung2812alt3/token-grounding-detector` (CVPR/ICLR 2026):
+> ADS math faithful, single-layer ~0.5 is *by design* (paper's ADS is the supervised
+> per-layer vector; our supervised overall 0.865 ≈ paper 0.88). CGC had a one-off
+> position bug, now fixed to the repo's generating-row readout. LaSCD `lascd_raw`
+> reproduces the official `_deco_layer_energy` verbatim (`macovaseas/LaSCD`). SAE has
+> no repo; the **true** version adds Mask2Former-Swin-L segmentation-region entropy
+> per the paper. TVER reproduces `zifuwan/ONLY` layer-0 `H(text)/H(vis)` exactly.
 
 ## B. Detection — SinkDetect shape scores & per-head diagnostic (Prong 1)
 
@@ -227,3 +252,221 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   beyond_svar_metrics.json).
 - Supersedes: the §A Beyond-ADS/CGC "simplified proxy" rows and the SVAR "layer-0"
   row (now the faithful fixed numbers).
+
+### 2026-07-08 — Official-repo audit + three new 2026 attention detectors (SAE, LaSCD, TVER)
+
+- **Motivation:** verify the fixed scores line-by-line against the official GitHub
+  repos (not just the papers), and broaden the attention-detector comparison with
+  recently-published, unsupervised, attention-based metrics. A 4-venue proceedings
+  sweep (CVPR/ICCV/ECCV, ACL/EMNLP/NAACL, NeurIPS/ICML/ICLR, surveys+citation graph)
+  found the field **saturated**: the only clean new unsupervised attention detector
+  not already catalogued is **TVER** (ICCV 2025). Meta-finding: the 2026 detection
+  wave is pivoting *away* from attention toward hidden-state/uncertainty probes,
+  several explicitly citing attention-sink unreliability — independent support for Prong 1.
+- **Repo audit verdicts** (repos cloned & read):
+  - **Beyond ADS/CGC** (`tuandung2812alt3/token-grounding-detector`, = CVPR/ICLR-2026
+    "The Devil is in the Tokens"): ADS math faithful. **Single-layer ADS ≈ 0.5 is by
+    design** — the paper's ADS is a *supervised classifier over the full per-layer ADS
+    vector*, reported without length control; our supervised overall (0.865) ≈ paper 0.88.
+    **CGC had a one-off bug:** we read the object hidden state at `token_pos+1`; the repo
+    builds a prefix ending *before* the object and reads the generating row (= our
+    `token_pos`, causal-equivalent). Fixed → CGC within-bin **0.752 → 0.574** (the old
+    0.752 "survives" was the artifact).
+  - **LaSCD** (`macovaseas/LaSCD`): our `lascd_raw` reproduces `_deco_layer_energy`
+    verbatim (per-head 4-neighbour Laplacian, zero-pad, Frobenius→mean, raw 24×24 slice).
+    It is a decoding/layer-selector, so detector use is a labeled adaptation.
+  - **SAE** (arXiv:2603.16558): **no official repo.** Added the **true** version with
+    **Mask2Former-Swin-L** (COCO-panoptic) segmentation-region entropy ÷ log|C| per the
+    paper; kept the seg-free raw-patch version as a labeled dispersion ablation.
+  - **TVER** (`zifuwan/ONLY`, ICCV 2025): reproduced layer-0 per-head
+    `H(text attn)/H(visual attn)` with outlier-zeroing + renorm, mean over heads,
+    exactly per the code. Sign confirmed empirically (higher = hallucinated).
+- **Setup:** LLaVA-1.5-7B, full 16426-mention set, 2 GPU shards →
+  `experiments/beyond_svar_v3/` (git-ignored). Same position/length-controlled metrics.
+  Also added **supervised ADS-only / CGC-only** (32-layer OOF) as the faithful test of
+  the paper's multi-layer *attention* detector under length control.
+- **Result (overall / within-bin AUROC), all faithful:**
+
+| Score | Type | Overall | Within-bin |
+|---|---|---|---|
+| TVER (ICCV'25, layer 0) | attn, unsup | 0.830 | 0.566 |
+| SAE — true (Mask2Former, best L10) | attn×seg, unsup | 0.783 | 0.575 |
+| SAE — seg-free skeleton (best L16) | attn disp., unsup | 0.792 | 0.608 |
+| LaSCD-raw (max L8–28) | attn, unsup | 0.574 | 0.500 |
+| CGC (faithful, best L31) | repr, unsup | 0.728 | 0.574 |
+| ADS-only supervised (32-layer) | attn | 0.840 | 0.664 |
+| CGC-only supervised (32-layer) | repr | 0.837 | 0.669 |
+| ADS+CGC supervised | attn+repr | 0.866 | 0.719 |
+
+- **Interpretation:** Prong 1 is now airtight and reproduction-faithful. Every
+  unsupervised **single-score attention** detector collapses under length control —
+  including the faithfully-reproduced 2026 **SAE** (with its real segmenter; overall
+  0.783 ≈ paper's 0.766, within-bin 0.556–0.575), **LaSCD** (chance, 0.500), and the
+  newest **TVER**, whose overall AUROC (0.830) equals the position-only baseline
+  (0.8304). Semantic segmentation does *not* rescue SAE. The corrected **CGC** also
+  collapses (0.574), so the surviving signal is not "grounding vs attention" per se —
+  it is **supervised multi-layer pooling** (ADS/CGC 0.664/0.669, combined 0.719) and
+  the single logit-lens **IC** (0.686); the ceiling (0.719) barely exceeds IC.
+- Supersedes the §A Beyond-CGC/ADS+CGC within-bin numbers (0.752/0.793 → faithful
+  0.574/0.719) and adds the SAE/LaSCD/TVER rows.
+
+### 2026-07-13 — H3 qualitative attention-case figures (object co-occurrence spec §5.4)
+
+- Setup: offline rendering from the saved H3 artifacts
+  (`mitigation/results/object_cooccurrence_prior/qualitative_case_{1,2}_attention.npz`,
+  LLaVA-1.5-7B, POPE adversarial, first answer-token decision row, layers 9–14
+  mean over heads) via the new `mitigation/scripts/visualize_qualitative_attention.py`.
+  No model re-run. Overlay style adapted from
+  `MM2026/Hallu_Sink_Correlation/show_attention_map.ipynb` (24×24 patch map,
+  nearest upsampling to 336², heatmap over the processed image), with `magma`,
+  value-modulated opacity, and p99.5-capped color scales instead of jet +
+  constant alpha. Outputs: `qualitative_cases_attention.{pdf,png}` (spec §5.4
+  five-panel layout: image+bbox | vanilla localization | ClearSight localization,
+  shared scale | positive matched residual | measurements), per-layer supplements
+  `qualitative_case_{1,2}_layers.{pdf,png}`, exact-values sidecar
+  `qualitative_cases_attention_data.json`, and the previously-missing result
+  `README.md` (spec §6).
+- Result (from the saved measurements, now visible in the figure):
+  - Case 2 (truck absent / car present, vanilla no → ClearSight yes): **97.3%**
+    of the positive matched residual falls inside the related-object (*car*)
+    region — consistent with the H3 associated-evidence mechanism.
+  - Case 1 (chair absent / dining table present, vanilla no → ClearSight yes):
+    only **2.3%** of the positive residual is in-region, and ClearSight
+    *decreases* the related-region absolute mass (0.0399 → 0.0297). Total
+    visual mass drops under ClearSight in both cases (0.0882→0.0736,
+    0.0709→0.0546).
+- Interpretation: the answer flip to "yes" is reproduced in both cases, but the
+  "intervention concentrates extra attention on the related object" narrative
+  (spec §5.1 criterion 4) holds only for case 2. Case 1 must be re-selected from
+  the saved 72-candidate pool or presented as a general associated-evidence
+  false positive (spec §5.1 fallback). H2 — the paired
+  difference-in-differences quantitative half — is still pending.
+- Supersedes: `qualitative_cases.{pdf,png}` (residual-only layout) as the
+  paper-facing H3 figure; the old files are kept for history.
+
+### 2026-07-14 — Clean-map qualitative figure (position prior + sink tokens removed)
+
+- Motivation: visualize the H3 cases with a **clean** attention map — RoPE
+  position prior removed *and* detected sink tokens deleted — following the sink
+  machinery of `MM2026/Hallu_Sink_Correlation/utils/AttnAdapter.py`.
+- Setup: `mitigation/scripts/extract_qualitative_sink_attention.py` reproduces the
+  vanilla first-answer-token decision for the two saved cases (same image/POPE
+  prompt), LLaVA-1.5-7B, layers 9–14. Sink detection = `auto_detect_sinks` on
+  pre-RoPE key L2 norm; purification / no-RoPE reuse the pure-torch
+  `detection/src/sinkdetect/sink_utils.py`. Runs in the `latentGuard` env
+  (transformers 4.48.1) via `output_attentions` + a forward pre-hook, so it does
+  **not** import the tfm-5.x `DetectionAdapter`/`interventions.py`. Model cache is
+  `/srv/common_model/huggingface` (the `.env` HF path is stale like the COCO path).
+- **Faithfulness gate PASSED**: reproduced `original` visual attention vs the saved
+  `vanilla_attention` — max|Δ| = 1.5e-3 (case 1), 6.4e-4 (case 2), both < 5e-3.
+  This also confirms tfm 4.48.1 reproduces the run that produced the H3 npz.
+- Result (in-region attention-mass fraction, raw → no-RoPE → clean):
+  - Case 2 (truck absent / car present): **0.318 → 0.519 → 0.573** — removing the
+    position prior and sinks *concentrates* attention onto the related object,
+    consistent with the H3 associated-evidence mechanism.
+  - Case 1 (chair absent / dining table present): 0.472 → 0.458 → 0.449 (flat) —
+    same selection caveat as the 2026-07-13 entry (case 1 fails §5.1 criterion 4).
+  - Removing RoPE raises total visual mass ~0.08 → ~0.55; detected sinks are
+    low-key-norm border/background patches (14–19 flagged in ≥4/6 band layers).
+- Artifacts: `qualitative_case_{1,2}_sink_attention.npz`,
+  `qualitative_cases_clean_attention.{pdf,png}`,
+  `qualitative_cases_clean_attention_data.json` (all under
+  `mitigation/results/object_cooccurrence_prior/`). New scripts:
+  `mitigation/scripts/extract_qualitative_sink_attention.py` and the extended
+  `visualize_qualitative_attention.py` (`render_clean_figure`). Minor additive
+  change: `DetectionAdapter` now stashes `last_key_norms` (unused here; for a
+  future tfm-5.x DetectionAdapter run).
+
+### 2026-07-14 — HCVR/LCVR attention-amplification on case 1268 (paper Fig. 4 reproduction)
+
+- Question: does amplifying attention on **high-credibility** vs **low-credibility**
+  visual regions move the answer symmetrically (paper's claim: HCVR↑→"yes",
+  LCVR↑→"no")? Single case: POPE adversarial qid 1268, "Is there a traffic light in
+  the image?" (COCO_val2014_000000244455; traffic light ABSENT). LLaVA-1.5-7B,
+  band layers 9–14, first answer-token decision row.
+- Setup: `mitigation/scripts/hcvr_lcvr_intervention.py`. Regions are defined on the
+  **CLEAN** map (no-RoPE position prior removed + detected sink tokens deleted,
+  sinks *excluded* from the ranking): HCVR = top-q, LCVR = bottom-q of the 558
+  eligible non-sink visual tokens (18 sink tokens dropped). Intervention =
+  **post-softmax** multiply of the region's attention columns by a factor, for all
+  post-image query rows, in every band layer, **no row renormalization** (renorm
+  saturates at ~10–20%). Gated monkeypatch of tfm-4.48 `eager_attention_forward`;
+  runs in `latentGuard` env. Baseline P(yes)=P(no)=0.500 (argmax "No"). Cache +
+  render split (GPU once, restyle with no GPU). Dense sweep factors 1.0→20; the two
+  line plots share one x-axis (1.00–2.25, step 0.25) scaled to HCVR's +30% point.
+- Result (probability change over the displayed window, factor 1.0→2.25):
+
+  | config | HCVR amplify → P(yes) | LCVR amplify → P(no) |
+  |---|---|---|
+  | top 25% / bottom 25% (140/140 tokens) | 0.500 → **0.804**  (+30.4%) | 0.500 → 0.542  (+4.2%) |
+  | top 10% / bottom 50% (56/279 tokens)  | 0.500 → **0.811**  (+31.1%) | 0.500 → 0.533  (+3.3%) |
+
+  - **Strong asymmetry, both configs.** Amplifying HCVR drives P(yes) up hard
+    (~+30%, robust, monotonic to a ~0.88 plateau around factor 3). Amplifying LCVR
+    moves P(no) only ~3–4% and, per the dense sweep, **reverses** at higher factors
+    (LCVR P(yes) climbs back above 0.5 past factor ~6–8). So *both* regions, pushed
+    hard enough, add **yes**-bias — the paper's symmetric HCVR-yes / LCVR-no does
+    not hold in magnitude. This is direct evidence for Prong-2 (pushing attention
+    injects answer bias, it is not target-object evidence verification).
+  - **Which quantile split is better: top 25% / bottom 25%.** HCVR effect is
+    essentially identical to the 10/50 split (~+30%), but the LCVR→no trend is
+    cleaner and slightly larger (+4.2% vs +3.3%), the regions are balanced (equal
+    140/140 token counts), and it matches the paper's own 25% choice. The 10/50
+    split's LCVR is a diffuse half-image region with a weaker, flatter early
+    response. Note the two line plots use independent y-axes (fig4 is zoomed to
+    0.46–0.54), so the ~4% LCVR effect *looks* as steep as the 30% HCVR effect —
+    the magnitudes differ ~7×.
+- Artifacts (git-ignored `mitigation/results/object_cooccurrence_prior/`):
+  `hcvr_lcvr_1268_t25_b25/` and `hcvr_lcvr_1268_t10_b50/`, each with 4 bare figures
+  (no titles / tight margins): `fig1_HCVR_top`, `fig2_LCVR_bottom` (binary region
+  highlights on the image), `fig3_amplify_top`, `fig4_amplify_bottom` (line plots,
+  shared round x-axis), plus `cache.npz`, `sweep_dense.csv`, `sweep_{HCVR,LCVR}_*.csv`,
+  `attention_distribution.csv`, `summary.json`.
+
+### 2026-07-14 — HCVR/LCVR region definition: by token-count vs by cumulative score (mass)
+
+- Follow-up to the same-day HCVR/LCVR entry. Question (raised by user): should HCVR/LCVR
+  be the top/bottom fraction of **tokens** (count) or of the **cumulative clean-attention
+  score** (mass)? Added `--select_by {count,mass}` to `hcvr_lcvr_intervention.py`; same
+  case 1268, same post-softmax no-renorm intervention, top_q=bottom_q=0.25.
+- The clean map is only moderately concentrated (top-10 eligible tokens hold 7.3% of
+  mass; top-25%-of-tokens hold 47.7%). Under the two definitions the regions differ a lot:
+
+  | 25% split | HCVR tokens / mass | LCVR tokens / mass | HCVR amplify→P(yes) @2.25 | LCVR amplify→P(no) @2.25 |
+  |---|---|---|---|---|
+  | by count | 140 / **47.7%** | 140 / **10.8%** | 0.500→0.804 (+30.4%) | 0.500→0.542 (+4.2%) |
+  | by mass  | 55 / 25.1% | 261 / 25.1% | 0.500→0.814 (+31.4%) | 0.500→0.539 (+3.9%) |
+
+- **The HCVR≫LCVR asymmetry is robust to the region definition** (HCVR ~+31% toward yes,
+  LCVR ~+4% toward no then reverses, under both). But **mass-based is the more appropriate
+  (and more rigorous) definition**, for two reasons:
+  1. It matches the "credibility = evidence mass" semantics — HCVR becomes a tight 55-token
+     high-score set (visually concentrated on the salient riders/vehicles), LCVR a broad
+     261-token low-score field.
+  2. **It removes a confound.** Count-based HCVR already holds 47.7% of the eligible mass
+     vs LCVR's 10.8%, so multiplying both by the same factor injects ~4.4× more *absolute*
+     attention mass into HCVR — the bigger HCVR effect is partly just "more mass moved."
+     Mass-based equalizes both regions at 25.1% mass, i.e. the *same* absolute injection,
+     and HCVR **still** moves the answer ~8× more than LCVR (+31% yes vs +4% no). So the
+     asymmetry is genuinely about *where* attention lands (credibility), not how much mass
+     is amplified — a cleaner Prong-2 result.
+- Recommendation: use `--select_by mass` for the paper figure. Artifacts:
+  `hcvr_lcvr_1268_t25_b25_mass/` (55/261 tokens), alongside the renamed
+  `hcvr_lcvr_1268_{t25_b25,t10_b50}_count/`.
+
+### 2026-07-15 — ClearSight paired prediction-distribution shift on POPE adversarial
+
+- Setup: paired all 3000 rows by `question_id` between
+  `mitigation/results/coco_llava_7b_attention_only/pope/adversarial/{vanilla,clearsight}/predictions.jsonl`.
+  The set is balanced (1500 positive / 1500 negative); all IDs matched and every
+  output normalized exactly to yes/no.
+- Prediction distribution: vanilla = 1438 yes / 1562 no (47.93% / 52.07%);
+  ClearSight = 1574 yes / 1426 no (52.47% / 47.53%), a **+136 / +4.53-point
+  shift toward yes**.
+- Paired transitions: 1438 yes→yes, 1426 no→no, **136 no→yes, 0 yes→no**.
+  Of the 136 flips, 53 correct vanilla false negatives, but 83 convert true
+  negatives into false positives. Thus TP +53, FP +83, TN −83, FN −53.
+- Consequence: TPR 81.20%→84.73% (+3.53pt), but FPR 14.67%→20.20%
+  (+5.53pt); accuracy 83.27%→82.27% (−1.00pt), precision 84.70%→80.75%,
+  MCC 0.666→0.646. ClearSight acts as a one-directional no→yes intervention;
+  its extra false positives outnumber corrected false negatives by 30.

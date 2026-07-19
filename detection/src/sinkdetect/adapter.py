@@ -74,6 +74,7 @@ class DetectionAdapter(LlamaAttention):
         self.last_no_rope_topmass_only_attn: Optional[torch.Tensor] = None
         self.last_no_rope_purified_attn: Optional[torch.Tensor] = None
         self.last_per_head_attn: Optional[torch.Tensor] = None  # (n_heads, seq, seq) CPU, only for PER_HEAD_LAYERS
+        self.last_key_norms: Optional[torch.Tensor] = None  # (seq,) pre-RoPE mean-over-(batch,heads) key L2 norm
         self.last_sink_stats: dict = {}
         self.compute_no_rope_attention: bool = False
 
@@ -97,6 +98,7 @@ class DetectionAdapter(LlamaAttention):
         # ── Capture pre-RoPE key norms for sink detection ──
         # Per-head L2 norm, averaged over (batch, heads)
         key_norms = key_states.float().norm(p=2, dim=-1).mean(dim=(0, 1))  # (seq_len,)
+        self.last_key_norms = key_norms.detach()
         all_pos = torch.arange(key_norms.size(0), device=key_norms.device)
         vis_pos = all_pos[(all_pos >= self.vis_start) & (all_pos < self.vis_end)]
         sink_pos = auto_detect_sinks(key_norms, vis_pos) if vis_pos.numel() > 0 else vis_pos

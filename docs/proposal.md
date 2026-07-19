@@ -30,9 +30,16 @@ length-controlled *within-bin* metric — mean-over-head attention-shape scores
 
 - `sink_only_conc_top10_mass`: overall AUROC 0.8099 → **within-bin 0.5087**.
 - PAS 0.835 → 0.593, SVAR 0.834 → 0.575 (the position-only baseline alone is 0.830).
+- This holds for **every unsupervised single-score attention detector we could
+  reproduce faithfully from its official repo**, including three 2026 methods:
+  **SAE** (ICLR-adjacent, with its real Mask2Former segmenter) 0.783 → 0.556,
+  **LaSCD** 0.574 → **0.500 (chance)**, and **TVER** (ICCV 2025) — whose overall
+  AUROC (0.830) sits *exactly on the position-only baseline* → within-bin 0.566.
 
 Reading the shape of attention cannot separate a hallucinated token from a
-grounded one once the length confounder is removed.
+grounded one once the length confounder is removed. Notably, the 2026 detection
+literature is itself pivoting away from attention toward hidden-state/uncertainty
+signals — independent corroboration of this prong.
 
 **Scope (must state honestly).** The collapse is specific to *mean-over-head
 attention-shape* scores. Not every internal signal dies under the control:

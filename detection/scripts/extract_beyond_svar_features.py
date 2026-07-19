@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -42,6 +43,8 @@ from sinkdetect.utils import build_caption_prompt, load_model_and_processor  # n
 
 _EPS = 1e-8
 _S8 = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])  # 8-connectivity
+# 4-neighbour discrete Laplacian for LaSCD (arXiv:2605.11559, App. B).
+_LAPLACIAN = torch.tensor([[0.0, 1, 0], [1, -4, 1], [0, 1, 0]]).view(1, 1, 3, 3)
 _DEBUG = bool(int(os.environ.get("BEYOND_DEBUG", "0")))
 
 
@@ -72,6 +75,61 @@ def ads_from_row(a: np.ndarray, top_x: float = 0.10, tau_ads: int = 2) -> float:
     return (1.0 - m) * h_hat
 
 
+def _denoise_renorm(a, mask=None, eps=_EPS):
+    """ONLY's per-key outlier-zero (drop keys > mean+std over the key axis) then renorm to sum 1.
+
+    a: [..., K]. If mask (bool, same trailing shape or broadcastable) is given, statistics and the
+    distribution are restricted to valid keys (used for causal text keys of variable length).
+    """
+    if mask is None:
+        mean = a.mean(-1, keepdim=True)
+        std = a.std(-1, unbiased=True, keepdim=True)          # torch ddof=1, matches ONLY
+        a = torch.where(a > mean + std, torch.zeros_like(a), a)
+    else:
+        m = mask.to(a.dtype)
+        a = a * m
+        cnt = m.sum(-1, keepdim=True).clamp_min(1.0)
+        mean = a.sum(-1, keepdim=True) / cnt
+        var = (((a - mean) * m) ** 2).sum(-1, keepdim=True) / (cnt - 1.0).clamp_min(1.0)
+        std = var.sqrt()
+        a = torch.where((a > mean + std) & mask, torch.zeros_like(a), a) * m
+    return a / a.sum(-1, keepdim=True).clamp_min(eps)
+
+
+def tver_layer_scores(full, vis_start, vis_end, text_mask, eps=1e-6):
+    """TVER (ONLY, arXiv:2507.00898): per-head H(text attn)/H(visual attn) at the query row, mean over heads.
+
+    full: [H, n, seq] attention rows at each mention's token_pos. text_mask: [n, seq] bool
+    (system + generated-so-far, excluding BOS/image/self-future). Higher TVER = text-prioritizing.
+    """
+    vis = full[:, :, vis_start:vis_end]                        # [H, n, 576]
+    p_vis = _denoise_renorm(vis)
+    H_vis = -(p_vis * (p_vis + eps).log()).sum(-1)             # [H, n] nats
+    p_text = _denoise_renorm(full, mask=text_mask.unsqueeze(0))
+    H_text = -(p_text * (p_text + eps).log()).sum(-1)          # [H, n]
+    H_text = torch.nan_to_num(H_text, nan=0.0)
+    H_vis = torch.nan_to_num(H_vis, nan=float("inf"))
+    return (H_text / H_vis).mean(0)                            # [n] mean over heads
+
+
+def patch_labels_for_image(seg_model, seg_proc, image, side, device):
+    """Mask2Former-Swin-L semantic labels for the CLIP 24x24 patch grid (SAE, arXiv:2603.16558).
+
+    Segments the 336x336 CLIP input, then assigns each 14x14 patch its majority-pixel
+    semantic label. Returns (labels[576] in [0,C), C) as a dense LongTensor on `device`.
+    """
+    res = side * 14  # 24*14 = 336, the CLIP input size
+    im = image.resize((res, res))
+    inp = seg_proc(images=im, return_tensors="pt").to(device)
+    with torch.no_grad():
+        o = seg_model(**inp)
+    sem = seg_proc.post_process_semantic_segmentation(o, target_sizes=[(res, res)])[0]  # [336,336] long
+    blocks = sem.reshape(side, 14, side, 14).permute(0, 2, 1, 3).reshape(side * side, 14 * 14)
+    maj = torch.mode(blocks, dim=-1).values                      # [576] majority label per patch
+    uniq, inv = torch.unique(maj, return_inverse=True)           # densify to [0,C)
+    return inv.to(device), int(uniq.numel())
+
+
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--object_cache", default=str(PROJECT_ROOT / "detection/baselines/results/coco_llava_7b_baselines/object_cache.jsonl"))
@@ -82,6 +140,8 @@ def main() -> None:
     p.add_argument("--shard_idx", type=int, default=0)
     p.add_argument("--num_shards", type=int, default=1)
     p.add_argument("--cgc_k_frac", type=float, default=0.05)
+    p.add_argument("--seg_model", default="facebook/mask2former-swin-large-coco-panoptic")
+    p.add_argument("--no_seg", action="store_true", help="skip Mask2Former; only the seg-free SAE skeleton")
     p.add_argument("--out", required=True)
     args = p.parse_args()
 
@@ -102,9 +162,21 @@ def main() -> None:
     prompt_text = build_caption_prompt()
     img_token_id = getattr(processor, "image_token_id", None) or getattr(processor, "image_token_index", 32000)
 
+    seg_model = seg_proc = None
+    if not args.no_seg:
+        from transformers import AutoImageProcessor, Mask2FormerForUniversalSegmentation
+        seg_proc = AutoImageProcessor.from_pretrained(args.seg_model)
+        seg_model = Mask2FormerForUniversalSegmentation.from_pretrained(args.seg_model).to(device).eval()
+        for prm in seg_model.parameters():
+            prm.requires_grad_(False)
+
     n_layers = model.config.text_config.num_hidden_layers  # 32
     out = {k: [] for k in ("object_id", "image_id", "token_pos", "gen_pos", "label")}
-    feat = {k: [] for k in ("image_mass", "ads", "cgc")}  # each -> (n, n_layers)
+    feat_keys = ["image_mass", "ads", "cgc", "sae_R", "lascd_raw", "lascd_norm", "tver"]
+    if seg_model is not None:
+        feat_keys.append("sae_seg")          # true SAE (Mask2Former segmentation-region entropy)
+    feat = {k: [] for k in feat_keys}         # each -> (n, n_layers)
+    lap = _LAPLACIAN.to(device)
 
     for image_id in tqdm(shard_ids, desc=f"shard{args.shard_idx}"):
         entry = generation.get(int(image_id))
@@ -139,21 +211,60 @@ def main() -> None:
             del inputs, outputs
             continue
         tpos = torch.tensor([int(r["token_pos"]) for r in mentions], device=device)
-        target = tpos + 1
+        # Object-token generating position (= repo's last_pos): used as the query row
+        # for attention scores AND as the token hidden state for CGC, matching the
+        # official token-grounding-detector code (features/cgc.py reads hs at last_pos).
 
-        # Per-layer head-averaged attention rows at the mention query positions,
-        # restricted to the image span -> [n_layers, n_mentions, 576].
-        img_rows = torch.empty((n_layers, len(mentions), vis_end - vis_start), dtype=torch.float32)
-        cgc = torch.empty((n_layers, len(mentions)), dtype=torch.float32)
-        k_cgc = max(1, int(round(args.cgc_k_frac * (vis_end - vis_start))))
+        # Per-layer, per-mention features at the object-token query row (token_pos).
+        nv = vis_end - vis_start                                # 576
+        side = int(round(nv ** 0.5))                            # 24
+        nm = len(mentions)
+        log_nv = math.log(nv)
+        img_rows = torch.empty((n_layers, nm, nv), dtype=torch.float32)  # head-avg (SVAR/ADS)
+        cgc = torch.empty((n_layers, nm), dtype=torch.float32)
+        sae_R = torch.empty((n_layers, nm), dtype=torch.float32)         # SAE-raw reliability R
+        lascd_raw = torch.empty((n_layers, nm), dtype=torch.float32)     # LaSCD energy (raw)
+        lascd_norm = torch.empty((n_layers, nm), dtype=torch.float32)    # LaSCD energy (mass-normalized)
+        tver = torch.empty((n_layers, nm), dtype=torch.float32)          # TVER (ONLY): H(text)/H(vis)
+        k_cgc = max(1, int(round(args.cgc_k_frac * nv)))
+        # Causal text-key mask per mention: system+generated-so-far, exclude BOS(0)/image/future.
+        pos = torch.arange(seq, device=device)
+        text_mask = (((pos >= 1) & (pos < vis_start)) |
+                     ((pos >= vis_end) & (pos <= tpos.unsqueeze(1))))    # [nm, seq]
+        if seg_model is not None:
+            image2 = Image.open(img_path).convert("RGB")
+            plabel, n_seg = patch_labels_for_image(seg_model, seg_proc, image2, side, device)
+            image2.close()
+            log_seg = math.log(n_seg) if n_seg > 1 else 1.0
+            sae_seg = torch.empty((n_layers, nm), dtype=torch.float32)   # true SAE reliability R
         for l in range(n_layers):
-            head_avg = attentions[l][0].mean(0)                 # [seq, seq]
-            rows = head_avg[tpos, vis_start:vis_end].float()    # [n, 576]
-            img_rows[l] = rows.cpu()
-            hs = hidden_states[l + 1][0].float()                # output of decoder layer l
-            tok = torch.nn.functional.normalize(hs[target], dim=-1)         # [n, d]
-            patch = torch.nn.functional.normalize(hs[vis_start:vis_end], dim=-1)  # [576, d]
-            sims = tok @ patch.t()                              # [n, 576]
+            full = attentions[l][0][:, tpos, :].float()                 # [H, n, seq] per-head full row
+            tver[l] = tver_layer_scores(full, vis_start, vis_end, text_mask).cpu()
+            Aph = full[:, :, vis_start:vis_end]                          # [H, n, 576] visual slice
+            img_rows[l] = Aph.mean(0).cpu()                             # head-avg row for SVAR/ADS
+            # SAE (arXiv:2603.16558), segmentation-free: per-head R = M*(1-normEntropy), mean over heads.
+            M = Aph.sum(-1)                                              # [H, n] attention mass
+            p = Aph / M.unsqueeze(-1).clamp_min(_EPS)
+            ent = -(p * p.clamp_min(_EPS).log()).sum(-1)                 # [H, n] natural-log entropy
+            sae_R[l] = (M * (1.0 - ent / log_nv)).mean(0).cpu()          # higher R = more reliable
+            if seg_model is not None:
+                # True SAE: pool p into Mask2Former semantic regions, entropy over regions / log|C|.
+                pc = torch.zeros(p.shape[0], nm, n_seg, device=p.device)
+                pc.index_add_(2, plabel, p)                              # [H, n, C]
+                ent_s = -(pc * pc.clamp_min(_EPS).log()).sum(-1)         # [H, n]
+                sae_seg[l] = (M * (1.0 - ent_s / log_seg)).mean(0).cpu()
+            # LaSCD (arXiv:2605.11559): per-head Frobenius norm of the 2D Laplacian, mean over heads.
+            grid = Aph.reshape(Aph.shape[0] * nm, 1, side, side)
+            e_raw = torch.nn.functional.conv2d(grid, lap, padding=1).flatten(1).norm(dim=1)
+            lascd_raw[l] = e_raw.reshape(Aph.shape[0], nm).mean(0).cpu()
+            gridn = p.reshape(Aph.shape[0] * nm, 1, side, side)          # mass-normalized (sum=1)
+            e_norm = torch.nn.functional.conv2d(gridn, lap, padding=1).flatten(1).norm(dim=1)
+            lascd_norm[l] = e_norm.reshape(Aph.shape[0], nm).mean(0).cpu()
+            # CGC (Beyond): object-token vs top-similarity patch hidden states, same layer.
+            hs = hidden_states[l + 1][0].float()
+            tok = torch.nn.functional.normalize(hs[tpos], dim=-1)          # generating pos (repo last_pos)
+            patch = torch.nn.functional.normalize(hs[vis_start:vis_end], dim=-1)
+            sims = tok @ patch.t()
             cgc[l] = sims.topk(k_cgc, dim=-1).values.mean(-1).cpu()
 
         img_rows_np = img_rows.numpy()                          # [L, n, 576]
@@ -173,7 +284,13 @@ def main() -> None:
             out["label"].append(int(r["label"]))
         feat["image_mass"].append(image_mass.astype(np.float32))
         feat["ads"].append(ads)
-        feat["cgc"].append(cgc.numpy().T.astype(np.float32))    # [n, L]
+        feat["cgc"].append(cgc.numpy().T.astype(np.float32))          # [n, L]
+        feat["sae_R"].append(sae_R.numpy().T.astype(np.float32))      # [n, L]
+        feat["lascd_raw"].append(lascd_raw.numpy().T.astype(np.float32))
+        feat["lascd_norm"].append(lascd_norm.numpy().T.astype(np.float32))
+        feat["tver"].append(tver.numpy().T.astype(np.float32))
+        if seg_model is not None:
+            feat["sae_seg"].append(sae_seg.numpy().T.astype(np.float32))
 
         del inputs, outputs, attentions, hidden_states
         torch.cuda.empty_cache()
