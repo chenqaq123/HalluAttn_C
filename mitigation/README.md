@@ -153,8 +153,9 @@ cache remain under git-ignored `experiments/qwen3vl_xev/`. Iteration 1 rejected
 the symmetric keep-minus-drop score, and iteration 2 rejected exact open/closed
 candidate agreement as a zero-coverage veto certificate; see `docs/proposal.md`
 and `docs/experiment_results.md` before changing these formulas. Iteration 3's
-pairwise certificate uses only zero-threshold sign gates and is pending a
-disjoint confirmatory run.
+pairwise certificate evolved into XEV v1: iteration 8 passed its disjoint
+960-row gate with 3 FP corrections and 1 TP veto. Keep the directional/alias
+configuration above frozen when running external validations.
 
 ## Attention-Shift Audit
 

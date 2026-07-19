@@ -102,14 +102,14 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 7 development (2026-07-19):** no constructive result is
-confirmed yet, but the precision-repaired rule is frozen for a larger holdout.
-The two-inventory iteration-6 rule failed because it accepted weak pairwise
-differences and generated S relations. Requiring an actual directional answer
-switch and matching inventory support only through auditable aliases converts
-the iteration-6 retrospective from 4 TP vetoes / 0 corrections to 0 TP vetoes /
-2 corrections. Because triggers are sparse, confirmation uses 960 untouched
-rows and still requires at least 3 triggers.
+**Status after iteration 8 (2026-07-19):** the first usable constructive version
+is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
+rows, the precision-repaired certificate triggers 4 times: 3 false-positive
+corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
+TPR falls only 0.8417 -> 0.8396, balanced accuracy rises 0.8823 -> 0.8844, and
+MCC rises 0.7671 -> 0.7719. It passes every pre-registered gate. The effect is
+sparse and small; current evidence supports a high-precision correction
+certificate, not a broad decoding replacement.
 
 ### 3.1 Principle and scope
 
@@ -254,6 +254,15 @@ baseline FPs pass it and are no longer falsely suppressed by parts/hypernyms:
 -> 0.0583, unchanged TPR 0.7958, balanced accuracy 0.8646 -> 0.8688, and MCC
 0.7362 -> 0.7455. This is not a held-out result.
 
+Iteration 8 confirms it on rows 1560--2519 (960 rows, 160 images). Seven strict
+local proposals invoke global support; three real targets are unanimously found
+and suppressed. The four remaining certificates correct `chair -> couch` once
+and `cup -> wine glass` twice, while incorrectly vetoing one real `couch` as
+chair because the first 12-item inventory omits a later `sofa` mention. The
+pre-registered gate passes: 4 triggers >=3, precision 0.75 >=2/3, FPR decreases,
+TPR drop is 0.0021 <=0.005, and MCC increases. **Adopt this frozen rule as XEV
+v1**, while reporting the single support-recall failure and low 0.42% action rate.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -294,9 +303,9 @@ Honest guardrails carried over from the tear-down:
 - Any absolute-gain claim must be reported against the honest baselines here.
 
 ## 5. Known risks / must-dos (rebuild backlog)
-- **XEV precision-repair confirmation:** run the frozen directional/alias rule on
-  960 untouched rows (1560--2519), requiring >=3 triggers, >=2/3 correction
-  precision, lower FPR, TPR loss <=0.005, and non-decreasing MCC.
+- **XEV v1 scaling:** preserve the frozen rule and report its sparse action rate.
+  Next validate across POPE random/popular and at least one additional modern
+  LVLM before changing inventory size or candidate provenance.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

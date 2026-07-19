@@ -683,3 +683,23 @@ minimum-three-trigger gate. All prior windows are development-only.
 
 **Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-7 entry;
 `experiments/qwen3vl_xev/iter7_smoke.jsonl` (git-ignored).
+
+## 2026-07-19 — XEV iteration 8: adopted first held-out usable version
+
+**Experiment:** Ran the frozen iteration-7 rule on 960 untouched balanced
+POPE-adversarial rows (1560--2519). Baseline TP/FP/TN/FN is 404/37/443/76. Seven
+strict local proposals invoke the global guard; three are suppressed and four
+act. Three actions correct FPs and one vetoes a TP, yielding 403/34/446/77.
+
+**Result:** The pre-registered gate passes: 4 triggers, 0.75 correction precision,
+FPR 0.0771 to 0.0708, TPR 0.8417 to 0.8396 (loss 0.00208), balanced accuracy
+0.8823 to 0.8844, and MCC 0.7671 to 0.7719. The action rate is only 0.42%.
+
+**Decision / proposal change:** Adopt the frozen directional/alias certificate as
+**XEV v1**, the first usable constructive result after restart. Scope the claim
+to sparse high-precision correction, disclose the one couch/chair support-recall
+failure, and do not tune inventory length on this holdout. Next work is external
+validation across POPE splits and models, not another in-window threshold change.
+
+**Evidence:** `docs/experiment_results.md` 2026-07-19 iteration-8 entry;
+`experiments/qwen3vl_xev/iter8_holdout_summary.json` (git-ignored).

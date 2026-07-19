@@ -756,3 +756,34 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   inventories of size 12, unanimous alias support. Gate: >=3 triggers, >=2/3
   correction precision, lower FPR, TPR loss <=0.005, non-decreasing MCC.
 - **Artifacts (git-ignored):** `experiments/qwen3vl_xev/iter7_smoke.jsonl`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 8: directional/alias rule passes holdout
+
+- **Confirmatory setup:** frozen commit `2a47784`, POPE-adversarial rows
+  1560--2519: 960 balanced rows, 480 yes / 480 no, 160 untouched images. Closed
+  top-k=3 local provenance, C relation, strict target-first `<0` and
+  alternative-first `>0`, two target-free full-image inventories of size 12,
+  and unanimous lexical/explicit-alias support. No generated S relation and no
+  oracle labels. Mean runtime 2.67 s/sample on two 4090 shards.
+- **Vanilla anchor:** margin AUROC **0.9442**, AUPRC 0.9538; TP/FP/TN/FN =
+  404/37/443/76; balanced accuracy **0.8823**, TPR 0.8417, FPR 0.0771, MCC
+  0.7671, yes-rate 0.4594.
+- **XEV v1 result:** 7 strict local proposals; the global guard suppresses 3 and
+  leaves 4 certificates. Three correct baseline FPs (`chair -> couch`, two
+  `cup -> wine glass`) and one vetoes a real couch as chair. Correction precision
+  is **0.75**. TP/FP/TN/FN becomes 403/34/446/77; FPR **0.0708** (-0.00625), TPR
+  **0.8396** (-0.00208), balanced accuracy **0.8844** (+0.00208), MCC **0.7719**
+  (+0.00473), yes-rate 0.4552. Action rate is 4/960 = **0.42%**.
+- **Pre-registered gate:** PASS. Triggers 4 >=3; correction precision 0.75 >=2/3;
+  FPR decreases; TPR loss 0.00208 <=0.005; MCC increases.
+- **Residual failure:** for qid 1587, the first inventory raw output contains
+  `sofa` after the parser's 12-item cutoff while the second contains it within
+  12. Unanimous support therefore fails and a real couch is vetoed. This is
+  disclosed but not repaired on the holdout. Inventory length remains frozen.
+- **Interpretation:** this is the first usable held-out XEV version, but its gain
+  is narrow. It supports a high-precision local identity-switch certificate,
+  not a general replacement for Qwen3 decoding. Closed COCO candidates remain a
+  reproducible local proposal gate; target-free inventories remain open-vocabulary.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter8_holdout_shard{0,1}.jsonl` and
+  `experiments/qwen3vl_xev/iter8_holdout_summary.json`.

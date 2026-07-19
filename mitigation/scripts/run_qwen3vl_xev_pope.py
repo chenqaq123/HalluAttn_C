@@ -854,7 +854,7 @@ def process_record(
         "schema_version": 3,
         "score_status": {
             "scores": "rejected-iteration1-keep-minus-drop",
-            "current_diagnostic": "lazy-global-support-under-evaluation",
+            "current_diagnostic": "xev-v1-directional-alias-certificate",
         },
         "question_id": str(record["question_id"]),
         "image_id": image_id,
