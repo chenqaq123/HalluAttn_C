@@ -20,6 +20,7 @@ from mitigation.src.xev import (  # noqa: E402
     inventory_lexically_supports_target,
     lexical_equivalent,
     make_counterfactual_views,
+    parse_candidate_list,
     parse_grounding_boxes,
     robust_local_identity_proposal,
     select_pairwise_candidates,
@@ -40,6 +41,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("inputs", nargs="+", help="Iteration-11 JSONL files")
     parser.add_argument("--output_file", required=True)
     parser.add_argument("--selection", choices=("actions", "conflicts"), default="actions")
+    parser.add_argument(
+        "--box_inputs",
+        nargs="+",
+        help="Saved grounded-cycle JSONL files whose pixel boxes are reused",
+    )
+    parser.add_argument(
+        "--view_mode",
+        choices=("clear_canvas", "crop"),
+        default="clear_canvas",
+    )
+    parser.add_argument(
+        "--conflict_relations",
+        choices=("CN", "C"),
+        default="CN",
+        help="Relations eligible for pairwise identity conflict",
+    )
     parser.add_argument("--model_path", default=DEFAULT_MODEL)
     parser.add_argument("--pope_dir", default=DEFAULT_POPE)
     parser.add_argument("--coco_root", default=DEFAULT_COCO)
@@ -101,6 +118,39 @@ def grounding_prompt(target: str) -> str:
     )
 
 
+def crop_candidates(
+    engine: Qwen3VLEngine,
+    image,
+    limit: int,
+    max_new_tokens: int,
+) -> tuple[list[str], str]:
+    prompt = (
+        "Without knowing any question target, list up to "
+        f"{limit} concrete object identities visibly supported in this image crop.\n\n"
+        "Use singular noun phrases at the most specific recognizable level. Do "
+        "not list attributes, parts, scene types, broader classes, or explanations. "
+        "Return a comma-separated list only."
+    )
+    raw = engine.generate(prompt, image=image, max_new_tokens=max_new_tokens)
+    return parse_candidate_list(raw, limit=limit), raw
+
+
+def saved_boxes(row: dict, image_size: tuple[int, int], limit: int) -> list[tuple[int, int, int, int]]:
+    width, height = image_size
+    boxes = []
+    for values in row.get("grounding_boxes", []):
+        if not isinstance(values, list) or len(values) != 4:
+            raise ValueError(f"Invalid saved grounding box: {values!r}")
+        box = tuple(int(value) for value in values)
+        x0, y0, x1, y1 = box
+        if not (0 <= x0 < x1 <= width and 0 <= y0 < y1 <= height):
+            raise ValueError(f"Saved grounding box outside image: {box!r}")
+        boxes.append(box)
+        if len(boxes) >= limit:
+            break
+    return boxes
+
+
 def process_row(
     source: dict,
     record: dict,
@@ -108,20 +158,27 @@ def process_row(
     relation_filter: RelationFilter,
     knowledge: dict,
     args: argparse.Namespace,
+    box_source: dict | None = None,
 ) -> dict:
     started = time.perf_counter()
     target = source["target"]
     image = load_pope_image(record)
-    raw = engine.generate(
-        grounding_prompt(target),
-        image=image,
-        max_new_tokens=args.grounding_max_new_tokens,
-    )
-    boxes = parse_grounding_boxes(
-        raw,
-        image.size,
-        limit=args.max_grounding_boxes,
-    )
+    if box_source is None:
+        raw = engine.generate(
+            grounding_prompt(target),
+            image=image,
+            max_new_tokens=args.grounding_max_new_tokens,
+        )
+        boxes = parse_grounding_boxes(
+            raw,
+            image.size,
+            limit=args.max_grounding_boxes,
+        )
+        box_source_name = "generated"
+    else:
+        raw = box_source.get("grounding_raw", "")
+        boxes = saved_boxes(box_source, image.size, args.max_grounding_boxes)
+        box_source_name = "saved"
     closed_candidates = [
         row["name"]
         for row in knowledge["neighbors"].get(target, [])[: args.closed_k]
@@ -130,13 +187,23 @@ def process_row(
 
     region_rows = []
     for index, bbox in enumerate(boxes):
-        keep, drop = make_counterfactual_views(image, bbox)
-        generated_candidates, candidate_raw = open_candidates(
-            engine,
-            keep,
-            limit=args.max_open_candidates,
-            max_new_tokens=args.candidate_max_new_tokens,
-        )
+        drop = None
+        if args.view_mode == "crop":
+            keep = image.crop(bbox).convert("RGB")
+            generated_candidates, candidate_raw = crop_candidates(
+                engine,
+                keep,
+                limit=args.max_open_candidates,
+                max_new_tokens=args.candidate_max_new_tokens,
+            )
+        else:
+            keep, drop = make_counterfactual_views(image, bbox)
+            generated_candidates, candidate_raw = open_candidates(
+                engine,
+                keep,
+                limit=args.max_open_candidates,
+                max_new_tokens=args.candidate_max_new_tokens,
+            )
         candidate_sources = {
             "closed": closed_candidates,
             "open": generated_candidates,
@@ -158,9 +225,18 @@ def process_row(
             questions=[source["question"], *([None] * len(all_candidates))],
         )
         keep_margin_map = dict(zip(hypotheses, keep_margins))
+        allowed_relations = ("C",) if args.conflict_relations == "C" else ("C", "N")
+        pairwise_sources = {
+            source_name: [
+                candidate
+                for candidate in candidates
+                if relations.get(candidate, "N") in allowed_relations
+            ]
+            for source_name, candidates in candidate_sources.items()
+        }
         pairwise_candidates = select_pairwise_candidates(
             target=target,
-            candidate_sources=candidate_sources,
+            candidate_sources=pairwise_sources,
             relations=relations,
             keep_margins=keep_margin_map,
             limit=args.pairwise_top_k,
@@ -176,7 +252,7 @@ def process_row(
             comparisons,
             required_sources=(),
             require_directional_switch=True,
-            allowed_relations=("C", "N"),
+            allowed_relations=allowed_relations,
         )
         target_named = inventory_lexically_supports_target(
             target, generated_candidates
@@ -187,6 +263,8 @@ def process_row(
             {
                 "index": index,
                 "bbox": list(bbox),
+                "view_mode": args.view_mode,
+                "view_size": list(keep.size),
                 "target_free_candidates": generated_candidates,
                 "target_free_raw": candidate_raw,
                 "target_named": target_named,
@@ -203,7 +281,8 @@ def process_row(
             }
         )
         keep.close()
-        drop.close()
+        if drop is not None:
+            drop.close()
 
     image.close()
     cycle_support = any(region["cycle_support"] for region in region_rows)
@@ -219,6 +298,7 @@ def process_row(
         "grounding_prompt": grounding_prompt(target),
         "grounding_raw": raw,
         "grounding_boxes": [list(box) for box in boxes],
+        "box_source": box_source_name,
         "regions": region_rows,
         "cycle_support_found": cycle_support,
         "action": bool(source["baseline_margin"] >= 0 and local_conflict and not cycle_support),
@@ -228,6 +308,8 @@ def process_row(
             "max_grounding_boxes": args.max_grounding_boxes,
             "max_open_candidates": args.max_open_candidates,
             "pairwise_top_k": args.pairwise_top_k,
+            "view_mode": args.view_mode,
+            "conflict_relations": args.conflict_relations,
             "model_path": args.model_path,
         },
     }
@@ -238,6 +320,16 @@ def main() -> None:
     if args.max_grounding_boxes <= 0:
         raise ValueError("--max_grounding_boxes must be positive")
     source_rows = [row for row in read_rows(args.inputs) if is_selected(row, args.selection)]
+    box_rows = read_rows(args.box_inputs) if args.box_inputs else []
+    box_by_id = {str(row["question_id"]): row for row in box_rows}
+    if args.box_inputs:
+        missing_boxes = [
+            str(row["question_id"])
+            for row in source_rows
+            if str(row["question_id"]) not in box_by_id
+        ]
+        if missing_boxes:
+            raise ValueError(f"Missing saved grounding rows: {missing_boxes}")
     records = {
         str(row["question_id"]): row
         for row in iter_pope_records(
@@ -277,6 +369,7 @@ def main() -> None:
                 relation_filter,
                 knowledge,
                 args,
+                box_source=box_by_id.get(question_id),
             )
             output.write(json.dumps(payload) + "\n")
             output.flush()

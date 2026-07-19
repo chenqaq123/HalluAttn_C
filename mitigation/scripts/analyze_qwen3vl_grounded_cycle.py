@@ -15,6 +15,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("inputs", nargs="+", help="Grounded-cycle JSONL files")
     parser.add_argument("--source_inputs", nargs="+", required=True)
+    parser.add_argument(
+        "--reference_inputs",
+        nargs="+",
+        help="Optional paired grounded-cycle JSONL files for funnel comparison",
+    )
     parser.add_argument("--output_json", required=True)
     return parser.parse_args()
 
@@ -51,10 +56,57 @@ def binary_metrics(labels: np.ndarray, predictions: np.ndarray) -> dict:
     }
 
 
+def condition_flags(row: dict) -> dict[str, bool]:
+    return {
+        "valid_box": bool(row["grounding_boxes"]),
+        "target_named": any(region["target_named"] for region in row["regions"]),
+        "positive_target_margin": any(
+            region["target_margin"] > 0 for region in row["regions"]
+        ),
+        "directional_conflict": any(
+            region["directional_conflict"] is not None for region in row["regions"]
+        ),
+        "cycle_support": bool(row["cycle_support_found"]),
+    }
+
+
+def paired_comparison(rows: list[dict], references: list[dict]) -> dict:
+    current = {str(row["question_id"]): row for row in rows}
+    reference = {str(row["question_id"]): row for row in references}
+    if set(current) != set(reference):
+        raise ValueError("Current and reference rows must have identical question IDs")
+    conditions = tuple(condition_flags(rows[0]))
+    payload = {}
+    for condition in conditions:
+        gains = []
+        losses = []
+        unchanged_positive = []
+        for question_id in sorted(current, key=int):
+            old = condition_flags(reference[question_id])[condition]
+            new = condition_flags(current[question_id])[condition]
+            if new and not old:
+                gains.append(question_id)
+            elif old and not new:
+                losses.append(question_id)
+            elif old and new:
+                unchanged_positive.append(question_id)
+        payload[condition] = {
+            "reference_count": sum(
+                condition_flags(row)[condition] for row in references
+            ),
+            "current_count": sum(condition_flags(row)[condition] for row in rows),
+            "gained_question_ids": gains,
+            "lost_question_ids": losses,
+            "unchanged_positive_question_ids": unchanged_positive,
+        }
+    return payload
+
+
 def main() -> None:
     args = parse_args()
     rows = read_rows(args.inputs)
     source_rows = read_rows(args.source_inputs)
+    reference_rows = read_rows(args.reference_inputs) if args.reference_inputs else []
     if not rows:
         raise ValueError("No grounded-cycle rows found")
 
@@ -161,6 +213,9 @@ def main() -> None:
         "full_conflict_coverage": full_coverage,
         "full_behavior": full_behavior,
         "stage2_gate_passed": stage2_gate,
+        "paired_reference": (
+            paired_comparison(rows, reference_rows) if reference_rows else None
+        ),
         "examples": rows,
     }
     output_path = Path(args.output_json)
