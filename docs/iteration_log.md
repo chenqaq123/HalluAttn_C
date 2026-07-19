@@ -795,3 +795,33 @@ or confidences from that proposal stage must not become decision evidence.
 
 **Evidence:** `docs/experiment_results.md` iteration-11 entry;
 `experiments/qwen3vl_xev/iter11_multiregion_dev_summary.json` (git-ignored).
+
+## 2026-07-19 — XEV iteration 12: rejected full-canvas grounded cycle
+
+**What changed:** Added a strict JSON parser for Qwen3-VL normalized grounding
+boxes, a lazy grounded-cycle runner over saved iteration-11 conflicts, and a
+stage-aware analyzer. Grounding labels and missing boxes are ignored. Positive
+support requires target-free local alias recovery, positive target margin, and
+no strict C/N directional conflict.
+
+**Experiment:** All 14 selected action cases return valid boxes. Eleven have
+positive target margin, five recover the target without naming it in the prompt,
+and only two pass the full cycle. Both supports are real targets and all four
+absent targets remain unsupported, but true-target support recall is 2/10. The
+stage-1 gate fails, so the planned 49-row extension is not run.
+
+**Diagnosis:** Grounding itself remains promising: on eight true targets with
+COCO boxes, mean maximum IoU is 0.607. The rendering discards that advantage by
+keeping the exact box on the full canvas, so small objects are not enlarged.
+Also, real bench/backpack boxes are rejected by overlapping person conflicts,
+showing that image-level N relations should not automatically be exclusive
+within a target-grounded box.
+
+**Decision / proposal change:** Reject the iteration-12 cycle unchanged. The
+next hypothesis is grounded crop-and-zoom followed by target-free
+re-identification, with C-only exclusive contradiction inside the grounded box.
+Grounding coordinates, labels, and box presence remain proposal-only signals.
+
+**Evidence:** `docs/experiment_results.md` iteration-12 entry;
+`experiments/qwen3vl_xev/iter12_grounded_cycle_actions_summary.json`
+(git-ignored).

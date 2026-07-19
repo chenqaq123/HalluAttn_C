@@ -102,7 +102,7 @@ competition mechanism remains under test rather than established.
 
 ## 3. Constructive method under test — XEV
 
-**Status after iteration 11 (2026-07-19):** the first usable constructive version
+**Status after iteration 12 (2026-07-19):** the first usable constructive version
 is confirmed, with deliberately narrow scope. On 960 untouched POPE-adversarial
 rows, the precision-repaired certificate triggers 4 times: 3 false-positive
 corrections and 1 true-positive veto (precision 0.75). FPR falls 0.0771 -> 0.0708,
@@ -121,6 +121,10 @@ Residual top-3 attention coverage improves support recall but still leaves 10
 true-positive vetoes for 4 corrections on the 120-row development window. The
 variant is rejected: coarse attention boxes are not object-pure enough to make
 candidate-relative local comparisons globally consistent.
+A target-grounding/re-identification audit then returns valid boxes for all 14
+selected failures with high support precision but only 2/10 true-target recall.
+This variant is also rejected; its coordinate proposals remain a useful lead,
+but keeping a small grounded box on the full canvas does not provide visual zoom.
 
 ### 3.1 Principle and scope
 
@@ -330,6 +334,25 @@ there is no single "main object" for a candidate-relative tournament to recover.
 must produce target-focused or object-pure regions before local verification;
 adding more coarse attention boxes or tuning pairwise margins is not justified.
 
+Iteration 12 tests target-focused proposals from Qwen3-VL's native 2D grounding.
+The returned/missing box and generated label are ignored; positive support
+requires a target-free regional inventory to recover the target, positive target
+margin, and no strict C/N conflict. On the 14 failure-enriched iteration-11
+actions, every case yields a valid box, but only `wine glass` and `umbrella` pass
+the full cycle. Support is precise (2/2 real targets and 0/4 absent targets) but
+recall is only 2/10, so the pre-registered stage-1 gate fails and the 49-row
+development extension is not run.
+
+An oracle-only localization audit keeps the proposal lead alive: for the eight
+true targets with matching COCO detection annotations, maximum grounding-box IoU
+has mean 0.607 and median 0.576. The verifier, not coordinates alone, is now the
+limitation. The current keep view preserves the full canvas, leaving a small
+grounded object small after model preprocessing. It also rejects real bench and
+backpack boxes because an overlapping person produces an N-relation conflict.
+The next test should crop and zoom the grounded box before target-free
+re-identification, and should reserve C for mutually exclusive box identities;
+neither change may be retrofitted to iteration 12.
+
 ### 3.4 Candidate universe
 
 XEV is **not limited to COCO categories**. Candidate sources are deliberately
@@ -363,6 +386,10 @@ Iteration 11 then shows that residual top-K attention coverage alone does not
 provide that grounding. It always returns three boxes and evaluates 436 pairwise
 comparisons, but the third box adds no target-support row. The immediate
 bottleneck is proposal purity and target coverage, not candidate quantity.
+Iteration 12 shows that native target grounding materially improves proposal
+purity by oracle IoU, but the full-canvas clear-region rendering wastes that
+precision. Candidate acquisition on a zoomed object crop is the next bottleneck
+test.
 
 ## 4. Contribution framing (intended)
 
@@ -392,6 +419,9 @@ Honest guardrails carried over from the tear-down:
   inconsistent local identities. Next test a target-focused or class-agnostic
   object proposal that remains proposal-only; do not use attention mass,
   proposal confidence, or generated inventory presence as decision evidence.
+  Native target grounding passes the coordinate sanity audit but its full-canvas
+  re-identification cycle has only 2/10 support recall. Next test exact box crops
+  as zoomed views and keep grounding output itself proposal-only.
 - **Oracle ceiling before open-vocabulary scaling:** keep candidate expansion
   frozen until oracle/closed dominance improves held-out behavior, not only the
   related-negative slice.

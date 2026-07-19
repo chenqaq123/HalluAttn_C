@@ -159,6 +159,10 @@ Iteration 11 adds `--proposal_strategy diverse --max_regions 3` and
 `--global_support_sources regions`. This residual multi-region variant uses
 strict regional pairwise directions instead of inventories, but it failed its
 development gate and is retained only for proposal/verifier diagnostics.
+Iteration 12 adds `run_qwen3vl_grounded_cycle.py` and
+`analyze_qwen3vl_grounded_cycle.py` for a lazy target-grounding and target-free
+re-identification audit over saved conflicts. Its full-canvas cycle failed the
+stage-1 recall gate and is diagnostic-only.
 The analyzer defaults to development status; pass
 `--pairwise_evaluation confirmatory` only for a rule and window frozen before
 inference.

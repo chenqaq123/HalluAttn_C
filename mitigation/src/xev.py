@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import math
 import re
 from dataclasses import dataclass
@@ -128,6 +129,54 @@ def parse_relation_labels(text: str, count: int) -> list[str] | None:
         label.upper() for label in re.findall(r"\b([SCN])\b", text, re.IGNORECASE)
     ]
     return labels[:count] if len(labels) >= count else None
+
+
+def parse_grounding_boxes(
+    text: str,
+    image_size: tuple[int, int],
+    limit: int = 3,
+) -> list[tuple[int, int, int, int]]:
+    """Parse Qwen3-VL normalized JSON boxes into valid image-pixel boxes."""
+
+    cleaned = re.sub(r"```(?:json)?", "", text, flags=re.IGNORECASE).replace(
+        "```", ""
+    )
+    payload = None
+    decoder = json.JSONDecoder()
+    for match in re.finditer(r"[\[{]", cleaned):
+        try:
+            payload, _ = decoder.raw_decode(cleaned[match.start() :])
+            break
+        except json.JSONDecodeError:
+            continue
+    if payload is None:
+        return []
+    entries = payload if isinstance(payload, list) else [payload]
+
+    width, height = image_size
+    boxes: list[tuple[int, int, int, int]] = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        values = entry.get("bbox_2d")
+        if not isinstance(values, list) or len(values) != 4:
+            continue
+        if not all(isinstance(value, (int, float)) for value in values):
+            continue
+        x0, y0, x1, y1 = map(float, values)
+        if not (0 <= x0 < x1 <= 1000 and 0 <= y0 < y1 <= 1000):
+            continue
+        pixel_box = (
+            max(0, math.floor(x0 / 1000 * width)),
+            max(0, math.floor(y0 / 1000 * height)),
+            min(width, math.ceil(x1 / 1000 * width)),
+            min(height, math.ceil(y1 / 1000 * height)),
+        )
+        if pixel_box not in boxes:
+            boxes.append(pixel_box)
+        if len(boxes) >= limit:
+            break
+    return boxes
 
 
 def propose_regions(

@@ -922,3 +922,41 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/qwen3vl_xev/iter11_multiregion_dev_shard{0,1}.jsonl` and
   `experiments/qwen3vl_xev/iter11_multiregion_dev_summary.json`.
+
+### 2026-07-19 — Qwen3-VL XEV iteration 12: grounded re-identification is precise but low-recall
+
+- **Pre-registered stage 1:** the 14 iteration-11 final actions, deliberately
+  selected before inference: 10 true-positive vetoes and 4 false-positive
+  corrections. Ask Qwen3-VL to locate each queried category using its official
+  normalized 0--1000 JSON grounding format, parse at most three boxes, and ignore
+  generated labels. On each exact clear-box/full-canvas view, require target-free
+  alias recovery, target margin `>0`, and no strict directional conflict against
+  up to three positive-keep open/closed C/N candidates. Grounding output alone is
+  never support or absence evidence.
+- **Cycle funnel:** valid grounding box **14/14**; positive regional target margin
+  11/14; target-free target recovery 5/14; any directional conflict 11/14; full
+  cycle support **2/14**. The two supports are real `wine glass` and `umbrella`
+  targets. None of the four absent targets receives support, giving support
+  precision 1.0.
+- **Gate:** FAIL. The cycle suppresses only **2/10** prior true-positive vetoes
+  versus the required 8/10. It retains all 4 false-positive corrections but also
+  leaves 8 TP vetoes. The 49-conflict-row stage 2 is therefore not run.
+- **Failure cases:** target-free recognition names `bench` and `backpack` in
+  their grounded boxes and their target margins are positive, but an overlapping
+  `person` produces a strict N-relation conflict. For real `bowl`, recognition
+  names the target but the target margin is negative. Other true targets fail
+  target-free re-identification even when the generated box is plausible.
+- **Oracle coordinate audit (diagnostic only):** eight of the ten real targets
+  have matching COCO instance boxes. Their maximum generated-box IoU has mean
+  **0.607** and median **0.576** (range 0.224--0.964). Grounding coordinates are
+  therefore not the only failure. The exact clear-box rendering preserves the
+  full image canvas, so small grounded objects such as cell phone remain small
+  after preprocessing rather than being zoomed.
+- **Decision:** reject the full-canvas grounded cycle without expanding boxes,
+  changing K, relaxing C/N conflicts, or extending to stage 2. Retain native
+  grounding strictly as a proposal lead. Next test exact box crop-and-zoom with
+  target-free re-identification, and treat only C (not overlapping N identities
+  such as person/hand) as an exclusive-box contradiction.
+- **Artifacts (git-ignored):**
+  `experiments/qwen3vl_xev/iter12_grounded_cycle_actions.jsonl` and
+  `experiments/qwen3vl_xev/iter12_grounded_cycle_actions_summary.json`.

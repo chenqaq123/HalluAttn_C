@@ -1,7 +1,7 @@
 # XEV Iteration 12 Protocol: Ground-and-Reidentify Cycle
 
 Date: 2026-07-19
-Status: pre-registered exploratory development protocol
+Status: completed; stage-1 gate failed, stage 2 not run
 
 ## Motivation
 
@@ -89,3 +89,20 @@ accuracy and MCC versus baseline.
 If either gate fails, audit box parse rate, target-free target recovery, target
 margin, and conflict rejection separately. Do not tune box expansion, inventory
 length, aliases, K, or non-zero margins on these rows.
+
+## Result
+
+All 14 selected cases return at least one valid box, 11 have a positive target
+margin, 5 recover the target in target-free regional recognition, and 11 contain
+a directional conflict. Only 2 boxes satisfy the full cycle; both are true
+targets (`wine glass` and `umbrella`), so support precision is 1.0 and no prior
+false-positive correction is suppressed. However, only 2/10 true-positive vetoes
+are prevented instead of the required 8/10. Stage 1 fails and stage 2 is not run.
+
+The failure is not simply poor coordinate generation. Among eight true targets
+with a matching COCO detection annotation, maximum proposal-to-ground-truth IoU
+has mean 0.607 and median 0.576. The current clear-box view preserves the full
+canvas, so a precisely grounded small target remains small after preprocessing.
+In addition, target-free recognition names real `bench` and `backpack` targets
+but the cycle rejects them because a spatially overlapping `person` produces an
+N-relation directional conflict. No rule was relaxed on this audit.

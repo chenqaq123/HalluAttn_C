@@ -14,6 +14,7 @@ from mitigation.src.xev import (
     pairwise_identity_certificate,
     pairwise_question,
     parse_candidate_list,
+    parse_grounding_boxes,
     parse_relation_labels,
     propose_diverse_regions,
     propose_regions,
@@ -246,3 +247,14 @@ def test_regional_target_support_mirrors_directional_conflict() -> None:
     }
     assert robust_local_target_support([target_support]) == target_support
     assert robust_local_target_support([ambiguous]) is None
+
+
+def test_grounding_box_parser_uses_normalized_json_and_discards_labels() -> None:
+    raw = '''```json
+    [
+      {"bbox_2d": [100, 200, 600, 800], "label": "wrong label"},
+      {"bbox_2d": [-1, 0, 50, 50], "label": "invalid"}
+    ]
+    ```'''
+    assert parse_grounding_boxes(raw, (200, 100)) == [(20, 20, 120, 80)]
+    assert parse_grounding_boxes("no box found", (200, 100)) == []
