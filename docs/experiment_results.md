@@ -1616,3 +1616,76 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   extraction without changing features, sink rules, or evaluator settings.
 - **Artifacts (git-ignored):** `experiments/spatial_allocation/smoke.npz`,
   `smoke_metrics.json`, and `smoke_oof.npz`.
+
+### 2026-07-20 — No-RoPE spatial-allocation full registered result
+
+- **Setup:** Frozen LLaVA-1.5-7B and the existing 16,426-mention, 4,977-image
+  COCO/CHAIR cache. Four GPU shards cover object IDs 0--16,425 exactly once.
+  New all-layer/all-head no-RoPE mass is elementwise identical to the retained
+  VVE allocation cache (maximum error **0**). All spatial/sink values are
+  finite. Five image-grouped OOF folds use seed 17, width-10 conditional class
+  weighting, the shared width-256 MLP initialization, and no position input.
+
+| Registered probe | Dim. | Overall | Within-bin | Matched | Residual | Macro-bin | Balanced AUROC / acc. |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| no-RoPE mass | 2,048 | 0.9053 | **0.8812** | **0.8702** | **0.7317** | **0.8307** | **0.8373 / 0.7605** |
+| no-RoPE top-10% mass | 2,048 | 0.9053 | 0.8640 | 0.8522 | 0.7230 | 0.8140 | 0.8128 / 0.7355 |
+| no-RoPE connectivity | 2,048 | 0.8793 | 0.8104 | 0.7968 | 0.6748 | 0.7762 | 0.7496 / 0.6821 |
+| no-RoPE mass + top-10% | 4,096 | 0.9103 | 0.8774 | 0.8663 | 0.7278 | 0.8243 | 0.8291 / 0.7488 |
+| no-RoPE mass + connectivity | 4,096 | 0.9029 | 0.8601 | 0.8494 | 0.7115 | 0.8195 | 0.8115 / 0.7354 |
+| sink-clean mass | 2,048 | 0.9042 | 0.8808 | 0.8695 | 0.7290 | 0.8269 | 0.8362 / 0.7557 |
+| sink-clean top-10% mass | 2,048 | 0.8979 | 0.8554 | 0.8445 | 0.7148 | 0.8164 | 0.8090 / 0.7312 |
+| sink-clean connectivity | 2,048 | 0.8777 | 0.8104 | 0.7925 | 0.6694 | 0.7703 | 0.7414 / 0.6684 |
+| sink-clean mass + top-10% | 4,096 | **0.9134** | 0.8745 | 0.8655 | 0.7291 | 0.8272 | 0.8294 / 0.7515 |
+| sink-clean mass + connectivity | 4,096 | 0.9109 | 0.8683 | 0.8552 | 0.7146 | 0.8209 | 0.8124 / 0.7351 |
+
+- **Connectivity gate:** Without sink deletion, `mass+connectivity` minus the
+  equal-dimensional `mass+top10` control is **-0.0173**, image-bootstrap 95% CI
+  `[-0.0239, -0.0103]`, with wins in only 2/14 stable bins. With sink deletion
+  the difference is -0.0062, CI `[-0.0119, 0.0006]`, and 5/14 wins. Both fail
+  the required +0.010 and 8/14 gates. Connectivity alone also trails top-10%
+  concentration by 0.0536 without sinks and 0.0450 after cleaning.
+- **Sink gate:** Sink-clean mass minus no-deletion mass is -0.0003, CI
+  `[-0.0023, 0.0018]`, with 5/14 wins. Sink deletion improves the already weak
+  mass+connectivity fusion by +0.0082, CI `[0.0029, 0.0140]`, and wins 9/14
+  bins, but misses the locked +0.010 gate and remains **-0.0129** below original
+  mass, CI `[-0.0196, -0.0063]`. Top-10% concentration also worsens by -0.0086
+  after sink deletion. Mean detected sink count ranges from 13.00 to 29.94 by
+  layer; sinks receive 5.87% of complete-row attention on average (5.78% pre,
+  5.96% post).
+
+The following values are mean per-bin AUROCs over the 1,000 literal 1:1
+position-balanced draws:
+
+| Position | Mass | Mass + top-10% | Mass + connectivity | Sink-clean mass + connectivity |
+|---|---:|---:|---:|---:|
+| 0--9 | **0.9404** | 0.9371 | 0.9075 | 0.9249 |
+| 10--19 | 0.9161 | **0.9227** | 0.9110 | 0.9178 |
+| 20--29 | 0.8730 | 0.8760 | 0.8655 | **0.8773** |
+| 30--39 | **0.8364** | 0.8341 | 0.8319 | 0.8305 |
+| 40--49 | **0.8761** | 0.8694 | 0.8430 | 0.8699 |
+| 50--59 | **0.8597** | 0.8545 | 0.8446 | 0.8470 |
+| 60--69 | **0.8543** | 0.8442 | 0.8325 | 0.8196 |
+| 70--79 | **0.8429** | 0.8407 | 0.8131 | 0.8220 |
+| 80--89 | **0.8225** | 0.8072 | 0.7968 | 0.7845 |
+| 90--99 | **0.8293** | 0.8209 | 0.7931 | 0.8115 |
+| 100--109 | **0.8150** | 0.8076 | 0.8065 | 0.7983 |
+| 110--119 | **0.8013** | 0.7736 | 0.7554 | 0.8011 |
+| 120--129 | 0.7832 | 0.7802 | **0.8110** | 0.7791 |
+| 130--139 | 0.7900 | 0.7406 | 0.7974 | **0.8211** |
+| 140--149 | 0.6236 | 0.6597 | **0.6857** | 0.6116 |
+
+- **Position interpretation:** The spatial features have isolated late-bin
+  gains, but they lose broadly through the much larger early/middle bins. The
+  candidate gate also forbids any stable-bin regression beyond 0.020; both
+  spatial fusions violate it repeatedly. Their apparent late recovery is not a
+  basis for position-specific routing or another feature sweep on COCO.
+- **Decision:** Reject fixed top-10% 8-neighbor coherence as added object-
+  hallucination evidence and reject low-key-norm sink deletion as a detector
+  component. The all-layer no-RoPE mass fingerprint remains the strongest
+  registered representation. This negative result does not show that attention
+  maps lack spatial semantics; it shows that this unsupervised topology summary
+  does not add position-controlled target-specific discrimination to mass.
+- **Artifacts (git-ignored):**
+  `experiments/spatial_allocation/features_shard{0..3}.npz`,
+  `iteration1_metrics.json`, and `iteration1_oof.npz`.

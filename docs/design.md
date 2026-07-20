@@ -416,6 +416,33 @@ Shape statistics of the test distribution, no null required:
 
 These test the "concentrated on a small region" property directly.
 
+#### 7.2.1 All-layer no-RoPE neighbor coherence audit
+
+The all-layer allocation audit retains per-head maps instead of averaging
+heads. For each pre/post row, recompute full-prefix pre-RoPE attention, let `m`
+be its total visual mass, and normalize its 576-patch visual slice to `p`.
+Select the exact top `round(0.10 * 576) = 58` patches. The non-spatial control is
+
+    top10_mass = sum_{u in top58(p)} p_u.
+
+For an 8-neighbor grid graph, let `d(u)` be the number of available neighbors
+of patch `u` and `n_T(u)` the number of those neighbors also in the top-58 set.
+The fixed connectivity statistic is
+
+    neighbor_coherence =
+        sum_{u in top58(p)} p_u * n_T(u) / d(u)  /  top10_mass.
+
+This lies in `[0,1]`; using the actual border degree avoids a deterministic
+border penalty. A matched sink-clean branch detects 3--30 low-key-norm visual
+tokens with the existing `mean - 1.5*std` rule, zeros them in the complete
+causal row, and renormalizes before computing the same three features.
+
+The 2026-07-20 registered test rejects this feature: `mass+neighbor_coherence`
+scores 0.8601 within-bin versus 0.8774 for equal-dimensional `mass+top10_mass`
+and 0.8812 for mass. Sink cleaning raises the spatial fusion only to 0.8683 and
+leaves mass at 0.8808. Keep the definition for reproducibility, but do not use
+it as an active detector component or tune its topology on the same labels.
+
 ### 7.3 CLC — Cross-Layer Consistency
 
 Stack the per-layer sink-stripped distributions into a matrix

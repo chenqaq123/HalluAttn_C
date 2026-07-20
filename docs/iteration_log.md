@@ -1563,3 +1563,25 @@ features are finite and active. A two-fold evaluator smoke completes end to end.
 **Decision:** The numerical and non-interference gates pass. Freeze this
 implementation and run the registered full four-shard extraction; do not alter
 the top-10% support, 8-neighborhood, sink rule, temporal rows, or feature sets.
+
+## 2026-07-20 — Spatial allocation and sink deletion fail registered gates
+
+**Reproduction:** Four shards retain all 16,426 mentions exactly once, and the
+new no-RoPE mass channel is elementwise identical to the previous VVE cache.
+The shared-seed probe therefore exactly reproduces 0.8812 within-bin AUROC.
+
+**Connectivity result:** Mass plus 8-neighbor coherence reaches 0.8601 versus
+0.8774 for equal-dimensional mass plus top-10% concentration. The -0.0173
+difference has CI `[-0.0239, -0.0103]` and only 2/14 stable-bin wins. The
+connectivity gate fails; adjacency is worse than retaining concentration alone.
+
+**Sink result:** Sink deletion leaves mass at 0.8808 (-0.0003, unresolved). It
+raises mass+connectivity from 0.8601 to 0.8683 (+0.0082, CI excluding zero),
+but misses the +0.010 gate and remains significantly below original mass.
+Deletion therefore partially denoises the rejected spatial feature without
+becoming a useful detector component.
+
+**Decision:** Close this fixed no-RoPE/top-10%/8-neighbor/sink formulation. Do
+not sweep connectivity thresholds, morphology, sink rules, layers, heads, or
+position-specific routing on COCO. Retain pure no-RoPE allocation mass as the
+strong supervised fingerprint baseline, not as target verification.

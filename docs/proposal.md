@@ -852,6 +852,19 @@ feasibility audit. It can reopen a spatial feature family only after beating
 equal-dimensional concentration and mass controls; it cannot by itself turn an
 allocation fingerprint into target-object verification.
 
+**Outcome.** The registered spatial family fails. No-deletion
+`mass+connectivity` reaches 0.8601 within-bin, below both mass alone (0.8812)
+and the equal-dimensional `mass+top10` control (0.8774). Connectivity minus
+top-10% concentration is -0.0173 with image-bootstrap CI
+`[-0.0239, -0.0103]` and wins only 2/14 stable position bins. Sink deletion
+leaves mass essentially unchanged (0.8808) and raises the weaker
+mass+connectivity representation from 0.8601 to 0.8683, but this +0.0082 change
+misses the +0.010 sink gate and the result remains -0.0129 below the original
+mass probe. Literal position-balanced AUROC likewise falls from 0.8373 for mass
+to 0.8115/0.8124 for no-deletion/sink-clean spatial fusion. Close this fixed
+top-10% 8-neighbor and low-key-norm sink formulation; do not add either
+component to the detector method.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can
@@ -905,6 +918,10 @@ Honest guardrails carried over from the tear-down:
   VVE-core, so do not attribute iteration-1 performance to values, select a
   favorable detector seed, or continue its causal/transfer stages as method
   confirmation.
+- **Spatial-allocation route is closed:** fixed top-10% 8-neighbor coherence is
+  significantly worse than equal-dimensional top-10% concentration, and sink
+  deletion does not beat no-deletion mass. Do not sweep support fractions,
+  neighborhoods, sink thresholds, or morphology on COCO to rescue it.
 - **Position-uniform readout failed:** it does not improve macro or late-bin
   VVE metrics. Retain the original objective for historical reporting and do
   not sweep blended weights, position heads, or thresholds on COCO.

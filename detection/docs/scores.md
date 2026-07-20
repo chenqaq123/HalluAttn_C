@@ -98,6 +98,24 @@ This gives the main ablation: sink removal only vs. top-mass only vs. both.
 | `global_conc_top{5,10}_mass`         | `−` top-k mass of `ã_avg` |
 | `global_conc_max_over_mean`          | `−( max / mean )` of `ã_avg` |
 
+## All-layer no-RoPE spatial allocation audit
+
+These are supervised probe inputs rather than signed scalar hallucination
+scores. They are cached for every layer, head, and fixed pre/post object row:
+
+| feature | formula |
+|---|---|
+| `visual_mass` | total complete-row attention on all 576 visual patches |
+| `top10_mass` | sum of the exact top 58 entries after visual-only normalization |
+| `top10_neighbor_coherence` | top-58 attention-mass-weighted fraction of occupied 8-neighbors, corrected by each patch's available grid degree |
+
+The `no_rope` branch recomputes complete-prefix attention from pre-RoPE Q/K.
+The `sink_clean` branch removes the existing low-key-norm sink set and
+renormalizes the complete row before applying the same formulas. `sink_mass`
+and `sink_count` are diagnostics and never detector inputs. The registered
+2026-07-20 audit rejects neighbor coherence and sink deletion as method
+components; these keys remain only for reproducibility.
+
 ## CLC — cross-layer consistency
 
 Let `P ∈ R^{L × |V|}` be the per-layer sink-stripped object distributions.
