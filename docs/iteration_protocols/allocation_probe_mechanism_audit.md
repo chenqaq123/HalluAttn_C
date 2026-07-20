@@ -118,3 +118,35 @@ independent data before becoming a general claim.
 
 Generated checkpoints, OOF scores, attribution arrays, and figures remain under
 `experiments/allocation_probe_audit/` and are git-ignored.
+
+## 8. Outcome (2026-07-20)
+
+The reproduction gate passes exactly: refit and retained OOF scores have maximum
+absolute difference 0 and both reach 0.881189 within-bin AUROC.
+
+Parameter ranks are stable across folds (mean rank correlation 0.817; top-32
+Jaccard 0.441), and gradient-effect ranks are moderately stable (0.664; Jaccard
+0.351). Seventeen pairs meet the locked stable-head definition. The leading
+zero-based pairs are `(L19,H13)`, `(L19,H29)`, `(L8,H25)`, `(L30,H9)`, and
+`(L23,H28)`. They do not form individual bottlenecks: no layer is necessary,
+the largest aggregate drop from removing a layer is 0.004, and the best
+keep-only layer reaches 0.7354.
+
+`layer_mean` reaches 0.7966 within-bin and retains 90% of the full gain in only
+1/14 stable bins. `head_deviation` reaches 0.8805 and retains at least 90% in
+14/14 bins. Thus the result requires relative allocation among heads, not the
+mean visual mass at each layer/row. No fixed eight-layer band is sufficient;
+keep-only AUROCs are 0.6559, 0.8095, 0.8035, and 0.7715 from early to late.
+
+Top-32 rankings are stable and beat random-32 in 12/14 bins, but the refit
+reaches 0.8534 and preserves 90% of the full gain in only 8/14 bins. The locked
+sparse-head conjunction therefore fails. Exploratorily, the pre-registered
+top-64 refit reaches 0.8694, preserves the gain in 14/14 bins, and beats
+random-64 in 8/14 bins. This supports concentration across dozens of heads with
+redundancy, not a small decisive head set. Removing the pre row leaves 0.8639;
+removing the post row leaves 0.7733, so post-target attention organization is
+the dominant temporal source.
+
+Per the decision boundary, these are supervised-probe mechanism findings only.
+They do not establish causal verification or reopen allocation as a constructive
+method.

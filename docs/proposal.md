@@ -811,6 +811,27 @@ refits. Every result is reported by position bin. Weight magnitude alone is not
 accepted as evidence of a special head, and this explanation audit does not
 reopen allocation as the constructive method.
 
+**Outcome.** The refit exactly reproduces the retained OOF scores. The signal is
+not a layerwise mean trajectory: mean-only allocation reaches 0.7966 within-bin,
+whereas head deviations after removing every layer/row mean retain 0.8805 versus
+0.8812 for full allocation and preserve at least 90% of the full gain in all 14
+stable position bins. Seventeen layer-head pairs satisfy the strict fold/gradient
+stability rule, led by `(L19,H13)`, `(L19,H29)`, `(L8,H25)`, `(L30,H9)`, and
+`(L23,H28)` using zero-based indices. They are predictive candidates, not
+individual causal bottlenecks: removing any entire layer lowers aggregate
+within-bin AUROC by at most 0.004, and no layer or eight-layer band passes the
+necessity/sufficiency gate.
+
+The registered sparse-head claim also fails. Top-32 refits reach 0.8534 and
+retain 90% of the full gain in only 8/14 stable bins, despite stable rankings and
+a clear advantage over random-32. Top-64 reaches 0.8694 and retains the gain in
+14/14 bins, indicating concentration across dozens of heads but substantial
+redundancy rather than a small decisive head set. Removing the pre row leaves
+0.8639, while removing the post row leaves only 0.7733; much of the learned
+signal is post-target attention reorganization. The defensible mechanism is a
+distributed cross-layer relative-head pattern, dominated by the post row, not
+target-object verification localized to a few heads.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can

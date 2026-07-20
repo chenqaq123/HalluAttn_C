@@ -1514,3 +1514,78 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   degrade, so global threshold calibration alone cannot explain the trend. The
   last two bins have only 35 and 19 examples per class and correspondingly wide
   downsampling ranges; they should not be treated as stable point estimates.
+
+### 2026-07-20 — No-RoPE allocation-probe mechanism audit
+
+- **Setup:** Refit the exact width-256 MLP over all `32 layers x 2 rows x 32
+  heads` of No-RoPE visual mass using the retained five image folds, size-
+  weighted conditional loss, ten epochs, and seed 17. Parameter rankings use
+  standardized first-layer column norms. Functional attribution uses held-out
+  absolute gradient-times-input plus zero-at-train-mean interventions. Sparse
+  pairs are selected from training-fold model parameters only and refit before
+  test evaluation.
+- **Reproduction:** Refit and retained OOF logits are elementwise identical
+  (maximum absolute difference 0). Both give overall AUROC 0.9053, within-bin
+  0.8812, and macro-bin 0.8307.
+
+| Representation refit | Dim. | Overall | Within-bin | Macro-bin | 90%-gain stable bins |
+|---|---:|---:|---:|---:|---:|
+| full allocation | 2,048 | 0.9053 | **0.8812** | **0.8307** | 14/14 |
+| layer/row head mean only | 64 | 0.8329 | 0.7966 | 0.7464 | 1/14 |
+| head deviations, layer/row mean removed | 2,048 | **0.9045** | **0.8805** | 0.8238 | **14/14** |
+
+| Position | Full | Layer mean | Head deviation | Top-32 | Random-32 | Top-64 | Random-64 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 0--9 | 0.9410 | 0.8795 | **0.9426** | 0.9256 | 0.8992 | 0.9271 | 0.9181 |
+| 10--19 | 0.9159 | 0.8258 | **0.9250** | 0.8950 | 0.8555 | 0.9196 | 0.9028 |
+| 20--29 | 0.8728 | 0.7822 | **0.8834** | 0.8617 | 0.8008 | 0.8698 | 0.8607 |
+| 30--39 | **0.8364** | 0.7184 | 0.8285 | 0.7911 | 0.7461 | 0.8143 | 0.7980 |
+| 40--49 | **0.8754** | 0.7137 | 0.8690 | 0.8434 | 0.7226 | 0.8601 | 0.7778 |
+| 50--59 | **0.8598** | 0.7754 | 0.8428 | 0.8281 | 0.7564 | 0.8371 | 0.7933 |
+| 60--69 | **0.8546** | 0.7687 | 0.8519 | 0.8282 | 0.7466 | 0.8356 | 0.7978 |
+| 70--79 | **0.8430** | 0.7655 | 0.8375 | 0.8112 | 0.7367 | 0.8288 | 0.7918 |
+| 80--89 | **0.8223** | 0.7282 | 0.8191 | 0.7682 | 0.7342 | 0.7955 | 0.7674 |
+| 90--99 | **0.8290** | 0.7443 | 0.8242 | 0.8051 | 0.7131 | 0.8281 | 0.7701 |
+| 100--109 | **0.8152** | 0.7411 | 0.8105 | 0.7524 | 0.7157 | 0.7843 | 0.7564 |
+| 110--119 | **0.8013** | 0.7021 | 0.7928 | 0.7589 | 0.7206 | 0.7977 | 0.7490 |
+| 120--129 | 0.7830 | 0.7552 | **0.7896** | 0.7131 | 0.6911 | 0.7822 | 0.7509 |
+| 130--139 | **0.7888** | 0.6939 | 0.7633 | 0.6959 | 0.6464 | 0.7832 | 0.7000 |
+| 140--149 | 0.6222 | 0.6015 | 0.5771 | 0.6015 | 0.5489 | **0.7124** | 0.6071 |
+
+- **Head stability:** First-layer parameter ranks have mean pairwise Spearman
+  0.817 (minimum 0.782) and top-32 Jaccard 0.441 (minimum 0.362). Held-out
+  gradient-effect ranks have mean Spearman 0.664 and top-32 Jaccard 0.351.
+  Seventeen pairs satisfy top-32-in-at-least-four-folds plus gradient-top-
+  quartile. Leading zero-based pairs are `(L19,H29)`, `(L8,H25)`, `(L19,H13)`,
+  `(L30,H9)`, `(L23,H28)`, `(L15,H12)`, `(L25,H18)`, and `(L11,H14)`.
+- **Depth and redundancy:** Removing any one complete layer changes aggregate
+  within-bin AUROC by at most -0.004; no layer meets the registered necessity
+  gate. The best keep-only layers are L11 (0.7354) and L19 (0.7293). Keeping
+  only bands 0--7, 8--15, 16--23, and 24--31 gives 0.6559, 0.8095, 0.8035, and
+  0.7715 respectively; no band is sufficient across positions.
+- **Temporal rows:** Removing pre (post-only intervention) gives 0.8639 within-
+  bin, while removing post (pre-only intervention) gives 0.7733. This is a
+  functional intervention on the full readout, not a separately refit row-only
+  detector. It nevertheless identifies post-target attention organization as
+  the dominant temporal input.
+
+| Pair count | Top-K within | Random-K within | Top-K macro | 90%-gain bins | Top-minus-random >=0.03 bins |
+|---:|---:|---:|---:|---:|---:|
+| 8 | 0.7761 | 0.6791 | 0.7320 | 0/14 | 13/14 |
+| 16 | 0.8112 | 0.7554 | 0.7562 | 0/14 | 11/14 |
+| 32 | 0.8534 | 0.8026 | 0.7920 | 8/14 | 12/14 |
+| 64 | 0.8694 | 0.8428 | 0.8251 | **14/14** | 8/14 |
+| 128 | 0.8739 | 0.8620 | 0.8261 | 13/14 | 3/14 |
+| 256 | 0.8750 | 0.8762 | 0.8233 | 13/14 | 0/14 |
+
+- **Decision:** The locked sparse-head gate fails because top-32 retains 90% of
+  full gain in only 8/14 bins. The top ranking is real, however: top-32 beats
+  random-32 in 12/14 bins. The registered top-64 result is an exploratory scale
+  observation: only 64/1,024 layer-head pairs recover most performance across
+  all stable bins, but no individual layer is necessary and random subsets
+  catch up as K grows. Describe the mechanism as a **distributed, redundant
+  cross-layer relative-head pattern with concentration across dozens of heads**,
+  not as one or a few causal verification heads.
+- **Artifacts (git-ignored):**
+  `experiments/allocation_probe_audit/iteration1_metrics.json` and
+  `iteration1_scores.npz`.

@@ -1488,3 +1488,37 @@ performance retention across at least 11/14 bins, and a positional advantage
 over random-32. Failure means distributed/redundant signal, not permission to
 search another K or ranker on test labels. This is explanatory and cannot revive
 the closed allocation/VVE constructive route.
+
+## 2026-07-20 — Allocation audit finds distributed relative-head structure
+
+**Reproduction:** The exact five-fold refit reproduces every retained allocation
+OOF logit (maximum absolute difference 0) and the 0.8812 within-bin AUROC. This
+passes the interpretation gate without changing the model or data.
+
+**Main mechanism:** The 64-dimensional layer/row head-mean trajectory reaches
+only 0.7966 and preserves 90% of full gain in 1/14 stable position bins. Removing
+that mean from every layer/row leaves the 2,048-dimensional relative head
+deviations at 0.8805 and preserves the gain in 14/14 bins. The full readout is
+therefore learning which heads receive relatively more or less visual mass, not
+mainly how much visual mass each layer allocates on average.
+
+**Localization:** Seventeen layer-head pairs satisfy the strict parameter and
+held-out-gradient stability rule. The leading pairs span layers 8, 19, 23, and
+30 rather than one contiguous depth. Removing any full layer costs at most 0.004
+within-bin; the best single layer reaches only 0.7354, and no eight-layer band
+is sufficient. Removing pre leaves 0.8639, whereas removing post leaves 0.7733,
+so the post-target row contributes most of the model's functional signal.
+
+**Sparsity decision:** Parameter-selected top-32 reaches 0.8534 and beats random-
+32 in 12/14 bins, but retains 90% of full gain in only 8/14; the registered
+sparse-head gate fails. Top-64 reaches 0.8694 and retains the gain in all 14 bins,
+an exploratory indication that the signal is concentrated across dozens rather
+than hundreds of pairs. Because single-layer removal is inert and random-K
+catches up at larger K, the final interpretation is distributed and redundant,
+not a small causal head circuit.
+
+**Paper implication:** The all-layer probe's success does not rescue attention
+allocation as verification. It exposes a stable supervised fingerprint in the
+relative allocation pattern, much of it after the target token has already been
+consumed. Keep candidate head IDs as local diagnostics; require cross-model/data
+replication before any specialization claim.

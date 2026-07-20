@@ -47,6 +47,7 @@ caches, and local tool settings.
 | `detection/scripts/cache_visual_value_evidence.py` | cache all-layer source-decomposed visual value evidence |
 | `detection/scripts/evaluate_visual_value_evidence.py` | image-grouped, position-controlled VVE OOF evaluation |
 | `detection/scripts/evaluate_position_balanced_oof.py` | explicitly position-balanced evaluation of frozen OOF detector scores |
+| `detection/scripts/analyze_allocation_probe.py` | parameter, intervention, and sparse-head audit of the No-RoPE allocation MLP |
 | `detection/scripts/legacy/` | retained for reproducing older full-attention runs |
 
 ### Detection Baselines
