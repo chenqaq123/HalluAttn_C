@@ -1458,3 +1458,59 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   set.
 - **Artifact (git-ignored):**
   `experiments/visual_value_evidence/position_balanced_oof_metrics.json`.
+
+### 2026-07-20 — Per-position distribution on the explicit balanced test
+
+- **Correction to pooled reporting:** The 0.8373 allocation-mass AUROC above
+  pools all balanced bins and still hides detector degradation with response
+  depth. Using the same 1,000 draws, frozen scores, shared selected rows, and
+  zero threshold, report every bin separately. `k` is the retained count per
+  class in each draw.
+
+| Position | k/class | Raw L31 acc. | No-RoPE L31 acc. | Attn.+conf. acc. | Allocation acc. [2.5--97.5%] | VVE-core acc. | Full VVE acc. |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 0--9 | 100 | 0.6424 | 0.6691 | 0.6944 | **0.8187 [0.7950, 0.8400]** | 0.8236 | 0.8039 |
+| 10--19 | 158 | 0.7099 | 0.7014 | 0.7194 | **0.8023 [0.7816, 0.8228]** | 0.8111 | 0.8082 |
+| 20--29 | 145 | 0.6386 | 0.6694 | 0.6747 | **0.7565 [0.7310, 0.7793]** | 0.7868 | 0.7743 |
+| 30--39 | 215 | 0.6294 | 0.6306 | 0.6801 | **0.7627 [0.7395, 0.7837]** | 0.7560 | 0.7543 |
+| 40--49 | 215 | 0.6622 | 0.6471 | 0.6882 | **0.7841 [0.7628, 0.8047]** | 0.7728 | 0.8026 |
+| 50--59 | 312 | 0.6414 | 0.6253 | 0.6810 | **0.7758 [0.7612, 0.7917]** | 0.7538 | 0.7598 |
+| 60--69 | 428 | 0.6380 | 0.6409 | 0.6877 | **0.7855 [0.7757, 0.7956]** | 0.7570 | 0.7757 |
+| 70--79 | 559 | 0.6328 | 0.6348 | 0.6873 | **0.7647 [0.7585, 0.7710]** | 0.7350 | 0.7523 |
+| 80--89 | 500 | 0.5937 | 0.5773 | 0.6800 | **0.7396 [0.7340, 0.7460]** | 0.7106 | 0.7322 |
+| 90--99 | 362 | 0.5702 | 0.5555 | 0.6755 | **0.7524 [0.7431, 0.7638]** | 0.7521 | 0.7735 |
+| 100--109 | 250 | 0.5570 | 0.5610 | 0.6258 | **0.7404 [0.7279, 0.7540]** | 0.7256 | 0.7440 |
+| 110--119 | 151 | 0.5376 | 0.5386 | 0.6578 | **0.7178 [0.7020, 0.7351]** | 0.7290 | 0.7509 |
+| 120--129 | 87 | 0.5275 | 0.5332 | 0.6175 | **0.6925 [0.6724, 0.7126]** | 0.7327 | 0.7807 |
+| 130--139 | 35 | 0.5626 | 0.4838 | 0.6865 | **0.7384 [0.7000, 0.7857]** | 0.7208 | 0.7478 |
+| 140--149 | 19 | 0.4640 | 0.5263 | 0.5948 | **0.5764 [0.5263, 0.6316]** | 0.6823 | 0.6028 |
+
+| Position | Raw L31 AUROC | No-RoPE L31 AUROC | Attn.+conf. AUROC | Allocation AUROC [2.5--97.5%] | VVE-core AUROC | Full VVE AUROC |
+|---|---:|---:|---:|---:|---:|---:|
+| 0--9 | 0.7577 | 0.7774 | 0.8827 | **0.9404 [0.9110, 0.9654]** | 0.9464 | 0.9507 |
+| 10--19 | 0.7815 | 0.7565 | 0.8502 | **0.9161 [0.8912, 0.9388]** | 0.9201 | 0.9253 |
+| 20--29 | 0.7066 | 0.7108 | 0.7685 | **0.8730 [0.8438, 0.9019]** | 0.8826 | 0.8720 |
+| 30--39 | 0.6863 | 0.7063 | 0.7404 | **0.8364 [0.8129, 0.8600]** | 0.8522 | 0.8369 |
+| 40--49 | 0.7179 | 0.7279 | 0.7685 | **0.8761 [0.8539, 0.8976]** | 0.8759 | 0.8856 |
+| 50--59 | 0.7248 | 0.7256 | 0.7414 | **0.8597 [0.8448, 0.8753]** | 0.8402 | 0.8507 |
+| 60--69 | 0.7585 | 0.7752 | 0.7651 | **0.8543 [0.8450, 0.8650]** | 0.8417 | 0.8441 |
+| 70--79 | 0.7462 | 0.7478 | 0.7563 | **0.8429 [0.8375, 0.8490]** | 0.8199 | 0.8399 |
+| 80--89 | 0.7191 | 0.7103 | 0.7441 | **0.8225 [0.8168, 0.8282]** | 0.7878 | 0.8146 |
+| 90--99 | 0.7289 | 0.7190 | 0.7328 | **0.8293 [0.8202, 0.8386]** | 0.8259 | 0.8403 |
+| 100--109 | 0.7185 | 0.7167 | 0.6804 | **0.8150 [0.8009, 0.8312]** | 0.7849 | 0.8116 |
+| 110--119 | 0.7021 | 0.6576 | 0.7045 | **0.8013 [0.7853, 0.8173]** | 0.7954 | 0.8062 |
+| 120--129 | 0.6887 | 0.6969 | 0.6936 | **0.7832 [0.7614, 0.8076]** | 0.8339 | 0.8513 |
+| 130--139 | 0.6355 | 0.6109 | 0.7043 | **0.7900 [0.7322, 0.8522]** | 0.7304 | 0.7964 |
+| 140--149 | 0.5420 | 0.5581 | 0.6530 | **0.6236 [0.5512, 0.7008]** | 0.7112 | 0.6312 |
+
+- **Trend:** Allocation mass is excellent at 0--19 (AUROC 0.916--0.940,
+  accuracy 0.802--0.819), stays around 0.80--0.88 AUROC through 120--139, and
+  falls sharply at 140--149 (0.624 AUROC, 0.576 accuracy). Raw/no-RoPE L31
+  accuracy approaches chance after position 100. Full VVE does not show a
+  consistent advantage over allocation; it helps in some late bins and loses in
+  others.
+- **Interpretation:** The detector is not uniformly strong across response
+  depth. Both discrimination (per-bin AUROC) and zero-threshold classification
+  degrade, so global threshold calibration alone cannot explain the trend. The
+  last two bins have only 35 and 19 examples per class and correspondingly wide
+  downsampling ranges; they should not be treated as stable point estimates.

@@ -1446,3 +1446,22 @@ stronger at **0.8373 AUROC / 0.7605 accuracy**, while VVE-core reaches 0.8267 /
 literal position balancing, but the local result is about 0.84 rather than 0.9.
 Full VVE remains practically tied with allocation mass, so this audit reinforces
 rather than changes the decision to close the value-specific method claim.
+
+## 2026-07-20 — Replace pooled balanced reporting with per-bin distributions
+
+**Correction:** A pooled AUROC over bins that are each label-balanced removes
+the position/label association but still hides how detector quality changes
+with depth. Extended the frozen-OOF audit to compute AUROC and zero-threshold
+accuracy separately in every 10-token bin for each of the 1,000 balanced draws.
+
+**Result:** All-layer allocation mass falls from 0.9404 AUROC / 0.8187 accuracy
+at positions 0--9 to 0.6236 / 0.5764 at 140--149. The middle bins decline more
+gradually: 0.8429 / 0.7647 at 70--79, 0.8150 / 0.7404 at 100--109, and 0.7832 /
+0.6925 at 120--129. Raw and no-RoPE L31 accuracy is close to chance after
+position 100. The last bins have wide ranges because only 35 and 19 examples
+per class remain.
+
+**Interpretation:** Do not report 0.8373 alone. The supervised per-head detector
+is strong early and materially weaker late; per-bin AUROC falls together with
+accuracy, so this is not only a global-threshold calibration artifact. Full VVE
+is also non-uniform and has no consistent per-bin advantage over allocation.

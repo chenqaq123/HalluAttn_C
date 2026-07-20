@@ -120,6 +120,9 @@ def main() -> None:
     results = {
         name: {"auroc": [], "accuracy_at_zero": []} for name in scores
     }
+    per_bin_results: dict[str, dict[str, dict[str, list[float]]]] = {
+        name: {} for name in scores
+    }
     bin_summary = None
     selected_count = None
     for _ in range(args.repeats):
@@ -142,6 +145,24 @@ def main() -> None:
             results[name]["accuracy_at_zero"].append(
                 float(np.mean(prediction == labels[indices]))
             )
+            for item in current_summary:
+                bin_key = f"{item['bin_start']}-{item['bin_end']}"
+                in_bin = (
+                    (positions[indices] >= item["bin_start"])
+                    & (positions[indices] <= item["bin_end"])
+                )
+                bin_indices = indices[in_bin]
+                bin_auc = roc_auc(labels[bin_indices], values[bin_indices])
+                if bin_auc is None:
+                    raise ValueError(f"AUROC is undefined for {name} in {bin_key}")
+                bin_metrics = per_bin_results[name].setdefault(
+                    bin_key, {"auroc": [], "accuracy_at_zero": []}
+                )
+                bin_metrics["auroc"].append(bin_auc)
+                bin_prediction = values[bin_indices] >= 0.0
+                bin_metrics["accuracy_at_zero"].append(
+                    float(np.mean(bin_prediction == labels[bin_indices]))
+                )
 
     output = {
         "position_free_oof": args.position_free_oof,
@@ -157,6 +178,16 @@ def main() -> None:
                 metric: _summary(values) for metric, values in metrics.items()
             }
             for name, metrics in results.items()
+        },
+        "per_bin_metrics": {
+            name: {
+                bin_key: {
+                    metric: _summary(values)
+                    for metric, values in bin_metrics.items()
+                }
+                for bin_key, bin_metrics in method_bins.items()
+            }
+            for name, method_bins in per_bin_results.items()
         },
     }
     output_path = Path(args.output)

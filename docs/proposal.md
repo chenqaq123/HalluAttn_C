@@ -784,6 +784,12 @@ two-layer attention-plus-confidence probe reaches 0.7411 / 0.6775. Thus the
 supervised per-head signal survives actual position balancing, but neither VVE
 nor allocation approaches 0.9 on this local balanced test.
 
+The pooled balanced result is not position-uniform. Allocation-mass AUROC drops
+from 0.9404 at positions 0--9 to 0.6236 at 140--149, while zero-threshold
+accuracy drops from 0.8187 to 0.5764. The decline is already visible in per-bin
+AUROC, so it cannot be explained only by one globally miscalibrated threshold.
+The detailed distribution is reported in `docs/experiment_results.md`.
+
 **Decision:** close VVE as the constructive detector route. Its high OOF AUROC
 is real, but the evidence does not identify target-aligned value content as the
 cause; all-layer allocation plus a high-capacity supervised readout explains
