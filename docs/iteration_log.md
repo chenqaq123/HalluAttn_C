@@ -1602,3 +1602,15 @@ position-balanced metrics, and paired image-bootstrap intervals.
 bin wins; full-row complementarity requires +0.010 over the stronger row. The
 audit distinguishes anticipatory from post-target predictive structure, but it
 cannot establish target-object verification or create a new detector claim.
+
+## 2026-07-20 — Implement temporal-row refits and pass evaluator smoke
+
+**Implementation:** Extended the frozen spatial-allocation evaluator with
+explicit 1,024-dimensional `mass_pre` and `mass_post` views and registered
+post-pre/full-post/full-pre paired comparisons. No extraction code or cached
+attention value changed.
+
+**Verification:** Eleven relevant unit tests pass. Synthetic tensors confirm
+that pre and post select exactly their intended temporal rows, and a two-fold,
+one-epoch smoke completes all three fitting and output paths. Freeze the code
+and proceed to the full five-fold audit.

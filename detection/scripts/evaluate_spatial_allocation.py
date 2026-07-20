@@ -79,6 +79,13 @@ def _registered_feature_sets(data: dict[str, np.ndarray]) -> dict[str, np.ndarra
             feature_sets[f"{branch}__{suffix}"] = np.ascontiguousarray(
                 selected.reshape(selected.shape[0], -1), dtype=np.float32
             )
+    no_rope = np.asarray(data["no_rope"], dtype=np.float32)
+    feature_sets["no_rope__mass_pre"] = np.ascontiguousarray(
+        no_rope[:, :, 0, :, 0].reshape(no_rope.shape[0], -1), dtype=np.float32
+    )
+    feature_sets["no_rope__mass_post"] = np.ascontiguousarray(
+        no_rope[:, :, 1, :, 0].reshape(no_rope.shape[0], -1), dtype=np.float32
+    )
     return feature_sets
 
 
@@ -276,6 +283,18 @@ def main() -> None:
         "candidate_sink_clean_vs_mass": (
             "sink_clean__mass_connectivity",
             "no_rope__mass",
+        ),
+        "post_vs_pre": (
+            "no_rope__mass_post",
+            "no_rope__mass_pre",
+        ),
+        "full_vs_post": (
+            "no_rope__mass",
+            "no_rope__mass_post",
+        ),
+        "full_vs_pre": (
+            "no_rope__mass",
+            "no_rope__mass_pre",
         ),
     }
     comparisons = {}

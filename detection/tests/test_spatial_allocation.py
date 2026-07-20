@@ -4,14 +4,19 @@ import sys
 import unittest
 from pathlib import Path
 
+import numpy as np
 import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "detection" / "src"))
 
 from sinkdetect.spatial_allocation import (  # noqa: E402
     remove_attention_keys,
     spatial_allocation_features,
+)
+from detection.scripts.evaluate_spatial_allocation import (  # noqa: E402
+    _registered_feature_sets,
 )
 
 
@@ -49,6 +54,31 @@ class SpatialAllocationTest(unittest.TestCase):
         torch.testing.assert_close(cleaned.sum(dim=-1), torch.ones(1, 1))
         torch.testing.assert_close(cleaned[0, 0], torch.tensor([0.25, 0.0, 0.75, 0.0]))
         torch.testing.assert_close(row, torch.tensor([[[0.1, 0.2, 0.3, 0.4]]]))
+
+    def test_temporal_feature_sets_select_pre_and_post_rows(self) -> None:
+        values = np.zeros((2, 32, 2, 32, 3), dtype=np.float32)
+        values[:, :, 0, :, 0] = 1.0
+        values[:, :, 1, :, 0] = 2.0
+        data = {
+            "feature_names": np.asarray(
+                ["visual_mass", "top10_mass", "top10_neighbor_coherence"]
+            ),
+            "no_rope": values,
+            "sink_clean": values.copy(),
+        }
+
+        feature_sets = _registered_feature_sets(data)
+
+        self.assertEqual(feature_sets["no_rope__mass_pre"].shape, (2, 1024))
+        self.assertEqual(feature_sets["no_rope__mass_post"].shape, (2, 1024))
+        np.testing.assert_array_equal(
+            feature_sets["no_rope__mass_pre"],
+            np.ones_like(feature_sets["no_rope__mass_pre"]),
+        )
+        np.testing.assert_array_equal(
+            feature_sets["no_rope__mass_post"],
+            np.full_like(feature_sets["no_rope__mass_post"], 2.0),
+        )
 
 
 if __name__ == "__main__":

@@ -1689,3 +1689,18 @@ position-balanced draws:
 - **Artifacts (git-ignored):**
   `experiments/spatial_allocation/features_shard{0..3}.npz`,
   `iteration1_metrics.json`, and `iteration1_oof.npz`.
+
+### 2026-07-20 — No-RoPE temporal-row evaluator smoke
+
+- **Setup:** Reused the validated 43-mention spatial-allocation smoke cache;
+  no model extraction or feature definition changed. Added equal-dimensional
+  1,024-input pre-only and post-only mass views beside the 2,048-input full view.
+- **Verification:** Unit tests confirm that pre selects exactly row 0 and post
+  exactly row 1 across all 32 layers and heads. A two-fold, one-epoch CPU run
+  completes all three OOF fitting and serialization paths. The tiny-sample
+  performance is not interpreted because no position bin is valid.
+- **Decision:** Evaluator gate passes. Run the registered five-fold temporal-row
+  audit with the frozen full cache and unchanged training settings.
+- **Artifacts (git-ignored):**
+  `experiments/spatial_allocation/temporal_smoke_metrics.json` and
+  `temporal_smoke_oof.npz`.
