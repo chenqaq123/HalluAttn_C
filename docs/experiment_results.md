@@ -1303,3 +1303,28 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/visual_value_evidence/features_shard{0,1}.npz`,
   `iteration1_metrics.json`, and `iteration1_oof.npz`.
+
+### 2026-07-20 — VVE readout-capacity audit (no new model run)
+
+- **Reason:** A code/cache audit after the positive result checked whether the
+  reported attention comparison isolates value content or also changes layer
+  coverage and probe capacity. This entry derives dimensions from the frozen
+  artifacts and introduces no new fitted metric.
+- **VVE dimensions:** Full VVE uses 32 layers x 2 rows x 32 heads x 5 features =
+  **10,240 inputs**. Its width-256 MLP has 2,621,953 trainable parameters.
+  Target-gain-only uses **2,048 inputs** and 524,801 parameters; it already
+  reaches 0.8793 within-bin, versus 0.8872 for full VVE.
+- **Reused attention baseline:** The position-free cache contains layers 22 and
+  31 only, with 32 heads x 8 allocation-shape features. After adding ten
+  confidence features, its MLP receives **522 inputs** and has 134,145
+  parameters. Its 0.7988 within-bin result is therefore a strong same-classifier
+  baseline, but not an all-layer/equal-capacity attribution control.
+- **Interpretation correction:** The existing OOF result remains valid as a
+  predictive comparison. It does not by itself establish that all +0.0884 comes
+  from values rather than all-layer coverage and readout capacity. The method
+  center is narrowed to the 2,048-dimensional target-gain trajectory; iteration
+  2 must compare it with an identical-dimension visual-mass trajectory and
+  compare full VVE with newly extracted all-layer attention-shape features.
+- **Decision:** Do not alter the iteration-1 score or tune VVE on COCO. Treat
+  capacity matching as a pre-registered falsification audit before causal or
+  transfer claims.

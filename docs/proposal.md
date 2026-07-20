@@ -664,6 +664,13 @@ their visual source. The proposed unit is their conjunction: source-decomposed,
 target-aligned visual residual evidence for position-controlled object
 hallucination detection.
 
+**Method center.** The core VVE object is the all-layer, all-head trajectory of
+normalized target gain. Source mass, value norm, direct dot/cosine, confidence,
+and attention shape are controls or diagnostic ceilings; they are not separate
+method ingredients. The external MLP is a readout, not the conceptual
+contribution. Iteration 2 therefore validates this fixed target-gain trajectory
+rather than adding features to chase a higher AUROC.
+
 ### 4.1 Iteration 1 result and decision
 
 The full run covers 16,426 object mentions from 4,977 images under the locked
@@ -674,6 +681,7 @@ five-fold image-grouped protocol. The primary results are:
 | confidence-only MLP | 0.7149 | 0.6724 | 0.6733 | 0.6325 |
 | attention + confidence MLP | 0.8561 | 0.7988 | 0.7856 | 0.6679 |
 | label-free no-RoPE VVE | 0.6020 | 0.5518 | 0.5623 | 0.5283 |
+| supervised no-RoPE target-gain trajectory | 0.9119 | **0.8793** | 0.8654 | 0.7153 |
 | supervised raw VVE | 0.9112 | 0.8821 | 0.8712 | 0.7138 |
 | supervised no-RoPE VVE | 0.9142 | **0.8872** | 0.8749 | **0.7271** |
 | supervised no-RoPE VVE + confidence | **0.9151** | **0.8873** | **0.8764** | 0.7219 |
@@ -695,11 +703,21 @@ no-RoPE minus raw VVE is only +0.0052 and its interval crosses zero
 reduces grounded score-position correlation, not claimed as a performance
 contribution. Confidence also adds effectively nothing to VVE.
 
+The current +0.0884 comparison is not yet a fully capacity-matched attribution.
+Full VVE supplies 10,240 inputs (about 2.62M MLP parameters), whereas the reused
+two-layer attention-plus-confidence cache supplies 522 inputs (about 0.13M
+parameters). The 2,048-dimensional target-gain-only detector already reaches
+0.8793, so the result is not created by the four auxiliary VVE features, but an
+all-layer, equal-dimension attention control is still mandatory before assigning
+the whole gain to value content.
+
 The route advances, but 0.90 within-bin was not reached. Before transfer claims,
-iteration 2 must establish that VVE tracks causal visual content through an
-attention-preserving value intervention and must quantify classifier-seed
-stability. Only then should the frozen extractor/probe be ported to Qwen3-VL and
-an independent hallucination benchmark.
+iteration 2 keeps VVE-core fixed and tests capacity-matched attention, repeated
+classifier seeds, wrong-target and language-source controls, and an attention-
+preserving value intervention. Only then should the frozen extractor/probe be
+ported unchanged to Qwen3-VL and an independent hallucination benchmark. The
+locked audit is in
+[visual_value_evidence_iteration_2.md](iteration_protocols/visual_value_evidence_iteration_2.md).
 
 ## 5. Contribution framing (intended)
 
@@ -753,6 +771,9 @@ Honest guardrails carried over from the tear-down:
   A development-time category-held-out MLP moved materially when its model seed
   offset changed; repeat-seed mean and dispersion are mandatory before a method
   claim. Do not choose the best seed.
+- **Capacity matching:** iteration-1 VVE uses all 32 layers while the reused
+  attention baseline uses layers 22 and 31. Match layers, rows, feature count,
+  MLP width, folds, and seeds before attributing the full gain to values.
 - **VVE causal validation:** target alignment can encode lexical semantics even
   without an explicit object-ID feature. Run target-direction permutation and
   attention-preserving visual-value interventions before calling the signal
@@ -777,7 +798,9 @@ Honest guardrails carried over from the tear-down:
 - Repo layout: [project_structure.md](project_structure.md).
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
-- Active detector protocol:
+- Active detector audit protocol:
+  [visual_value_evidence_iteration_2.md](iteration_protocols/visual_value_evidence_iteration_2.md).
+- Completed VVE iteration-1 protocol:
   [visual_value_evidence_iteration_1.md](iteration_protocols/visual_value_evidence_iteration_1.md).
 - Closed position-free attention protocol:
   [position_free_detector_iteration_1.md](iteration_protocols/position_free_detector_iteration_1.md).

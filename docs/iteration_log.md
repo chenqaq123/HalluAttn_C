@@ -1317,3 +1317,32 @@ shortcut dependence, and (3) intervene on visual values while preserving
 attention weights to test whether high VVE predicts a target-logit or behavior
 change. Only a stable causal result should be ported to Qwen3-VL and an
 independent hallucination dataset.
+
+## 2026-07-20 — Refocus VVE on target gain and lock the validation audit
+
+**Method clarification:** VVE is not the 10,240-dimensional feature bundle or
+the MLP itself. Its center is the source-decomposed visual contribution and its
+all-layer/all-head normalized gain for the emitted target. Target gain alone
+already reaches 0.8793 within-bin; mass, norm, dot/cosine, confidence, and
+attention shape are now explicitly diagnostic controls. This is a post-result
+simplification on COCO and requires unchanged external confirmation.
+
+**Capacity audit:** Full VVE uses 10,240 inputs and a 2.62M-parameter readout.
+The reused attention-plus-confidence baseline uses only layers 22/31, 522
+inputs, and a 0.13M-parameter readout. The +0.0884 predictive advantage is real
+under the registered folds, but the current comparison does not isolate value
+content from all-layer coverage and probe capacity. No metric was rerun or
+replaced in this audit.
+
+**Locked next iteration:** Added
+`docs/iteration_protocols/visual_value_evidence_iteration_2.md`. It preserves
+VVE-core and forbids feature/fusion tuning. Five fixed MLP seeds test stability;
+equal-dimension visual-mass and full-capacity attention-shape probes test
+allocation; wrong-target and language-source trajectories test target/visual
+specificity; fixed-layer raw visual-contribution subtraction tests causal logit
+effects while preserving that layer's attention probabilities.
+
+**Decision:** These controls validate or falsify VVE but never become detector
+inputs. Passing opens unchanged Qwen3-VL and independent-data confirmation.
+Failure narrows the claim according to the registered stage, without changing
+heads, layers, features, thresholds, or fusion on the observed COCO labels.
