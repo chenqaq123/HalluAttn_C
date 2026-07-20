@@ -832,6 +832,26 @@ signal is post-target attention reorganization. The defensible mechanism is a
 distributed cross-layer relative-head pattern, dominated by the post row, not
 target-object verification localized to a few heads.
 
+### 4.5 Registered spatial-allocation audit
+
+The current allocation probe discards the 24x24 visual layout by reducing every
+layer/head/row map to total visual mass. The next local audit tests whether that
+distributed fingerprint contains spatial organization that mass alone cannot
+represent. RoPE removal is fixed by method definition. The two independently
+controlled additions are (1) a top-10% 8-neighbor coherence statistic, compared
+against equal-dimensional top-10% mass concentration, and (2) deletion of the
+existing low-key-norm visual sink set. Both are evaluated alone and in matched
+mass fusions over all layers, heads, and pre/post rows.
+
+The locked protocol is
+[no_rope_spatial_allocation_audit.md](iteration_protocols/no_rope_spatial_allocation_audit.md).
+It treats connectivity, concentration, and sink deletion as separate factors,
+uses the existing image-grouped position-conditional MLP, and reports every
+position bin plus literal position-balanced tests. This remains a same-data
+feasibility audit. It can reopen a spatial feature family only after beating
+equal-dimensional concentration and mass controls; it cannot by itself turn an
+allocation fingerprint into target-object verification.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can

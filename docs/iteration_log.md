@@ -1522,3 +1522,25 @@ allocation as verification. It exposes a stable supervised fingerprint in the
 relative allocation pattern, much of it after the target token has already been
 consumed. Keep candidate head IDs as local diagnostics; require cross-model/data
 replication before any specialization claim.
+
+## 2026-07-20 — Pre-register no-RoPE spatial-allocation audit
+
+**Question:** The successful all-layer allocation probe retains only visual
+mass, so it cannot distinguish a compact two-dimensional support from scattered
+attention with the same mass. The user proposed mandatory RoPE removal plus
+optional sink deletion and connectivity-based concentration.
+
+**Locked design:** Retain the full no-RoPE causal attention row and extract, for
+all 32 layers, 32 heads, and pre/post rows, visual mass, top-10% mass, and a
+top-10% 8-neighbor coherence score. The latter is compared against top-10% mass
+at equal input dimension so any gain can be assigned to patch adjacency rather
+than generic concentration. Apply the existing low-key-norm sink rule as an
+independent on/off branch and cache sink mass only as a diagnostic.
+
+**Evaluation contract:** Reuse the image-grouped five-fold width-256 MLP with
+position-conditional weighting and a shared seed. Report every position bin and
+literal per-bin-balanced distributions. Connectivity, sink deletion, and the
+full spatial family each have explicit improvement gates; no top-k, sink,
+neighborhood, layer/head, row, seed, or classifier sweep is allowed on COCO.
+This is same-data feasibility and cannot establish verification without later
+independent transfer.
