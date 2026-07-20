@@ -1465,3 +1465,26 @@ per class remain.
 is strong early and materially weaker late; per-bin AUROC falls together with
 accuracy, so this is not only a global-threshold calibration artifact. Full VVE
 is also non-uniform and has no consistent per-bin advantage over allocation.
+
+## 2026-07-20 — Pre-register the all-layer allocation mechanism audit
+
+**Question:** The No-RoPE all-layer/all-head allocation MLP is substantially
+stronger than the earlier L31 and L22/L31 probes, but its 2,048 correlated inputs
+and nonlinear readout make raw weight inspection insufficient. The open question
+is whether a sparse stable head set, distributed head identity, or the layerwise
+mean allocation trajectory explains the result.
+
+**Locked analysis:** Refit the exact five-fold model and require reproduction
+within 0.002. Combine standardized first-layer column norms with held-out
+gradient-times-input, fold-rank stability, exact layer/row/depth-band
+interventions, mean-versus-head-deviation refits, and train-fold-only top-K
+head-pair refits for `K={8,16,32,64,128,256}` against deterministic random-K
+controls. Report the complete per-position AUROC vector; bins with fewer than 30
+examples per class cannot satisfy gates.
+
+**Guardrail:** Model parameters nominate candidates but cannot establish head
+importance. A sparse-head conclusion requires stable top-32 overlap, held-out
+performance retention across at least 11/14 bins, and a positional advantage
+over random-32. Failure means distributed/redundant signal, not permission to
+search another K or ranker on test labels. This is explanatory and cannot revive
+the closed allocation/VVE constructive route.

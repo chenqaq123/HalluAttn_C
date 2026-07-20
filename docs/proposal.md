@@ -798,6 +798,19 @@ intervention, Qwen3-VL, or transfer stages as VVE confirmation. The extractor
 and results remain useful for the paper's audit and for designing a genuinely
 orthogonal next hypothesis.
 
+### 4.4 Registered explanation audit
+
+The strong No-RoPE all-layer allocation control creates a separate mechanistic
+question: whether its performance comes from a few stable specialized heads, a
+distributed per-head pattern, or a simple layerwise mean-mass trajectory. The
+locked audit in
+[allocation_probe_mechanism_audit.md](iteration_protocols/allocation_probe_mechanism_audit.md)
+combines fold-stable model-parameter rankings, held-out gradient effects,
+layer/row interventions, mean-versus-head refits, and train-fold-only sparse-head
+refits. Every result is reported by position bin. Weight magnitude alone is not
+accepted as evidence of a special head, and this explanation audit does not
+reopen allocation as the constructive method.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can
