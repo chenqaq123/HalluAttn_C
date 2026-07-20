@@ -1206,3 +1206,25 @@ Keep the 0.7431 no-RoPE probe only as a supervised external analysis ceiling,
 not as an unsupervised or novel method. The durable two-pronged critique remains;
 the next constructive design must be training-free and move outside attention
 allocation.
+
+## 2026-07-20 — Audit the 0.9 target before choosing the next detector
+
+**Literature correction:** HaloProbe's reported 0.935 AUROC is its final
+Bayesian posterior on the natural held-out distribution. Its own
+position-balanced test AUROC is 0.876 without balanced training and 0.877 with
+balanced training. Treat 0.9 within-position AUROC as a stronger stretch target,
+not as a number already established by HaloProbe.
+
+**Exploratory ceiling:** On the existing image-grouped folds, an untuned NumPy
+pairwise ridge diagnostic reaches 0.7946 within-bin from raw L31 attention plus
+IC/NLL/entropy and 0.8018 after adding L22. Adding object-word identity reaches
+0.8264, but that gain is category prior rather than visual verification. Full
+numbers and caveats are appended to `docs/experiment_results.md`.
+
+**Decision:** Do not optimize toward 0.9 by adding position or object-frequency
+shortcuts to a monolithic classifier. A HaloProbe-style full feature replica is
+useful as a controlled baseline, but the constructive method must add evidence
+that tests whether the target token is supported by visual content. Candidate
+families to protocol next are target-logit-aligned visual value contributions,
+layerwise multimodal evidence trajectories, and attention-preserving visual
+value ablations. No proposal direction is selected in this audit.

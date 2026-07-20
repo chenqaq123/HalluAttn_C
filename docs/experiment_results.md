@@ -1173,3 +1173,40 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/position_free_detector/clean_per_head_features_shard{0..3}.npz`,
   `iteration1_metrics.json`, and `iteration1_oof.npz`.
+
+### 2026-07-20 — HaloProbe metric audit and exploratory fusion ceiling
+
+- **Metric audit:** HaloProbe's headline 0.935 is the final posterior AUROC on
+  its natural held-out distribution, not its position-balanced test result.
+  HaloProbe Table 6 reports 0.876 AUROC for natural training / balanced test and
+  0.877 for balanced training / balanced test. Its 0.935 therefore is not a
+  demonstrated 0.9 target for this project's stricter within-position metric.
+- **Setup:** Reused the frozen 16,426-mention position-free cache, five
+  image-grouped folds, seed 17, bin width 10, and train-only position-matched
+  positive-minus-negative rows. This was an untuned offline diagnostic using a
+  NumPy ridge pairwise ranker (`lambda=10`), not the locked logistic evaluator
+  and not a candidate method. The raw L31 sanity result (0.744 within-bin) is
+  close to the locked logistic result (0.7405).
+
+| Exploratory features | Dim. | Overall | Within-bin | Matched |
+|---|---:|---:|---:|---:|
+| IC + NLL + entropy | 3 | 0.8056 | 0.7086 | 0.7280 |
+| raw L31 attention probe | 256 | 0.8567 | 0.7443 | 0.7424 |
+| raw L31 + confidence | 259 | 0.8854 | 0.7946 | 0.7960 |
+| no-RoPE L31 + confidence | 259 | 0.8764 | 0.7966 | 0.7958 |
+| raw L22/L31 + confidence | 515 | 0.8834 | **0.8018** | 0.7989 |
+| raw + no-RoPE L31 + confidence | 515 | 0.8878 | 0.8008 | 0.7977 |
+| object-word one-hot only | 80 | 0.6506 | 0.6558 | 0.6336 |
+| raw L31 + confidence + object word | 339 | **0.8929** | **0.8264** | **0.8185** |
+| raw L22/L31 + confidence + object word | 595 | 0.8873 | 0.8180 | 0.8095 |
+
+- **Interpretation:** Confidence and attention are complementary: their simple
+  fusion adds about 0.05 within-bin over the raw probe. Object identity adds a
+  further 0.032, but this is a category-frequency shortcut rather than image
+  evidence. More layers and raw/no-RoPE duplication do not improve reliably.
+  Straightforward HaloProbe-style feature fusion therefore offers useful
+  baseline headroom to roughly 0.80--0.83 on this stricter protocol, but it does
+  not make 0.9 plausible without a new evidence-bearing feature family.
+- **Scope:** No new extraction was run and no hyperparameter was selected on
+  these results. They motivate the next protocol; they do not reopen the closed
+  attention-allocation route or supersede the locked iteration-1 result.
