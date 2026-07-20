@@ -76,14 +76,16 @@ not every attention method.
 The completed **training-free detector audit** (§3) gives a stronger negative
 boundary. Removing RoPE slightly reduces position correlation but does not
 improve an attention probe beyond noise, sink deletion significantly harms it,
-and the fixed label-free local-gain score is below chance. The first **Visual
-Value Evidence** result (§4) crosses that boundary: a supervised external probe
-over source-decomposed, target-aligned visual value contributions reaches 0.887
-within-position AUROC, versus 0.799 for the matched attention-plus-confidence
-probe. Its label-free aggregation fails at 0.552. The constructive claim is
-therefore about evidence-bearing value content that can be learned by a frozen-
-LVLM detector, not a new unsupervised score. The two-pronged critique remains
-the paper spine.
+and the fixed label-free local-gain score is below chance. **Visual Value
+Evidence** (§4) initially appeared to cross that boundary: its supervised probe
+reached 0.887 within-position AUROC versus 0.799 for the available two-layer
+attention-plus-confidence probe. The mandatory capacity control overturns that
+attribution. An equal-dimension, all-layer/all-head visual-allocation trajectory
+reaches 0.881 versus 0.878 for VVE-core under the same seed, and full VVE exceeds
+it by only 0.004 with a bootstrap interval crossing zero. Label-free VVE also
+fails at 0.552. VVE is therefore retained as a predictive but capacity-confounded
+audit, not the constructive method. The two-pronged critique remains the paper
+spine while a new constructive route is selected on independent evidence.
 
 ## 2. Positioning vs. prior work
 
@@ -106,10 +108,10 @@ the paper spine.
   attention detection**: preserving heads, removing RoPE, deleting sink
   patches, and contrasting nearby rows does not beat IC or the same-run raw
   per-head probe. This sharpens the critique but is not a constructive method.
-- A candidate constructive boundary: **source-decomposed visual value evidence**
-  improves a matched supervised detector even after position, same-object, and
-  unseen-category controls. This remains provisional until causal value
-  ablations, repeat-seed stability, and cross-model/data transfer are complete.
+- A controlled **capacity-confound result for source-decomposed visual value
+  evidence**: the apparent gain over a narrow attention baseline disappears
+  against an equal-dimension all-layer allocation probe. This constrains future
+  detector claims but is not itself a successful constructive method.
 
 ## 3. Completed constructive audit — Position-Free Detection Failed
 
@@ -623,9 +625,9 @@ crosses an unstable semantic boundary (`vase` versus `pot/flowerpot`). A future
 grounded branch needs an independently validated equivalence/taxonomy layer;
 spatial evidence alone has reached its limit on this benchmark.
 
-## 4. Active constructive route — Visual Value Evidence
+## 4. Completed constructive audit — Visual Value Evidence
 
-VVE tests **what visual attention carries**, rather than how much
+VVE tested **what visual attention carries**, rather than how much
 or where it attends. For each layer, head, and object-generating row, decompose
 the exact visual part of the attention output:
 
@@ -636,8 +638,8 @@ direction and measure both its direct alignment and its normalized logit-lens
 gain. A grounded mention should receive target-specific positive visual support;
 a hallucinated mention may allocate attention to real image regions while
 transporting content that does not support the emitted target. This is the
-constructive counterpart to the paper thesis: allocation is not verification,
-but value-bearing, target-aligned residual evidence can be.
+candidate constructive counterpart to the paper thesis: allocation is not
+verification, but value-bearing, target-aligned residual evidence might be.
 
 The method first **removes RoPE from Q/K**, recomputes causal attention over the
 complete prefix, and then applies those weights to the original values and
@@ -662,16 +664,17 @@ The novelty claim is deliberately narrow. Direct logit attribution, logit lens,
 and source decomposition are established primitives. HaloProbe does not inspect
 value content; Owl/VTACR averages attention weights despite using the word
 "contribution"; VISTA and Overthinking trace layerwise logits without isolating
-their visual source. The proposed unit is their conjunction: source-decomposed,
+their visual source. The tested unit was their conjunction: source-decomposed,
 target-aligned visual residual evidence for position-controlled object
-hallucination detection.
+hallucination detection. The capacity result in §4.3 prevents claiming that
+conjunction as an empirically distinct detector signal.
 
-**Method center.** The core VVE object is the all-layer, all-head trajectory of
+**Tested method center.** The core VVE object is the all-layer, all-head trajectory of
 normalized target gain. Source mass, value norm, direct dot/cosine, confidence,
 and attention shape are controls or diagnostic ceilings; they are not separate
 method ingredients. The external MLP is a readout, not the conceptual
-contribution. Iteration 2 therefore validates this fixed target-gain trajectory
-rather than adding features to chase a higher AUROC.
+contribution. Iteration 2 was therefore designed to validate this fixed target-
+gain trajectory rather than add features to chase a higher AUROC.
 
 ### 4.1 Iteration 1 result and decision
 
@@ -709,18 +712,12 @@ The current +0.0884 comparison is not yet a fully capacity-matched attribution.
 Full VVE supplies 10,240 inputs (about 2.62M MLP parameters), whereas the reused
 two-layer attention-plus-confidence cache supplies 522 inputs (about 0.13M
 parameters). The 2,048-dimensional target-gain-only detector already reaches
-0.8793, so the result is not created by the four auxiliary VVE features, but an
-all-layer, equal-dimension attention control is still mandatory before assigning
-the whole gain to value content.
+0.8793, so the result is not created by the four auxiliary VVE features. This
+made an all-layer, equal-dimension attention control mandatory before assigning
+the gain to value content; §4.3 reports that failed attribution test.
 
-The route advances, but 0.90 within-bin was not reached. Before transfer claims,
-iteration 2 keeps VVE-core fixed and tests capacity-matched attention, repeated
-classifier seeds, wrong-target and language-source controls, and an attention-
-preserving value intervention. Its first readout audit replaces sample-count-
-weighted position bins with one frozen equal-bin objective; this changes only
-the supervised readout loss, not VVE. Only then should the frozen extractor/probe be
-ported unchanged to Qwen3-VL and an independent hallucination benchmark. The
-locked audit is in
+This iteration-1 decision was superseded by the registered Stage-A0 and first
+Stage-A capacity result in §4.3. The locked audit is in
 [visual_value_evidence_iteration_2.md](iteration_protocols/visual_value_evidence_iteration_2.md).
 
 ### 4.2 Same-data comparison with prior detectors
@@ -752,34 +749,63 @@ not claims that label supervision is free.
 | **VVE-core, RoPE removed (ours)** | **0.9119** | **0.8793** |
 | full VVE diagnostic | 0.9142 | 0.8872 |
 
-This establishes a strong same-data feasibility result for supervised VVE-core,
-not complete validation. The HaloProbe-style row is our matched local probe, not
-HaloProbe's official 0.935 from a different evaluation distribution. A publishable
-method claim still requires the capacity-matched audit and unchanged transfer to
-Qwen3-VL plus an independent dataset.
+This established a strong same-data feasibility result for supervised VVE-core,
+not value-specific validation. The HaloProbe-style row is our local two-layer
+probe, not HaloProbe's official 0.935 from a different evaluation distribution.
+The equal-dimension control in §4.3 shows why this table cannot support a VVE
+method claim by itself.
+
+### 4.3 Position-uniform and capacity-matched outcome
+
+The one registered position-uniform objective does not fix the late-bin
+degradation. Against the same-seed size-weighted fit, VVE-core macro-bin AUROC
+moves only 0.8298 to 0.8305 and full VVE falls from 0.8369 to 0.8306; their
+80--139 AUROCs also fall from 0.7992 to 0.7938 and 0.8213 to 0.8123. The
+optimization fails its locked +0.015 gates and is rejected. The original
+size-weighted objective remains the reporting reference; no blended weighting,
+position head, or threshold sweep is allowed on this dataset.
+
+More decisively, the first registered Stage-A seed fails the capacity gate.
+With identical 2,048-dimensional layer/head/row coverage, classifier, folds,
+and initialization, visual allocation mass reaches **0.8812** within-bin versus
+**0.8783** for VVE-core. The difference is -0.0029 with image-bootstrap 95% CI
+`[-0.0093, 0.0036]`. Full VVE reaches 0.8855, only +0.0043 over allocation mass,
+with CI `[-0.0002, 0.0094]`. Because Stage A required VVE-core to beat allocation
+mass at every seed and by at least 0.05 on average, one registered losing seed
+already makes the gate impossible to pass. Further seeds cannot rescue the
+registered decision.
+
+**Decision:** close VVE as the constructive detector route. Its high OOF AUROC
+is real, but the evidence does not identify target-aligned value content as the
+cause; all-layer allocation plus a high-capacity supervised readout explains
+essentially the same labels. Do not run the downstream target/source,
+intervention, Qwen3-VL, or transfer stages as VVE confirmation. The extractor
+and results remain useful for the paper's audit and for designing a genuinely
+orthogonal next hypothesis.
 
 ## 5. Contribution framing (intended)
 
-Frame as an **analysis + frozen-LVLM supervised detection** paper only if the
-remaining causal and transfer audits pass:
+The current defensible frame is an **analysis paper**; a constructive method can
+be restored only by a new, independently motivated hypothesis that survives an
+equal-capacity allocation control:
 
 1. The **two-pronged critique** — attention-based detection and mitigation both
    fail under matched controls (length control for detection; answer-prior /
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive **Visual Value Evidence detector**: decompose the visual
-   value content transported by each head and ask whether it raises the emitted
-   object's logit. Iteration 1 supports the supervised frozen-LVLM variant; the
-   label-free variant is a negative result and must not be promoted as working.
+3. A **capacity-controlled detector audit**: a source-decomposed target-value
+   probe appears strong against narrow baselines, but an equal-dimension
+   all-layer allocation probe matches it. This prevents a false value-evidence
+   contribution claim and sharpens what a future method must explain.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
 - Prong 2 is scoped to attention *amplification* (PAI is inert).
 - Any absolute-gain claim must be reported against the honest baselines here.
-- If both VVE detector variants fail their confirmation gates, remove the
-  constructive claim and submit the work as an analysis paper; do not revive
-  XEV or the closed clean-attention detector.
+- VVE has failed its registered capacity confirmation gate. Keep it as an audit,
+  remove the constructive claim, and do not revive XEV or the closed clean-
+  attention detector.
 
 ## 6. Known risks / must-dos (rebuild backlog)
 - **XEV is closed:** preserve code and append-only evidence for reproducibility,
@@ -806,25 +832,18 @@ Honest guardrails carried over from the tear-down:
 - **VVE supervision boundary:** the successful MLP uses CHAIR labels. Call it a
   supervised external detector, even though the LVLM is frozen and inference
   does not fine-tune generation. The registered label-free VVE score failed.
-- **VVE robustness:** the primary image-grouped result uses the registered seed.
-  A development-time category-held-out MLP moved materially when its model seed
-  offset changed; repeat-seed mean and dispersion are mandatory before a method
-  claim. Do not choose the best seed.
-- **Capacity matching:** iteration-1 VVE uses all 32 layers while the reused
-  attention baseline uses layers 22 and 31. Match layers, rows, feature count,
-  MLP width, folds, and seeds before attributing the full gain to values.
-- **Position-uniform readout:** iteration-1 class weighting balances labels
-  inside each bin but leaves total bin weight proportional to sample count. The
-  one registered equal-bin objective may replace it only if macro/late-bin
-  metrics improve under the locked no-regression gates; do not sweep mixtures.
-- **VVE causal validation:** target alignment can encode lexical semantics even
-  without an explicit object-ID feature. Run target-direction permutation and
-  attention-preserving visual-value interventions before calling the signal
-  verified visual evidence.
+- **VVE route is closed:** the equal-dimension allocation-mass probe matches
+  VVE-core, so do not attribute iteration-1 performance to values, select a
+  favorable detector seed, or continue its causal/transfer stages as method
+  confirmation.
+- **Position-uniform readout failed:** it does not improve macro or late-bin
+  VVE metrics. Retain the original objective for historical reporting and do
+  not sweep blended weights, position heads, or thresholds on COCO.
 - **Uncertainty shortcut:** compare clean-head scores against IC, NLL, and
   entropy, and test whether a supervised fusion adds signal beyond them.
 - **Transfer:** COCO/LLaVA feasibility cannot support a general detector claim.
-  The positive supervised route requires Qwen3-VL and an independent dataset.
+  Reserve Qwen3-VL and independent datasets for a new route that first survives
+  local equal-capacity controls; do not spend them validating closed VVE.
 - **Compute:** cache compact per-head evidence only, never full hidden states or
   full attention tensors. Run the 16-image numerical gate before full sharding;
   do not run mitigation inference in this iteration.
@@ -841,7 +860,7 @@ Honest guardrails carried over from the tear-down:
 - Repo layout: [project_structure.md](project_structure.md).
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
-- Active detector audit protocol:
+- Completed VVE falsification protocol:
   [visual_value_evidence_iteration_2.md](iteration_protocols/visual_value_evidence_iteration_2.md).
 - Completed VVE iteration-1 protocol:
   [visual_value_evidence_iteration_1.md](iteration_protocols/visual_value_evidence_iteration_1.md).

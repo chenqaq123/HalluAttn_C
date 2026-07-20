@@ -214,3 +214,26 @@ correlational logit-lens feature, not a causal contribution.
 
 Generated artifacts remain under `experiments/visual_value_evidence/` and are
 git-ignored.
+
+## 8. Outcome (2026-07-20)
+
+Stage A0 fails. Under a shared registered model seed, uniform-bin weighting
+changes VVE-core macro-bin AUROC from 0.8298 to 0.8305 and full VVE from 0.8369
+to 0.8306. The corresponding 80--139 AUROCs change from 0.7992 to 0.7938 and
+0.8213 to 0.8123. Neither detector reaches the registered +0.015 macro or late-
+position gain, so the size-weighted objective is retained and further weighting
+variants are prohibited by this protocol.
+
+The first Stage-A registered seed also makes the capacity gate impossible to
+pass. The equal-dimension allocation-mass probe reaches 0.8812 within-bin AUROC,
+while VVE-core reaches 0.8783, a difference of -0.0029 with 500-iteration image-
+bootstrap 95% CI `[-0.0093, 0.0036]`. Full VVE reaches 0.8855, only +0.0043 over
+allocation mass with CI `[-0.0002, 0.0094]`. Stage A required VVE-core to beat
+allocation mass at every seed and by at least 0.05 on average. Because one
+registered seed already loses, no result from the remaining seeds can satisfy
+that conjunction.
+
+Per the locked decision rule, VVE is narrowed to a capacity-sensitive in-domain
+probe result. Stages B/C and VVE transfer are not run as confirmation, and no
+feature, fusion, weighting, head, layer, or threshold tuning follows this
+failure.

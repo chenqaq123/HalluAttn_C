@@ -1371,3 +1371,53 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Remaining validation:** This is one-model, one-dataset in-domain evidence.
   Capacity matching, repeated classifier seeds, causal/source controls,
   Qwen3-VL, and an independent benchmark remain open.
+
+### 2026-07-20 — Position-uniform readout fails; allocation mass matches VVE
+
+- **Setup:** Refit confidence, VVE-core, full VVE, the retained two-layer
+  attention-plus-confidence control, and a new equal-dimension allocation-mass
+  control on the unchanged 16,426 mentions and five image folds. Both objectives
+  use the same registered initialization (`seed=17`, shared offset 0), width-256
+  MLP, optimizer, epochs, and feature standardization. The allocation control is
+  the no-RoPE visual-attention mass at all 32 layers, two rows, and 32 heads,
+  giving exactly 2,048 inputs like VVE-core.
+
+| Detector | Weighting | Overall | Within | Matched | Residual | Macro-bin | 80--139 | Grounded pos. rho |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| confidence | size | 0.7133 | 0.6725 | 0.6742 | 0.6320 | 0.6672 | 0.6742 | 0.1059 |
+| attention + confidence | size | 0.8606 | 0.7996 | 0.7848 | 0.6679 | 0.7457 | 0.7195 | 0.6392 |
+| allocation mass | size | 0.9053 | **0.8812** | 0.8702 | **0.7317** | 0.8307 | 0.8168 | 0.6394 |
+| VVE-core | size | 0.9097 | 0.8783 | 0.8627 | 0.7152 | 0.8298 | 0.7992 | 0.5781 |
+| full VVE | size | 0.9089 | 0.8855 | **0.8719** | 0.7295 | **0.8369** | **0.8213** | 0.6500 |
+| confidence | uniform | 0.7135 | 0.6628 | 0.6689 | 0.6296 | 0.6644 | 0.6800 | 0.0730 |
+| attention + confidence | uniform | 0.8343 | 0.7842 | 0.7717 | 0.6684 | 0.7278 | 0.7090 | 0.5122 |
+| allocation mass | uniform | 0.9013 | 0.8767 | 0.8654 | **0.7199** | 0.8210 | 0.8107 | 0.5900 |
+| VVE-core | uniform | 0.9059 | 0.8757 | 0.8607 | 0.7124 | 0.8305 | 0.7938 | 0.5159 |
+| full VVE | uniform | 0.9080 | **0.8821** | **0.8695** | 0.7119 | **0.8306** | **0.8123** | 0.6373 |
+
+- **Stage-A0 gate:** Uniform weighting improves VVE-core macro-bin AUROC by
+  only +0.0007 and reduces full-VVE macro-bin AUROC by 0.0063. It also reduces
+  the registered 80--139 metric by 0.0054 for core and 0.0090 for full VVE.
+  Core grounded score-position rho falls by the required amount (0.5781 to
+  0.5159), but full VVE does not (0.6500 to 0.6373). The optimization therefore
+  fails the conjunctive gate; its small within/matched changes do not rescue it.
+- **Capacity result:** With the original size weighting, VVE-core minus
+  allocation mass is -0.0029 within-bin; a 500-iteration image bootstrap gives
+  95% CI `[-0.0093, 0.0036]`. Full VVE minus allocation mass is only +0.0043,
+  CI `[-0.0002, 0.0094]`. Allocation mass also exceeds core on matched and
+  residual AUROC. This is not the registered >=0.05 value-content advantage.
+- **Seed-offset disclosure:** An earlier uniform run retained historical,
+  feature-family-specific seed offsets and gave within-bin 0.8749 (core),
+  0.8787 (full), 0.7919 (attention plus confidence), and 0.8692 (allocation
+  mass). It is superseded for paired attribution by the shared-seed table above;
+  it leads to the same no-gain conclusion.
+- **Decision:** Reject position-uniform weighting and retain size weighting only
+  as the historical reference. More importantly, Stage A cannot pass because
+  its first registered seed does not beat allocation mass. Close VVE as a
+  constructive value-specific detector; retain the high AUROC as a capacity-
+  sensitive supervised probe result. Do not continue VVE weighting sweeps,
+  Stage B/C, or cross-model transfer as confirmation.
+- **Artifacts (git-ignored):**
+  `experiments/visual_value_evidence/iteration2_{size,uniform}_shared_seed_metrics.json`
+  and corresponding `*_oof.npz`; the intermediate run is
+  `iteration2_uniform_metrics.json` / `iteration2_uniform_oof.npz`.

@@ -1398,3 +1398,32 @@ tuning on this COCO result.
 **Scope:** This is a readout optimization prompted by observed COCO bin trends,
 not independent confirmation and not a VVE feature change. Any passing objective
 must be transferred unchanged to Qwen3-VL and an independent dataset.
+
+## 2026-07-20 — Reject the readout optimization and close VVE on capacity control
+
+**Implementation:** Added the one registered `uniform_bin` loss weighting,
+fixed-range and macro position reporting, targeted feature-family execution,
+shared detector initialization, and an all-layer/all-head allocation-mass
+control. The control has 2,048 inputs on the identical layer/head/row grid as
+VVE-core. Bootstrap evaluation was reduced to the requested within-bin metric,
+avoiding unrelated matched-pair computation without changing the statistic.
+
+**Optimization outcome:** Uniform weighting does not improve the observed weak
+region. VVE-core macro AUROC changes 0.8298 to 0.8305 and 80--139 AUROC changes
+0.7992 to 0.7938. Full VVE macro changes 0.8369 to 0.8306 and 80--139 changes
+0.8213 to 0.8123. The locked Stage-A0 gate fails, so the original objective is
+retained and no weighting interpolation, position input/head, or threshold
+tuning will be tried on these labels.
+
+**Falsification outcome:** Under the same registered seed, allocation mass
+reaches 0.8812 within-bin while VVE-core reaches 0.8783. Core minus mass is
+-0.0029 with image-bootstrap CI `[-0.0093, 0.0036]`. Full VVE reaches 0.8855,
+only +0.0043 over mass with CI `[-0.0002, 0.0094]`. The registered Stage-A gate
+requires core to beat mass at every seed and by +0.05 on average; the first seed
+already loses, so the conjunction is impossible regardless of later seeds.
+
+**Decision:** Stop treating VVE as the constructive method. Preserve iteration
+1 as a genuine high-AUROC but capacity-confounded supervised probe and use this
+failure as an audit result. Cancel VVE Stage B/C and VVE-specific Qwen3/transfer
+runs; the next constructive hypothesis must differ from allocation under an
+equal-capacity control before consuming independent validation data.

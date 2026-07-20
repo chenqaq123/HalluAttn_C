@@ -18,7 +18,11 @@ from torch.utils.data import DataLoader, Dataset
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from detection.baselines.metrics import compute_metric_bundle, roc_auc  # noqa: E402
+from detection.baselines.metrics import (  # noqa: E402
+    compute_metric_bundle,
+    roc_auc,
+    within_bin_auc,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -39,6 +43,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--category_folds", type=int, default=5)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--bin_width", type=int, default=10)
+    parser.add_argument(
+        "--weighting",
+        choices=("size", "uniform_bin"),
+        default="size",
+        help="Training-loss weighting; size reproduces iteration 1.",
+    )
+    parser.add_argument(
+        "--only_feature_sets",
+        default="",
+        help="Optional comma-separated supervised feature-set names to evaluate.",
+    )
+    parser.add_argument("--skip_category_oof", action="store_true")
+    parser.add_argument(
+        "--shared_model_seed_offset",
+        type=int,
+        default=None,
+        help="Use one seed offset for every supervised feature family.",
+    )
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--hidden_size", type=int, default=256)
@@ -185,6 +207,30 @@ def _metric_bundle(
     result["position_category_control"] = _conditional_category_auc(
         labels, scores, positions, words, width
     )
+    result["position_ranges"] = {}
+    for lo, hi in ((0, 39), (40, 79), (80, 119), (120, 149)):
+        selected = [
+            item
+            for item in result["within_bins"]
+            if item["auc"] is not None
+            and item["bin_start"] >= lo
+            and item["bin_end"] <= hi
+        ]
+        count = sum(item["n"] for item in selected)
+        result["position_ranges"][f"{lo}-{hi}"] = {
+            "auc": (
+                float(
+                    np.average(
+                        [item["auc"] for item in selected],
+                        weights=[item["n"] for item in selected],
+                    )
+                )
+                if count
+                else None
+            ),
+            "n": count,
+            "bins": len(selected),
+        }
     return result
 
 
@@ -220,18 +266,35 @@ def _label_free_oof(
     return scores, residuals
 
 
-def _conditional_weights(labels: np.ndarray, positions: np.ndarray, width: int) -> np.ndarray:
+def _conditional_weights(
+    labels: np.ndarray,
+    positions: np.ndarray,
+    width: int,
+    mode: str = "size",
+) -> np.ndarray:
+    if mode not in {"size", "uniform_bin"}:
+        raise ValueError(f"Unknown weighting mode: {mode}")
     weights = np.zeros(labels.size, dtype=np.float32)
     bins = positions // width
     for bin_id in np.unique(bins):
         in_bin = bins == bin_id
+        bin_count = int(in_bin.sum())
+        class_counts = {
+            label: int(np.sum(in_bin & (labels == label))) for label in (0, 1)
+        }
+        if mode == "uniform_bin" and (
+            bin_count < 30 or any(count == 0 for count in class_counts.values())
+        ):
+            continue
         for label in (0, 1):
             mask = in_bin & (labels == label)
-            count = int(mask.sum())
+            count = class_counts[label]
             if count:
-                weights[mask] = float(in_bin.sum()) / (2.0 * count)
+                numerator = float(bin_count) / 2.0 if mode == "size" else 1.0
+                weights[mask] = numerator / count
     positive = weights > 0
-    weights[positive] /= weights[positive].mean()
+    if positive.any():
+        weights[positive] /= weights[positive].mean()
     return weights
 
 
@@ -312,10 +375,17 @@ def _mlp_oof(
         train_indices = np.where(train)[0]
         test_indices = np.where(test)[0]
         mean, std = _feature_moments(X, train_indices)
-        weights = _conditional_weights(labels[train], positions[train], args.bin_width)
+        weights = _conditional_weights(
+            labels[train], positions[train], args.bin_width, mode=args.weighting
+        )
         full_weights = np.zeros(labels.size, dtype=np.float32)
         full_weights[train] = weights
-        dataset = _IndexedDataset(X, labels.astype(np.float32), full_weights, train_indices)
+        fit_indices = train_indices[weights > 0]
+        if fit_indices.size == 0:
+            raise ValueError(f"No weighted training examples in fold {fold_index}")
+        dataset = _IndexedDataset(
+            X, labels.astype(np.float32), full_weights, fit_indices
+        )
         generator = torch.Generator().manual_seed(args.seed + model_seed_offset + fold_index)
         loader = DataLoader(
             dataset,
@@ -382,12 +452,12 @@ def _bootstrap_difference(
     for _ in range(iterations):
         sampled = rng.choice(unique_images, size=unique_images.size, replace=True)
         indices = np.concatenate([by_image[image_id] for image_id in sampled])
-        left_metric = compute_metric_bundle(
+        left_metric = within_bin_auc(
             labels[indices], left[indices], positions[indices], bin_width=width
-        )["within_bin_auroc"]
-        right_metric = compute_metric_bundle(
+        )["auc"]
+        right_metric = within_bin_auc(
             labels[indices], right[indices], positions[indices], bin_width=width
-        )["within_bin_auroc"]
+        )["auc"]
         if left_metric is not None and right_metric is not None:
             differences.append(left_metric - right_metric)
     if not differences:
@@ -461,7 +531,6 @@ def main() -> None:
         "probe_vve_no_rope_confidence": np.concatenate([no_rope, confidence], axis=1),
         "probe_vve_raw_confidence": np.concatenate([raw, confidence], axis=1),
     }
-
     attention_paths = sorted(glob.glob(args.attention_features_glob))
     if attention_paths:
         attention = _load_npz_parts(args.attention_features_glob)
@@ -473,6 +542,24 @@ def main() -> None:
         feature_sets["probe_attention_confidence"] = np.concatenate(
             [attention_raw, confidence], axis=1
         )
+    feature_sets["probe_allocation_mass"] = (
+        data["no_rope"][..., 0].reshape(labels.size, -1).astype(np.float32)
+    )
+    feature_seed_offsets = {
+        name: 100 * (index + 1) for index, name in enumerate(feature_sets)
+    }
+    if args.only_feature_sets:
+        selected_names = {
+            name.strip() for name in args.only_feature_sets.split(",") if name.strip()
+        }
+        unknown = selected_names - set(feature_sets)
+        if unknown:
+            raise ValueError(f"Unknown feature sets: {sorted(unknown)}")
+        feature_sets = {
+            name: features
+            for name, features in feature_sets.items()
+            if name in selected_names
+        }
 
     scores = {}
     residuals = {}
@@ -484,35 +571,43 @@ def main() -> None:
         folds,
         args.bin_width,
     )
-    for spec_index, (name, features) in enumerate(feature_sets.items()):
+    for name, features in feature_sets.items():
+        model_seed_offset = (
+            args.shared_model_seed_offset
+            if args.shared_model_seed_offset is not None
+            else feature_seed_offsets[name]
+        )
         scores[name], residuals[name] = _mlp_oof(
             features,
             labels,
             positions,
             image_test_masks,
             args,
-            model_seed_offset=100 * (spec_index + 1),
+            model_seed_offset=model_seed_offset,
         )
 
-    category_masks = _category_fold_masks(words, args.category_folds, args.seed + 1000)
-    category_specs = {
-        "category_oof_confidence": confidence,
-        "category_oof_vve_no_rope_gain": gain_only,
-        "category_oof_vve_no_rope": no_rope,
-    }
-    if "probe_attention_confidence" in feature_sets:
-        category_specs["category_oof_attention_confidence"] = feature_sets[
-            "probe_attention_confidence"
-        ]
-    for spec_index, (name, features) in enumerate(category_specs.items()):
-        scores[name], residuals[name] = _mlp_oof(
-            features,
-            labels,
-            positions,
-            category_masks,
-            args,
-            model_seed_offset=5000 + 100 * spec_index,
+    if not args.skip_category_oof:
+        category_masks = _category_fold_masks(
+            words, args.category_folds, args.seed + 1000
         )
+        category_specs = {
+            "category_oof_confidence": confidence,
+            "category_oof_vve_no_rope_gain": gain_only,
+            "category_oof_vve_no_rope": no_rope,
+        }
+        if "probe_attention_confidence" in feature_sets:
+            category_specs["category_oof_attention_confidence"] = feature_sets[
+                "probe_attention_confidence"
+            ]
+        for spec_index, (name, features) in enumerate(category_specs.items()):
+            scores[name], residuals[name] = _mlp_oof(
+                features,
+                labels,
+                positions,
+                category_masks,
+                args,
+                model_seed_offset=5000 + 100 * spec_index,
+            )
 
     baseline = np.load(args.baseline_scores)
     if object_ids.min(initial=0) < 0 or object_ids.max(initial=-1) >= baseline["labels"].size:
@@ -537,8 +632,9 @@ def main() -> None:
         )
         for name, value in scores.items()
     }
-    intervals = {
-        "vve_no_rope_minus_raw": _bootstrap_difference(
+    intervals = {}
+    if {"probe_vve_no_rope", "probe_vve_raw"} <= scores.keys():
+        intervals["vve_no_rope_minus_raw"] = _bootstrap_difference(
             labels,
             positions,
             image_ids,
@@ -547,8 +643,9 @@ def main() -> None:
             args.bin_width,
             500,
             args.seed + 1,
-        ),
-        "vve_no_rope_minus_confidence": _bootstrap_difference(
+        )
+    if {"probe_vve_no_rope", "probe_confidence"} <= scores.keys():
+        intervals["vve_no_rope_minus_confidence"] = _bootstrap_difference(
             labels,
             positions,
             image_ids,
@@ -557,8 +654,7 @@ def main() -> None:
             args.bin_width,
             500,
             args.seed + 2,
-        ),
-    }
+        )
     if "probe_attention_confidence" in scores:
         intervals["vve_no_rope_minus_attention_confidence"] = (
             _bootstrap_difference(
@@ -585,8 +681,30 @@ def main() -> None:
                 args.seed + 3,
             )
         )
+    if {"probe_vve_no_rope_gain", "probe_allocation_mass"} <= scores.keys():
+        intervals["vve_core_minus_allocation_mass"] = _bootstrap_difference(
+            labels,
+            positions,
+            image_ids,
+            scores["probe_vve_no_rope_gain"],
+            scores["probe_allocation_mass"],
+            args.bin_width,
+            500,
+            args.seed + 4,
+        )
+    if {"probe_vve_no_rope", "probe_allocation_mass"} <= scores.keys():
+        intervals["vve_full_minus_allocation_mass"] = _bootstrap_difference(
+            labels,
+            positions,
+            image_ids,
+            scores["probe_vve_no_rope"],
+            scores["probe_allocation_mass"],
+            args.bin_width,
+            500,
+            args.seed + 5,
+        )
     output = {
-        "protocol": "docs/iteration_protocols/visual_value_evidence_iteration_1.md",
+        "protocol": "docs/iteration_protocols/visual_value_evidence_iteration_2.md",
         "n": int(labels.size),
         "images": int(np.unique(image_ids).size),
         "hallucinated": int(labels.sum()),
@@ -594,6 +712,10 @@ def main() -> None:
         "category_folds": args.category_folds,
         "seed": args.seed,
         "bin_width": args.bin_width,
+        "weighting": args.weighting,
+        "only_feature_sets": sorted(feature_sets),
+        "skip_category_oof": args.skip_category_oof,
+        "shared_model_seed_offset": args.shared_model_seed_offset,
         "epochs": args.epochs,
         "metrics": metrics,
         "bootstrap_within_bin_differences": intervals,
