@@ -879,6 +879,18 @@ under the same five folds, seed, conditional objective, and MLP. The existing
 complementary. This is explanatory and cannot convert a predictive temporal
 fingerprint into verification.
 
+**Outcome.** Separately refitted post-only mass is the strongest representation:
+0.8859 within-bin from 1,024 inputs, versus 0.8425 for equal-dimensional
+pre-only and 0.8812 for 2,048-dimensional full pre+post. Post minus pre is
++0.0434 with bootstrap CI `[0.0353, 0.0529]` and 13/14 stable-bin wins, passing
+the post-dominance gate. Full minus post is -0.0047 with CI
+`[-0.0083, -0.0009]` and only 2/14 wins, so temporal complementarity fails:
+adding pre slightly hurts rather than helps. Literal position-balanced AUROC is
+0.7913 pre, 0.8426 post, and 0.8373 full. The strongest allocation fingerprint
+is therefore primarily a post-target reorganization across layers and heads,
+not an anticipatory object-verification signal. Pre remains predictive, but it
+is neither dominant nor complementary in this readout.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can

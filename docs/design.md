@@ -443,6 +443,25 @@ and 0.8812 for mass. Sink cleaning raises the spatial fusion only to 0.8683 and
 leaves mass at 0.8808. Keep the definition for reproducibility, but do not use
 it as an active detector component or tune its topology on the same labels.
 
+#### 7.2.2 Pre/post temporal-row refits
+
+For an object mention whose first subtoken is at `token_pos + 1`, the temporal
+allocation views are:
+
+    mass_pre  = { sum_{v in V} A_noRoPE[l,h,token_pos,v] }_{l,h}
+    mass_post = { sum_{v in V} A_noRoPE[l,h,token_pos+1,v] }_{l,h}.
+
+Each row-only representation has `32 layers x 32 heads = 1,024` features. The
+full representation concatenates them into 2,048 features. `pre` is available
+before the object subtoken is consumed; `post` conditions on that subtoken and
+predicts the following token or subtoken.
+
+Equal-capacity refits give 0.8425 within-bin AUROC for pre and 0.8859 for post.
+Post beats pre by 0.0434 with CI `[0.0353, 0.0529]`. Full pre+post reaches only
+0.8812 and is 0.0047 below post with CI excluding zero. Thus the allocation
+fingerprint is mainly post-target state reorganization; concatenating the
+anticipatory row is not complementary for this probe.
+
 ### 7.3 CLC — Cross-Layer Consistency
 
 Stack the per-layer sink-stripped distributions into a matrix

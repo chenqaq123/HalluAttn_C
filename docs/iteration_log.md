@@ -1614,3 +1614,24 @@ attention value changed.
 that pre and post select exactly their intended temporal rows, and a two-fold,
 one-epoch smoke completes all three fitting and output paths. Freeze the code
 and proceed to the full five-fold audit.
+
+## 2026-07-20 — Post-only mass is stronger than pre and full
+
+**Result:** Equal-capacity refits give 0.8425 within-bin AUROC for pre-only and
+0.8859 for post-only. Post beats pre by +0.0434 with CI
+`[0.0353, 0.0529]` and 13/14 stable-bin wins, so post dominance passes. The
+2,048-dimensional full representation reproduces 0.8812 but is 0.0047 below
+post with CI `[-0.0083, -0.0009]`; it wins only 2/14 bins, so temporal
+complementarity fails. Position-balanced AUROC is 0.7913 pre, 0.8426 post, and
+0.8373 full.
+
+**Correction to the earlier intervention:** Zeroing post in the already fitted
+full model gave only 0.7733, but a separately optimized pre probe reaches
+0.8425. The intervention measured reliance of one readout, not row capacity.
+The qualitative post-dominance conclusion survives and becomes stronger under
+the fair refit.
+
+**Decision:** Use post-only no-RoPE mass as the strongest diagnostic baseline.
+Describe the learned layer-head pattern as primarily post-target attention
+reorganization. Do not claim that high allocation-probe accuracy demonstrates
+anticipatory visual verification; pre is predictive but not complementary.

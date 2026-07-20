@@ -219,12 +219,22 @@ def main() -> None:
         raise ValueError("The registered audit requires all 32 layers")
 
     feature_sets = _registered_feature_sets(data)
+    temporal_feature_sets = {
+        "no_rope__mass_pre",
+        "no_rope__mass_post",
+    }
     if args.only_feature_sets.strip():
         requested = {name.strip() for name in args.only_feature_sets.split(",") if name.strip()}
         unknown = requested - feature_sets.keys()
         if unknown:
             raise ValueError(f"Unknown feature sets: {sorted(unknown)}")
         feature_sets = {name: value for name, value in feature_sets.items() if name in requested}
+    else:
+        feature_sets = {
+            name: value
+            for name, value in feature_sets.items()
+            if name not in temporal_feature_sets
+        }
     folds = _image_folds(image_ids, args.folds, args.seed)
     test_masks = [np.isin(image_ids, fold) for fold in folds]
 
@@ -324,8 +334,13 @@ def main() -> None:
         "mean_sink_attention_mass_pre": float(sink_mass[:, :, 0].mean()),
         "mean_sink_attention_mass_post": float(sink_mass[:, :, 1].mean()),
     }
+    protocol = (
+        "docs/iteration_protocols/no_rope_temporal_row_audit.md"
+        if temporal_feature_sets & feature_sets.keys()
+        else "docs/iteration_protocols/no_rope_spatial_allocation_audit.md"
+    )
     output = {
-        "protocol": "docs/iteration_protocols/no_rope_spatial_allocation_audit.md",
+        "protocol": protocol,
         "features_glob": args.features_glob,
         "n": int(labels.size),
         "images": int(np.unique(image_ids).size),

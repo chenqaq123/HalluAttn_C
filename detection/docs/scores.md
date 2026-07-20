@@ -116,6 +116,19 @@ and `sink_count` are diagnostics and never detector inputs. The registered
 2026-07-20 audit rejects neighbor coherence and sink deletion as method
 components; these keys remain only for reproducibility.
 
+The temporal audit exposes two views of `visual_mass`:
+
+| view | query row | dimensions |
+|---|---|---:|
+| `mass_pre` | `token_pos`, before the first object subtoken is consumed | 1,024 |
+| `mass_post` | `token_pos + 1`, after that subtoken is consumed | 1,024 |
+| `mass_full` | concatenated pre and post rows | 2,048 |
+
+The row-only scores come from separately fitted probes, not by zeroing one row
+in the full model. Post-only is the strongest registered allocation view
+(0.8859 within-bin versus 0.8425 pre and 0.8812 full), so these are explanatory
+fingerprints rather than candidate feature additions.
+
 ## CLC — cross-layer consistency
 
 Let `P ∈ R^{L × |V|}` be the per-layer sink-stripped object distributions.

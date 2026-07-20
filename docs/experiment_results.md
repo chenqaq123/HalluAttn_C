@@ -1704,3 +1704,60 @@ position-balanced draws:
 - **Artifacts (git-ignored):**
   `experiments/spatial_allocation/temporal_smoke_metrics.json` and
   `temporal_smoke_oof.npz`.
+
+### 2026-07-20 — No-RoPE temporal-row full registered result
+
+- **Setup:** Reused the exact all-layer no-RoPE mass cache for all 16,426
+  COCO/CHAIR mentions. Pre-only and post-only each contain 1,024 features
+  (`32 layers x 32 heads`); full concatenates both into 2,048. All three use the
+  same five image folds, seed 17 and seed offset 0, position-conditional class
+  weighting, width-256 MLP, and ten epochs. No position or other feature enters.
+
+| Mass view | Dim. | Overall | Within-bin | Matched | Residual | Macro-bin | Balanced AUROC / acc. |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| pre-only | 1,024 | 0.8773 | 0.8425 | 0.8299 | 0.6940 | 0.7773 | 0.7913 / 0.7194 |
+| post-only | 1,024 | **0.9099** | **0.8859** | **0.8740** | **0.7379** | **0.8385** | **0.8426 / 0.7633** |
+| full pre+post | 2,048 | 0.9053 | 0.8812 | 0.8702 | 0.7317 | 0.8307 | 0.8373 / 0.7605 |
+
+- **Post-dominance gate:** Post minus pre is **+0.0434** within-bin, bootstrap
+  95% CI `[0.0353, 0.0529]`, with post winning 13/14 stable bins. It passes the
+  locked +0.020, nonzero-CI, and 8/14 requirements.
+- **Complementarity gate:** Full minus post is **-0.0047**, CI
+  `[-0.0083, -0.0009]`, with full winning only 2/14 stable bins. The gate
+  required full to beat the stronger row by +0.010 and 8/14; it fails in the
+  opposite direction. Full still beats pre by +0.0387, CI
+  `[0.0318, 0.0474]`, in all 14 stable bins.
+
+The following table reports mean AUROC and zero-threshold accuracy in each of
+the 1,000 literal position-balanced draws:
+
+| Position | Pre AUROC / acc. | Post AUROC / acc. | Full AUROC / acc. |
+|---|---:|---:|---:|
+| 0--9 | 0.9104 / 0.7523 | **0.9462 / 0.8190** | 0.9404 / 0.8187 |
+| 10--19 | 0.9027 / **0.8053** | **0.9196** / 0.7989 | 0.9161 / 0.8023 |
+| 20--29 | 0.8298 / 0.7255 | **0.8895 / 0.7804** | 0.8730 / 0.7565 |
+| 30--39 | 0.7935 / 0.7130 | **0.8448** / 0.7584 | 0.8364 / **0.7627** |
+| 40--49 | 0.8285 / 0.7327 | 0.8760 / **0.8035** | **0.8761** / 0.7841 |
+| 50--59 | 0.8101 / 0.7330 | 0.8540 / 0.7717 | **0.8597 / 0.7758** |
+| 60--69 | 0.8048 / 0.7359 | **0.8565 / 0.7907** | 0.8543 / 0.7855 |
+| 70--79 | 0.7976 / 0.7357 | **0.8448** / 0.7593 | 0.8429 / **0.7647** |
+| 80--89 | 0.7701 / 0.6967 | **0.8252 / 0.7420** | 0.8225 / 0.7396 |
+| 90--99 | 0.7726 / 0.6973 | **0.8386 / 0.7586** | 0.8293 / 0.7524 |
+| 100--109 | 0.7506 / 0.6933 | **0.8227 / 0.7440** | 0.8150 / 0.7404 |
+| 110--119 | 0.7405 / 0.6828 | **0.8021** / 0.7169 | 0.8013 / **0.7178** |
+| 120--129 | 0.7711 / **0.7198** | 0.7648 / 0.6793 | **0.7832** / 0.6925 |
+| 130--139 | 0.6062 / 0.5807 | **0.8225 / 0.7618** | 0.7900 / 0.7384 |
+| 140--149 | 0.5739 / 0.5324 | **0.6728 / 0.6740** | 0.6236 / 0.5764 |
+
+- **Interpretation:** Pre is genuinely predictive after independent refitting;
+  its 0.8425 is much higher than the earlier 0.7733 zero-row intervention on a
+  full model that could not adapt. Nevertheless, post is decisively stronger
+  and even outperforms full despite half the input dimension. The strongest
+  signal therefore appears after the first object subtoken has entered the
+  residual stream. It is best described as distributed post-target attention
+  reorganization, not evidence that the model verified the object before saying
+  it. Pre may encode image/context hallucination propensity, but adds no useful
+  complement to post under this readout.
+- **Artifacts (git-ignored):**
+  `experiments/spatial_allocation/temporal_row_metrics.json` and
+  `temporal_row_oof.npz`.
