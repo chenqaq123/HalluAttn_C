@@ -1544,3 +1544,22 @@ full spatial family each have explicit improvement gates; no top-k, sink,
 neighborhood, layer/head, row, seed, or classifier sweep is allowed on COCO.
 This is same-data feasibility and cannot establish verification without later
 independent transfer.
+
+## 2026-07-20 — Implement and pass spatial-allocation Stage A
+
+**Implementation:** Added a compact GPU-vectorized spatial feature module, an
+all-layer no-RoPE/sink-clean extractor, and a matched five-fold evaluator. The
+connectivity statistic uses top-k support plus 8-neighbor convolution rather
+than storing full attention maps or running per-map connected-component loops.
+The evaluator locks ten same-dimension or matched-fusion probes, paired
+bootstrap comparisons, stable-bin wins, and literal position-balanced reports.
+
+**Verification:** Ten unit tests pass in the frozen PyTorch 2.5.1 / Transformers
+4.48.1 environment. On 16 images, all 43 mentions are retained; no-RoPE visual
+mass exactly matches the existing VVE allocation cache, model logits are
+unchanged, sink-clean rows remain normalized within `3.58e-7`, and all spatial
+features are finite and active. A two-fold evaluator smoke completes end to end.
+
+**Decision:** The numerical and non-interference gates pass. Freeze this
+implementation and run the registered full four-shard extraction; do not alter
+the top-10% support, 8-neighborhood, sink rule, temporal rows, or feature sets.

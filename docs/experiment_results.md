@@ -1589,3 +1589,30 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Artifacts (git-ignored):**
   `experiments/allocation_probe_audit/iteration1_metrics.json` and
   `iteration1_scores.npz`.
+
+### 2026-07-20 — No-RoPE spatial-allocation Stage-A smoke
+
+- **Setup:** Frozen LLaVA-1.5-7B, fp16 eager implementation, Transformers
+  4.48.1; first 16 images and 43 mentions from the existing COCO/CHAIR cache.
+  The extractor recomputes complete-prefix no-RoPE QK rows at all 32 layers,
+  pre/post rows, and 32 heads, then caches visual mass, top-10% mass, and fixed
+  8-neighbor coherence with and without the existing low-key-norm sink deletion.
+- **Shape and identity:** Both feature branches have shape
+  `(43, 32, 2, 32, 3)`; sink mass is `(43, 32, 2, 32)`. Object IDs align with
+  the VVE smoke cache, and new no-RoPE visual mass is elementwise identical to
+  its allocation channel (maximum absolute error **0**). Enabling hidden-state
+  output changes logits by **0**.
+- **Numerical gates:** Sink-clean complete rows have maximum sum error
+  `3.5763e-07`; sink deletion changes features (maximum difference `0.6962`).
+  Top-10% mass lies in `[0.1060, 1.0000]` and neighbor coherence in
+  `[0.0029, 0.9301]`, so the spatial channels are finite, bounded, and active.
+  Mean sink counts at L22/L31 are 18.74/16.30, matching the earlier two-layer
+  smoke extraction.
+- **Evaluator:** A two-fold, one-epoch CPU run completes feature loading,
+  train-fold normalization, shared-seed MLP fitting, and JSON/NPZ serialization.
+  Its 43-row performance is not interpreted because no position bin satisfies
+  the full evaluation contract.
+- **Decision:** Stage A passes. Proceed to the registered four-shard full
+  extraction without changing features, sink rules, or evaluator settings.
+- **Artifacts (git-ignored):** `experiments/spatial_allocation/smoke.npz`,
+  `smoke_metrics.json`, and `smoke_oof.npz`.
