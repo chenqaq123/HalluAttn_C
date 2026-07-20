@@ -73,13 +73,14 @@ not every attention method.
 > (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
 > adds yes-bias.
 
-The completed **training-free detector audit** (§3) now gives a stronger
-negative boundary. Removing RoPE slightly reduces position correlation but does
-not improve a supervised probe beyond noise, sink deletion significantly harms
-it, and the fixed label-free local-gain score is below chance. The project
-therefore has no active constructive attention method. The two-pronged critique
-remains the paper spine while the next training-free direction is redesigned
-outside attention allocation.
+The completed **training-free detector audit** (§3) gives a stronger negative
+boundary. Removing RoPE slightly reduces position correlation but does not
+improve a supervised probe beyond noise, sink deletion significantly harms it,
+and the fixed label-free local-gain score is below chance. The selected next
+direction (§4) therefore moves from attention allocation to **Visual Value
+Evidence**: decompose the visual content actually transported by each attention
+head and measure whether that residual update supports the emitted object logit.
+The two-pronged critique remains the paper spine.
 
 ## 2. Positioning vs. prior work
 
@@ -615,7 +616,48 @@ crosses an unstable semantic boundary (`vase` versus `pot/flowerpot`). A future
 grounded branch needs an independently validated equivalence/taxonomy layer;
 spatial evidence alone has reached its limit on this benchmark.
 
-## 4. Contribution framing (intended)
+## 4. Active direction — Visual Value Evidence
+
+The next detector tests **what visual attention carries**, rather than how much
+or where it attends. For each layer, head, and object-generating row, decompose
+the exact visual part of the attention output:
+
+    c_vis^(l,h) = W_O^(l,h) sum_(j in V) alpha_j^(l,h) v_j^(l,h).
+
+Project this residual contribution into the emitted object's unembedding
+direction and measure both its direct alignment and its normalized logit-lens
+gain. A grounded mention should receive target-specific positive visual support;
+a hallucinated mention may allocate attention to real image regions while
+transporting content that does not support the emitted target. This is the
+constructive counterpart to the paper thesis: allocation is not verification,
+but value-bearing, target-aligned residual evidence can be.
+
+The primary branch recomputes QK before layer-local RoPE over the complete causal
+prefix while retaining the original values, output projection, residual stream,
+and target token. An exact raw-attention branch is the source control. Position,
+response length, repetition, and object identity are excluded from the strict
+detector; training remains conditionally balanced within position bins and all
+evaluation is image-grouped OOF.
+
+Two variants are separated explicitly:
+
+1. a label-free late-layer joint target-gain score;
+2. a supervised external MLP over per-head value evidence and decoder confidence.
+
+The LVLM stays frozen and generation is unchanged. The supervised probe is
+training-free only with respect to the LVLM and must not be called an
+unsupervised method. The locked first-iteration formulas, controls, and gates are
+in [visual_value_evidence_iteration_1.md](iteration_protocols/visual_value_evidence_iteration_1.md).
+
+The novelty claim is deliberately narrow. Direct logit attribution, logit lens,
+and source decomposition are established primitives. HaloProbe does not inspect
+value content; Owl/VTACR averages attention weights despite using the word
+"contribution"; VISTA and Overthinking trace layerwise logits without isolating
+their visual source. The proposed unit is their conjunction: source-decomposed,
+target-aligned visual residual evidence for position-controlled object
+hallucination detection.
+
+## 5. Contribution framing (intended)
 
 Frame as an **analysis + training-free detection** paper only if the new audit
 passes:
@@ -625,20 +667,21 @@ passes:
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive **clean per-head grounding-gain detector**: remove RoPE and
-   sink patches, compare an object row with nearby non-object rows, and preserve
-   sparse late-head evidence. Promote the unsupervised and supervised variants
-   separately, only against IC and the raw per-head probe under all position
-   controls.
+3. A constructive **Visual Value Evidence detector**: decompose the visual
+   value content transported by each head and ask whether it raises the emitted
+   object's logit. Promote label-free and supervised variants separately, only
+   if they beat confidence and HaloProbe-style fusion under all position and
+   category controls.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
 - Prong 2 is scoped to attention *amplification* (PAI is inert).
 - Any absolute-gain claim must be reported against the honest baselines here.
-- If both detector variants fail their confirmation gates, remove the constructive
-  claim and submit the work as an analysis paper; do not revive XEV.
+- If both VVE detector variants fail their confirmation gates, remove the
+  constructive claim and submit the work as an analysis paper; do not revive
+  XEV or the closed clean-attention detector.
 
-## 5. Known risks / must-dos (rebuild backlog)
+## 6. Known risks / must-dos (rebuild backlog)
 - **XEV is closed:** preserve code and append-only evidence for reproducibility,
   but do not tune aliases, candidates, boxes, scales, thresholds, or support
   guards. The 4/960 result is a sparse numerical fluctuation, not the method.
@@ -656,15 +699,17 @@ Honest guardrails carried over from the tear-down:
 - **Supervision relabeling:** an external probe is allowed but must be called
   supervised and compared to HaloProbe/DHCP/Beyond rather than to label-free
   methods as though supervision were free.
-- **Head-selection leakage:** do not select heads, layers, signs, quantiles, or
-  fusion weights on evaluation labels. Layer 31 and top 25% are frozen before
-  clean-feature extraction; all calibration is train-fold-only.
+- **Feature-selection leakage:** do not select heads, layers, signs, temporal
+  rows, or fusion weights on evaluation labels. VVE iteration 1 extracts all
+  layers and freezes its label-free aggregation before the full run; all
+  calibration is train-fold-only.
 - **Uncertainty shortcut:** compare clean-head scores against IC, NLL, and
   entropy, and test whether a supervised fusion adds signal beyond them.
 - **Transfer:** COCO/LLaVA feasibility cannot support a general detector claim.
   A positive route requires Qwen3-VL and an independent dataset.
-- **Compute:** first cache only summarized per-head features at layers 22/31;
-  do not save another all-layer attention tensor or run mitigation inference.
+- **Compute:** cache compact per-head evidence only, never full hidden states or
+  full attention tensors. Run the 16-image numerical gate before full sharding;
+  do not run mitigation inference in this iteration.
 - **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
   LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
   baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).
@@ -673,12 +718,14 @@ Honest guardrails carried over from the tear-down:
   internal signals fail.
 - **Object repetition control** (free, borrowed from HaloProbe) for detection.
 
-## 6. Pointers
+## 7. Pointers
 - Score/metric definitions and the position/length control: [design.md](design.md).
 - Repo layout: [project_structure.md](project_structure.md).
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
 - Active detector protocol:
+  [visual_value_evidence_iteration_1.md](iteration_protocols/visual_value_evidence_iteration_1.md).
+- Closed position-free attention protocol:
   [position_free_detector_iteration_1.md](iteration_protocols/position_free_detector_iteration_1.md).
 - Rejected PCPA design record:
   [pcpa_iteration_1.md](iteration_protocols/pcpa_iteration_1.md).

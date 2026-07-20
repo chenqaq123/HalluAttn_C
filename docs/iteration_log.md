@@ -1228,3 +1228,31 @@ that tests whether the target token is supported by visual content. Candidate
 families to protocol next are target-logit-aligned visual value contributions,
 layerwise multimodal evidence trajectories, and attention-preserving visual
 value ablations. No proposal direction is selected in this audit.
+
+## 2026-07-20 — Select Visual Value Evidence for the next detector iteration
+
+**Selection:** The next active route is Visual Value Evidence (VVE). For every
+object-generating row, layer, and head, decompose the visual-token part of the
+attention output after value aggregation and the head-specific output projection,
+then measure its alignment and normalized logit gain for the emitted object.
+This asks whether visual content supports the target, rather than treating
+attention allocation as support.
+
+**Position contract:** The primary branch recomputes QK without layer-local
+RoPE over the full causal prefix. The classifier receives no position,
+repetition, response-length, or object-identity feature; training is balanced
+inside position bins and evaluation remains image-grouped and within-bin. Raw
+post-RoPE evidence is a matched control. The failed sink deletion is not reused.
+
+**Novelty audit:** HaloProbe uses fine-grained attention plus confidence but no
+value-to-target attribution. Owl/VTACR averages visual/text attention weights;
+VISTA and the 2026 Overthinking detector trace layerwise logits without isolating
+their visual source. Direct logit attribution remains acknowledged prior art;
+the proposed claim is limited to source-decomposed, target-aligned visual
+residual evidence for controlled object-hallucination detection.
+
+**Protocol:** Locked formulas, Stage-A numerical gates, OOF controls, and
+full-data thresholds in
+`docs/iteration_protocols/visual_value_evidence_iteration_1.md` before any VVE
+implementation or result inspection. A fused 0.85 within-bin AUROC is the
+advance gate; 0.90 is explicitly a stretch target.
