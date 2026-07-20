@@ -1,7 +1,12 @@
 # PCPA Iteration 1 Protocol: Common-Mode-Free Pairwise Alignment
 
 Date: 2026-07-20
-Status: pre-registered; not started
+Status: cancelled before start on 2026-07-20; retained as a historical record
+
+> Superseded by the training-free position-free detector audit. No manifest,
+> reference-margin cache, LoRA adapter, or trained checkpoint was produced. The
+> active protocol is
+> [position_free_detector_iteration_1.md](position_free_detector_iteration_1.md).
 
 ## Question
 

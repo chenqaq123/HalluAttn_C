@@ -1114,3 +1114,36 @@ least ten net corrections, exhibit near-zero common-mode update, and lose at
 least half its gain when images are removed or permuted. POPE-random remains
 untouched confirmation data and POPE-adversarial remains exhausted. No new
 experimental result was produced in this design iteration.
+
+## 2026-07-20 — PCPA cancelled; position-free detector audit pre-registered
+
+**Direction correction:** Cancelled PCPA before data-manifest construction,
+reference-margin caching, or LoRA training. It modifies the LVLM and therefore
+does not satisfy the required training-free deployment setting. The project
+returns to detection before attempting another mitigation method. The LVLM and
+its generated outputs are frozen; an optional supervised external detector is
+allowed but must be reported separately from a label-free score.
+
+**Existing evidence:** On the same 16,426 LLaVA/COCO object mentions, the best
+label-free controlled score is IC at 0.686 within-bin AUROC. Mean-over-head
+attention shapes collapse near chance, but a raw post-RoPE layer-31 per-head
+logistic probe reaches 0.726 under image-grouped OOF. This establishes a narrow
+feasibility gap: useful late-head information exists, but no label-free readout
+or source-level position removal has recovered it.
+
+**New hypothesis:** Test clean per-head grounding gain. Recompute visual
+attention from pre-RoPE Q/K, remove low-key-norm sink patches, preserve heads,
+and compare each object-generating row with nearby generated non-object rows.
+The fixed unsupervised score aggregates the strongest quartile of per-head JSD
+and concentration gains. The supervised ceiling fits a no-intercept linear
+probe only on hallucinated-minus-grounded differences matched within generation-
+position bins, with image-grouped OOF and no position feature.
+
+**Gate:** `docs/iteration_protocols/position_free_detector_iteration_1.md`
+requires the label-free score to reach 0.70 within-bin and beat IC, or the clean
+conditional probe to reach 0.75 and beat the raw layer-31 probe by 0.02. Raw,
+no-RoPE, sink-clean, local-difference, all-head, and layer controls are frozen.
+Matched-pair/residual AUROC and score-position correlations are mandatory. If
+both routes fail, constructive attention detection closes; no head/layer/window
+tuning is allowed on the full result. No new experimental result was produced
+in this design iteration.

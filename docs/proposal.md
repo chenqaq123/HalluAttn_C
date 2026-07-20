@@ -73,15 +73,15 @@ not every attention method.
 > (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
 > adds yes-bias.
 
-The constructive answer is now being rebuilt as **Pair-Centered Preference
-Alignment** (PCPA; see §3). The key correction is to train on the failure mode
-itself: for one unchanged natural image, pair a genuinely visible object with a
-semantically related but absent object. The preferred joint outcome is
-`Yes(visible) + No(absent)` and the rejected outcome reverses both answers.
-Because each side contains one `Yes` and one `No`, a scene-level confidence
-change or global answer prior cannot satisfy the preference. A centering
-constraint additionally forbids the two answer margins from drifting together.
-The deployed model uses its ordinary answer distribution in one forward pass.
+The constructive work is now restricted to a **training-free detector audit**
+(see §3). The LVLM and its answer distribution remain unchanged. We first
+remove the explicit RoPE geometry from attention, delete detected sink patches,
+and preserve late-layer heads instead of averaging them. A grounded object
+should make at least a few heads change their visual distribution relative to
+nearby non-object tokens; a hallucinated mention should lack that local content
+gain. We test both a fixed label-free score and an external supervised linear
+probe trained only on position-matched differences. No detector result is yet a
+constructive claim.
 
 ## 2. Positioning vs. prior work
 
@@ -100,188 +100,156 @@ The deployed model uses its ordinary answer distribution in one forward pass.
 - The **mitigation-side critique** made measurable: the *related-present vs.
   plain-absent* FPR decomposition that exposes attention-amplification's
   answer-prior over-fitting — invisible in prior aggregate-POPE tables.
-- A constructive reframing from **one-sided evidence amplification to
-  common-mode-free preference learning**: on the same image, jointly prefer a
-  visible target over a related absent target while constraining their average
-  answer-margin update to zero. The intended contribution is the matched
-  two-query preference unit and its held-out-category transfer, not DPO or hard
-  negative mining in isolation.
+- A feasibility test for **content-only, position-deconfounded detection**:
+  preserve late-layer per-head structure, remove RoPE and sink patches at the
+  score source, and compare the object row with nearby non-object rows. The
+  intended contribution exists only if this improves position-controlled
+  detection beyond IC and the existing raw-attention probe without modifying
+  the LVLM.
 
-## 3. Constructive direction under test — Pair-Centered Preference Alignment
+## 3. Constructive direction under test — Position-Free Detection Audit
 
-**Status after the 2026-07-20 route review:** XEV remains closed; TCS, NEA, and
-EEA were cancelled before their new-stage pilots began. EEA introduced an
-absolute patch-set score, but that moved the project toward a weakly supervised
-detector whose publishable advantage over MIL and patch-text matching depended
-on a fragile pooling ablation. It also did not directly optimize the observed
-failure: attention amplification moves both present and related-absent queries
-toward `Yes`.
+**Status after the 2026-07-20 correction:** XEV remains closed; TCS, NEA, EEA,
+and PCPA were all cancelled before their new-stage pilots began. PCPA violated
+the desired deployment constraint because it fine-tuned the LVLM. The project
+returns to detection before attempting another mitigation route.
 
-The active hypothesis is **Pair-Centered Preference Alignment (PCPA)**. It uses
-the same natural image to form one visible-object query and one semantically
-related absent-object query, then aligns their joint answer preference while
-removing common-mode answer drift. The first training iteration is
-pre-registered; no mitigation claim exists yet.
+The active question is deliberately empirical: after removing the explicit
+position prior at the attention source, can a fixed unsupervised score or a
+small external supervised classifier detect object hallucination well enough to
+justify a training-free method? The LVLM is frozen. The detector may read one
+ordinary teacher-forced forward over an already generated caption; it may not
+change generation, query another model, or use an external vision detector.
 
-### 3.1 Design contract from the observed failure
+### 3.1 What "removing position" must mean
 
-The new route must satisfy all of the following:
+No-RoPE alone is not enough. RoPE removal deletes one geometric term from Q/K,
+but later mentions are still more likely to hallucinate and model states may
+encode response depth indirectly. A valid detector must therefore pass three
+separate controls:
 
-- no answer may be corrected by asking Qwen3-VL to judge another view of its own
-  proposal; XEV already exhausted that information loop;
-- no inpainted or diffusion-edited image is needed for training, because the
-  edit itself can become the absence label;
-- no external detector, SAM-style grounding decoder, or generated candidate
-  inventory is present at inference;
-- no image/no-image, strong/weak-view, or clean/corrupted logit difference is
-  used at decoding or training time;
-- no visual-attention mass is amplified; the Prong-2 evidence predicts that
-  amplification raises the yes-rate rather than verifying identity;
-- supervision must be answer-balanced inside every training unit, so a generic
-  `Yes` or `No` shift cannot improve its preference score;
-- the behavior change must transfer to target categories never queried during
-  training;
-- the final deployed model must use its ordinary answer distribution in one
-  forward pass, with no auxiliary head or candidate set.
+1. **Source control:** recompute per-head visual attention from pre-RoPE Q/K;
+   remove key-norm sink patches and renormalize only over the remaining visual
+   tokens. The original model forward and logits are untouched.
+2. **Learning control:** never provide `gen_pos`, absolute token index, response
+   length, or position-bin ID to a classifier. Supervised weights are estimated
+   from hallucinated/grounded differences matched inside the same position bin,
+   with all mentions from one image kept in one fold.
+3. **Evaluation control:** overall AUROC is secondary. Within-bin, matched-pair,
+   and train-fold residual AUROC are mandatory, together with per-bin dispersion
+   and an explicit position-only baseline.
 
-### 3.2 Same-image pair as the preference unit
+The detector is training-free with respect to the LVLM. The unsupervised score
+uses no hallucination labels. The supervised variant may fit a lightweight
+external probe, but must be named and reported separately rather than called an
+unsupervised training-free method.
 
-For a natural image `I`, choose an annotated visible object `t+` and a
-semantically related object `t-` that is absent. Ask the same existence template
-twice:
+### 3.2 Clean per-head grounding gain
 
-    q+ = "Is there a <t+> in the image?"
-    q- = "Is there a <t-> in the image?"
+Let `q_t` be the generating row for an object mention and let `q_n` be up to
+eight nearest generated non-object rows within 16 tokens. At late decoder layer
+`l` and head `h`, compute pre-RoPE visual attention
 
-The preferred joint response is `y_w = (Yes to q+, No to q-)`; the rejected
-joint response is `y_l = (No to q+, Yes to q-)`. Define the ordinary answer
-margin
+    p_t^(l,h) = softmax(q_t k_vis^T / sqrt(d))
+    p_n^(l,h) = mean_r softmax(q_r k_vis^T / sqrt(d)),
 
-    m_theta(t, I) = log pi_theta(Yes | q_t, I)
-                    - log pi_theta(No | q_t, I),
+after deleting visual keys detected as sinks from their pre-RoPE key norms.
+Renormalize each distribution over the retained visual tokens. The local row is
+matched in response context and therefore controls much of the remaining depth,
+syntax, and image-level salience without using labels.
 
-and freeze the corresponding reference-model margin `m_0`. The reference-
-centered pair improvement is
+For each head measure two complementary gains:
 
-    Delta+ = m_theta(t+, I) - m_0(t+, I)
-    Delta- = m_theta(t-, I) - m_0(t-, I)
-    d_pair = Delta+ - Delta-.
+    g_jsd^(l,h) = JSD(p_t^(l,h), p_n^(l,h))
+    g_conc^(l,h) = top5(p_t^(l,h)) - top5(p_n^(l,h)).
 
-The joint preference loss is
+A grounded object need not affect every head. The fixed unsupervised score keeps
+the strongest quartile of positive gains instead of averaging all heads first:
 
-    L_pair = -log sigmoid(beta * d_pair).
+    G(t) = mean_top25%_h [rank(g_jsd^(31,h))
+                          + rank(max(0, g_conc^(31,h)))]
+    S_unsup(t) = -G(t).
 
-This is a true pairwise preference over two joint outcomes, not two independent
-binary labels. Expanding the joint log-probability ratio yields exactly
-`Delta+ - Delta-`: one `Yes` and one `No` occur on both sides, the pixels are
-identical, and only assignment of the answers to target identities differs.
-Scene confidence, image quality, and a constant answer-prior shift therefore
-cancel from the pair score.
+Ranks are estimated from an unlabeled calibration split and frozen for the test
+fold. Higher `S_unsup` means more likely hallucinated. Layer 31 is fixed from the
+existing depth diagnostic, not selected on the new outcomes; layer 22 is an
+ablation. Raw post-RoPE and no-RoPE-without-sink versions are matched controls.
 
-The Prong-2 result nevertheless warns that shared parameters can move both
-margins in the same direction while increasing their separation. PCPA explicitly
-penalizes that unidentifiable common mode:
+The supervised ceiling uses the same per-head features plus object-row entropy,
+top-1, and top-5 concentration. A linear probe is fitted on within-position-bin
+hallucinated-minus-grounded feature differences, with reversed differences as
+negative examples and no intercept. This conditional objective removes the
+common position component before estimating head weights. Predictions are
+strictly image-grouped out of fold.
 
-    c_pair = (Delta+ + Delta-) / 2
-    L_center = c_pair^2.
+### 3.3 First dataset and leakage contract
 
-A balanced sign anchor prevents a correctly ordered pair from retaining two
-positive or two negative absolute margins:
+Use the existing LLaVA-1.5-7B COCO-val2014 caption cache: 16,426 first object
+mentions from 4,977 images, with CHAIR labels and a hallucination rate of 0.244.
+This permits direct comparison to IC (`0.686` within-bin) and the raw late-layer
+per-head probe (`0.726`) without regenerating captions or changing labels.
 
-    L_anchor = softplus(gamma - m_theta(t+, I))
-             + softplus(gamma + m_theta(t-, I)).
+All calibration, classifier fitting, standardization, position residualization,
+and head weighting are performed inside five image-grouped folds. Mentions from
+one image never cross train/test. The unsupervised method may use unlabeled
+training-fold feature distributions only; it may not choose layers, heads,
+quantiles, signs, or fusion weights from test labels. The supervised probe may
+use train-fold labels only through same-bin matched differences.
 
-The active objective is
-
-    L_PCPA = L_pair + lambda_c * L_center + lambda_a * L_anchor.
-
-At inference there is no pair construction, reference model, margin correction,
-threshold, candidate inventory, or extra forward pass. Only the aligned
-Qwen3-VL model answers the user's original query.
-
-### 3.3 Natural-image pair construction and transfer contract
-
-Use only natural COCO images and image-level instance annotations. Compute
-positive NPMI between category-presence variables on train2017. For an absent
-target `t-`, choose the highest-NPMI annotated category in the same image as
-`t+`; require at least 50 corpus co-occurrences and never use boxes in training.
-The related present object is part of the supervised pair, not a patch proposal
-or an inference-time candidate.
-
-Sort COCO categories by ID and reserve every fourth category as an unseen query
-target. None of those 20 names may appear as `t+` or `t-` in training. Evaluate
-them in both present and related-absent queries; also evaluate same-image pairs
-whose absent target is held out. COCO-80 is the first controlled label source,
-not the method's output vocabulary. LVIS-on-COCO follows only if the
-category-disjoint COCO gate passes.
-
-The first form is deliberately object-existence-specific. The analogous
-attribute unit would hold the entity and image fixed while pairing one true and
-one false attribute, but no attribute claim is made by the object pilot.
+COCO/CHAIR is a feasibility dataset, not evidence of broad transfer. A positive
+route must next reproduce on a modern model and an independent hallucination
+dataset. Qwen3-VL is the preferred second model; no mitigation benchmark is
+opened during this detector iteration.
 
 ### 3.4 Novelty boundary from the refreshed literature
 
-- **Standard multimodal DPO, HALVA/HA-DPO, and CHAIR-DPO** already prefer a
-  faithful answer over a hallucinated answer. PCPA does not claim response
-  preference optimization itself.
-- **FINER-Tuning (CVPR 2026)** is the closest data-level neighbor: it applies DPO
-  to fine-grained negative queries where erroneous and genuinely present
-  elements co-occur. Therefore semantic hard negatives and same-image
-  co-occurrence are not the novelty.
-- **mDPO** shows that ordinary multimodal DPO can ignore the image and adds an
-  image-preference objective plus a chosen-reward anchor. PCPA instead leaves
-  the image unchanged, contrasts two target assignments, and directly measures
-  whether the learned pair advantage survives image removal and swapping.
-- **OPPO (2026)** orders one correct answer under attention-warped strong,
-  original, and degraded weak views. PCPA makes no strong-view assumption and
-  never edits or ranks images; it orders target-answer assignments on one view.
-- **DCD** identifies likelihood displacement and utility loss in pairwise
-  alignment. PCPA's balanced absolute anchor and common-mode audit address the
-  binary answer-prior failure, but general-capability preservation remains an
-  empirical requirement.
+- **HaloProbe (2026)** already identifies position/repetition confounding and
+  trains per-head attention-plus-confidence probes across models. Consequently
+  neither "position matters" nor "a supervised head probe works" is ours.
+- **DHCP, Beyond ADS/CGC, and related supervised detectors** already train on
+  per-layer/per-head attention or representation tensors. A linear external
+  classifier is not itself novel.
+- **PAS, SVAR, SAE, TVER, and LaSCD** cover label-free attention mass, shape,
+  entropy, segmentation, and layer-energy scores. Our reproductions show their
+  mean/single-score variants collapse under position control.
+- **IC, entropy, and NLL** are strong non-attention uncertainty controls. A new
+  attention score must beat IC rather than merely exceed chance.
 
-The narrow intended novelty is therefore **a same-image, two-query joint
-preference whose common answer mode is explicitly constrained**. It should
-force target identity discrimination rather than global `Yes` suppression or
-amplification. This is a working novelty boundary, not a priority claim: if
-ordinary per-query DPO or balanced answer-only tuning matches PCPA, the method
-claim fails.
+The only defensible method boundary would be the conjunction of **source-level
+de-rotation, sink deletion, local-row differencing, and sparse per-head
+aggregation**, validated under a position-conditional learning objective. That
+boundary is provisional. If the unsupervised score does not beat IC or the
+supervised clean probe does not beat the raw layer-31 probe, this becomes a
+negative analysis rather than a method claim.
 
 ### 3.5 First validation and kill criteria
 
-Iteration 1 is an end-to-end Qwen3-VL LoRA pilot, not an auxiliary-probe gate.
-Use one frozen set of natural-image pairs and identical trainable parameters for
-six arms: frozen base, balanced answer-only tuning, ordinary per-query DPO,
-anchor-matched per-query DPO, joint-pair preference without centering, and full
-PCPA. The no-centering arm is the decisive method ablation.
+Iteration 1 first extracts raw, no-RoPE, and no-RoPE-plus-sink-clean per-head
+features at layers 22 and 31. It then evaluates the fixed unsupervised grounding
+gain and an image-grouped position-matched linear probe. Existing IC and raw
+layer-31 probe predictions are frozen baselines.
 
-Evaluate once on the 20 unseen COCO targets, a same-image held-out pair set, and
-POPE-popular. POPE-random remains untouched confirmation data;
-POPE-adversarial is exhausted. Report related-absent FPR, TPR, balanced
-accuracy, MCC, yes-rate, pair accuracy, per-category dispersion, and the mean
-common/separation margin updates. Remove or swap images as destructive controls
-without retraining.
+The unsupervised route advances only if it reaches at least `0.70` within-bin
+AUROC, exceeds IC by at least `0.01`, and improves both matched-pair and residual
+AUROC. The supervised route advances only if the clean conditional probe reaches
+at least `0.75` within-bin AUROC, beats the raw layer-31 probe by at least `0.02`,
+and does not obtain that gain from overall-position correlation. For either
+route, no-RoPE and sink cleaning must each have a positive matched ablation.
 
-PCPA advances only if it:
+Failure of both gates closes attention-based constructive detection. A result
+between the old baselines and these gates is useful analysis but not promoted as
+a new method. The full protocol is
+[position_free_detector_iteration_1.md](iteration_protocols/position_free_detector_iteration_1.md).
 
-1. beats both answer-only tuning and ordinary per-query DPO by at least 0.03
-   held-out same-image pair accuracy, with an image-grouped paired-bootstrap
-   interval above zero;
-2. lowers held-out related-absent FPR by at least 0.03 versus the frozen model
-   while losing at most 0.005 TPR, and increases both MCC and balanced accuracy;
-3. makes at least ten net corrections on POPE-popular, increases MCC and
-   balanced accuracy, and changes aggregate yes-rate by at most 0.01;
-4. keeps absolute mean common-mode update below 10% of the mean separation
-   update and materially violates this bound when `L_center` is ablated;
-5. loses at least half of its pair-accuracy gain when images are removed or
-   counterlabel-swapped, showing that language-only category relations do not
-   explain the result.
+### 3.6 Rejected pre-experiment design — PCPA
 
-Failure closes PCPA without tuning pair definitions, answer thresholds, or the
-held-out category split. The complete frozen protocol is
-[pcpa_iteration_1.md](iteration_protocols/pcpa_iteration_1.md).
+Pair-Centered Preference Alignment proposed a same-image two-query preference
+loss with a zero-common-mode constraint. It was cancelled before manifest
+construction or LoRA training because it modifies the LVLM, contrary to the
+required training-free deployment setting. Its protocol remains a historical
+design record and must not be run as the active route.
 
-### 3.6 Rejected pre-experiment design — EEA
+### 3.7 Rejected pre-experiment design — EEA
 
 Existential Evidence Aggregation proposed an unnormalized target-patch matcher
 with log-mean-exp set pooling. It was cancelled before its frozen-feature pilot.
@@ -291,7 +259,7 @@ established MIL, global-pooling, and patch-text controls. More importantly, it
 did not directly prevent the common `Yes` shift measured in Prong 2. Its
 pre-registered protocol is retained as a historical design record.
 
-### 3.7 Rejected pre-experiment design — NEA
+### 3.8 Rejected pre-experiment design — NEA
 
 Null-Evidence Attention proposed a learned null key/value inside selected
 visual-attention heads while preserving the original visual mass. It was
@@ -303,7 +271,7 @@ art, and the learned null value can become an unconstrained answer-steering
 direction. The retained protocol documents the rejected design; it must not be
 implemented as the active method.
 
-### 3.8 Rejected pre-experiment design — TCS
+### 3.9 Rejected pre-experiment design — TCS
 
 Target-Causal Selectivity proposed target-removal sensitivity and neighbor-
 removal invariance using inpainted triples. It was cancelled before Stage A for
@@ -315,7 +283,7 @@ uses target removal and VISE/VES-RFT occupy nearby perturbation/sensitivity
 training. The design remains documented in its protocol and literature memo but
 must not be implemented as the active method.
 
-### 3.9 Closed route evidence — XEV
+### 3.10 Closed route evidence — XEV
 
 Everything below this heading is the preserved design/failure trace and is
 superseded by §§3.1--3.5. Terms such as "current" and "next" describe the state
@@ -636,26 +604,25 @@ spatial evidence alone has reached its limit on this benchmark.
 
 ## 4. Contribution framing (intended)
 
-Frame as an **analysis + pairwise-alignment** paper, conditional on the
-new method passing confirmation:
+Frame as an **analysis + training-free detection** paper only if the new audit
+passes:
 
 1. The **two-pronged critique** — attention-based detection and mitigation both
    fail under matched controls (length control for detection; answer-prior /
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive **Pair-Centered Preference Alignment** objective: jointly
-   prefer a visible object and reject a related absent object on the exact same
-   image, while constraining their common answer-margin update. Promote it only
-   if it transfers to unseen targets, beats balanced answer-only tuning and
-   ordinary per-query DPO, depends on the image, and improves an untouched
-   benchmark without yes/no prior collapse.
+3. A constructive **clean per-head grounding-gain detector**: remove RoPE and
+   sink patches, compare an object row with nearby non-object rows, and preserve
+   sparse late-head evidence. Promote the unsupervised and supervised variants
+   separately, only against IC and the raw per-head probe under all position
+   controls.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
 - Prong 2 is scoped to attention *amplification* (PAI is inert).
 - Any absolute-gain claim must be reported against the honest baselines here.
-- If the new objective fails its confirmation gates, remove the constructive
+- If both detector variants fail their confirmation gates, remove the constructive
   claim and submit the work as an analysis paper; do not revive XEV.
 
 ## 5. Known risks / must-dos (rebuild backlog)
@@ -668,22 +635,23 @@ Honest guardrails carried over from the tear-down:
   The retained protocol is historical, not pending work.
 - **EEA is cancelled:** do not train the patch matcher or run its Stage A. The
   retained protocol is historical, not pending work.
-- **Generic-DPO risk:** semantic negatives, faithful-over-hallucinated response
-  pairs, and DPO are established. The claim survives only if the two-query joint
-  unit and centering term beat ordinary per-query DPO and the no-centering arm.
-- **Language-only shortcut:** balance `Yes`/`No` within every pair, hold out
-  queried categories, and require pair gains to collapse under image removal and
-  counterlabel image swapping.
-- **Relative-only failure:** report absolute positive and negative margins. Pair
-  ordering alone is insufficient if both queries still answer `Yes` or both
-  answer `No`; the balanced sign anchor is mandatory.
-- **Common-mode failure:** report `Delta+`, `Delta-`, separation, and their mean.
-  Do not accept a result driven by global `Yes` suppression or amplification.
-- **Vocabulary transfer:** train/evaluate with category-disjoint target splits.
-  COCO-only gains cannot support an open-vocabulary claim; LVIS expansion
-  follows only after the 20-category held-out PCPA gate succeeds.
-- **Compute:** begin with one Qwen3-VL LoRA seed and short matched arms. Do not
-  scale data, rank, or models until the registered objective comparison passes.
+- **PCPA is cancelled:** do not build manifests or train LoRA. The retained
+  protocol is historical, not pending work.
+- **No-RoPE is not deconfounding by itself:** it removes rotary geometry but not
+  response-depth information in hidden states or labels. The learning and
+  evaluation controls in §3.1 are mandatory.
+- **Supervision relabeling:** an external probe is allowed but must be called
+  supervised and compared to HaloProbe/DHCP/Beyond rather than to label-free
+  methods as though supervision were free.
+- **Head-selection leakage:** do not select heads, layers, signs, quantiles, or
+  fusion weights on evaluation labels. Layer 31 and top 25% are frozen before
+  clean-feature extraction; all calibration is train-fold-only.
+- **Uncertainty shortcut:** compare clean-head scores against IC, NLL, and
+  entropy, and test whether a supervised fusion adds signal beyond them.
+- **Transfer:** COCO/LLaVA feasibility cannot support a general detector claim.
+  A positive route requires Qwen3-VL and an independent dataset.
+- **Compute:** first cache only summarized per-head features at layers 22/31;
+  do not save another all-layer attention tensor or run mitigation inference.
 - **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
   LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
   baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).
@@ -697,9 +665,9 @@ Honest guardrails carried over from the tear-down:
 - Repo layout: [project_structure.md](project_structure.md).
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
-- Current route audit:
-  [2026-07-20_pair_centered_preference_redesign.md](../literature/2026-07-20_pair_centered_preference_redesign.md).
-- Pre-registered PCPA training pilot:
+- Active detector protocol:
+  [position_free_detector_iteration_1.md](iteration_protocols/position_free_detector_iteration_1.md).
+- Rejected PCPA design record:
   [pcpa_iteration_1.md](iteration_protocols/pcpa_iteration_1.md).
 - Rejected EEA design record:
   [eea_iteration_0.md](iteration_protocols/eea_iteration_0.md).
