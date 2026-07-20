@@ -1096,3 +1096,30 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   `experiments/qwen3vl_xev/iter15_stage2_local.jsonl`,
   `experiments/qwen3vl_xev/iter15_stage2_grounded.jsonl`, and
   `experiments/qwen3vl_xev/iter15_stage2_summary.json`.
+
+### 2026-07-20 — Position-free detector iteration 1, Stage-A extraction smoke
+
+- **Setup:** LLaVA-1.5-7B, fp16 eager attention, Transformers 4.48.1; first 16
+  COCO images in the frozen object cache. Read-only pre-hooks capture pre-RoPE
+  Q/K at layers 22 and 31. Features are summarized per head for raw, no-RoPE,
+  and no-RoPE plus sink-deletion branches. No model module or generated caption
+  is changed.
+- **Output:** 43/43 object mentions have eight valid nearby non-object rows.
+  Each branch has shape `(43, 2, 32, 8)` and contains only finite values. Class
+  balance is 35 grounded / 8 hallucinated. Mean detected sink counts are 18.74
+  at layer 22 and 16.30 at layer 31.
+- **Non-interference gate:** comparing the same first input before and after
+  registering the hooks gives max logit error **0** and max ordinary raw-
+  attention error **0**. Both no-RoPE and sink deletion produce non-identical
+  detector features, so neither branch is an accidental no-op.
+- **Legacy-cache diagnostic:** mention positions and token sequences align, but
+  86 raw layer-row comparisons against the unversioned May 22 per-head cache do
+  not reproduce exactly: max feature errors `[1.0098, 0.3048, 0.1411, 175.5422]`
+  for entropy, negative top-1, negative top-5, and negative max/mean. The same-
+  runtime identity gate replaces this invalid cross-runtime oracle; all current
+  branches will be compared within one extraction run. This amendment was made
+  before Stage B and did not alter a score or metric.
+- **Decision:** Stage A passes. Do not interpret performance on this 43-row,
+  imbalanced smoke; proceed to the locked full extraction and OOF evaluation.
+- **Artifact (git-ignored):**
+  `experiments/position_free_detector/smoke.npz`.

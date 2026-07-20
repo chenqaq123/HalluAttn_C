@@ -1147,3 +1147,28 @@ Matched-pair/residual AUROC and score-position correlations are mandatory. If
 both routes fail, constructive attention detection closes; no head/layer/window
 tuning is allowed on the full result. No new experimental result was produced
 in this design iteration.
+
+## 2026-07-20 — Position-free detector implementation and Stage-A smoke
+
+**Implementation:** Added a frozen-LVLM extractor that registers read-only
+pre-hooks on LLaVA layers 22 and 31, captures pre-RoPE per-head Q/K, detects
+low-key-norm visual sinks, and stores compact raw/no-RoPE/clean object-versus-
+local features. Added the locked offline evaluator for train-fold empirical-CDF
+label-free scoring and image-grouped, position-matched pairwise logistic probes.
+No model attention module is replaced and no detector feature contains position.
+
+**Stage-A evidence:** On 16 images / 43 mentions, all three `(43, 2, 32, 8)`
+feature tensors are finite. The hooks change neither logits nor raw attention
+(both max errors 0), and no-RoPE and sink deletion are active rather than no-op
+branches. The evaluator's fold, matching, residualization, and metric paths also
+pass a 500-row synthetic runtime check.
+
+**Protocol amendment:** The unversioned May 22 raw per-head cache cannot be an
+exact numerical oracle: token alignment is correct, but 86 raw layer-row
+comparisons show material cross-runtime drift. The discrepancy is retained as a
+diagnostic; same-runtime no-hook versus hook identity is the hard faithfulness
+gate, and every Stage-B branch is extracted together. This amendment precedes
+all Stage-B metrics and changes no method hyperparameter or success threshold.
+
+**Decision / next:** Stage A passes. Commit the implementation before launching
+the one-shot full four-shard extraction and locked evaluation.
