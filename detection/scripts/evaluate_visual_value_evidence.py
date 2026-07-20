@@ -36,6 +36,7 @@ def parse_args() -> argparse.Namespace:
         default="detection/baselines/results/coco_llava_7b_baselines/baseline_scores.npz",
     )
     parser.add_argument("--folds", type=int, default=5)
+    parser.add_argument("--category_folds", type=int, default=5)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--bin_width", type=int, default=10)
     parser.add_argument("--epochs", type=int, default=10)
@@ -83,6 +84,13 @@ def _image_folds(image_ids: np.ndarray, folds: int, seed: int) -> list[np.ndarra
     images = np.asarray(sorted(set(image_ids.tolist())), dtype=np.int64)
     rng.shuffle(images)
     return [np.asarray(part, dtype=np.int64) for part in np.array_split(images, folds)]
+
+
+def _category_fold_masks(words: np.ndarray, folds: int, seed: int) -> list[np.ndarray]:
+    rng = np.random.RandomState(seed)
+    categories = np.asarray(sorted(set(words.tolist())))
+    rng.shuffle(categories)
+    return [np.isin(words, part) for part in np.array_split(categories, folds)]
 
 
 def _bin_means(scores: np.ndarray, positions: np.ndarray, width: int) -> dict[int, float]:
@@ -289,9 +297,8 @@ def _predict(model, X, indices, mean, std, device, batch_size):
 def _mlp_oof(
     X: np.ndarray,
     labels: np.ndarray,
-    image_ids: np.ndarray,
     positions: np.ndarray,
-    folds: list[np.ndarray],
+    test_masks: list[np.ndarray],
     args: argparse.Namespace,
     model_seed_offset: int,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -299,8 +306,8 @@ def _mlp_oof(
     scores = np.full(labels.size, np.nan, dtype=np.float64)
     residuals = np.full_like(scores, np.nan)
     device = torch.device(args.device)
-    for fold_index, test_images in enumerate(folds):
-        test = np.isin(image_ids, test_images)
+    for fold_index, test in enumerate(test_masks):
+        test = np.asarray(test, dtype=bool)
         train = ~test
         train_indices = np.where(train)[0]
         test_indices = np.where(test)[0]
@@ -358,6 +365,47 @@ def _mlp_oof(
     return scores, residuals
 
 
+def _bootstrap_difference(
+    labels: np.ndarray,
+    positions: np.ndarray,
+    image_ids: np.ndarray,
+    left: np.ndarray,
+    right: np.ndarray,
+    width: int,
+    iterations: int,
+    seed: int,
+) -> dict:
+    rng = np.random.RandomState(seed)
+    unique_images = np.asarray(sorted(set(image_ids.tolist())))
+    by_image = {image_id: np.where(image_ids == image_id)[0] for image_id in unique_images}
+    differences = []
+    for _ in range(iterations):
+        sampled = rng.choice(unique_images, size=unique_images.size, replace=True)
+        indices = np.concatenate([by_image[image_id] for image_id in sampled])
+        left_metric = compute_metric_bundle(
+            labels[indices], left[indices], positions[indices], bin_width=width
+        )["within_bin_auroc"]
+        right_metric = compute_metric_bundle(
+            labels[indices], right[indices], positions[indices], bin_width=width
+        )["within_bin_auroc"]
+        if left_metric is not None and right_metric is not None:
+            differences.append(left_metric - right_metric)
+    if not differences:
+        return {
+            "iterations": 0,
+            "low": None,
+            "median": None,
+            "high": None,
+        }
+    low, median, high = np.percentile(differences, [2.5, 50.0, 97.5])
+    return {
+        "iterations": len(differences),
+        "low": float(low),
+        "median": float(median),
+        "high": float(high),
+    }
+
+
 def _json_ready(value):
     if isinstance(value, dict):
         return {str(key): _json_ready(item) for key, item in value.items()}
@@ -391,15 +439,24 @@ def main() -> None:
     ]:
         raise ValueError("Unexpected VVE per-head schema")
     folds = _image_folds(image_ids, args.folds, args.seed)
+    image_test_masks = [np.isin(image_ids, test_images) for test_images in folds]
 
     confidence = data["confidence"].reshape(labels.size, -1).astype(np.float32)
     no_rope = data["no_rope"].reshape(labels.size, -1).astype(np.float32)
     raw = data["raw"].reshape(labels.size, -1).astype(np.float32)
     gain_only = data["no_rope"][..., 4].reshape(labels.size, -1).astype(np.float32)
+    no_rope_pre = data["no_rope"][:, :, 0].reshape(labels.size, -1).astype(np.float32)
+    no_rope_post = data["no_rope"][:, :, 1].reshape(labels.size, -1).astype(np.float32)
+    gain_pre = data["no_rope"][:, :, 0, :, 4].reshape(labels.size, -1).astype(np.float32)
+    gain_post = data["no_rope"][:, :, 1, :, 4].reshape(labels.size, -1).astype(np.float32)
     feature_sets = {
         "probe_confidence": confidence,
         "probe_vve_no_rope_gain": gain_only,
+        "probe_vve_no_rope_gain_pre": gain_pre,
+        "probe_vve_no_rope_gain_post": gain_post,
         "probe_vve_no_rope": no_rope,
+        "probe_vve_no_rope_pre": no_rope_pre,
+        "probe_vve_no_rope_post": no_rope_post,
         "probe_vve_raw": raw,
         "probe_vve_no_rope_confidence": np.concatenate([no_rope, confidence], axis=1),
         "probe_vve_raw_confidence": np.concatenate([raw, confidence], axis=1),
@@ -431,11 +488,30 @@ def main() -> None:
         scores[name], residuals[name] = _mlp_oof(
             features,
             labels,
-            image_ids,
             positions,
-            folds,
+            image_test_masks,
             args,
             model_seed_offset=100 * (spec_index + 1),
+        )
+
+    category_masks = _category_fold_masks(words, args.category_folds, args.seed + 1000)
+    category_specs = {
+        "category_oof_confidence": confidence,
+        "category_oof_vve_no_rope_gain": gain_only,
+        "category_oof_vve_no_rope": no_rope,
+    }
+    if "probe_attention_confidence" in feature_sets:
+        category_specs["category_oof_attention_confidence"] = feature_sets[
+            "probe_attention_confidence"
+        ]
+    for spec_index, (name, features) in enumerate(category_specs.items()):
+        scores[name], residuals[name] = _mlp_oof(
+            features,
+            labels,
+            positions,
+            category_masks,
+            args,
+            model_seed_offset=5000 + 100 * spec_index,
         )
 
     baseline = np.load(args.baseline_scores)
@@ -461,16 +537,66 @@ def main() -> None:
         )
         for name, value in scores.items()
     }
+    intervals = {
+        "vve_no_rope_minus_raw": _bootstrap_difference(
+            labels,
+            positions,
+            image_ids,
+            scores["probe_vve_no_rope"],
+            scores["probe_vve_raw"],
+            args.bin_width,
+            500,
+            args.seed + 1,
+        ),
+        "vve_no_rope_minus_confidence": _bootstrap_difference(
+            labels,
+            positions,
+            image_ids,
+            scores["probe_vve_no_rope"],
+            scores["probe_confidence"],
+            args.bin_width,
+            500,
+            args.seed + 2,
+        ),
+    }
+    if "probe_attention_confidence" in scores:
+        intervals["vve_no_rope_minus_attention_confidence"] = (
+            _bootstrap_difference(
+                labels,
+                positions,
+                image_ids,
+                scores["probe_vve_no_rope"],
+                scores["probe_attention_confidence"],
+                args.bin_width,
+                500,
+                args.seed,
+            )
+        )
+    if "category_oof_attention_confidence" in scores:
+        intervals["category_oof_vve_minus_attention_confidence"] = (
+            _bootstrap_difference(
+                labels,
+                positions,
+                image_ids,
+                scores["category_oof_vve_no_rope"],
+                scores["category_oof_attention_confidence"],
+                args.bin_width,
+                500,
+                args.seed + 3,
+            )
+        )
     output = {
         "protocol": "docs/iteration_protocols/visual_value_evidence_iteration_1.md",
         "n": int(labels.size),
         "images": int(np.unique(image_ids).size),
         "hallucinated": int(labels.sum()),
         "folds": args.folds,
+        "category_folds": args.category_folds,
         "seed": args.seed,
         "bin_width": args.bin_width,
         "epochs": args.epochs,
         "metrics": metrics,
+        "bootstrap_within_bin_differences": intervals,
     }
     output_path = Path(args.output_json)
     output_path.parent.mkdir(parents=True, exist_ok=True)

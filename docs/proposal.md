@@ -75,12 +75,15 @@ not every attention method.
 
 The completed **training-free detector audit** (§3) gives a stronger negative
 boundary. Removing RoPE slightly reduces position correlation but does not
-improve a supervised probe beyond noise, sink deletion significantly harms it,
-and the fixed label-free local-gain score is below chance. The selected next
-direction (§4) therefore moves from attention allocation to **Visual Value
-Evidence**: decompose the visual content actually transported by each attention
-head and measure whether that residual update supports the emitted object logit.
-The two-pronged critique remains the paper spine.
+improve an attention probe beyond noise, sink deletion significantly harms it,
+and the fixed label-free local-gain score is below chance. The first **Visual
+Value Evidence** result (§4) crosses that boundary: a supervised external probe
+over source-decomposed, target-aligned visual value contributions reaches 0.887
+within-position AUROC, versus 0.799 for the matched attention-plus-confidence
+probe. Its label-free aggregation fails at 0.552. The constructive claim is
+therefore about evidence-bearing value content that can be learned by a frozen-
+LVLM detector, not a new unsupervised score. The two-pronged critique remains
+the paper spine.
 
 ## 2. Positioning vs. prior work
 
@@ -103,6 +106,10 @@ The two-pronged critique remains the paper spine.
   attention detection**: preserving heads, removing RoPE, deleting sink
   patches, and contrasting nearby rows does not beat IC or the same-run raw
   per-head probe. This sharpens the critique but is not a constructive method.
+- A candidate constructive boundary: **source-decomposed visual value evidence**
+  improves a matched supervised detector even after position, same-object, and
+  unseen-category controls. This remains provisional until causal value
+  ablations, repeat-seed stability, and cross-model/data transfer are complete.
 
 ## 3. Completed constructive audit — Position-Free Detection Failed
 
@@ -616,9 +623,9 @@ crosses an unstable semantic boundary (`vase` versus `pot/flowerpot`). A future
 grounded branch needs an independently validated equivalence/taxonomy layer;
 spatial evidence alone has reached its limit on this benchmark.
 
-## 4. Active direction — Visual Value Evidence
+## 4. Active constructive route — Visual Value Evidence
 
-The next detector tests **what visual attention carries**, rather than how much
+VVE tests **what visual attention carries**, rather than how much
 or where it attends. For each layer, head, and object-generating row, decompose
 the exact visual part of the attention output:
 
@@ -657,10 +664,47 @@ their visual source. The proposed unit is their conjunction: source-decomposed,
 target-aligned visual residual evidence for position-controlled object
 hallucination detection.
 
+### 4.1 Iteration 1 result and decision
+
+The full run covers 16,426 object mentions from 4,977 images under the locked
+five-fold image-grouped protocol. The primary results are:
+
+| Detector | Overall | Within-bin | Matched | OOF residual |
+|---|---:|---:|---:|---:|
+| confidence-only MLP | 0.7149 | 0.6724 | 0.6733 | 0.6325 |
+| attention + confidence MLP | 0.8561 | 0.7988 | 0.7856 | 0.6679 |
+| label-free no-RoPE VVE | 0.6020 | 0.5518 | 0.5623 | 0.5283 |
+| supervised raw VVE | 0.9112 | 0.8821 | 0.8712 | 0.7138 |
+| supervised no-RoPE VVE | 0.9142 | **0.8872** | 0.8749 | **0.7271** |
+| supervised no-RoPE VVE + confidence | **0.9151** | **0.8873** | **0.8764** | 0.7219 |
+
+The supervised route passes every pre-registered advance gate. Evidence-only
+no-RoPE VVE improves over attention plus confidence by 0.0884 within-bin; the
+image-bootstrap 95% interval is `[0.0763, 0.1026]`. It remains strong when only
+the causal pre-object row is used (0.8747), so the result is not created solely
+by consuming the target token. Inside the same position-bin and object category,
+VVE reaches 0.8581 versus 0.7648 for attention plus confidence. When entire
+object categories are excluded from detector training, VVE reaches 0.8040
+versus 0.7539; the gain interval is `[0.0350, 0.0665]`.
+
+Two limits are equally important. First, the fixed label-free score fails, so
+iteration 1 yields a **supervised external detector over a frozen LVLM**, not an
+unsupervised detector. Second, no-RoPE itself is not the source of the gain:
+no-RoPE minus raw VVE is only +0.0052 and its interval crosses zero
+(`[-0.0009, 0.0124]`). Removing RoPE is retained as source hygiene because it
+reduces grounded score-position correlation, not claimed as a performance
+contribution. Confidence also adds effectively nothing to VVE.
+
+The route advances, but 0.90 within-bin was not reached. Before transfer claims,
+iteration 2 must establish that VVE tracks causal visual content through an
+attention-preserving value intervention and must quantify classifier-seed
+stability. Only then should the frozen extractor/probe be ported to Qwen3-VL and
+an independent hallucination benchmark.
+
 ## 5. Contribution framing (intended)
 
-Frame as an **analysis + training-free detection** paper only if the new audit
-passes:
+Frame as an **analysis + frozen-LVLM supervised detection** paper only if the
+remaining causal and transfer audits pass:
 
 1. The **two-pronged critique** — attention-based detection and mitigation both
    fail under matched controls (length control for detection; answer-prior /
@@ -669,9 +713,8 @@ passes:
    mitigation failure measurable.
 3. A constructive **Visual Value Evidence detector**: decompose the visual
    value content transported by each head and ask whether it raises the emitted
-   object's logit. Promote label-free and supervised variants separately, only
-   if they beat confidence and HaloProbe-style fusion under all position and
-   category controls.
+   object's logit. Iteration 1 supports the supervised frozen-LVLM variant; the
+   label-free variant is a negative result and must not be promoted as working.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
@@ -703,10 +746,21 @@ Honest guardrails carried over from the tear-down:
   rows, or fusion weights on evaluation labels. VVE iteration 1 extracts all
   layers and freezes its label-free aggregation before the full run; all
   calibration is train-fold-only.
+- **VVE supervision boundary:** the successful MLP uses CHAIR labels. Call it a
+  supervised external detector, even though the LVLM is frozen and inference
+  does not fine-tune generation. The registered label-free VVE score failed.
+- **VVE robustness:** the primary image-grouped result uses the registered seed.
+  A development-time category-held-out MLP moved materially when its model seed
+  offset changed; repeat-seed mean and dispersion are mandatory before a method
+  claim. Do not choose the best seed.
+- **VVE causal validation:** target alignment can encode lexical semantics even
+  without an explicit object-ID feature. Run target-direction permutation and
+  attention-preserving visual-value interventions before calling the signal
+  verified visual evidence.
 - **Uncertainty shortcut:** compare clean-head scores against IC, NLL, and
   entropy, and test whether a supervised fusion adds signal beyond them.
 - **Transfer:** COCO/LLaVA feasibility cannot support a general detector claim.
-  A positive route requires Qwen3-VL and an independent dataset.
+  The positive supervised route requires Qwen3-VL and an independent dataset.
 - **Compute:** cache compact per-head evidence only, never full hidden states or
   full attention tensors. Run the 16-image numerical gate before full sharding;
   do not run mitigation inference in this iteration.

@@ -1277,3 +1277,43 @@ paths pass.
 selection. Commit this implementation milestone, then run full sharded feature
 extraction and the locked five-fold OOF evaluation. Do not interpret the
 43-mention smoke metrics.
+
+## 2026-07-20 — VVE supervised route passes; label-free route fails
+
+**Execution:** Completed two all-layer extraction shards for all 16,426 cached
+LLaVA/COCO object mentions and the registered five-fold image-grouped OOF
+evaluation. Added the mandatory pre/post, same-position/same-category, and
+leave-category-out audits without changing detector features or training
+hyperparameters. A small-sample bootstrap edge case now returns an explicit
+empty interval instead of failing.
+
+**Primary result:** Evidence-only no-RoPE VVE reaches 0.8872 within-bin AUROC,
+versus 0.7988 for the identical-MLP attention-plus-confidence baseline and
+0.6724 for confidence. Its +0.0884 advantage over attention plus confidence has
+image-bootstrap 95% CI `[0.0763, 0.1026]`. Confidence fusion reaches 0.8873 and
+therefore contributes essentially no additional signal. The supervised route
+passes the registered 0.85 / +0.03 / evidence-only / matched-residual gates but
+narrowly misses the 0.90 stretch target.
+
+**Leakage and transfer audits:** Pre-only VVE remains high at 0.8747 within-bin,
+showing that post-target self-conditioning is not required. Inside the same
+position and object category, VVE reaches 0.8581 versus 0.7648 for attention
+plus confidence. With complete object categories held out from training, VVE
+reaches 0.8040 versus 0.7539; the +0.0501 interval is `[0.0350, 0.0665]`.
+However, category-held-out residual AUROC is lower than attention (0.5626 vs.
+0.5994), and an intermediate MLP seed offset produced 0.8223, exposing material
+seed sensitivity that must be averaged rather than selected.
+
+**Negative boundaries:** The fixed label-free score reaches only 0.5518 within-
+bin and is rejected. No-RoPE VVE improves over raw by only 0.0052 with interval
+`[-0.0009, 0.0124]`; de-rotation is retained as position-reducing hygiene, not
+as the source of the detector gain. The successful method is a supervised
+external probe over a frozen LVLM and must be named accordingly.
+
+**Decision / next:** Advance VVE to a separately pre-registered causal audit,
+not another full-data feature sweep. Iteration 2 must (1) repeat key OOF results
+over fixed classifier seeds, (2) permute target directions to measure lexical
+shortcut dependence, and (3) intervene on visual values while preserving
+attention weights to test whether high VVE predicts a target-logit or behavior
+change. Only a stable causal result should be ported to Qwen3-VL and an
+independent hallucination dataset.

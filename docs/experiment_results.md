@@ -1239,3 +1239,67 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   layer aggregation, model hyperparameters, or thresholds.
 - **Artifact (git-ignored):**
   `experiments/visual_value_evidence/stage_a_smoke.npz`.
+
+### 2026-07-20 — Visual Value Evidence iteration 1, full result and mandatory audits
+
+- **Setup:** Frozen LLaVA-1.5-7B and the existing COCO-val2014 CHAIR cache:
+  16,426 first object mentions from 4,977 images, with 4,009 hallucinated and
+  12,417 grounded. Two extraction shards cover object IDs 0--16,425 exactly
+  once; labels and positions match the baseline cache. Raw and full-prefix
+  no-RoPE VVE features are finite at all 32 layers, 32 heads, and fixed pre/post
+  rows.
+- **Evaluation:** Five image-grouped OOF folds, seed 17, position-bin width 10.
+  Every normalizer and MLP is fitted on training folds only with the registered
+  position-conditional class weighting. No position, length, repetition, or
+  object-ID feature enters a detector.
+
+| Detector | Overall | Within-bin | Matched | OOF residual |
+|---|---:|---:|---:|---:|
+| IC baseline | 0.7761 | 0.6856 | 0.7029 | 0.6334 |
+| confidence-only MLP | 0.7149 | 0.6724 | 0.6733 | 0.6325 |
+| attention + confidence MLP | 0.8561 | 0.7988 | 0.7856 | 0.6679 |
+| label-free no-RoPE VVE | 0.6020 | 0.5518 | 0.5623 | 0.5283 |
+| no-RoPE target-gain MLP | 0.9119 | 0.8793 | 0.8654 | 0.7153 |
+| raw VVE MLP | 0.9112 | 0.8821 | 0.8712 | 0.7138 |
+| no-RoPE VVE MLP | 0.9142 | **0.8872** | 0.8749 | **0.7271** |
+| no-RoPE VVE + confidence MLP | **0.9151** | **0.8873** | **0.8764** | 0.7219 |
+
+- **Primary paired differences:** Evidence-only no-RoPE VVE minus the matched
+  attention-plus-confidence MLP is +0.0884 within-bin; 500-iteration image-
+  bootstrap 95% CI `[0.0763, 0.1026]`. VVE minus confidence is +0.2148 with CI
+  `[0.1942, 0.2335]`. No-RoPE minus raw VVE is only +0.0052 with CI
+  `[-0.0009, 0.0124]`; RoPE removal is not a demonstrated performance gain.
+- **Causal-row audit:** Pre-only VVE reaches 0.8963 overall, **0.8747** within-
+  bin, 0.8621 matched, and 0.7059 residual. Post-only reaches 0.9110, 0.8843,
+  0.8730, and 0.7360. The post row is stronger, but the pre-object row retains
+  most of the effect; consuming the first target subtoken is not necessary for
+  high discrimination.
+- **Same-position/same-category diagnostic:** Over 13,300 mentions in 579 valid
+  category-by-position groups, evidence-only no-RoPE VVE reaches size-weighted
+  AUROC **0.8581** (macro 0.8207), versus 0.7648 (macro 0.7150) for attention
+  plus confidence and 0.7074 for confidence.
+- **Leave-category-out audit:** Five category-grouped folds exclude every test
+  object category from detector training. No-RoPE VVE reaches 0.8685 overall,
+  **0.8040** within-bin, 0.8003 matched, and 0.5626 residual. The matched
+  attention-plus-confidence baseline reaches 0.8367, 0.7539, 0.7461, and
+  0.5994. The within-bin VVE gain is +0.0501 with image-bootstrap CI
+  `[0.0350, 0.0665]`. Category transfer is positive but materially weaker than
+  ordinary image-grouped OOF, and its residual metric does not beat attention.
+- **Seed-sensitivity disclosure:** Before adding the matched category baselines,
+  an intermediate category-only evaluator run used a different deterministic
+  MLP seed offset and produced 0.8223 within-bin for full VVE (target-gain-only
+  0.7417). The final complete evaluator gives 0.8040 (target-gain-only 0.7403).
+  The primary image-grouped model kept its registered seed and is unchanged,
+  but this 0.018 category-transfer spread makes a repeat-seed audit mandatory.
+- **Position audit:** Grounded-only score/position Spearman is 0.6888 for raw
+  VVE, 0.6271 for no-RoPE VVE, 0.6363 for attention plus confidence, and 0.1176
+  for confidence. No-RoPE reduces but does not remove response-depth signal;
+  the within-bin, matched, residual, and category controls remain essential.
+- **Decision:** The supervised route passes all five advance gates and narrowly
+  misses the 0.90 stretch target. The label-free route fails. Advance to a
+  separately locked attention-preserving visual-value intervention and repeat-
+  seed audit; do not tune the full-data MLP to chase 0.90. Cross-model/data
+  transfer remains untested.
+- **Artifacts (git-ignored):**
+  `experiments/visual_value_evidence/features_shard{0,1}.npz`,
+  `iteration1_metrics.json`, and `iteration1_oof.npz`.
