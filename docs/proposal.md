@@ -639,12 +639,14 @@ transporting content that does not support the emitted target. This is the
 constructive counterpart to the paper thesis: allocation is not verification,
 but value-bearing, target-aligned residual evidence can be.
 
-The primary branch recomputes QK before layer-local RoPE over the complete causal
-prefix while retaining the original values, output projection, residual stream,
-and target token. An exact raw-attention branch is the source control. Position,
-response length, repetition, and object identity are excluded from the strict
-detector; training remains conditionally balanced within position bins and all
-evaluation is image-grouped OOF.
+The method first **removes RoPE from Q/K**, recomputes causal attention over the
+complete prefix, and then applies those weights to the original values and
+output projection. The residual stream and emitted target token remain fixed.
+Raw post-RoPE VVE is an experimental ablation and the exact branch used for
+causal intervention; it is not the headline detector. Position, response
+length, repetition, and object identity are excluded from the strict detector;
+training remains conditionally balanced within position bins and all evaluation
+is image-grouped OOF.
 
 Two variants are separated explicitly:
 
@@ -697,11 +699,11 @@ versus 0.7539; the gain interval is `[0.0350, 0.0665]`.
 
 Two limits are equally important. First, the fixed label-free score fails, so
 iteration 1 yields a **supervised external detector over a frozen LVLM**, not an
-unsupervised detector. Second, no-RoPE itself is not the source of the gain:
-no-RoPE minus raw VVE is only +0.0052 and its interval crosses zero
-(`[-0.0009, 0.0124]`). Removing RoPE is retained as source hygiene because it
-reduces grounded score-position correlation, not claimed as a performance
-contribution. Confidence also adds effectively nothing to VVE.
+unsupervised detector. Second, removing RoPE is a fixed position-prior control,
+not the source of the empirical gain: removed-RoPE minus raw VVE is only +0.0052
+and its interval crosses zero (`[-0.0009, 0.0124]`). The method still removes it
+by definition; the novelty and predictive gain are assigned to target-aligned
+visual values. Confidence adds effectively nothing to VVE.
 
 The current +0.0884 comparison is not yet a fully capacity-matched attribution.
 Full VVE supplies 10,240 inputs (about 2.62M MLP parameters), whereas the reused
@@ -718,6 +720,41 @@ preserving value intervention. Only then should the frozen extractor/probe be
 ported unchanged to Qwen3-VL and an independent hallucination benchmark. The
 locked audit is in
 [visual_value_evidence_iteration_2.md](iteration_protocols/visual_value_evidence_iteration_2.md).
+
+### 4.2 Same-data comparison with prior detectors
+
+The following methods all use the same frozen LLaVA-1.5-7B captions, 16,426
+COCO/CHAIR object mentions, hallucination labels, and position-bin metric. They
+are separated by supervision; comparisons across the two blocks are descriptive,
+not claims that label supervision is free.
+
+| Label-free detector | Overall | Within-bin |
+|---|---:|---:|
+| PAS | 0.8349 | 0.5928 |
+| SVAR | 0.8053 | 0.5678 |
+| NLL | 0.7114 | 0.6360 |
+| Entropy | 0.7206 | 0.6366 |
+| IC | 0.7761 | **0.6856** |
+| TVER | 0.8303 | 0.5655 |
+| SAE (Mask2Former) | 0.7833 | 0.5747 |
+| LaSCD raw layer energy | 0.5739 | 0.5000 |
+| label-free VVE | 0.6020 | 0.5518 |
+
+| Supervised external detector | Overall | Within-bin |
+|---|---:|---:|
+| ADS-only, 32-layer OOF | 0.8379 | 0.6660 |
+| CGC-only, 32-layer OOF | 0.8372 | 0.6688 |
+| ADS+CGC, 32-layer OOF | 0.8661 | 0.7185 |
+| raw per-head attention probe | 0.8546 | 0.7405 |
+| HaloProbe-style attention + confidence | 0.8561 | 0.7988 |
+| **VVE-core, RoPE removed (ours)** | **0.9119** | **0.8793** |
+| full VVE diagnostic | 0.9142 | 0.8872 |
+
+This establishes a strong same-data feasibility result for supervised VVE-core,
+not complete validation. The HaloProbe-style row is our matched local probe, not
+HaloProbe's official 0.935 from a different evaluation distribution. A publishable
+method claim still requires the capacity-matched audit and unchanged transfer to
+Qwen3-VL plus an independent dataset.
 
 ## 5. Contribution framing (intended)
 

@@ -1328,3 +1328,46 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Decision:** Do not alter the iteration-1 score or tune VVE on COCO. Treat
   capacity matching as a pre-registered falsification audit before causal or
   transfer claims.
+
+### 2026-07-20 — Same-data prior-detector comparison audit (no new inference)
+
+- **Alignment check:** The Beyond/SAE/TVER/LaSCD shards contain every object ID
+  `0..16425` exactly once. After sorting by ID, their CHAIR labels and `gen_pos`
+  arrays are exactly equal to the retained baseline cache; VVE OOF object IDs,
+  labels, and positions are also exactly equal. All rows therefore refer to the
+  same 16,426 LLaVA-1.5-7B COCO/CHAIR mentions with 4,009 hallucinated and use
+  the same position-bin width. No model inference or detector refit was needed.
+
+| Label-free detector | Overall | Within-bin | Matched |
+|---|---:|---:|---:|
+| PAS | 0.8349 | 0.5928 | 0.5833 |
+| SVAR | 0.8053 | 0.5678 | 0.5664 |
+| NLL | 0.7114 | 0.6360 | 0.6524 |
+| Entropy | 0.7206 | 0.6366 | 0.6545 |
+| IC | 0.7761 | **0.6856** | **0.7029** |
+| TVER | 0.8303 | 0.5655 | 0.5436 |
+| SAE (Mask2Former) | 0.7833 | 0.5747 | 0.5789 |
+| LaSCD raw layer energy | 0.5739 | 0.5000 | 0.5072 |
+| label-free VVE | 0.6020 | 0.5518 | 0.5623 |
+
+| Supervised external detector | Overall | Within-bin | Matched |
+|---|---:|---:|---:|
+| ADS-only, 32-layer logistic OOF | 0.8379 | 0.6660 | 0.6596 |
+| CGC-only, 32-layer HGB OOF | 0.8372 | 0.6688 | 0.6759 |
+| ADS+CGC, 32-layer logistic OOF | 0.8661 | 0.7185 | 0.7240 |
+| raw per-head conditional probe | 0.8546 | 0.7405 | 0.7393 |
+| HaloProbe-style attention + confidence | 0.8561 | 0.7988 | 0.7856 |
+| **VVE-core, RoPE removed** | **0.9119** | **0.8793** | **0.8654** |
+| full VVE diagnostic | 0.9142 | 0.8872 | 0.8749 |
+
+- **Interpretation:** VVE-core is currently the strongest supervised detector on
+  this exact local protocol, while label-free VVE is not competitive with IC,
+  entropy, or NLL. The supervised advantage must not be used to claim a win over
+  label-free methods without stating the supervision difference.
+- **HaloProbe boundary:** The 0.7988 row is a HaloProbe-style local baseline
+  trained on the same object cache. HaloProbe's official 0.935 is not inserted
+  into this table because it comes from a different natural-distribution test;
+  its reported balanced-test result is also not the same dataset/model run.
+- **Remaining validation:** This is one-model, one-dataset in-domain evidence.
+  Capacity matching, repeated classifier seeds, causal/source controls,
+  Qwen3-VL, and an independent benchmark remain open.

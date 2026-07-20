@@ -5,6 +5,11 @@
 **Backbone/data:** frozen LLaVA-1.5-7B, existing COCO-val2014 CHAIR cache  
 **Purpose:** validate VVE without changing its method center or tuning toward 0.90
 
+**Pre-implementation wording amendment (2026-07-20):** The detector is described
+directly as removing RoPE from Q/K before computing VVE. Raw post-RoPE VVE remains
+only an ablation and the exact branch for intervention. This wording change does
+not alter a feature, split, model, gate, or result.
+
 ## 1. Fixed Method Center
 
 The method remains **target-aligned visual value evidence**. For layer `l`, head
@@ -28,10 +33,11 @@ not an independent confirmation. It must later be confirmed unchanged on a new
 model/data setting.
 
 The LVLM, generated captions, first-subtoken target definition, all 32 layers,
-both temporal rows, no-RoPE detector branch, MLP width, optimizer, weighting,
-folds, and evaluation metrics remain unchanged. Raw attention is retained for
-the exact intervention. Removing RoPE is source hygiene, not a claimed source
-of performance.
+both temporal rows, MLP width, optimizer, weighting, folds, and evaluation
+metrics remain unchanged. The detector directly removes RoPE from Q/K before
+recomputing causal attention and target gain. Raw attention is retained only for
+the performance ablation and exact intervention. RoPE removal controls the
+explicit position prior; the claimed new signal remains visual value evidence.
 
 ## 2. Questions
 

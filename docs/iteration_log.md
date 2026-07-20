@@ -1346,3 +1346,27 @@ effects while preserving that layer's attention probabilities.
 inputs. Passing opens unchanged Qwen3-VL and independent-data confirmation.
 Failure narrows the claim according to the registered stage, without changing
 heads, layers, features, thresholds, or fusion on the observed COCO labels.
+
+## 2026-07-20 — Make RoPE removal explicit and consolidate prior-detector comparisons
+
+**Method wording:** Future method descriptions state the operation directly:
+remove RoPE from Q/K, recompute full-prefix causal attention, transport the
+original visual values, and read the emitted-target gain trajectory. Raw VVE is
+an ablation and the branch required for exact intervention, not a second method.
+This keeps the novelty centered on target-aligned visual value evidence rather
+than on RoPE removal itself.
+
+**Comparison audit:** Consolidated every retained detector that uses the same
+16,426 LLaVA/COCO/CHAIR object mentions and position-controlled metric. Object
+IDs cover `0..16425` exactly once, and labels/positions match the baseline and
+VVE caches elementwise. Label-free methods and supervised external probes are
+reported separately. In the label-free block, IC remains strongest at 0.6856
+within-bin and label-free VVE fails at 0.5518. In the supervised block, ADS+CGC
+reaches 0.7185, the raw per-head probe 0.7405, the same-data HaloProbe-style
+attention-plus-confidence probe 0.7988, and VVE-core 0.8793.
+
+**Scope decision:** The existing run is a valid same-data feasibility comparison
+but not full validation. Do not place HaloProbe's official 0.935 into this table
+because it uses a different evaluation distribution. Complete the locked
+capacity/seed/causal audit, then transfer unchanged to Qwen3-VL and an independent
+dataset before making a general detector claim.
