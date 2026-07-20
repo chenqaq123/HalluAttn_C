@@ -775,6 +775,15 @@ mass at every seed and by at least 0.05 on average, one registered losing seed
 already makes the gate impossible to pass. Further seeds cannot rescue the
 registered decision.
 
+A post-hoc explicit balance audit gives the operational number hidden by the
+within-bin summary. Downsampling each valid 10-token bin to equal grounded and
+hallucinated counts retains 7,072 mentions per draw. Across 1,000 frozen-OOF
+draws, all-layer allocation mass reaches **0.8373 AUROC / 0.7605 zero-threshold
+accuracy**; VVE-core reaches 0.8267 / 0.7478 and full VVE 0.8398 / 0.7624. The
+two-layer attention-plus-confidence probe reaches 0.7411 / 0.6775. Thus the
+supervised per-head signal survives actual position balancing, but neither VVE
+nor allocation approaches 0.9 on this local balanced test.
+
 **Decision:** close VVE as the constructive detector route. Its high OOF AUROC
 is real, but the evidence does not identify target-aligned value content as the
 cause; all-layer allocation plus a high-capacity supervised readout explains

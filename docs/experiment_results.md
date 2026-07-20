@@ -1421,3 +1421,40 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   `experiments/visual_value_evidence/iteration2_{size,uniform}_shared_seed_metrics.json`
   and corresponding `*_oof.npz`; the intermediate run is
   `iteration2_uniform_metrics.json` / `iteration2_uniform_oof.npz`.
+
+### 2026-07-20 — Explicit position-balanced OOF detector audit
+
+- **Question:** The registered within-bin metric compares labels only inside a
+  position bin but does not make the test counts 1:1. This post-hoc audit answers
+  the separate operational question: what performance remains after the test
+  examples themselves are balanced inside every position bin?
+- **Protocol:** Reuse frozen image-grouped OOF scores with no refit, feature
+  choice, or threshold tuning. In each valid 10-token bin from 0--149, randomly
+  downsample the larger class to the smaller class. Each draw has exactly 3,536
+  grounded and 3,536 hallucinated mentions (7,072 total). Use the same selected
+  rows for every detector and repeat 1,000 times with seed 1701. Report the mean
+  and the 2.5--97.5 percentile range across downsampling draws. Zero is the
+  natural decision threshold of the frozen conditional logistic/MLP scores;
+  because the test is 1:1, ordinary accuracy equals balanced accuracy.
+
+| Frozen supervised OOF detector | Balanced AUROC | 2.5--97.5% | Accuracy@0 | 2.5--97.5% |
+|---|---:|---:|---:|---:|
+| raw L31 per-head attention | 0.7010 | 0.6970--0.7048 | 0.6142 | 0.6101--0.6184 |
+| no-RoPE L31 per-head attention | 0.7094 | 0.7050--0.7138 | 0.6104 | 0.6061--0.6150 |
+| L22/L31 attention + confidence | 0.7411 | 0.7369--0.7456 | 0.6775 | 0.6735--0.6816 |
+| all-layer/all-head allocation mass | **0.8373** | 0.8336--0.8409 | **0.7605** | 0.7571--0.7644 |
+| VVE-core | 0.8267 | 0.8231--0.8303 | 0.7478 | 0.7443--0.7516 |
+| full VVE | **0.8398** | 0.8362--0.8436 | **0.7624** | 0.7586--0.7660 |
+
+- **Interpretation:** Per-head supervised attention remains clearly predictive
+  after literal position balancing, especially with all-layer coverage. The
+  strongest allocation-only probe reaches 0.837 AUROC rather than its 0.881
+  sample-weighted within-bin result. Full VVE is only +0.0024 AUROC and +0.0018
+  accuracy over allocation mass on this test, reinforcing the capacity-control
+  conclusion. None of the local probes reaches 0.9 balanced AUROC.
+- **Scope:** The percentile range measures random downsampling variability, not
+  a retraining or image-bootstrap confidence interval. This is a requested
+  post-hoc evaluation of frozen OOF predictions and is not a new confirmation
+  set.
+- **Artifact (git-ignored):**
+  `experiments/visual_value_evidence/position_balanced_oof_metrics.json`.

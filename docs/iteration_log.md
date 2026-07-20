@@ -1427,3 +1427,22 @@ already loses, so the conjunction is impossible regardless of later seeds.
 failure as an audit result. Cancel VVE Stage B/C and VVE-specific Qwen3/transfer
 runs; the next constructive hypothesis must differ from allocation under an
 equal-capacity control before consuming independent validation data.
+
+## 2026-07-20 — Measure literal position-balanced detector performance
+
+**Clarification:** Within-bin AUROC controls comparisons by position but leaves
+the natural positive/negative counts untouched. Added a reproducible frozen-OOF
+audit that downsamples both labels to 1:1 inside every valid 10-token position
+bin. Fifteen bins retain 7,072 mentions per draw; 1,000 draws use seed 1701 and
+the same selected rows for every detector.
+
+**Result:** Raw and no-RoPE L31 per-head probes reach balanced AUROC 0.7010 and
+0.7094, with zero-threshold accuracies 0.6142 and 0.6104. Two-layer attention
+plus confidence reaches 0.7411 / 0.6775. All-layer allocation mass is much
+stronger at **0.8373 AUROC / 0.7605 accuracy**, while VVE-core reaches 0.8267 /
+0.7478 and full VVE 0.8398 / 0.7624.
+
+**Decision:** Correct the verbal summary: supervised per-head attention survives
+literal position balancing, but the local result is about 0.84 rather than 0.9.
+Full VVE remains practically tied with allocation mass, so this audit reinforces
+rather than changes the decision to close the value-specific method claim.
