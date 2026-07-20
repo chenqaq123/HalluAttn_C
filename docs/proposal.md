@@ -716,7 +716,9 @@ the whole gain to value content.
 The route advances, but 0.90 within-bin was not reached. Before transfer claims,
 iteration 2 keeps VVE-core fixed and tests capacity-matched attention, repeated
 classifier seeds, wrong-target and language-source controls, and an attention-
-preserving value intervention. Only then should the frozen extractor/probe be
+preserving value intervention. Its first readout audit replaces sample-count-
+weighted position bins with one frozen equal-bin objective; this changes only
+the supervised readout loss, not VVE. Only then should the frozen extractor/probe be
 ported unchanged to Qwen3-VL and an independent hallucination benchmark. The
 locked audit is in
 [visual_value_evidence_iteration_2.md](iteration_protocols/visual_value_evidence_iteration_2.md).
@@ -811,6 +813,10 @@ Honest guardrails carried over from the tear-down:
 - **Capacity matching:** iteration-1 VVE uses all 32 layers while the reused
   attention baseline uses layers 22 and 31. Match layers, rows, feature count,
   MLP width, folds, and seeds before attributing the full gain to values.
+- **Position-uniform readout:** iteration-1 class weighting balances labels
+  inside each bin but leaves total bin weight proportional to sample count. The
+  one registered equal-bin objective may replace it only if macro/late-bin
+  metrics improve under the locked no-regression gates; do not sweep mixtures.
 - **VVE causal validation:** target alignment can encode lexical semantics even
   without an explicit object-ID feature. Run target-direction permutation and
   attention-preserving visual-value interventions before calling the signal

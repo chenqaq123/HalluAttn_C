@@ -10,6 +10,14 @@ directly as removing RoPE from Q/K before computing VVE. Raw post-RoPE VVE remai
 only an ablation and the exact branch for intervention. This wording change does
 not alter a feature, split, model, gate, or result.
 
+**Pre-implementation position-uniform amendment (2026-07-20):** Inspection of
+the already reported per-bin metrics showed that the original class-balanced
+loss still gives each bin total weight proportional to its sample count. Bins
+0--39 therefore supply 56% of the loss, and full-VVE AUROC falls from 0.9253 in
+positions 0--39 to 0.7682 in 120--149. Before any iteration-2 fit, Stage A0
+below freezes one equal-bin readout. This is a post-result COCO optimization and
+requires unchanged external confirmation; it changes no VVE feature.
+
 ## 1. Fixed Method Center
 
 The method remains **target-aligned visual value evidence**. For layer `l`, head
@@ -33,8 +41,10 @@ not an independent confirmation. It must later be confirmed unchanged on a new
 model/data setting.
 
 The LVLM, generated captions, first-subtoken target definition, all 32 layers,
-both temporal rows, MLP width, optimizer, weighting, folds, and evaluation
-metrics remain unchanged. The detector directly removes RoPE from Q/K before
+both temporal rows, MLP width, optimizer, folds, and evaluation metrics remain
+unchanged. Except for the explicitly isolated Stage-A0 weighting audit, the
+registered iteration-1 weighting remains the reference. The detector directly
+removes RoPE from Q/K before
 recomputing causal attention and target gain. Raw attention is retained only for
 the performance ablation and exact intervention. RoPE removal controls the
 explicit position prior; the claimed new signal remains visual value evidence.
@@ -54,7 +64,48 @@ Iteration 2 asks four questions only:
 
 No head, layer, feature, threshold, or fusion search is allowed.
 
-## 3. Stage A: Capacity- and Seed-Matched Readout
+## 3. Stage A0: Position-Uniform Readout
+
+The iteration-1 weight for mention `i` in position bin `b` and class `y` is:
+
+    w_size(i) = n_b / (2 n_(b,y)).
+
+It balances classes inside each bin but leaves total bin weight proportional to
+`n_b`. The one registered optimization is:
+
+    w_uniform(i) = 1 / n_(b,y),
+
+followed by one global normalization to mean weight one. Each valid `(bin,
+class)` group therefore has equal total weight. A training-fold bin is valid
+only when it has at least 30 mentions and both classes; other bins receive zero
+fit weight. Feature standardization still uses all training images.
+
+Run the original and uniform objectives with the same folds, model seed, width,
+optimizer, epochs, and features for VVE-core, full VVE, allocation mass,
+attention plus confidence, and confidence. No exponent, interpolation, minimum-
+count, or bin-width sweep is permitted.
+
+Primary metrics are equal-bin macro AUROC and position-matched AUROC. Report the
+registered size-weighted within-bin metric for continuity, plus fixed aggregate
+ranges `{0--39, 40--79, 80--119, 120--149}` and grounded score/position
+Spearman.
+
+The uniform objective advances only if all apply:
+
+1. VVE-core and full VVE each improve macro-bin AUROC by at least 0.015;
+2. their weighted within-bin and matched AUROC each fall by no more than 0.010;
+3. their size-weighted mean AUROC over bins 80--139 improves by at least 0.015;
+4. grounded score/position Spearman decreases by at least 0.05;
+5. uniform VVE-core still beats uniformly trained attention plus confidence by
+   at least 0.05 macro-bin AUROC.
+
+If the gate passes, uniform weighting becomes the fixed readout objective for
+the remaining robustness audits, while iteration-1 numbers remain the original
+confirmatory result. If it fails, retain the original objective and report the
+late-position degradation. Do not try square-root weighting, blended losses,
+position inputs, bin-specific heads, or threshold calibration on COCO.
+
+## 4. Stage A: Capacity- and Seed-Matched Readout
 
 Keep image folds fixed with data seed 17. Train each readout with five fixed
 model-initialization seeds `{17, 29, 43, 59, 71}`. Report every seed, mean,
@@ -95,11 +146,11 @@ Stage A passes only if:
 Failure does not trigger feature tuning. It narrows iteration 1 to a high-
 capacity in-domain probe result.
 
-## 4. Stage B: Target and Source Specificity
+## 5. Stage B: Target and Source Specificity
 
 Run fixed negative controls without changing the VVE-core readout.
 
-### 4.1 Wrong-target direction
+### 5.1 Wrong-target direction
 
 For each mention, construct a deterministic label-free derangement inside its
 generation-position bin using seed 1701. The control target comes from another
@@ -111,7 +162,7 @@ Train and evaluate the same five-seed probe on these features. Correct-target
 VVE must exceed wrong-target VVE by at least 0.05 mean within-bin AUROC. This
 control tests target-image correspondence; it is not fused into the method.
 
-### 4.2 Language-source contribution
+### 5.2 Language-source contribution
 
 Replace the visual source span `V` with the generated-caption prefix visible at
 the same causal row and compute the identical target-gain trajectory. Prompt
@@ -122,7 +173,7 @@ as a generic source-conditioned internal probe rather than visual verification.
 Report correct/wrong target and visual/language source results for ordinary
 image OOF, same-position/same-category groups, and leave-category-out OOF.
 
-## 5. Stage C: Attention-Preserving Value Intervention
+## 6. Stage C: Attention-Preserving Value Intervention
 
 Stage C runs only if Stages A and B pass. Use the raw branch because its visual
 contribution is part of the model's actual attention output. At fixed layers
@@ -150,7 +201,7 @@ correlation than the random-direction control at every fixed layer. Grounded
 versus hallucinated intervention effects are reported as analysis, not used to
 choose layers or thresholds.
 
-## 6. Decision
+## 7. Decision
 
 Passing all stages retains VVE-core and opens unchanged Qwen3-VL plus independent-
 dataset confirmation. The method remains the target-gain trajectory; controls

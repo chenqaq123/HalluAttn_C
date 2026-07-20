@@ -1370,3 +1370,31 @@ but not full validation. Do not place HaloProbe's official 0.935 into this table
 because it uses a different evaluation distribution. Complete the locked
 capacity/seed/causal audit, then transfer unchanged to Qwen3-VL and an independent
 dataset before making a general detector claim.
+
+## 2026-07-20 — Pre-register position-uniform VVE readout optimization
+
+**Observed limitation:** Full VVE declines from 0.9253 size-weighted AUROC over
+positions 0--39 to 0.7682 over 120--149; equal-bin macro AUROC is 0.8342 versus
+the 0.8872 sample-weighted headline. OOF score separation shrinks mainly because
+late grounded mentions move toward the hallucination score distribution. The
+existing conditional loss balances classes within each bin but gives each bin
+total weight proportional to its sample count, so positions 0--39 contribute
+56% of training weight.
+
+**Frozen optimization:** Keep RoPE-removed VVE-core, full VVE, folds, features,
+MLP, and optimizer unchanged. Replace only the fit weights with
+`1 / n_(bin,class)` for bins with at least 30 training mentions and both labels,
+so every valid bin/class group contributes equally. Compare against the original
+objective under the same seed; apply the same objective to attention and
+confidence controls.
+
+**Gate:** Both VVE-core and full VVE must gain at least 0.015 macro-bin and 0.015
+over positions 80--139, lose at most 0.010 weighted-within and matched AUROC,
+reduce grounded position Spearman by at least 0.05, and preserve at least 0.05
+macro-bin advantage over attention plus confidence. Failure forbids trying
+square-root/blended weighting, position inputs, per-bin heads, or threshold
+tuning on this COCO result.
+
+**Scope:** This is a readout optimization prompted by observed COCO bin trends,
+not independent confirmation and not a VVE feature change. Any passing objective
+must be transferred unchanged to Qwen3-VL and an independent dataset.
