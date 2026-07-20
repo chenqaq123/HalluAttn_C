@@ -1,7 +1,7 @@
 # Position-Free Detector Iteration 1: Clean Per-Head Feasibility
 
 Date: 2026-07-20
-Status: pre-registered; Stage A passed, Stage B not started
+Status: completed; both advance gates failed
 
 ## Question
 
@@ -196,3 +196,12 @@ Commit implementation before Stage B. Append every Stage-B result, including
 failed ablations and leakage diagnostics, to `docs/experiment_results.md` and
 append the decision to `docs/iteration_log.md`. Feature caches, OOF predictions,
 and bootstrap samples remain under ignored experiment storage.
+
+## Outcome
+
+Both routes failed on the full 16,426-mention audit. The fixed clean label-free
+score reached 0.4553 within-bin AUROC versus IC at 0.6856. The supervised raw,
+no-RoPE, and clean probes reached 0.7405, 0.7431, and 0.6998 respectively.
+No-RoPE minus raw was not resolved by paired bootstrap, while sink deletion was
+significantly harmful. Per the gates above, constructive attention detection is
+closed. Full metrics and interpretation are in `docs/experiment_results.md`.

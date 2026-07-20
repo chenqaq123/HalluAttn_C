@@ -1172,3 +1172,37 @@ all Stage-B metrics and changes no method hyperparameter or success threshold.
 
 **Decision / next:** Stage A passes. Commit the implementation before launching
 the one-shot full four-shard extraction and locked evaluation.
+
+## 2026-07-20 — Position-free detector iteration 1 failed both full-data gates
+
+**Execution:** Completed the committed one-shot four-shard extraction on all
+16,426 LLaVA/COCO object mentions and the locked five-fold image-grouped OOF
+evaluation. Object IDs are complete and unique, labels/positions align with the
+baseline cache, and every branch is finite.
+
+**Label-free result:** The pre-registered clean layer-31 top-eight local score is
+below chance: 0.3881 overall, 0.4553 within-bin, 0.4633 matched, and 0.4766 OOF
+residual. It loses decisively to IC at 0.6856 within-bin and also loses to its
+clean object-only ablation at 0.5236. Neither no-RoPE nor sink deletion gives a
+positive within-bin change. The unsupervised gate fails every substantive item.
+
+**Supervised result:** The same-run raw conditional probe reaches 0.7405 within-
+bin. Removing RoPE reaches 0.7431, only +0.0026 with paired 95% CI
+`[-0.0102, 0.0174]`, while residual AUROC drops 0.6762 -> 0.6633. Sink deletion
+then lowers within-bin to 0.6998; clean minus no-RoPE CI is
+`[-0.0574, -0.0302]`. The clean probe misses the 0.75/0.72/0.68 thresholds and
+does not beat raw. The supervised gate fails.
+
+**Mechanistic decision:** RoPE removal does reduce position correlation, but it
+does not expose a stronger position-independent verification signal. Deleting
+low-key-norm sink patches removes useful evidence. Most importantly, nearby
+non-object-row distribution change is not a grounding certificate; hallucinated
+mentions do not show the pre-registered lack-of-local-gain ordering.
+
+**Direction decision:** Close constructive attention-based detection exactly as
+pre-registered. Do not rescue it by flipping the unsupervised sign or sweeping
+heads, layers, windows, sink thresholds, or regularization on the full result.
+Keep the 0.7431 no-RoPE probe only as a supervised external analysis ceiling,
+not as an unsupervised or novel method. The durable two-pronged critique remains;
+the next constructive design must be training-free and move outside attention
+allocation.

@@ -1123,3 +1123,53 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
   imbalanced smoke; proceed to the locked full extraction and OOF evaluation.
 - **Artifact (git-ignored):**
   `experiments/position_free_detector/smoke.npz`.
+
+### 2026-07-20 — Position-free detector iteration 1, full locked result
+
+- **Setup:** 16,426 first object mentions from 4,977 COCO images; 4,009
+  hallucinated / 12,417 grounded. LLaVA-1.5-7B is frozen. Four Transformers-
+  4.48.1 extraction shards cover object IDs 0--16,425 exactly once; labels and
+  positions align with the baseline cache and all raw/no-RoPE/clean features
+  are finite. Mean sink counts are 18.22 (layer 22) and 16.53 (layer 31).
+- **Evaluation:** five image-grouped OOF folds, position-bin width 10, seed 17.
+  Supervised folds contain `[3234, 3221, 3174, 3233, 3166]` matched positive
+  differences before adding their reversed counterparts. All score calibration,
+  standardization, classifier fitting, and residualization use train folds only.
+
+| Method | Overall | Within-bin | Matched | OOF residual |
+|---|---:|---:|---:|---:|
+| IC | 0.7761 | **0.6856** | 0.7029 | 0.6334 |
+| unsup raw L31 top-8 local | 0.3965 | 0.4646 | 0.4678 | 0.4765 |
+| unsup no-RoPE L31 top-8 local | 0.4164 | 0.4632 | 0.4700 | 0.4820 |
+| unsup clean L31 top-8 local | 0.3881 | **0.4553** | 0.4633 | 0.4766 |
+| unsup clean L31 all-head mean | 0.3590 | 0.4597 | 0.4710 | 0.4745 |
+| unsup clean L31 object-only | 0.5479 | 0.5236 | 0.5224 | 0.5039 |
+| unsup clean L22 top-8 local | 0.4676 | 0.5120 | 0.5086 | 0.5070 |
+| supervised raw L31 conditional | 0.8546 | 0.7405 | 0.7393 | **0.6762** |
+| supervised no-RoPE L31 conditional | 0.8462 | **0.7431** | **0.7404** | 0.6633 |
+| supervised clean L31 conditional | 0.8140 | 0.6998 | 0.7072 | 0.6491 |
+| supervised clean object-only | 0.7841 | 0.6873 | 0.6877 | 0.6201 |
+
+- **Paired image-bootstrap, within-bin differences (500 iterations):**
+  no-RoPE supervised minus raw `+0.0026`, 95% CI `[-0.0102, 0.0174]`;
+  clean supervised minus no-RoPE `-0.0434`, CI `[-0.0574, -0.0302]`;
+  clean supervised minus raw `-0.0408`, CI `[-0.0576, -0.0229]`;
+  clean unsupervised minus IC `-0.2303`, CI `[-0.2524, -0.2080]`.
+- **Position diagnostics:** grounded-only score/position Spearman is 0.5828 for
+  raw supervised, 0.5336 for no-RoPE, and 0.3658 for clean. Position removal
+  reduces correlation, but no-RoPE residual AUROC also falls 0.6762 -> 0.6633;
+  it does not reveal new position-independent evidence. All 15 valid bins exceed
+  0.55 for no-RoPE and clean supervised probes, versus 14/15 for raw.
+- **Interpretation:** the fixed local-gain score has the wrong ordering and is
+  worse than its object-only control (0.4553 vs. 0.5236 within-bin). No-RoPE's
+  +0.0026 supervised change is statistically unresolved and below the 0.75
+  gate. Sink deletion causes a significant 0.0434 loss. The clean probe does
+  use some local information (0.6998 vs. 0.6873 object-only), but its paired CI
+  `[-0.0004, 0.0250]` includes zero and both are below raw.
+- **Decision:** both pre-registered gates fail. Close constructive attention
+  detection; do not tune head count, layer, local window, sink rule, signs, or
+  regularization on this result. Retain the 0.7431 no-RoPE conditional probe as
+  a supervised analysis ceiling only, not a new method.
+- **Artifacts (git-ignored):**
+  `experiments/position_free_detector/clean_per_head_features_shard{0..3}.npz`,
+  `iteration1_metrics.json`, and `iteration1_oof.npz`.

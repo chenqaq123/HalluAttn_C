@@ -73,15 +73,13 @@ not every attention method.
 > (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
 > adds yes-bias.
 
-The constructive work is now restricted to a **training-free detector audit**
-(see §3). The LVLM and its answer distribution remain unchanged. We first
-remove the explicit RoPE geometry from attention, delete detected sink patches,
-and preserve late-layer heads instead of averaging them. A grounded object
-should make at least a few heads change their visual distribution relative to
-nearby non-object tokens; a hallucinated mention should lack that local content
-gain. We test both a fixed label-free score and an external supervised linear
-probe trained only on position-matched differences. No detector result is yet a
-constructive claim.
+The completed **training-free detector audit** (§3) now gives a stronger
+negative boundary. Removing RoPE slightly reduces position correlation but does
+not improve a supervised probe beyond noise, sink deletion significantly harms
+it, and the fixed label-free local-gain score is below chance. The project
+therefore has no active constructive attention method. The two-pronged critique
+remains the paper spine while the next training-free direction is redesigned
+outside attention allocation.
 
 ## 2. Positioning vs. prior work
 
@@ -100,26 +98,24 @@ constructive claim.
 - The **mitigation-side critique** made measurable: the *related-present vs.
   plain-absent* FPR decomposition that exposes attention-amplification's
   answer-prior over-fitting — invisible in prior aggregate-POPE tables.
-- A feasibility test for **content-only, position-deconfounded detection**:
-  preserve late-layer per-head structure, remove RoPE and sink patches at the
-  score source, and compare the object row with nearby non-object rows. The
-  intended contribution exists only if this improves position-controlled
-  detection beyond IC and the existing raw-attention probe without modifying
-  the LVLM.
+- A controlled negative result for **content-only, position-deconfounded
+  attention detection**: preserving heads, removing RoPE, deleting sink
+  patches, and contrasting nearby rows does not beat IC or the same-run raw
+  per-head probe. This sharpens the critique but is not a constructive method.
 
-## 3. Constructive direction under test — Position-Free Detection Audit
+## 3. Completed constructive audit — Position-Free Detection Failed
 
-**Status after the 2026-07-20 correction:** XEV remains closed; TCS, NEA, EEA,
-and PCPA were all cancelled before their new-stage pilots began. PCPA violated
-the desired deployment constraint because it fine-tuned the LVLM. The project
-returns to detection before attempting another mitigation route.
+**Status after the 2026-07-20 full audit:** XEV remains closed; TCS, NEA, EEA,
+and PCPA were cancelled before their new-stage pilots. PCPA violated the desired
+deployment constraint because it fine-tuned the LVLM. The subsequent frozen-
+LVLM position-free attention detector failed both pre-registered gates, so this
+constructive route is also closed.
 
-The active question is deliberately empirical: after removing the explicit
-position prior at the attention source, can a fixed unsupervised score or a
-small external supervised classifier detect object hallucination well enough to
-justify a training-free method? The LVLM is frozen. The detector may read one
-ordinary teacher-forced forward over an already generated caption; it may not
-change generation, query another model, or use an external vision detector.
+The audit asked whether removing the explicit position prior at the attention
+source could support either a fixed unsupervised score or a small external
+supervised classifier. The LVLM stayed frozen and the detector only read one
+ordinary teacher-forced forward over each already generated caption. The answer
+is no under the locked design and controls below.
 
 ### 3.1 What "removing position" must mean
 
@@ -144,7 +140,7 @@ uses no hallucination labels. The supervised variant may fit a lightweight
 external probe, but must be named and reported separately rather than called an
 unsupervised training-free method.
 
-### 3.2 Clean per-head grounding gain
+### 3.2 Tested clean per-head grounding gain
 
 Let `q_t` be the generating row for an object mention and let `q_n` be up to
 eight nearest generated non-object rows within 16 tokens. At late decoder layer
@@ -222,12 +218,21 @@ boundary is provisional. If the unsupervised score does not beat IC or the
 supervised clean probe does not beat the raw layer-31 probe, this becomes a
 negative analysis rather than a method claim.
 
-### 3.5 First validation and kill criteria
+### 3.5 Full result and decision
 
-Iteration 1 first extracts raw, no-RoPE, and no-RoPE-plus-sink-clean per-head
-features at layers 22 and 31. It then evaluates the fixed unsupervised grounding
-gain and an image-grouped position-matched linear probe. Existing IC and raw
-layer-31 probe predictions are frozen baselines.
+Iteration 1 extracted raw, no-RoPE, and no-RoPE-plus-sink-clean per-head features
+at layers 22 and 31 for all 16,426 mentions, then evaluated the fixed
+unsupervised grounding gain and an image-grouped position-matched linear probe.
+
+| Detector | Overall | Within-bin | Matched | OOF residual |
+|---|---:|---:|---:|---:|
+| IC baseline | 0.7761 | 0.6856 | 0.7029 | 0.6334 |
+| unsupervised raw local | 0.3965 | 0.4646 | 0.4678 | 0.4765 |
+| unsupervised no-RoPE local | 0.4164 | 0.4632 | 0.4700 | 0.4820 |
+| unsupervised clean local | 0.3881 | 0.4553 | 0.4633 | 0.4766 |
+| supervised raw conditional probe | 0.8546 | 0.7405 | 0.7393 | 0.6762 |
+| supervised no-RoPE conditional probe | 0.8462 | **0.7431** | 0.7404 | 0.6633 |
+| supervised clean conditional probe | 0.8140 | 0.6998 | 0.7072 | 0.6491 |
 
 The unsupervised route advances only if it reaches at least `0.70` within-bin
 AUROC, exceeds IC by at least `0.01`, and improves both matched-pair and residual
@@ -236,9 +241,17 @@ at least `0.75` within-bin AUROC, beats the raw layer-31 probe by at least `0.02
 and does not obtain that gain from overall-position correlation. For either
 route, no-RoPE and sink cleaning must each have a positive matched ablation.
 
-Failure of both gates closes attention-based constructive detection. A result
-between the old baselines and these gates is useful analysis but not promoted as
-a new method. The full protocol is
+Both gates failed. No-RoPE minus raw is only +0.0026 within-bin and its paired
+95% interval crosses zero (`[-0.0102, 0.0174]`); residual AUROC decreases.
+Sink deletion is reliably harmful: clean minus no-RoPE is -0.0434 with interval
+`[-0.0574, -0.0302]`. The unsupervised local score loses even to its clean
+object-only ablation (0.4553 vs. 0.5236 within-bin), directly rejecting the
+local-grounding-gain hypothesis.
+
+Per the frozen rule, failure of both gates closes attention-based constructive
+detection. The no-RoPE probe is retained only as a supervised external ceiling:
+it is not unsupervised, does not meet the 0.75 gate, does not significantly beat
+raw attention, and overlaps existing per-head probe work. The full protocol is
 [position_free_detector_iteration_1.md](iteration_protocols/position_free_detector_iteration_1.md).
 
 ### 3.6 Rejected pre-experiment design — PCPA
