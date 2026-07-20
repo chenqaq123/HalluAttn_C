@@ -865,6 +865,20 @@ to 0.8115/0.8124 for no-deletion/sink-clean spatial fusion. Close this fixed
 top-10% 8-neighbor and low-key-norm sink formulation; do not add either
 component to the detector method.
 
+### 4.6 Registered pre/post temporal-row audit
+
+The full allocation representation mixes an anticipatory `pre` row, before the
+object's first subtoken enters the sequence, with a `post` row that has already
+consumed that subtoken. The earlier zero-at-mean intervention shows that the
+trained full readout relies more heavily on post, but it does not measure the
+best row-only detectors. The locked
+[temporal-row audit](iteration_protocols/no_rope_temporal_row_audit.md) therefore
+refits equal-dimensional 1,024-input pre-only and post-only No-RoPE mass probes
+under the same five folds, seed, conditional objective, and MLP. The existing
+2,048-input full probe is retained only to test whether the rows are
+complementary. This is explanatory and cannot convert a predictive temporal
+fingerprint into verification.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can

@@ -1585,3 +1585,20 @@ becoming a useful detector component.
 not sweep connectivity thresholds, morphology, sink rules, layers, heads, or
 position-specific routing on COCO. Retain pure no-RoPE allocation mass as the
 strong supervised fingerprint baseline, not as target verification.
+
+## 2026-07-20 — Pre-register No-RoPE pre/post row refits
+
+**Question:** The full 2,048-dimensional allocation probe and its functional
+row-zero interventions indicate post-row reliance, but do not reveal how strong
+separately optimized pre-only and post-only detectors are.
+
+**Locked comparison:** Refit 1,024-dimensional all-layer/all-head pre-only and
+post-only mass probes with identical folds, seeds, optimizer, conditional loss,
+and width-256 MLP. Refit the existing full representation in the same run as a
+reproduction and complementarity reference. Report every position bin, literal
+position-balanced metrics, and paired image-bootstrap intervals.
+
+**Interpretation guardrail:** Post dominance requires +0.020 and 8/14 stable-
+bin wins; full-row complementarity requires +0.010 over the stronger row. The
+audit distinguishes anticipatory from post-target predictive structure, but it
+cannot establish target-object verification or create a new detector claim.
