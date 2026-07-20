@@ -1256,3 +1256,24 @@ full-data thresholds in
 `docs/iteration_protocols/visual_value_evidence_iteration_1.md` before any VVE
 implementation or result inspection. A fused 0.85 within-bin AUROC is the
 advance gate; 0.90 is explicitly a stretch target.
+
+## 2026-07-20 — Implement VVE and pass the Stage-A numerical gate
+
+**Implementation:** Added pure PyTorch source-decomposition primitives, a frozen
+LLaVA all-layer extractor, an image-grouped conditionally balanced MLP evaluator,
+and unit tests. The extractor caches compact per-head visual mass, value norm,
+target dot/cosine, normalized target-logit gain, joint features, and decoder
+confidence at fixed pre/post rows for raw and no-RoPE branches. Existing closed
+attention code is unchanged.
+
+**Stage-A result:** The 16-image run retained 43 mentions with finite
+`(43,32,2,32,5)` per-head tensors. Forward logit error is 0, attention-output
+reconstruction error is `3.8147e-06`, per-head source-sum error is
+`2.8610e-06`, raw mass cache error is 0, and raw/no-RoPE maximum row difference
+is 0.9432. Four mathematical unit tests and the evaluator's end-to-end smoke
+paths pass.
+
+**Decision / next:** Stage A passes without method changes or outcome-based
+selection. Commit this implementation milestone, then run full sharded feature
+extraction and the locked five-fold OOF evaluation. Do not interpret the
+43-mention smoke metrics.

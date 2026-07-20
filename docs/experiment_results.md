@@ -1210,3 +1210,32 @@ is part of the rebuild backlog (was on `main`; to be re-derived here).
 - **Scope:** No new extraction was run and no hyperparameter was selected on
   these results. They motivate the next protocol; they do not reopen the closed
   attention-allocation route or supersede the locked iteration-1 result.
+
+### 2026-07-20 — Visual Value Evidence iteration 1, Stage-A smoke
+
+- **Setup:** Frozen LLaVA-1.5-7B, fp16 eager attention, Transformers 4.48.1;
+  first 16 images from the existing object cache. The extractor reads all 32
+  decoder layers at the pre-object and post-first-subtoken rows. It stores exact
+  raw and full-prefix pre-RoPE QK branches, while values, output projections,
+  residuals, final norm, and target unembedding directions remain fixed.
+- **Output:** 43/43 mentions were retained. Both per-head branches have shape
+  `(43, 32, 2, 32, 5)`, both joint branches have shape `(43, 32, 2, 5)`, and
+  confidence has shape `(43, 2, 5)`. Every cached value is finite. Target token
+  IDs are exactly `input_ids[token_pos+1]`; decoded examples include `table`,
+  `bott`, `wine`, `chair`, and `boat`, consistent with first-subtoken scoring.
+- **Numerical gates:** enabling hidden-state/attention outputs changes logits by
+  **0**. The maximum bias-free attention-output reconstruction error is
+  `3.8147e-06`; maximum per-head-to-joint source-sum error is `2.8610e-06`;
+  cached raw visual-mass error is **0**. Raw and no-RoPE branches are active and
+  non-identical (maximum attention-row difference `0.9432`). All gates are below
+  their locked tolerances.
+- **Evaluator runtime:** A two-fold, one-epoch CPU run on the smoke artifact
+  completed every label-free, evidence-only, confidence-only, fused, attention-
+  control, residualization, and output-serialization path. Its tiny-sample
+  metrics are not reported or interpreted; no position bin meets the full
+  evaluation's minimum sample contract.
+- **Decision:** Stage A passes. Proceed to full sharded extraction and the
+  pre-registered five-fold OOF evaluation without changing features, signs,
+  layer aggregation, model hyperparameters, or thresholds.
+- **Artifact (git-ignored):**
+  `experiments/visual_value_evidence/stage_a_smoke.npz`.

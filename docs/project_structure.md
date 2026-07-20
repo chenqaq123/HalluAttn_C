@@ -44,6 +44,8 @@ caches, and local tool settings.
 | `detection/scripts/analyze_position_effect.py` | position-confound diagnostic |
 | `detection/scripts/cache_per_head_rows.py` | per-head attention-shape cache |
 | `detection/scripts/diagnose_per_head.py` | supervised per-head diagnostic probe |
+| `detection/scripts/cache_visual_value_evidence.py` | cache all-layer source-decomposed visual value evidence |
+| `detection/scripts/evaluate_visual_value_evidence.py` | image-grouped, position-controlled VVE OOF evaluation |
 | `detection/scripts/legacy/` | retained for reproducing older full-attention runs |
 
 ### Detection Baselines
@@ -67,6 +69,7 @@ caches, and local tool settings.
 | `detection/src/sinkdetect/scoring.py` | score aggregation and AUROC utilities |
 | `detection/src/sinkdetect/sink_utils.py` | sink detection, top-mass masking, visual bounds |
 | `detection/src/sinkdetect/utils.py` | model loading, prompt, token masks |
+| `detection/src/sinkdetect/value_evidence.py` | visual value decomposition, target-logit evidence, confidence features |
 
 ### Mitigation
 

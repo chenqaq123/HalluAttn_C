@@ -95,6 +95,36 @@ Stage 2b derives raw, sink-only, top-mass-only, and purified score families
 from that cache, so changing `--ratio` or metric formulas does not require
 another VLM forward.
 
+## Visual Value Evidence
+
+The active detector reads the value content transported from visual tokens and
+projects it into the emitted object's logit direction. It does not modify model
+generation and does not save full hidden-state or attention tensors.
+
+```bash
+conda run --no-capture-output -n latentGuard \
+  python detection/scripts/cache_visual_value_evidence.py \
+  --model_path llava-hf/llava-1.5-7b-hf \
+  --coco_path /srv/common_dataset/coco-2014-dataset \
+  --layers all \
+  --device 0 \
+  --shard_idx 0 \
+  --num_shards 4 \
+  --out experiments/visual_value_evidence/features_shard0.npz
+
+conda run --no-capture-output -n latentGuard \
+  python detection/scripts/evaluate_visual_value_evidence.py \
+  --features_glob 'experiments/visual_value_evidence/features_shard*.npz' \
+  --device cuda:0 \
+  --output_json experiments/visual_value_evidence/iteration1_metrics.json \
+  --output_npz experiments/visual_value_evidence/iteration1_oof.npz
+```
+
+Run `--limit_images 16 --check_forward_identity` before full sharding. The
+extractor caches exact raw and full-prefix no-RoPE branches at the pre-object and
+post-first-subtoken rows. The evaluator fits all supervised components inside
+image-grouped folds and never supplies position or object identity to the probe.
+
 For sharded runs, launch `cache_attention_rows.py` with matching
 `--shard_idx/--num_shards`, then merge:
 
