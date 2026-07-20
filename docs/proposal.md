@@ -73,15 +73,15 @@ not every attention method.
 > (Prong 1) collapses to chance under length control; pushing it (Prong 2) only
 > adds yes-bias.
 
-The constructive answer is now being rebuilt as **Existential Evidence
-Aggregation** (EEA; see §3). The key correction is not another attention route
-or a second decoding distribution. Object existence is a set predicate:
-"there exists at least one visual element that matches the target." Softmax
-attention instead answers a compulsory relative-choice question -- which token
-should receive the available mass -- and therefore always produces a winner,
-even when every token is a poor absolute match. EEA learns unnormalized,
-target-patch compatibility and aggregates it with a smooth existential operator
-during training. The deployed model uses an ordinary single forward pass.
+The constructive answer is now being rebuilt as **Pair-Centered Preference
+Alignment** (PCPA; see §3). The key correction is to train on the failure mode
+itself: for one unchanged natural image, pair a genuinely visible object with a
+semantically related but absent object. The preferred joint outcome is
+`Yes(visible) + No(absent)` and the rejected outcome reverses both answers.
+Because each side contains one `Yes` and one `No`, a scene-level confidence
+change or global answer prior cannot satisfy the preference. A centering
+constraint additionally forbids the two answer margins from drifting together.
+The deployed model uses its ordinary answer distribution in one forward pass.
 
 ## 2. Positioning vs. prior work
 
@@ -100,27 +100,30 @@ during training. The deployed model uses an ordinary single forward pass.
 - The **mitigation-side critique** made measurable: the *related-present vs.
   plain-absent* FPR decomposition that exposes attention-amplification's
   answer-prior over-fitting — invisible in prior aggregate-POPE tables.
-- A constructive reframing from **relative allocation to absolute set
-  verification**: use a shared open-vocabulary patch matcher and a smooth
-  existential aggregation loss to teach the model that a related patch is not
-  target evidence merely because it wins a relative attention competition. The
-  intended contribution is the set-level evidence objective and its transfer to
-  unseen target categories, not multiple-instance learning or patch matching in
-  isolation.
+- A constructive reframing from **one-sided evidence amplification to
+  common-mode-free preference learning**: on the same image, jointly prefer a
+  visible target over a related absent target while constraining their average
+  answer-margin update to zero. The intended contribution is the matched
+  two-query preference unit and its held-out-category transfer, not DPO or hard
+  negative mining in isolation.
 
-## 3. Constructive direction under test — Existential Evidence Aggregation
+## 3. Constructive direction under test — Pair-Centered Preference Alignment
 
-**Status after the third 2026-07-19 outer-loop review:** XEV remains closed; TCS
-and NEA were both cancelled before implementation. NEA put a learned null branch
-in the same head as the visual branch, but its behavior still reduced to
-subtracting a learned absence-conditioned contribution from the ordinary
-answer. Recent work also occupies evidence-strength preference training, visual
-sensitivity, query-guided patch reinforcement, and visual-token logit injection.
-Changing the location of the subtraction is not a defensible method boundary.
-The active hypothesis is EEA. It is pre-registered only through a cheap
-frozen-feature mechanism gate; no mitigation claim exists yet.
+**Status after the 2026-07-20 route review:** XEV remains closed; TCS, NEA, and
+EEA were cancelled before their new-stage pilots began. EEA introduced an
+absolute patch-set score, but that moved the project toward a weakly supervised
+detector whose publishable advantage over MIL and patch-text matching depended
+on a fragile pooling ablation. It also did not directly optimize the observed
+failure: attention amplification moves both present and related-absent queries
+toward `Yes`.
 
-### 3.1 What the failures rule out
+The active hypothesis is **Pair-Centered Preference Alignment (PCPA)**. It uses
+the same natural image to form one visible-object query and one semantically
+related absent-object query, then aligns their joint answer preference while
+removing common-mode answer drift. The first training iteration is
+pre-registered; no mitigation claim exists yet.
+
+### 3.1 Design contract from the observed failure
 
 The new route must satisfy all of the following:
 
@@ -131,128 +134,164 @@ The new route must satisfy all of the following:
 - no external detector, SAM-style grounding decoder, or generated candidate
   inventory is present at inference;
 - no image/no-image, strong/weak-view, or clean/corrupted logit difference is
-  used at decoding time;
+  used at decoding or training time;
 - no visual-attention mass is amplified; the Prong-2 evidence predicts that
   amplification raises the yes-rate rather than verifying identity;
-- the added parameters are shared across target words, and both the mechanism
-  score and behavior change must transfer to categories never used as training
-  targets;
+- supervision must be answer-balanced inside every training unit, so a generic
+  `Yes` or `No` shift cannot improve its preference score;
+- the behavior change must transfer to target categories never queried during
+  training;
 - the final deployed model must use its ordinary answer distribution in one
-  forward pass. Any auxiliary evidence head is training-only.
+  forward pass, with no auxiliary head or candidate set.
 
-### 3.2 The operator mismatch: relative choice versus existential truth
+### 3.2 Same-image pair as the preference unit
 
-Let `t` be the queried object phrase and `v_i` the `N` visual patch states from a
-frozen Qwen3-VL layer before the answer is generated. A shared low-rank matcher
-produces **unnormalized** compatibility logits:
+For a natural image `I`, choose an annotated visible object `t+` and a
+semantically related object `t-` that is absent. Ask the same existence template
+twice:
 
-    u_t = normalize(W_t * embed(t))
-    u_i = normalize(W_v * RMS(v_i))
-    s_i(t, I) = <u_t, u_i> / tau_s + b(u_t).
+    q+ = "Is there a <t+> in the image?"
+    q- = "Is there a <t-> in the image?"
 
-`embed(t)` is formed from the input embeddings of the target phrase, before it
-has seen the image. The verifier therefore cannot hide the answer in an
-image-conditioned query state. There are no category-specific output weights.
+The preferred joint response is `y_w = (Yes to q+, No to q-)`; the rejected
+joint response is `y_l = (No to q+, Yes to q-)`. Define the ordinary answer
+margin
 
-Standard attention would normalize `s_i` over patches and retain only relative
-allocation. EEA instead preserves their absolute level and approximates the
-existential predicate with a resolution-stable smooth maximum:
+    m_theta(t, I) = log pi_theta(Yes | q_t, I)
+                    - log pi_theta(No | q_t, I),
 
-    E(t, I) = tau_e * logmeanexp_i(s_i(t, I) / tau_e).
+and freeze the corresponding reference-model margin `m_0`. The reference-
+centered pair improvement is
 
-Duplicating every patch leaves `E` unchanged. A present target can be certified
-by one high-match patch; an absent target requires every patch match to remain
-low. A toilet may be the best relative match for a queried sink while still
-failing the sink's absolute compatibility boundary. That is precisely the case
-that attention amplification cannot express.
+    Delta+ = m_theta(t+, I) - m_0(t+, I)
+    Delta- = m_theta(t-, I) - m_0(t-, I)
+    d_pair = Delta+ - Delta-.
 
-The first pilot trains the EEA head only as a diagnostic. If that mechanism gate
-passes, a second iteration may train a parameter-matched Qwen3-VL LoRA with
+The joint preference loss is
 
-    L_full = L_answer + lambda_set * BCE(E(t, I), y)
-             + lambda_agree * SmoothL1(m_answer, stopgrad(E(t, I))).
+    L_pair = -log sigmoid(beta * d_pair).
 
-The answer-only LoRA is the primary control. EEA is an auxiliary training
-objective, not a runtime score: the auxiliary matcher is removed for behavior
-evaluation, and `m_answer` comes from the ordinary model logits in one forward
-pass. Full EEA is useful only if the resulting ordinary model beats answer-only
-SFT and matched auxiliary-pooling controls on held-out categories.
+This is a true pairwise preference over two joint outcomes, not two independent
+binary labels. Expanding the joint log-probability ratio yields exactly
+`Delta+ - Delta-`: one `Yes` and one `No` occur on both sides, the pixels are
+identical, and only assignment of the answers to target identities differs.
+Scene confidence, image quality, and a constant answer-prior shift therefore
+cancel from the pair score.
 
-### 3.3 Natural-image supervision and open-vocabulary contract
+The Prong-2 result nevertheless warns that shared parameters can move both
+margins in the same direction while increasing their separation. PCPA explicitly
+penalizes that unidentifiable common mode:
 
-Use only natural COCO images and image-level annotations. For every target,
-construct balanced present, related-present-negative, and random-negative rows.
-Related negatives contain a high-NPMI semantic neighbor but not the target; they
-are the primary stress case rather than an after-the-fact diagnostic.
+    c_pair = (Delta+ + Delta-) / 2
+    L_center = c_pair^2.
 
-The normal question supplies `t`; no candidate inventory is generated. COCO-80
-is only the first source of image-level labels, not the output vocabulary. Sort
-categories by ID and reserve every fourth category as an unseen target. Neither
-the target-side matcher nor any tuning loss sees those 20 targets as labels.
-LVIS-on-COCO is considered only after this category-disjoint gate passes.
+A balanced sign anchor prevents a correctly ordered pair from retaining two
+positive or two negative absolute margins:
 
-This design is object-existence-specific in its first form. Attribute support
-would require conditioning the attribute match on an independently established
-entity region; it is not claimed by the object pilot.
+    L_anchor = softplus(gamma - m_theta(t+, I))
+             + softplus(gamma + m_theta(t-, I)).
+
+The active objective is
+
+    L_PCPA = L_pair + lambda_c * L_center + lambda_a * L_anchor.
+
+At inference there is no pair construction, reference model, margin correction,
+threshold, candidate inventory, or extra forward pass. Only the aligned
+Qwen3-VL model answers the user's original query.
+
+### 3.3 Natural-image pair construction and transfer contract
+
+Use only natural COCO images and image-level instance annotations. Compute
+positive NPMI between category-presence variables on train2017. For an absent
+target `t-`, choose the highest-NPMI annotated category in the same image as
+`t+`; require at least 50 corpus co-occurrences and never use boxes in training.
+The related present object is part of the supervised pair, not a patch proposal
+or an inference-time candidate.
+
+Sort COCO categories by ID and reserve every fourth category as an unseen query
+target. None of those 20 names may appear as `t+` or `t-` in training. Evaluate
+them in both present and related-absent queries; also evaluate same-image pairs
+whose absent target is held out. COCO-80 is the first controlled label source,
+not the method's output vocabulary. LVIS-on-COCO follows only if the
+category-disjoint COCO gate passes.
+
+The first form is deliberately object-existence-specific. The analogous
+attribute unit would hold the entity and image fixed while pairing one true and
+one false attribute, but no attribute claim is made by the object pilot.
 
 ### 3.4 Novelty boundary from the refreshed literature
 
-- **Multiple-instance learning and weakly supervised localization** already
-  model an image as a bag of patches under image-level presence labels. EEA does
-  not claim MIL, smooth-max pooling, or patch-text matching individually.
-- **OPPO (2026)** contrasts stronger, anchored, and weaker visual views and
-  proves a lower bound on local visual sensitivity. EEA has one natural image,
-  no evidence-strength ordering, no DPO objective, and no decoding contrast.
-- **Same Attention, Different Truths (CVPR 2026)** decodes high-attention visual
-  states with a logit lens, then masks or injects visual-token logits at
-  inference. EEA never chooses a patch by attention and removes its auxiliary
-  head at inference.
-- **CausalLens, PADE/AIR, TSR-MLLM, and Q-Zoom** identify and reinforce
-  query-relevant patches. They remain selection/allocation methods; EEA tests
-  whether the best absolute patch match clears an existence boundary and never
-  reinforces the selected patch.
-- **LPFV self-validation** verifies objects from sampled captions and selects or
-  aggregates candidate captions. EEA uses no sampled caption, candidate
-  inventory, or second model query.
-- **Slot-MLLM** changes visual tokenization to object-centric slots. EEA keeps
-  native tokens and asks only whether a shared set operator can expose
-  transferable target evidence.
-- Box/mask-grounding methods and external visual verifiers remain valid positive
-  controls, but they use supervision or perception modules excluded here.
+- **Standard multimodal DPO, HALVA/HA-DPO, and CHAIR-DPO** already prefer a
+  faithful answer over a hallucinated answer. PCPA does not claim response
+  preference optimization itself.
+- **FINER-Tuning (CVPR 2026)** is the closest data-level neighbor: it applies DPO
+  to fine-grained negative queries where erroneous and genuinely present
+  elements co-occur. Therefore semantic hard negatives and same-image
+  co-occurrence are not the novelty.
+- **mDPO** shows that ordinary multimodal DPO can ignore the image and adds an
+  image-preference objective plus a chosen-reward anchor. PCPA instead leaves
+  the image unchanged, contrasts two target assignments, and directly measures
+  whether the learned pair advantage survives image removal and swapping.
+- **OPPO (2026)** orders one correct answer under attention-warped strong,
+  original, and degraded weak views. PCPA makes no strong-view assumption and
+  never edits or ranks images; it orders target-answer assignments on one view.
+- **DCD** identifies likelihood displacement and utility loss in pairwise
+  alignment. PCPA's balanced absolute anchor and common-mode audit address the
+  binary answer-prior failure, but general-capability preservation remains an
+  empirical requirement.
 
-The narrow intended novelty is therefore **an absolute, open-vocabulary
-patch-set existence objective that distills into the ordinary LVLM forward**.
-If smooth existential pooling does not beat relative softmax pooling, a global
-visual pool, and answer-only SFT on unseen targets, the claim fails.
+The narrow intended novelty is therefore **a same-image, two-query joint
+preference whose common answer mode is explicitly constrained**. It should
+force target identity discrimination rather than global `Yes` suppression or
+amplification. This is a working novelty boundary, not a priority claim: if
+ordinary per-query DPO or balanced answer-only tuning matches PCPA, the method
+claim fails.
 
 ### 3.5 First validation and kill criteria
 
-Iteration 0 is deliberately diagnostic. Freeze Qwen3-VL, cache native visual
-states, and fit the same shared matcher with four aggregators: EEA smooth max,
-softmax-weighted average, global mean pooling, and top-attention-patch pooling.
-Evaluate once on 20 unseen COCO targets. In addition to image swapping, use a
-**same-image target swap**: pair one present object with one related absent
-object in the same image and require the evidence ordering to flip while the
-patch set is unchanged.
+Iteration 1 is an end-to-end Qwen3-VL LoRA pilot, not an auxiliary-probe gate.
+Use one frozen set of natural-image pairs and identical trainable parameters for
+six arms: frozen base, balanced answer-only tuning, ordinary per-query DPO,
+anchor-matched per-query DPO, joint-pair preference without centering, and full
+PCPA. The no-centering arm is the decisive method ablation.
 
-The route advances to LoRA only if EEA:
+Evaluate once on the 20 unseen COCO targets, a same-image held-out pair set, and
+POPE-popular. POPE-random remains untouched confirmation data;
+POPE-adversarial is exhausted. Report related-absent FPR, TPR, balanced
+accuracy, MCC, yes-rate, pair accuracy, per-category dispersion, and the mean
+common/separation margin updates. Remove or swap images as destructive controls
+without retraining.
 
-1. reaches at least 0.75 category-macro AUROC on present versus related absent;
-2. exceeds every relative/global pooling control by at least 0.05 AUROC with a
-   paired bootstrap interval above zero;
-3. reaches at least 0.65 accuracy on the same-image target-swap ordering and
-   loses at least 0.15 AUROC when images are swapped across labels;
-4. leaves no more than five of twenty held-out targets below 0.60 AUROC.
+PCPA advances only if it:
 
-If Stage A passes, pre-register a separate training iteration with answer-only
-LoRA, EEA-LoRA, and parameter-matched auxiliary controls. POPE-popular is the
-development behavior task; POPE-random or MME existence stays untouched.
-POPE-adversarial is exhausted. No answer threshold may be fit on evaluation
-data. A behavior method advances only with lower related-present FPR, at most
-0.5 TPR-point loss, higher MCC and balanced accuracy, bounded yes-rate change,
-and at least ten net corrected baseline errors.
+1. beats both answer-only tuning and ordinary per-query DPO by at least 0.03
+   held-out same-image pair accuracy, with an image-grouped paired-bootstrap
+   interval above zero;
+2. lowers held-out related-absent FPR by at least 0.03 versus the frozen model
+   while losing at most 0.005 TPR, and increases both MCC and balanced accuracy;
+3. makes at least ten net corrections on POPE-popular, increases MCC and
+   balanced accuracy, and changes aggregate yes-rate by at most 0.01;
+4. keeps absolute mean common-mode update below 10% of the mean separation
+   update and materially violates this bound when `L_center` is ablated;
+5. loses at least half of its pair-accuracy gain when images are removed or
+   counterlabel-swapped, showing that language-only category relations do not
+   explain the result.
 
-### 3.6 Rejected pre-experiment design — NEA
+Failure closes PCPA without tuning pair definitions, answer thresholds, or the
+held-out category split. The complete frozen protocol is
+[pcpa_iteration_1.md](iteration_protocols/pcpa_iteration_1.md).
+
+### 3.6 Rejected pre-experiment design — EEA
+
+Existential Evidence Aggregation proposed an unnormalized target-patch matcher
+with log-mean-exp set pooling. It was cancelled before its frozen-feature pilot.
+Although it avoided attention and contrastive decoding, it introduced a
+training-time detector and made the claim depend on smooth pooling beating
+established MIL, global-pooling, and patch-text controls. More importantly, it
+did not directly prevent the common `Yes` shift measured in Prong 2. Its
+pre-registered protocol is retained as a historical design record.
+
+### 3.7 Rejected pre-experiment design — NEA
 
 Null-Evidence Attention proposed a learned null key/value inside selected
 visual-attention heads while preserving the original visual mass. It was
@@ -264,7 +303,7 @@ art, and the learned null value can become an unconstrained answer-steering
 direction. The retained protocol documents the rejected design; it must not be
 implemented as the active method.
 
-### 3.7 Rejected pre-experiment design — TCS
+### 3.8 Rejected pre-experiment design — TCS
 
 Target-Causal Selectivity proposed target-removal sensitivity and neighbor-
 removal invariance using inpainted triples. It was cancelled before Stage A for
@@ -276,7 +315,7 @@ uses target removal and VISE/VES-RFT occupy nearby perturbation/sensitivity
 training. The design remains documented in its protocol and literature memo but
 must not be implemented as the active method.
 
-### 3.8 Closed route evidence — XEV
+### 3.9 Closed route evidence — XEV
 
 Everything below this heading is the preserved design/failure trace and is
 superseded by §§3.1--3.5. Terms such as "current" and "next" describe the state
@@ -597,7 +636,7 @@ spatial evidence alone has reached its limit on this benchmark.
 
 ## 4. Contribution framing (intended)
 
-Frame as an **analysis + set-verification training** paper, conditional on the
+Frame as an **analysis + pairwise-alignment** paper, conditional on the
 new method passing confirmation:
 
 1. The **two-pronged critique** — attention-based detection and mitigation both
@@ -605,12 +644,12 @@ new method passing confirmation:
    related-vs-plain control for mitigation).
 2. A controlled **semantic-neighbor / alternative-confusion** view that makes the
    mitigation failure measurable.
-3. A constructive **Existential Evidence Aggregation** objective: preserve
-   absolute target-patch compatibility, aggregate the visual tokens as a set,
-   and distill that objective into an ordinary single-forward LVLM. Promote it
-   only if the frozen mechanism transfers across unseen categories, beats
-   relative/global pooling, and EEA-LoRA later beats answer-only SFT on an
-   untouched benchmark without yes/no prior collapse.
+3. A constructive **Pair-Centered Preference Alignment** objective: jointly
+   prefer a visible object and reject a related absent object on the exact same
+   image, while constraining their common answer-margin update. Promote it only
+   if it transfers to unseen targets, beats balanced answer-only tuning and
+   ordinary per-query DPO, depends on the image, and improves an untouched
+   benchmark without yes/no prior collapse.
 
 Honest guardrails carried over from the tear-down:
 - Prong 1 is pre-empted by HaloProbe → background only.
@@ -627,23 +666,24 @@ Honest guardrails carried over from the tear-down:
   four-view objective. Its protocol is historical, not pending work.
 - **NEA is cancelled:** do not implement null keys/values or run its Stage A.
   The retained protocol is historical, not pending work.
-- **Detector relabeling risk:** EEA is structurally an internal open-vocabulary
-  patch verifier. Do not claim novelty for MIL or matching; the claim survives
-  only if the set operator beats relative/global pooling and its training loss
-  improves the ordinary model beyond answer-only SFT.
-- **Target/query shortcut:** form the target representation from pre-decoder
-  input embeddings, balance labels within category, and require same-image
-  present-versus-related-target swaps. Do not use an image-conditioned answer
-  state as the target embedding in iteration 0.
-- **Absolute-score calibration:** train one shared matcher and one shared
-  target-conditioned bias; no per-category thresholds or held-out calibration.
-  Patch duplication must leave the log-mean-exp score unchanged.
+- **EEA is cancelled:** do not train the patch matcher or run its Stage A. The
+  retained protocol is historical, not pending work.
+- **Generic-DPO risk:** semantic negatives, faithful-over-hallucinated response
+  pairs, and DPO are established. The claim survives only if the two-query joint
+  unit and centering term beat ordinary per-query DPO and the no-centering arm.
+- **Language-only shortcut:** balance `Yes`/`No` within every pair, hold out
+  queried categories, and require pair gains to collapse under image removal and
+  counterlabel image swapping.
+- **Relative-only failure:** report absolute positive and negative margins. Pair
+  ordering alone is insufficient if both queries still answer `Yes` or both
+  answer `No`; the balanced sign anchor is mandatory.
+- **Common-mode failure:** report `Delta+`, `Delta-`, separation, and their mean.
+  Do not accept a result driven by global `Yes` suppression or amplification.
 - **Vocabulary transfer:** train/evaluate with category-disjoint target splits.
-  COCO-only gains cannot support an open-vocabulary claim; LVIS expansion follows
-  only after the 20-category held-out EEA gate succeeds.
-- **Compute:** begin with cached frozen visual states and train the shared EEA
-  head offline. Do not start LoRA until the smooth-max mechanism beats every
-  pre-registered pooling control on unseen targets.
+  COCO-only gains cannot support an open-vocabulary claim; LVIS expansion
+  follows only after the 20-category held-out PCPA gate succeeds.
+- **Compute:** begin with one Qwen3-VL LoRA seed and short matched arms. Do not
+  scale data, rank, or models until the registered objective comparison passes.
 - **Prong 2 generality:** current evidence is ClearSight/VisAttnSink/PAI/VCD on
   LLaVA-1.5. Extend the yes-rate / related-FPR decomposition to more mitigation
   baselines (OPERA/DAMRO/M3ID) and ≥1 modern model (Qwen-VL / InternVL).
@@ -658,8 +698,10 @@ Honest guardrails carried over from the tear-down:
 - Reproduced baseline results: [experiment_results.md](experiment_results.md).
 - Decision history: [iteration_log.md](iteration_log.md).
 - Current route audit:
-  [2026-07-19_existential_evidence_redesign.md](../literature/2026-07-19_existential_evidence_redesign.md).
-- Pre-registered EEA mechanism pilot:
+  [2026-07-20_pair_centered_preference_redesign.md](../literature/2026-07-20_pair_centered_preference_redesign.md).
+- Pre-registered PCPA training pilot:
+  [pcpa_iteration_1.md](iteration_protocols/pcpa_iteration_1.md).
+- Rejected EEA design record:
   [eea_iteration_0.md](iteration_protocols/eea_iteration_0.md).
 - Rejected NEA design record:
   [nea_iteration_1.md](iteration_protocols/nea_iteration_1.md).

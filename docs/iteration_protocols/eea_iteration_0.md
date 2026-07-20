@@ -1,7 +1,11 @@
 # EEA Iteration 0 Protocol: Absolute Set Evidence Before Tuning
 
 Date: 2026-07-19
-Status: pre-registered; not started
+Status: cancelled before start on 2026-07-20; retained as a historical record
+
+> Superseded by Pair-Centered Preference Alignment. No EEA feature caching,
+> matcher training, or model evaluation was run. The active protocol is
+> [pcpa_iteration_1.md](pcpa_iteration_1.md).
 
 ## Question
 

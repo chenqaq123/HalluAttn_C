@@ -1076,3 +1076,41 @@ object and one related absent object. EEA must reach 0.75 macro AUROC, beat ever
 matched pooling control by 0.05, pass the same-image ordering test, and lose
 signal under image/patch swaps. Failure closes the route before LoRA. No new
 experimental result was produced in this design iteration.
+
+## 2026-07-20 — EEA cancelled; pair-centered preference alignment pre-registered
+
+**Design rejection:** Cancelled EEA before feature caching or matcher training.
+Although its absolute patch-set score avoided attention amplification and
+contrastive decoding, the method became a weakly supervised detector whose
+claim depended on smooth existential pooling beating established MIL and
+patch-text controls. It also did not directly constrain the empirical Prong-2
+failure: both present and related-absent answer margins can move toward `Yes`.
+
+**Literature refresh:** Ordinary faithful-versus-hallucinated DPO is established
+by multimodal preference methods including HA-DPO/HALVA and CHAIR-DPO. FINER is
+the closest data-level overlap: it trains with fine-grained negative queries
+whose mismatched and genuinely present elements co-occur. mDPO already diagnoses
+image-ignoring preference learning and adds image preference plus reward
+anchoring. OPPO orders one faithful answer over strong/original/weak image views.
+Therefore neither DPO, semantic hard negatives, same-image co-occurrence,
+anchoring, nor evidence-strength ordering is claimed as new. The boundary audit
+is in `literature/2026-07-20_pair_centered_preference_redesign.md`.
+
+**New hypothesis:** Pre-register Pair-Centered Preference Alignment (PCPA). One
+unchanged natural image supplies a visible target `t+` and a related absent
+target `t-`. The preferred joint outcome is `Yes(t+) + No(t-)`; the rejected
+outcome flips both assignments. Both sides contain one `Yes` and one `No`, so a
+global answer-prior shift cancels from the pair score. A reference-relative
+centering penalty constrains the average of the two margin updates to zero, and
+a balanced sign anchor prevents a correctly ranked pair from retaining two
+positive or two negative margins. Inference remains one ordinary Qwen3-VL pass.
+
+**Gate:** `docs/iteration_protocols/pcpa_iteration_1.md` compares frozen base,
+balanced answer SFT, independent DPO, anchor-matched independent DPO, joint
+preference without centering, and full PCPA under identical LoRA capacity. The
+method must beat SFT and ordinary DPO on 20 unseen target categories, lower
+related-absent FPR without TPR or yes-rate collapse, improve POPE-popular by at
+least ten net corrections, exhibit near-zero common-mode update, and lose at
+least half its gain when images are removed or permuted. POPE-random remains
+untouched confirmation data and POPE-adversarial remains exhausted. No new
+experimental result was produced in this design iteration.
