@@ -1712,3 +1712,99 @@ holdout. Only after this passes should a probe-before-commit decoder be built.
 The detector-only first action is selective rollback/abstention; any corrective
 replacement requires an independently positive visual-support certificate and
 must never interpret missing support as proof of absence.
+
+## 2026-07-21 — Design probe-before-commit selective decoding
+
+**Working method:** Probe-before-Commit Selective Decoding (PCSD). The method
+separates sensing from action. The frozen supervised post-only No-RoPE mass
+probe estimates whether a tentative object mention is risky; it never supplies
+an attention/head correction direction and is not described as target-object
+verification. The LVLM remains frozen. This is LVLM-training-free inference
+with a supervised external probe, not a label-free method.
+
+**Deployment interface:** Decode a candidate noun phrase into a temporary KV
+branch before exposing it as committed output. After the first object subtoken
+has entered the temporary branch, read the same post-row feature used by the
+detector. A low-risk phrase commits normally. A high-risk phrase discards the
+temporary KV state and invokes one discrete action. This speculative execution
+turns a post-target signal into a pre-commit decision without changing the
+ordinary model's attention, hidden states, or next-token distribution.
+
+**Action hierarchy:**
+
+1. The first usable variant permits only one rollback followed by clause
+   termination, EOS, or a noun-free continuation. It is selective abstention,
+   not object correction.
+2. A later replacement variant may construct open-vocabulary noun-phrase
+   branches from the model's native top-K continuations. It may not be limited
+   to COCO categories.
+3. The detector can trigger replacement search but cannot identify the true
+   replacement. A candidate may be committed only with an independently
+   positive visual-support certificate and a bounded native-likelihood loss.
+   Missing visual support is never treated as evidence of absence. If no
+   candidate has positive support, abstain instead of forcing an alternative.
+
+The replacement feasible set is conceptually
+
+    F = {c: support(c) >= eta,
+            logP(c | image, prefix) >= logP(original) - epsilon}.
+
+Choose the highest-native-likelihood member of `F`; do not optimize a weighted
+sum of model logits and detector risk. In particular, reject continuous rules
+of the form `logit - lambda * risk`, probe-gradient head suppression, visual-
+mass amplification, and repeated free-form self-refinement.
+
+**Iteration 0: same-prefix actionability audit.** Before any output-changing
+code, create paired branches that share image, prefix, syntactic object slot,
+and generation position. One candidate is a present object and the other is a
+semantically related absent object. Teacher-force each candidate only far
+enough to read its post feature and measure
+
+    A_pair = P(risk(absent) > risk(present)).
+
+Use image-grouped folds and an object-category-held-out evaluation. Candidate
+construction and relation matching are train/dev only. Mandatory controls are
+pre-only mass, full mass, native token likelihood, IC, HaloProbe-style scores,
+a token/category-only classifier, image permutation, and random related
+candidates. The pre row is the strongest structural negative control because
+it is identical for candidates branching from the same prefix.
+
+**Advance gate:** Require paired AUROC at least 0.70 overall and 0.65 on held-
+out object categories, a nonzero image-bootstrap interval over native
+likelihood and token/category-only controls, and no material dependence on
+generation position. If this fails, close detector-guided replacement. The
+detector may still support calibrated abstention or routing, but not correction.
+
+**Iteration 1: selective rollback pilot.** Only after Iteration 0 passes, run
+the detector-only single-rollback variant on a disjoint captioning split. Freeze
+the trigger threshold on calibration images. A useful operating point must
+retain a sparse action rate and be compared with vanilla decoding, action-rate-
+matched random rollback, IC-triggered rollback, native-low-confidence rollback,
+always-stop-at-the-same-position, and ordinary beam/top-K regeneration.
+
+Report CHAIRi/CHAIRs, grounded-object recall/coverage, SPICE/CIDEr, caption
+length, noun count, action count, correction precision, grounded-mention
+rollback rate, net corrections, and added forward passes. Report each metric by
+generation-position bin and by related-present versus plain-absent errors. The
+pilot advances only if correction precision is at least 2/3, hallucinated
+mentions removed outnumber grounded mentions removed by at least 2:1, grounded-
+object recall drops by at most one absolute point, and SPICE does not decrease.
+
+**Task boundary:** Start on CHAIR caption generation. The current detector reads
+generated object mentions, whereas POPE places the queried object in the prompt
+and generates only Yes/No. Applying this detector directly to POPE would change
+the detection interface and is not a valid first intervention evaluation.
+
+**Novelty boundary:** Rollback itself is occupied by OPERA; probe-gradient head
+intervention is occupied by VIB-Probe; external grounding plus iterative
+self-refinement is occupied by Kestrel; and continuous altered-view logit
+contrast is occupied by VCD/SECOND-style decoding. The provisional contribution
+is therefore the conjunction of a position-controlled post-object risk probe,
+speculative pre-commit execution, sparse object-local discrete action, and an
+asymmetric positive-evidence rule. External grounding or candidate generation
+alone is not claimed as novel.
+
+**Current status:** Design recorded, not pre-registered and not adopted into the
+proposal. The next concrete work item is Iteration 0 only. Do not implement the
+rollback decoder, add an external grounder, or tune an intervention threshold
+until the same-prefix actionability gate has been frozen and evaluated.
