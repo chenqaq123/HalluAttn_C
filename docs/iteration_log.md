@@ -1657,3 +1657,30 @@ three non-finite rows; all other selected scores are complete. Fix TVER's three
 values to its unlabeled global finite median so every detector retains exactly
 the same sampled rows. Record the count and fill value; do not perform
 detector-specific row deletion or label/position-conditioned imputation.
+
+## 2026-07-21 — Complete balanced prior-detector comparison
+
+**Protocol correction:** The earlier amendment counted three non-finite entries
+across the full 32-layer TVER tensor. The selected layer-0 column contains only
+one; that value was replaced by the unlabeled layer-0 finite median
+(`0.6399639845`). No detector-specific row was removed and the protocol's
+substantive handling is unchanged.
+
+**Result:** On the exact same 1,000 position-balanced draws, label-free PAS,
+SVAR, IC, TVER, and selected-layer SAE reach 0.5228, 0.5600, 0.6996, 0.5034,
+and 0.5763 AUROC. The local supervised HaloProbe-style probe reaches 0.7439.
+No-RoPE mass remains stronger: 0.7913 pre, 0.8426 post, and 0.8373 full. Post
+is the best detector in 12/15 bins; full leads in three, with two differences
+below 0.006.
+
+**Provenance decision:** Exclude ADS+CGC from the per-bin table. Its exact OOF
+scores were not retained, and a current reconstruction gives 0.8659/0.7177
+overall/within-bin instead of the locked 0.8661/0.7185. The within-bin drift
+exceeds the 0.0005 preregistered acceptance tolerance. Reporting reconstructed
+bins as the prior reproduction would be misleading.
+
+**Conclusion:** Position balancing exposes PAS and TVER as largely positional
+proxies and leaves IC as the strongest label-free baseline. The supervised
+post-only all-layer/all-head mass fingerprint is robustly strongest, but it
+must remain framed as a diagnostic probe of post-target reorganization rather
+than an unsupervised hallucination score or object-verification mechanism.

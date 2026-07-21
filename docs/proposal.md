@@ -903,6 +903,20 @@ pre/post/full mass table. All methods share the same 1,000 draws inside each
 10-token bin. The comparison reports AUROC only across methods because the
 label-free scores do not share a calibrated zero threshold.
 
+**Outcome.** Literal position balancing reverses the apparent ranking of the
+prior attention scores. PAS and TVER fall from natural-distribution overall
+AUROCs of 0.8349/0.8303 to 0.5228/0.5034, while IC is the strongest label-free
+baseline at 0.6996. The supervised local HaloProbe-style reproduction reaches
+0.7439. No-RoPE mass gives 0.7913 pre, 0.8426 post, and 0.8373 full; post is the
+highest column in 12/15 position bins, with full leading in the other three
+(twice by less than 0.006). Thus the post-target allocation fingerprint remains
+strongest under an identical sampling distribution, but this is a supervised
+diagnostic result, not a label-free detector. ADS+CGC is omitted from the
+per-bin table because
+its original OOF scores were not retained and the current reconstruction misses
+the locked aggregate-reproduction tolerance; inserting reconstructed bins would
+violate the protocol.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can

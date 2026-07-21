@@ -2,7 +2,7 @@
 
 **Date registered:** 2026-07-21  
 **Backbone/data:** frozen LLaVA-1.5-7B, 16,426 COCO/CHAIR mentions  
-**Status:** registered before computing the new per-bin comparison table
+**Status:** completed under the frozen protocol
 
 ## 1. Purpose
 
@@ -46,8 +46,10 @@ for label-free scores because their raw scales have no common calibrated
 threshold. This is a descriptive baseline table, not a method-selection gate.
 
 **Pre-result missing-value amendment.** The alignment pass found three
-non-finite TVER values among 16,426 cached rows; every other selected detector is
-complete. Replace only those three values with TVER's global finite median,
-computed without labels, and record the count/value in the artifact. This keeps
-the selected rows identical for every detector. Do not drop detector-specific
-rows or use position/label-conditioned imputation.
+non-finite entries in the complete 32-layer TVER tensor. The frozen layer-0
+score used here contains one of them among 16,426 rows; every other selected
+detector is complete. Replace only that selected layer-0 value with TVER's
+global layer-0 finite median, computed without labels, and record the
+count/value in the artifact. This keeps the selected rows identical for every
+detector. Do not drop detector-specific rows or use position/label-conditioned
+imputation.

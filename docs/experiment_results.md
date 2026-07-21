@@ -1761,3 +1761,89 @@ the 1,000 literal position-balanced draws:
 - **Artifacts (git-ignored):**
   `experiments/spatial_allocation/temporal_row_metrics.json` and
   `temporal_row_oof.npz`.
+
+### 2026-07-21 — Same-draw position-balanced comparison with prior detectors
+
+- **Setup:** Aligned PAS, faithful SVAR, IC, faithful TVER layer 0, the
+  previously selected Mask2Former SAE layer 10, the local HaloProbe-style
+  attention-plus-confidence OOF probe, and No-RoPE pre/post/full mass to the
+  same 16,426 COCO/CHAIR mentions. Every method uses the exact same 1,000
+  seed-1701 1:1 draws inside each 10-token position bin. Each draw contains
+  3,536 grounded and 3,536 hallucinated mentions.
+- **Score provenance:** All retained columns reproduce their prior natural-
+  distribution aggregates. The selected TVER layer-0 vector has one non-finite
+  row (the full 32-layer tensor has three); it is replaced by the unlabeled
+  layer-0 finite median, `0.6399639845`. No row is dropped.
+- **ADS+CGC exclusion:** The prior experiment retained only its aggregate
+  metrics, not exact OOF scores. Reconstructing with the current environment
+  gives overall/within-bin 0.8659/0.7177 versus the locked 0.8661/0.7185. The
+  within-bin drift, about 0.0008, exceeds the 0.0005 reproduction tolerance, so
+  ADS+CGC is not assigned a per-bin column. This is an artifact-provenance
+  failure, not evidence about its relative performance.
+
+| Detector | Supervision | Natural overall | Natural within-bin | Position-balanced AUROC |
+|---|---|---:|---:|---:|
+| PAS (L0) | label-free | 0.8349 | 0.5928 | 0.5228 |
+| SVAR (L5--18) | label-free | 0.8053 | 0.5678 | 0.5600 |
+| IC | label-free | 0.7761 | 0.6856 | **0.6996** |
+| TVER (L0) | label-free | 0.8303 | 0.5656 | 0.5034 |
+| Mask2Former SAE (selected L10) | label-free | 0.7833 | 0.5747 | 0.5763 |
+| HaloProbe-style attention + confidence | supervised OOF | 0.8561 | 0.7988 | 0.7439 |
+| No-RoPE mass pre | supervised OOF | 0.8773 | 0.8425 | 0.7913 |
+| No-RoPE mass post | supervised OOF | **0.9099** | **0.8859** | **0.8426** |
+| No-RoPE mass full | supervised OOF | 0.9053 | 0.8812 | 0.8373 |
+
+The following tables report the mean AUROC in each of the 1,000 shared draws.
+`n/class` is the number sampled from each label in that position bin.
+
+| Position | n/class | PAS | SVAR | IC | TVER | SAE |
+|---|---:|---:|---:|---:|---:|---:|
+| 0--9 | 100 | 0.6234 | 0.5353 | 0.5997 | **0.6424** | 0.5538 |
+| 10--19 | 158 | 0.5694 | 0.5920 | **0.7594** | 0.5648 | 0.5561 |
+| 20--29 | 145 | 0.5934 | 0.6210 | **0.7286** | 0.5431 | 0.5780 |
+| 30--39 | 215 | 0.5687 | 0.5722 | **0.7004** | 0.4997 | 0.5936 |
+| 40--49 | 215 | 0.5775 | 0.5499 | **0.7300** | 0.5579 | 0.5907 |
+| 50--59 | 312 | 0.5588 | 0.5599 | **0.7108** | 0.5725 | 0.5574 |
+| 60--69 | 428 | 0.5763 | 0.5717 | **0.6921** | 0.5106 | 0.5917 |
+| 70--79 | 559 | 0.6065 | 0.6010 | **0.7315** | 0.5523 | 0.6168 |
+| 80--89 | 500 | 0.5890 | 0.5360 | **0.6968** | 0.5071 | 0.5857 |
+| 90--99 | 362 | 0.5972 | 0.5823 | **0.7053** | 0.5168 | 0.5741 |
+| 100--109 | 250 | 0.5943 | 0.5807 | **0.7007** | 0.5027 | 0.6075 |
+| 110--119 | 151 | 0.5941 | 0.5709 | **0.6775** | 0.4674 | 0.6174 |
+| 120--129 | 87 | 0.5863 | **0.6815** | 0.6765 | 0.5423 | 0.6516 |
+| 130--139 | 35 | 0.5643 | 0.5964 | **0.6606** | 0.5605 | 0.5718 |
+| 140--149 | 19 | 0.4768 | 0.4235 | **0.6413** | 0.3314 | 0.5165 |
+
+| Position | n/class | HaloProbe-style | Mass pre | Mass post | Mass full |
+|---|---:|---:|---:|---:|---:|
+| 0--9 | 100 | 0.8748 | 0.9104 | **0.9462** | 0.9404 |
+| 10--19 | 158 | 0.8561 | 0.9027 | **0.9196** | 0.9161 |
+| 20--29 | 145 | 0.7715 | 0.8298 | **0.8895** | 0.8730 |
+| 30--39 | 215 | 0.7393 | 0.7935 | **0.8448** | 0.8364 |
+| 40--49 | 215 | 0.7749 | 0.8285 | 0.8760 | **0.8761** |
+| 50--59 | 312 | 0.7421 | 0.8101 | 0.8540 | **0.8597** |
+| 60--69 | 428 | 0.7830 | 0.8048 | **0.8565** | 0.8543 |
+| 70--79 | 559 | 0.7611 | 0.7976 | **0.8448** | 0.8429 |
+| 80--89 | 500 | 0.7454 | 0.7701 | **0.8252** | 0.8225 |
+| 90--99 | 362 | 0.7210 | 0.7726 | **0.8386** | 0.8293 |
+| 100--109 | 250 | 0.6810 | 0.7506 | **0.8227** | 0.8150 |
+| 110--119 | 151 | 0.6781 | 0.7405 | **0.8021** | 0.8013 |
+| 120--129 | 87 | 0.6931 | 0.7711 | 0.7648 | **0.7832** |
+| 130--139 | 35 | 0.6553 | 0.6062 | **0.8225** | 0.7900 |
+| 140--149 | 19 | 0.6215 | 0.5739 | **0.6728** | 0.6236 |
+
+- **Tail uncertainty:** The final two bins contain only 35 and 19 examples per
+  class. For post/full, their resampling intervals are `[0.7771, 0.8718]` /
+  `[0.7322, 0.8522]` at 130--139 and `[0.6011, 0.7452]` /
+  `[0.5512, 0.7008]` at 140--149. Their ordering should not be overread.
+- **Interpretation:** PAS and TVER look strong only before literal position
+  balancing; they fall to 0.5228 and 0.5034. IC is the strongest retained
+  label-free score at 0.6996 but remains well below every No-RoPE mass probe.
+  HaloProbe-style reaches 0.7439, also below pre-only mass at 0.7913. Post is
+  the best column in 12/15 bins; full wins the remaining three, twice by tiny
+  margins. This strengthens the result that the useful supervised fingerprint
+  is a distributed post-target allocation pattern. It does not turn mass into
+  an unsupervised detector or establish target-object verification.
+- **Artifacts (git-ignored):**
+  `experiments/spatial_allocation/position_balanced_detector_comparison.json`
+  and `position_balanced_detector_scores.npz`.
