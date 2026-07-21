@@ -1635,3 +1635,19 @@ the fair refit.
 Describe the learned layer-head pattern as primarily post-target attention
 reorganization. Do not claim that high allocation-probe accuracy demonstrates
 anticipatory visual verification; pre is predictive but not complementary.
+
+## 2026-07-21 — Register balanced per-position prior-detector columns
+
+**Request:** Extend the pre/post/full balanced-bin table with detectors already
+reproduced on the same 16,426 mentions.
+
+**Locked columns:** Label-free PAS, faithful SVAR, IC, TVER, and Mask2Former SAE;
+supervised faithful ADS+CGC logistic OOF and local HaloProbe-style attention plus
+confidence; then pre/post/full No-RoPE mass. SAE is marked as its previously
+selected best-layer diagnostic. ADS+CGC must reproduce its prior aggregate
+metrics before use.
+
+**Fairness:** Align every score by object ID/label/position and reuse the exact
+same 1,000 seed-1701 within-bin 1:1 draws. Compare AUROC across all detectors;
+retain zero-threshold accuracy only for the temporal MLP table because raw
+label-free scores have incomparable thresholds.

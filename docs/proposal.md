@@ -891,6 +891,18 @@ is therefore primarily a post-target reorganization across layers and heads,
 not an anticipatory object-verification signal. Pre remains predictive, but it
 is neither dominant nor complementary in this readout.
 
+### 4.7 Registered per-position detector comparison
+
+The temporal result must be read against prior detectors on the same literal
+position-balanced rows, not only against pooled or natural-distribution AUROC.
+The locked
+[comparison protocol](iteration_protocols/position_balanced_detector_comparison.md)
+adds five representative label-free reproductions (PAS, SVAR, IC, TVER, SAE)
+and two supervised external probes (ADS+CGC and local HaloProbe-style) to the
+pre/post/full mass table. All methods share the same 1,000 draws inside each
+10-token bin. The comparison reports AUROC only across methods because the
+label-free scores do not share a calibrated zero threshold.
+
 ## 5. Contribution framing (intended)
 
 The current defensible frame is an **analysis paper**; a constructive method can
