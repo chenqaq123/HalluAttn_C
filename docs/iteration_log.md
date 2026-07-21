@@ -1684,3 +1684,31 @@ proxies and leaves IC as the strongest label-free baseline. The supervised
 post-only all-layer/all-head mass fingerprint is robustly strongest, but it
 must remain framed as a diagnostic probe of post-target reorganization rather
 than an unsupervised hallucination score or object-verification mechanism.
+
+## 2026-07-21 — Separate hallucination sensing from intervention
+
+**Question:** How can the post-only detector support mitigation after direct
+attention amplification and distribution steering proved unreliable?
+
+**Exploratory check:** The highest-risk 10% of frozen post-only OOF mentions
+contains 1,248 hallucinated versus 395 grounded mentions (0.7596 precision),
+while triggering on 3.18% of all grounded mentions. At a post-hoc threshold
+with about 1% grounded-trigger rate, 375/500 triggers are hallucinated. These
+numbers motivate sparse selective action but are not an intervention result;
+thresholds used all OOF labels and no output was changed.
+
+**Design constraint:** Do not use probe gradients to suppress heads, amplify
+visual mass, or continuously mix the probe score into next-token logits. A
+predictive allocation fingerprint is not automatically a causal correction
+direction. The detector may decide when a tentative object mention needs
+rollback, abstention, or escalation, but it cannot by itself determine which
+alternative object is visually true.
+
+**Next gate before implementation:** Test counterfactual actionability on
+same-image, same-prefix, same-position object branches. The post probe must rank
+related absent candidates as riskier than present candidates and beat native
+likelihood, IC, token/category-only, and pre-row controls under image/category
+holdout. Only after this passes should a probe-before-commit decoder be built.
+The detector-only first action is selective rollback/abstention; any corrective
+replacement requires an independently positive visual-support certificate and
+must never interpret missing support as proof of absence.

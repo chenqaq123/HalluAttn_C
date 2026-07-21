@@ -1847,3 +1847,27 @@ The following tables report the mean AUROC in each of the 1,000 shared draws.
 - **Artifacts (git-ignored):**
   `experiments/spatial_allocation/position_balanced_detector_comparison.json`
   and `position_balanced_detector_scores.npz`.
+
+### 2026-07-21 — Exploratory post-probe risk/coverage sanity check
+
+- **Setup:** Read the frozen image-grouped OOF post-only scores from
+  `temporal_row_oof.npz`. Rank all 16,426 mentions by hallucination risk and
+  treat a triggered mention only as a hypothetical rollback/abstention action.
+  No caption was regenerated and no attention, hidden state, or logit was
+  changed.
+- **Top-10% operating point:** 1,643 mentions trigger: 1,248 hallucinated and
+  395 grounded. Trigger precision is 0.7596, hallucination recall is 0.3113,
+  and the grounded-mention trigger rate is 0.0318. A hypothetical deletion has
+  a 3.16:1 hallucinated-to-grounded action ratio; this is not yet a caption-
+  quality result.
+- **Approximately 1% grounded-trigger operating point:** Selecting the score
+  threshold at the empirical 99th percentile of grounded OOF scores triggers
+  500 mentions: 375 hallucinated and 125 grounded. Precision is 0.7500,
+  hallucination recall is 0.0935, and grounded trigger rate is 0.0101.
+- **Interpretation boundary:** Both thresholds were selected post hoc using all
+  OOF labels, so these numbers are exploratory and cannot validate an
+  intervention policy. They show only that a sparse high-risk action regime is
+  plausible enough to pre-register. Detection AUROC still does not establish
+  that the probe can rank alternative object continuations sharing the same
+  image, prefix, and position, nor that deleting grounded mentions preserves
+  caption coverage.
