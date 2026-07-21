@@ -12,6 +12,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from detection.scripts.compare_position_balanced_detectors import (  # noqa: E402
     _assert_aligned,
     _fit_adscgc_logistic_oof,
+    _impute_nonfinite,
 )
 
 
@@ -47,6 +48,13 @@ class PositionBalancedDetectorComparisonTest(unittest.TestCase):
                 reference["gen_pos"],
                 reference,
             )
+
+    def test_nonfinite_imputation_uses_unlabeled_global_median(self) -> None:
+        values, diagnostic = _impute_nonfinite(
+            np.asarray([1.0, np.nan, 3.0, np.inf, 2.0])
+        )
+        np.testing.assert_array_equal(values, np.asarray([1.0, 2.0, 3.0, 2.0, 2.0]))
+        self.assertEqual(diagnostic, {"count": 2, "fill_value": 2.0})
 
 
 if __name__ == "__main__":

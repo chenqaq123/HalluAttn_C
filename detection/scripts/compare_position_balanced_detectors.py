@@ -121,6 +121,17 @@ def _check_reproduction(name: str, metrics: dict, expected: tuple[float, float])
         )
 
 
+def _impute_nonfinite(values: np.ndarray) -> tuple[np.ndarray, dict]:
+    output = np.asarray(values, dtype=np.float64).copy()
+    invalid = ~np.isfinite(output)
+    finite = output[~invalid]
+    if finite.size == 0:
+        raise ValueError("Cannot impute a score with no finite values")
+    fill = float(np.median(finite))
+    output[invalid] = fill
+    return output, {"count": int(invalid.sum()), "fill_value": fill}
+
+
 def main() -> None:
     args = parse_args()
     temporal = np.load(args.temporal_oof)
@@ -159,11 +170,12 @@ def main() -> None:
     )
     adscgc = adscgc_raw[beyond_order]
 
+    tver, tver_imputation = _impute_nonfinite(beyond["tver"][:, 0])
     scores = {
         "pas": np.asarray(baseline["pas_layer0_hallu_score"], dtype=np.float64),
         "svar": -np.asarray(beyond["image_mass"][:, 5:19], dtype=np.float64).sum(axis=1),
         "ic": np.asarray(vve["score__baseline_ic"], dtype=np.float64),
-        "tver": np.asarray(beyond["tver"][:, 0], dtype=np.float64),
+        "tver": tver,
         "sae": -np.asarray(beyond["sae_seg"][:, 10], dtype=np.float64),
         "adscgc": adscgc,
         "haloprobe_style": np.asarray(
@@ -258,6 +270,7 @@ def main() -> None:
         "bin_width": args.bin_width,
         "selected_count_per_repeat": selected_count,
         "valid_bins": valid_bins,
+        "imputation": {"tver": tver_imputation},
         "detectors": metadata,
         "natural_metrics": metrics,
         "balanced_metrics": {name: _summary(values) for name, values in aggregate.items()},

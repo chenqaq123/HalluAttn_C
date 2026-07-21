@@ -44,3 +44,10 @@ bins.
 Only AUROC is shared across all columns. Do not compare zero-threshold accuracy
 for label-free scores because their raw scales have no common calibrated
 threshold. This is a descriptive baseline table, not a method-selection gate.
+
+**Pre-result missing-value amendment.** The alignment pass found three
+non-finite TVER values among 16,426 cached rows; every other selected detector is
+complete. Replace only those three values with TVER's global finite median,
+computed without labels, and record the count/value in the artifact. This keeps
+the selected rows identical for every detector. Do not drop detector-specific
+rows or use position/label-conditioned imputation.

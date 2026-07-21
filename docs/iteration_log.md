@@ -1651,3 +1651,9 @@ metrics before use.
 same 1,000 seed-1701 within-bin 1:1 draws. Compare AUROC across all detectors;
 retain zero-threshold accuracy only for the temporal MLP table because raw
 label-free scores have incomparable thresholds.
+
+**Missing-value amendment before results:** The frozen TVER cache contains
+three non-finite rows; all other selected scores are complete. Fix TVER's three
+values to its unlabeled global finite median so every detector retains exactly
+the same sampled rows. Record the count and fill value; do not perform
+detector-specific row deletion or label/position-conditioned imputation.
