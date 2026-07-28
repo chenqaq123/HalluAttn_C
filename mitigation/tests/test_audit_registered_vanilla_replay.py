@@ -42,6 +42,24 @@ class RegisteredVanillaReplayTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "expected vanilla"):
                 _saved([str(path)], "sample_id")
 
+    def test_saved_accepts_one_complete_vanilla_row(self) -> None:
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "row.jsonl"
+            path.write_text(
+                json.dumps(
+                    {
+                        "clip_id": "clip-1",
+                        "method": "vanilla",
+                        "caption": "caption",
+                    }
+                )
+                + "\n"
+            )
+            self.assertEqual(
+                _saved([str(path)], "clip_id")["clip-1"]["caption"],
+                "caption",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
