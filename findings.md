@@ -48,6 +48,12 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Registered Qwen3-VL AllPath development audit (500/500 images): 1,684
   mentions identify 101 unique good heads and 45 unique hallucination heads
   with no overlap; all 36×32 bounds and finite-score checks pass.
+- Registered Qwen2.5-VL CHAIR ClearSight (500/500): CHAIRs 28.20→26.00
+  and CHAIRi 8.72→7.59 with recall 58.27→58.21, but all paired intervals
+  include zero; captions are 11.04 words longer.
+- Qwen3-VL video-native sensor (122/122 clips, 6,191 mentions): OOF
+  overall/within-bin/matched AUROC 0.7564/0.7519/0.7568; the frozen
+  threshold realizes a 2.020% grounded trigger rate.
 
 ## Patterns and Insights
 
@@ -103,7 +109,8 @@ replacement.
 The detector factorial is complete: cross-layer and cross-head component gates
 pass, while the positive interaction and full-mechanism gates fail. Dataset,
 formula-port, evaluator, and shard-merging audits are complete. AllPath head
-identification is now frozen for all three image architectures. Formal image
-generation and model-native sensor extraction are running; the first complete
-caption controls are LLaVA-NeXT-Video on Vript-HAL and Qwen2.5-VL on CHAIR.
-Corrected PAI/VCD rows remain gated by real-model identity audits.
+identification is frozen for all three image architectures, and Qwen3's
+video-native OOF sensor is complete. Formal image generation is running; the
+first mitigation row, Qwen2.5 CHAIR ClearSight, has nominally favorable but
+inconclusive paired hallucination deltas. Corrected PAI/VCD rows remain gated
+by real-model identity audits.

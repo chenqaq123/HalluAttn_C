@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 119
+  total_runs: 120
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -79,11 +79,15 @@ experiments:
       experiment: "Qwen2.5-VL shared CHAIR vanilla control"
       result: "500/500 images; CHAIRs=28.20, CHAIRi=8.72, Recall=58.27"
       primary_value: 28.2
+    - date: "2026-07-28"
+      experiment: "Qwen2.5-VL CHAIR ClearSight"
+      result: "500/500; CHAIRs=26.00 (delta -2.20, CI includes zero), Recall=58.21"
+      primary_value: 26.0
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The detector mechanism is resolved as two supported but redundant main effects. Two shared controls are formal, AllPath heads are frozen for all three image architectures, and mitigation rows remain paired to controls; PAI/VCD stay locked pending corrected real-model identity audits."
+  last_reflection: "The detector mechanism is resolved as two supported but redundant main effects. Qwen2.5 CHAIR ClearSight is the first formal mitigation row but its nominal hallucination gain is inconclusive; Qwen3 video-native sensing is ready. PAI/VCD stay locked pending corrected real-model identity audits."
 
 workspace:
   findings: "findings.md"
