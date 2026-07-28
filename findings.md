@@ -39,6 +39,9 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   fixed eight-layer bands 0.8062--0.8682, halves 0.8679/0.8697, and
   all-layer head-mean 0.8030. Both main-effect gates pass; head-deviation
   reaches 0.8797. The positive interaction gate fails (-0.1824).
+- Registered LLaVA-NeXT-Video shared Vript-HAL control (122/122 clips):
+  official precision 70.12, recall 23.91, F1 35.19, and mean caption length
+  193.69 words. This is a control row, not a mitigation result.
 
 ## Patterns and Insights
 
@@ -67,6 +70,15 @@ replacement.
   clearly-labelled completion of that detail.
 - Generated artifacts remain under ignored experiment directories; benchmark
   data belongs under `/home/chenguanxu/common_dataset`.
+- The configured common-dataset CIFS mount is currently read-only. The
+  checksum-verified AMBER, THRONE, and Vript-HAL payloads are staged under
+  `/tmp/sinkdetect_datasets` and cannot be copied to the requested destination
+  until the mount is restored read-write.
+- A direct two-branch decoder that bypasses
+  `prepare_inputs_for_generation` is invalid for Qwen-VL because it omits
+  multimodal RoPE/cache-position state. The earlier Qwen2.5 PAI pilot is
+  invalidated; formal PAI/VCD rows stay locked until the corrected decoder is
+  token-identical at zero intervention strength on real models.
 
 ## Open Questions
 
@@ -83,5 +95,8 @@ replacement.
 ## Optimization Trajectory
 
 The detector factorial is complete: cross-layer and cross-head component gates
-pass, while the positive interaction and full-mechanism gates fail. Image and
-video caption matrices remain in execution preparation.
+pass, while the positive interaction and full-mechanism gates fail. Dataset,
+formula-port, evaluator, and shard-merging audits are complete. Formal image
+generation and model-native sensor extraction are running; the first complete
+caption row is the LLaVA-NeXT-Video shared Vript-HAL control. Corrected
+PAI/VCD rows remain gated by real-model identity audits.

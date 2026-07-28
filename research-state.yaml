@@ -65,17 +65,21 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 117
+  total_runs: 118
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
       result: "cross-layer pass; cross-head pass; positive interaction fail"
       primary_value: 0.8768
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT-Video shared Vript-HAL vanilla control"
+      result: "122/122 clips; official P=70.12, R=23.91, F1=35.19"
+      primary_value: 35.1878
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The consolidated factorial confirms both requested main effects under equal capacity, but rejects positive synergy; keep the narrowed redundant-distributed interpretation while executing the caption matrices."
+  last_reflection: "The detector mechanism is resolved as two supported but redundant main effects. Caption execution is now fail-closed: only the shared LLaVA video control is formal, while PAI/VCD rows remain locked pending corrected real-model identity audits."
 
 workspace:
   findings: "findings.md"
