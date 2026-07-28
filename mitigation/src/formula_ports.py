@@ -409,6 +409,7 @@ def generate_pai_greedy(
                 guided = guided.masked_fill(scores < cutoff, -torch.inf)
             next_token = torch.argmax(guided, dim=-1)
             if int(next_token[0]) in eos:
+                generated.append(next_token)
                 stopped_by_eos = True
                 break
             generated.append(next_token)
@@ -457,6 +458,36 @@ def _diffusion_noise(
     return alpha * tensor + sigma * noise
 
 
+def _offload_dynamic_cache(cache) -> bool:
+    """Temporarily move a Transformers dynamic KV cache to CPU."""
+
+    layers = getattr(cache, "layers", None)
+    if not layers:
+        return False
+    initialized = False
+    for layer in layers:
+        if getattr(layer, "is_initialized", False):
+            layer.offload()
+            initialized = True
+    if initialized and torch.cuda.is_available():
+        torch.cuda.synchronize()
+        torch.cuda.empty_cache()
+    return initialized
+
+
+def _prefetch_dynamic_cache(cache) -> None:
+    """Move a temporarily offloaded dynamic KV cache back to its device."""
+
+    layers = getattr(cache, "layers", None)
+    if not layers:
+        return
+    for layer in layers:
+        if getattr(layer, "is_initialized", False):
+            layer.prefetch()
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+
+
 def generate_vcd_greedy_multimodal(
     model,
     tokenizer,
@@ -502,6 +533,7 @@ def generate_vcd_greedy_multimodal(
     eos = _eos_ids(model, tokenizer)
     stopped_by_eos = False
     branch_calls = 0
+    clean_initial_cache_offloads = 0
 
     with torch.inference_mode():
         for _ in range(int(max_new_tokens)):
@@ -512,6 +544,15 @@ def generate_vcd_greedy_multimodal(
                 first_inputs=inputs,
                 past_key_values=past,
             )
+            # On long video prompts the second full-sequence branch can exceed
+            # a 24 GB card solely because the first branch's KV cache remains
+            # resident.  Move that cache to CPU only for the distorted
+            # branch's initial prompt pass, then restore it unchanged.  Both
+            # caches stay on GPU for all single-token decoding steps.
+            restore_clean_cache = (
+                past_distorted is None and _offload_dynamic_cache(past)
+            )
+            clean_initial_cache_offloads += int(restore_clean_cache)
             distorted_logits, past_distorted = _forward_branch(
                 model,
                 current_distorted,
@@ -519,6 +560,8 @@ def generate_vcd_greedy_multimodal(
                 first_inputs=distorted,
                 past_key_values=past_distorted,
             )
+            if restore_clean_cache:
+                _prefetch_dynamic_cache(past)
             branch_calls += 1
             adjusted = (1.0 + float(alpha)) * logits - float(alpha) * (
                 distorted_logits
@@ -531,6 +574,7 @@ def generate_vcd_greedy_multimodal(
                 adjusted = adjusted.masked_fill(logits < cutoff, -torch.inf)
             next_token = torch.argmax(adjusted, dim=-1)
             if int(next_token[0]) in eos:
+                generated.append(next_token)
                 stopped_by_eos = True
                 break
             generated.append(next_token)
@@ -555,4 +599,5 @@ def generate_vcd_greedy_multimodal(
         "noise_step": int(noise_step),
         "perturbed_branch_calls": branch_calls,
         "visual_tensor_keys": visual_keys,
+        "clean_initial_cache_cpu_offloads": clean_initial_cache_offloads,
     }
