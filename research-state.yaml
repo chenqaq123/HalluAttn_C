@@ -50,8 +50,8 @@ hypotheses:
     priority: high
   - id: H2
     statement: "A video-native detector-gated rollback policy improves Vript-HAL precision on all video-capable target models without lowering paired F1."
-    status: active
-    motivation: "Qwen2.5-VL already shows a significant precision gain, but model breadth and matched VCD/SmartSight controls are missing."
+    status: unsupported_cross_model
+    motivation: "Qwen2.5-VL shows a significant precision gain, but Qwen3-VL is only nominally favorable and its precision CI crosses zero; matched LLaVA/VCD/SmartSight rows remain necessary for the complete comparison, not to rescue the already-failed all-model gate."
     parent: null
     priority: high
   - id: H3
@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 130
+  total_runs: 131
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -111,11 +111,15 @@ experiments:
       experiment: "LLaVA-NeXT CHAIR DIML"
       result: "CHAIRs=31.20 and F1=74.32; every paired CI includes zero; shorter captions"
       primary_value: 31.2
+    - date: "2026-07-28"
+      experiment: "Qwen3-VL Vript-HAL detector-gated rollback"
+      result: "P/R/F1=71.92/40.38/51.01; paired precision delta +0.30 CI [-0.56,+1.18]; H2 gate fail; removal precision 65.09%"
+      primary_value: 71.9178
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "LLaVA CHAIR ClearSight and DIML are nominally favorable but inconclusive; DIML lacks the significant recall/F1 loss seen on Qwen2.5, confirming architecture-dependent behavior. Other rows continue."
+  last_reflection: "Qwen3 video rollback is nominally favorable but inconclusive and fails its precision gate, so the all-model H2 claim is unsupported even though matched LLaVA/VCD/SmartSight rows still must be completed. Image rows and all matched controls continue."
 
 workspace:
   findings: "findings.md"
