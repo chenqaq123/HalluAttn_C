@@ -92,6 +92,11 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   +0.30/+0.54/+0.52 points, but all 95% intervals include zero, so the
   model-level H2 gate fails. Removal precision is 65.09% over 318 completed
   rollbacks; captions remain the same length and have no premature EOS.
+- Registered LLaVA-NeXT CHAIR full PAI (500/500): CHAIRs is unchanged at
+  34.40, while CHAIRi significantly worsens 9.75→14.54, recall significantly
+  falls 65.62→62.43, and F1 significantly falls 72.91→70.57. Captions are
+  45.29 words shorter. This is a valid active full-PAI negative result, not
+  the earlier POPE attention-only no-op.
 
 ## Patterns and Insights
 
