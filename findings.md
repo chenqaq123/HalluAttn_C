@@ -51,6 +51,10 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Registered Qwen2.5-VL CHAIR ClearSight (500/500): CHAIRs 28.20→26.00
   and CHAIRi 8.72→7.59 with recall 58.27→58.21, but all paired intervals
   include zero; captions are 11.04 words longer.
+- Registered Qwen2.5-VL CHAIR DIML (500/500): CHAIRs 28.20→15.60 and
+  precision 84.06→89.43 significantly improve, while recall 58.27→50.29
+  and F1 68.83→64.38 significantly decline. This is a coverage trade-off,
+  not a Pareto improvement.
 - Qwen3-VL video-native sensor (122/122 clips, 6,191 mentions): OOF
   overall/within-bin/matched AUROC 0.7564/0.7519/0.7568; the frozen
   threshold realizes a 2.020% grounded trigger rate.
