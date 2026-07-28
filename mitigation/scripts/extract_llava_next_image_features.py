@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import os
 import pickle
@@ -26,6 +27,18 @@ from sinkdetect.chair import evaluate_chair
 from mitigation.src.allpath_identification import first_chair_mentions
 from mitigation.src.registered_llava_probe import (
     RegisteredLlavaCaptioner,
+)
+
+
+FEATURE_KEYS = (
+    "object_id",
+    "image_id",
+    "token_pos",
+    "gen_pos",
+    "label",
+    "word",
+    "no_rope",
+    "first_logp",
 )
 
 
@@ -96,6 +109,92 @@ def arrays(
     }
 
 
+def load_resume_checkpoint(
+    jsonl_path: Path,
+    npz_path: Path,
+) -> tuple[dict[str, list], set[int]]:
+    """Load a synchronized JSONL/NPZ checkpoint or fail closed.
+
+    JSONL records image-level completion, including images with no mentions;
+    NPZ stores mention-level tensors.  A missing peer, duplicate image row, or
+    disagreement in per-image mention counts means the two-file checkpoint
+    cannot be resumed safely.
+    """
+
+    values: dict[str, list] = {key: [] for key in FEATURE_KEYS}
+    jsonl_exists = jsonl_path.is_file()
+    npz_exists = npz_path.is_file()
+    if jsonl_exists != npz_exists:
+        raise RuntimeError(
+            "Unsafe feature checkpoint: JSONL and NPZ must either both "
+            f"exist or both be absent ({jsonl_path}, {npz_path})"
+        )
+    if not jsonl_exists:
+        return values, set()
+
+    log_rows = [
+        json.loads(line)
+        for line in jsonl_path.read_text().splitlines()
+        if line.strip()
+    ]
+    image_ids = [int(row["image_id"]) for row in log_rows]
+    duplicate_ids = sorted(
+        image_id
+        for image_id, count in Counter(image_ids).items()
+        if count != 1
+    )
+    if duplicate_ids:
+        raise RuntimeError(
+            "Unsafe feature checkpoint: duplicate JSONL image IDs "
+            f"{duplicate_ids[:10]}"
+        )
+
+    cached = np.load(npz_path, allow_pickle=True)
+    missing = [key for key in FEATURE_KEYS if key not in cached.files]
+    if missing:
+        raise RuntimeError(
+            f"Unsafe feature checkpoint: NPZ lacks keys {missing}"
+        )
+    lengths = {
+        key: int(np.asarray(cached[key]).shape[0])
+        for key in FEATURE_KEYS
+    }
+    if len(set(lengths.values())) != 1:
+        raise RuntimeError(
+            f"Unsafe feature checkpoint: NPZ row counts differ {lengths}"
+        )
+    for key in FEATURE_KEYS:
+        values[key] = list(cached[key])
+
+    logged_mentions = {
+        int(row["image_id"]): len(row.get("mentions", []))
+        for row in log_rows
+    }
+    cached_mentions = Counter(
+        int(value) for value in np.asarray(cached["image_id"])
+    )
+    mismatched = sorted(
+        image_id
+        for image_id, count in logged_mentions.items()
+        if cached_mentions.get(image_id, 0) != count
+    )
+    extra_feature_images = sorted(
+        set(cached_mentions) - set(logged_mentions)
+    )
+    if mismatched or extra_feature_images:
+        raise RuntimeError(
+            "Unsafe feature checkpoint: JSONL/NPZ mention counts differ; "
+            f"mismatched={mismatched[:10]}, "
+            f"extra={extra_feature_images[:10]}"
+        )
+    object_ids = np.asarray(cached["object_id"], dtype=np.int64)
+    if np.unique(object_ids).size != object_ids.size:
+        raise RuntimeError(
+            "Unsafe feature checkpoint: duplicate NPZ object IDs"
+        )
+    return values, set(image_ids)
+
+
 def main() -> None:
     args = parse_args()
     sys.path.insert(0, args.pas_src)
@@ -132,27 +231,7 @@ def main() -> None:
     jsonl_path = Path(str(prefix) + ".jsonl")
     npz_path = Path(str(prefix) + ".npz")
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
-    keys = (
-        "object_id",
-        "image_id",
-        "token_pos",
-        "gen_pos",
-        "label",
-        "word",
-        "no_rope",
-        "first_logp",
-    )
-    values: dict[str, list] = {key: [] for key in keys}
-    done = set()
-    if jsonl_path.is_file() and npz_path.is_file():
-        cached = np.load(npz_path, allow_pickle=True)
-        for key in keys:
-            values[key] = list(cached[key])
-        done = {
-            int(json.loads(line)["image_id"])
-            for line in jsonl_path.read_text().splitlines()
-            if line
-        }
+    values, done = load_resume_checkpoint(jsonl_path, npz_path)
     pending = [
         image_id for image_id in selected if image_id not in done
     ]

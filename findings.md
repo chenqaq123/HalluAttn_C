@@ -75,6 +75,15 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Corrected LLaVA-NeXT active PAI changes 20/20 outputs and exercises every
   frozen layer 2--31; mean content tokens change 198.85→176.00 with no
   premature EOS in either branch. This validates activity, not efficacy.
+- Registered LLaVA-NeXT image sensor source (2,967 disjoint COCO images,
+  7,382 mentions): all four feature shards pass exact image/order,
+  per-image mention, finite tensor, unique object-ID, and zero-CHAIR-overlap
+  audits. Five folds use 2,318 training and 580 calibration images; the
+  independently recomputed threshold is 2.53055 and realizes a 2.020%
+  grounded trigger rate.
+- LLaVA-NeXT-Video vanilla replay passes 20/20 and rollback
+  token/caption/shared-control identity passes 5/5, releasing its formal
+  video ours row.
 
 ## Patterns and Insights
 
@@ -115,6 +124,11 @@ replacement.
   logits through its `None` default. The final repair passes fresh 5/5 gates
   on both Qwen2.5 and LLaVA-NeXT-Video, including 512-token continuations,
   without changing Qwen's audited output.
+- Feature extraction checkpoints are a synchronized JSONL/NPZ pair, not two
+  independently resumable files. An orphan peer, duplicate image completion,
+  per-image mention-count mismatch, duplicate object ID, or partial source
+  coverage must fail closed. Readiness is established by full registered-set
+  and tensor audit, never by JSONL line count alone.
 
 ## Open Questions
 
