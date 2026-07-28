@@ -54,6 +54,9 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Qwen3-VL video-native sensor (122/122 clips, 6,191 mentions): OOF
   overall/within-bin/matched AUROC 0.7564/0.7519/0.7568; the frozen
   threshold realizes a 2.020% grounded trigger rate.
+- Corrected Qwen2.5 two-branch decoding passes VCD no-op identity 5/5,
+  rollback/shared-control identity 5/5, and frozen vanilla replay 20/20.
+  Formal PAI/VCD still waits for the independent LLaVA decoder gate.
 
 ## Patterns and Insights
 
@@ -89,8 +92,9 @@ replacement.
 - A direct two-branch decoder that bypasses
   `prepare_inputs_for_generation` is invalid for Qwen-VL because it omits
   multimodal RoPE/cache-position state. The earlier Qwen2.5 PAI pilot is
-  invalidated; formal PAI/VCD rows stay locked until the corrected decoder is
-  token-identical at zero intervention strength on real models.
+  invalidated. The GenerationMixin-equivalent repair now passes Qwen2.5
+  real-model identity, but formal PAI/VCD rows stay locked until the
+  independent LLaVA real-model gate also passes.
 
 ## Open Questions
 

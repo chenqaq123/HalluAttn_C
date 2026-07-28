@@ -87,7 +87,7 @@ experiments:
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The detector mechanism is resolved as two supported but redundant main effects. Qwen2.5 CHAIR ClearSight is the first formal mitigation row but its nominal hallucination gain is inconclusive; Qwen3 video-native sensing is ready. PAI/VCD stay locked pending corrected real-model identity audits."
+  last_reflection: "Qwen2.5 CHAIR ClearSight is nominally favorable but inconclusive, Qwen3 video-native sensing is ready, and the corrected decoder now passes Qwen2.5 5/5. Formal PAI/VCD stays locked pending the independent LLaVA decoder identity and commit."
 
 workspace:
   findings: "findings.md"
