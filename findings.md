@@ -84,6 +84,9 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - LLaVA-NeXT-Video vanilla replay passes 20/20 and rollback
   token/caption/shared-control identity passes 5/5, releasing its formal
   video ours row.
+- LLaVA-NeXT image vanilla replay passes 20/20 and rollback
+  token/caption/shared-control identity passes 5/5 with the audited sensor,
+  releasing formal CHAIR/AMBER ours.
 
 ## Patterns and Insights
 
