@@ -22,6 +22,7 @@ if str(ROOT) not in sys.path:
 
 from detection.scripts.evaluate_visual_value_evidence import (
     _Probe,
+    _feature_moments,
     _image_folds,
     _load_npz_parts,
     _predict,
@@ -88,6 +89,8 @@ def audit_sensor(
         "calibration_fraction",
         "folds",
         "epochs",
+        "exclude_manifest",
+        "features_glob",
         "hidden_size",
         "grounded_trigger_rate",
     }
@@ -95,6 +98,21 @@ def audit_sensor(
     if missing_config:
         raise RuntimeError(
             f"Sensor config lacks keys {missing_config}"
+        )
+    configured_features = sorted(glob.glob(config["features_glob"]))
+    if [
+        str(Path(path).resolve()) for path in configured_features
+    ] != [
+        str(Path(path).resolve()) for path in feature_paths
+    ]:
+        raise RuntimeError(
+            "Sensor config resolves to different feature files"
+        )
+    if Path(config["exclude_manifest"]).resolve() != (
+        exclude_manifest.resolve()
+    ):
+        raise RuntimeError(
+            "Sensor config uses a different exclusion manifest"
         )
 
     data = _load_npz_parts(features_glob)
@@ -183,6 +201,18 @@ def audit_sensor(
             raise RuntimeError(
                 f"Fold {fold_index} moments are not finite/positive"
             )
+        fit = training & ~np.isin(image_ids, expected_test_images)
+        expected_mean, expected_std = _feature_moments(
+            features, np.where(fit)[0]
+        )
+        if not np.allclose(
+            mean, expected_mean, rtol=1e-6, atol=1e-7
+        ) or not np.allclose(
+            std, expected_std, rtol=1e-6, atol=1e-7
+        ):
+            raise RuntimeError(
+                f"Fold {fold_index} feature moments differ"
+            )
         model = _Probe(input_size, hidden_size)
         model.load_state_dict(record["state_dict"], strict=True)
         for parameter in model.parameters():
@@ -256,6 +286,8 @@ def audit_sensor(
         )
     if thresholds.get("excluded_eval_ids", []) != []:
         raise RuntimeError("Threshold artifact reports excluded eval IDs")
+    if int(thresholds["seed"]) != seed:
+        raise RuntimeError("Threshold/config seeds differ")
 
     return {
         "valid": True,

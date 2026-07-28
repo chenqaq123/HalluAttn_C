@@ -65,6 +65,8 @@ class DisjointCaptionSensorAuditTests(unittest.TestCase):
                     "calibration_fraction": 1 / 3,
                     "folds": 2,
                     "epochs": 1,
+                    "exclude_manifest": str(exclude),
+                    "features_glob": str(features_path),
                     "hidden_size": 2,
                     "grounded_trigger_rate": 0.02,
                 },
@@ -88,6 +90,7 @@ class DisjointCaptionSensorAuditTests(unittest.TestCase):
                     "calibration_grounded_mentions": 2,
                     "excluded_eval_images_with_features": 0,
                     "excluded_eval_ids": [],
+                    "seed": seed,
                 }
             )
         )
