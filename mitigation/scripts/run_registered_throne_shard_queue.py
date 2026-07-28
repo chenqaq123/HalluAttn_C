@@ -109,6 +109,13 @@ def parse_args() -> argparse.Namespace:
             "formula_decoder_validation.json"
         ),
     )
+    parser.add_argument(
+        "--aqa_parity_gate",
+        default=(
+            "experiments/registered_caption/"
+            "throne_aqa_suite_parity.json"
+        ),
+    )
     parser.add_argument("--poll_seconds", type=float, default=2.0)
     parser.add_argument("--max_attempts", type=int, default=5)
     return parser.parse_args()
@@ -118,7 +125,10 @@ def _json(path: str | Path) -> dict[str, Any]:
     return json.loads((ROOT / path).read_text())
 
 
-def validate_gate_files(decoder_gate: str | Path) -> None:
+def validate_gate_files(
+    decoder_gate: str | Path,
+    aqa_parity_gate: str | Path,
+) -> None:
     decoder = _json(decoder_gate)
     if decoder.get("schema") != "sinkdetect-formula-decoder-validation-v1":
         raise ValueError("Unexpected formula decoder gate schema")
@@ -128,6 +138,13 @@ def validate_gate_files(decoder_gate: str | Path) -> None:
             raise ValueError(f"Decoder gate lacks a passing {kind} audit")
     if not decoder.get("unit_tests_pass"):
         raise ValueError("Decoder gate does not record passing unit tests")
+    parity = _json(aqa_parity_gate)
+    if parity.get("schema") != "sinkdetect-throne-aqa-suite-parity-v1":
+        raise ValueError("Unexpected THRONE AQA parity gate schema")
+    if parity.get("answers_compared") != 1095:
+        raise ValueError("THRONE AQA parity must compare 1,095 answers")
+    if not parity.get("exact_match") or parity.get("answer_mismatches") != 0:
+        raise ValueError("THRONE AQA suite parity failed")
 
     for kind, config in MODELS.items():
         replay = _json(config["replay"])
@@ -160,8 +177,11 @@ def validate_gate_files(decoder_gate: str | Path) -> None:
                 raise FileNotFoundError(ROOT / config[key])
 
 
-def gates_ready(decoder_gate: str | Path) -> bool:
-    required = [ROOT / decoder_gate]
+def gates_ready(
+    decoder_gate: str | Path,
+    aqa_parity_gate: str | Path,
+) -> bool:
+    required = [ROOT / decoder_gate, ROOT / aqa_parity_gate]
     for config in MODELS.values():
         required.extend(
             ROOT / config[key]
@@ -425,9 +445,9 @@ def main() -> None:
         raise ValueError("Invalid shard")
     if not 0 <= args.physical_gpu < 8:
         raise ValueError("physical GPU must be in [0, 8)")
-    while not gates_ready(args.decoder_gate):
+    while not gates_ready(args.decoder_gate, args.aqa_parity_gate):
         time.sleep(args.poll_seconds)
-    validate_gate_files(args.decoder_gate)
+    validate_gate_files(args.decoder_gate, args.aqa_parity_gate)
     for kind, config in MODELS.items():
         run_retry(
             formula_command(
