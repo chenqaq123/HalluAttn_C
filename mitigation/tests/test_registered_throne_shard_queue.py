@@ -3,9 +3,13 @@ from __future__ import annotations
 import unittest
 
 from mitigation.scripts.run_registered_throne_shard_queue import (
+    EVALUATORS,
+    METHODS,
     MODELS,
+    aqa_command,
     formula_command,
     ours_command,
+    score_command,
 )
 
 
@@ -27,6 +31,31 @@ class ThroneShardQueueTests(unittest.TestCase):
         self.assertIn("--shard_idx 7 --num_shards 8", joined)
         self.assertIn("--max_actions 5", joined)
         self.assertIn("ours_shard7.jsonl", joined)
+
+    def test_aqa_suite_contains_every_registered_caption_row(self):
+        command = aqa_command("xl", EVALUATORS["xl"], 4, 8)
+        joined = " ".join(command)
+        self.assertIn("run_registered_throne_aqa_suite.py", joined)
+        for config in MODELS.values():
+            for method in METHODS:
+                self.assertIn(
+                    f"{config['directory']}/throne/{method}_shard*.jsonl",
+                    joined,
+                )
+                self.assertIn(
+                    f"aqa/xl/{method}_shard4.json",
+                    joined,
+                )
+        self.assertIn("--batch_size 64", joined)
+
+    def test_score_command_requires_all_six_rows_and_official_vote(self):
+        command = score_command(MODELS["qwen25"])
+        joined = " ".join(command)
+        for method in METHODS:
+            self.assertIn(f"--caption_row {method}=", joined)
+            self.assertIn(f"--aqa_row {method}=", joined)
+        self.assertIn("--voting_threshold 9", joined)
+        self.assertIn("--bootstrap 10000", joined)
 
 
 if __name__ == "__main__":

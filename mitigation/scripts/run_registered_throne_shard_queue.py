@@ -19,6 +19,16 @@ MANIFEST = (
     "/tmp/sinkdetect_datasets/open_caption_manifests/"
     "throne-objects365.jsonl"
 )
+COCO_ANN = (
+    "/tmp/sinkdetect_datasets/THRONE/metadata/"
+    "zhiyuan_objv2_val_fixname.json"
+)
+METHODS = ("vanilla", "pai", "clearsight", "diml", "allpath", "ours")
+EVALUATORS = {
+    "base": "/tmp/sinkdetect_models/flan-t5-base",
+    "large": "/tmp/sinkdetect_models/flan-t5-large",
+    "xl": "/tmp/sinkdetect_models/flan-t5-xl",
+}
 
 MODELS = {
     "llava_next": {
@@ -185,16 +195,20 @@ def wait_for_gpu(index: int, poll_seconds: float) -> None:
         time.sleep(poll_seconds)
 
 
-def formula_command(
-    kind: str, config: dict[str, str], shard_idx: int, num_shards: int
-) -> list[str]:
-    directory = (
+def result_directory(config: dict[str, str]) -> Path:
+    return (
         ROOT
         / "experiments"
         / "registered_caption"
         / config["directory"]
         / "throne"
     )
+
+
+def formula_command(
+    kind: str, config: dict[str, str], shard_idx: int, num_shards: int
+) -> list[str]:
+    directory = result_directory(config)
     command = [
         PYTHON,
         str(ROOT / "mitigation/scripts/run_open_caption_formula_suite.py"),
@@ -236,14 +250,7 @@ def formula_command(
 def ours_command(
     kind: str, config: dict[str, str], shard_idx: int, num_shards: int
 ) -> list[str]:
-    output = (
-        ROOT
-        / "experiments"
-        / "registered_caption"
-        / config["directory"]
-        / "throne"
-        / f"ours_shard{shard_idx}.jsonl"
-    )
+    output = result_directory(config) / f"ours_shard{shard_idx}.jsonl"
     return [
         PYTHON,
         str(ROOT / "mitigation/scripts/run_registered_qwen_rollback.py"),
@@ -274,6 +281,119 @@ def ours_command(
         "--seed",
         "927",
     ]
+
+
+def caption_matrix_ready(num_shards: int) -> bool:
+    return all(
+        (
+            result_directory(config)
+            / f"{method}_shard{shard}.jsonl.meta.json"
+        ).is_file()
+        for config in MODELS.values()
+        for method in METHODS
+        for shard in range(num_shards)
+    )
+
+
+def aqa_command(
+    evaluator: str,
+    evaluator_path: str,
+    shard_idx: int,
+    num_shards: int,
+) -> list[str]:
+    command = [
+        PYTHON,
+        str(ROOT / "mitigation/scripts/run_registered_throne_aqa_suite.py"),
+        "--manifest",
+        MANIFEST,
+        "--coco_ann",
+        COCO_ANN,
+        "--evaluator_model_path",
+        evaluator_path,
+    ]
+    for config in MODELS.values():
+        directory = result_directory(config)
+        for method in METHODS:
+            command.extend(
+                [
+                    "--job",
+                    str(directory / f"{method}_shard*.jsonl"),
+                    str(
+                        directory
+                        / "aqa"
+                        / evaluator
+                        / f"{method}_shard{shard_idx}.json"
+                    ),
+                ]
+            )
+    command.extend(
+        [
+            "--device",
+            "cuda:0",
+            "--batch_size",
+            "64",
+            "--shard_idx",
+            str(shard_idx),
+            "--num_shards",
+            str(num_shards),
+        ]
+    )
+    return command
+
+
+def aqa_matrix_ready(num_shards: int) -> bool:
+    return all(
+        (
+            result_directory(config)
+            / "aqa"
+            / evaluator
+            / f"{method}_shard{shard}.json.meta.json"
+        ).is_file()
+        for config in MODELS.values()
+        for evaluator in EVALUATORS
+        for method in METHODS
+        for shard in range(num_shards)
+    )
+
+
+def score_command(config: dict[str, str]) -> list[str]:
+    directory = result_directory(config)
+    command = [
+        PYTHON,
+        str(ROOT / "mitigation/scripts/score_registered_throne.py"),
+        "--manifest",
+        MANIFEST,
+        "--coco_ann",
+        COCO_ANN,
+    ]
+    for method in METHODS:
+        command.extend(
+            [
+                "--caption_row",
+                f"{method}={directory}/{method}_shard?.jsonl",
+                "--aqa_row",
+                f"{method}={directory}/aqa/*/{method}_shard?.json",
+            ]
+        )
+    command.extend(
+        [
+            "--output",
+            str(directory / "full_score.json"),
+            "--expected_images",
+            "5110",
+            "--expected_evaluators",
+            "3",
+            "--expected_prompts",
+            "3",
+            "--voting_threshold",
+            "9",
+            "--bootstrap",
+            "10000",
+            "--seed",
+            "20260728",
+        ]
+    )
+    return command
 
 
 def run_retry(
@@ -323,6 +443,29 @@ def main() -> None:
             poll_seconds=args.poll_seconds,
             max_attempts=args.max_attempts,
         )
+    while not caption_matrix_ready(args.num_shards):
+        time.sleep(args.poll_seconds)
+    for evaluator, evaluator_path in EVALUATORS.items():
+        run_retry(
+            aqa_command(
+                evaluator,
+                evaluator_path,
+                args.shard_idx,
+                args.num_shards,
+            ),
+            physical_gpu=args.physical_gpu,
+            poll_seconds=args.poll_seconds,
+            max_attempts=args.max_attempts,
+        )
+    if args.shard_idx == 0:
+        while not aqa_matrix_ready(args.num_shards):
+            time.sleep(args.poll_seconds)
+        for config in MODELS.values():
+            subprocess.run(
+                score_command(config),
+                cwd=ROOT,
+                check=True,
+            )
 
 
 if __name__ == "__main__":
