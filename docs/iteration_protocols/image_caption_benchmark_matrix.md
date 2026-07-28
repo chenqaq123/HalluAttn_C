@@ -32,8 +32,8 @@ backend, and image preprocessing resolution are recorded with every result.
 2. **THRONE-Objects365:** all 5,110 image IDs in the official
    `objects365_subset.txt`, using the corrected Objects365 validation
    annotations. Prompt: `Describe this image in detail.` Primary metric:
-   classwise F2; overall precision, recall, F1, F2 and parser valid-vote rate
-   are also reported.
+   classwise F0.5; overall precision, recall, F1, F0.5 and parser valid-vote
+   rate are also reported.
 3. **AMBER-generative:** all 1,004 official images and annotations. Prompt:
    `Describe this image.` Primary metrics: CHAIR and Hal; Cover and Cog are
    also reported.
@@ -140,6 +140,17 @@ reported only as secondary evidence.
    not produce a statistically clear loss in the associated coverage/recall
    metric. Otherwise the conclusion is mixed or unsupported.
 
+## Pre-result evaluator-name correction (2026-07-28)
+
+Before any THRONE caption result or evaluator output existed, inspection of
+the frozen official evaluator at commit
+`45badbb71c2b3e8d6619f6b45cccdac24dd20b46` showed that
+`throne_score_aqa.py` computes
+`1.25 * P * R / (0.25 * P + R)` and reports it as **F0.5**. The earlier
+protocol text incorrectly called this value F2. This amendment corrects only
+the metric name; the official evaluator, three Flan-T5 parsers, three prompt
+formats, voting rules, data, and all generation settings remain unchanged.
+
 ## Execution order
 
 1. Materialize and checksum datasets/manifests.
@@ -149,4 +160,3 @@ reported only as secondary evidence.
    assigning model/benchmark blocks across available GPUs.
 5. Run official evaluators, paired audits, and then append results to
    `docs/experiment_results.md`.
-
