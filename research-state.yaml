@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 123
+  total_runs: 125
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -95,7 +95,7 @@ experiments:
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The decoder gate is released and Qwen3-VL Vript-HAL vanilla is complete at F1 50.49. Continue replay/rollback/mitigation execution and record each completed row."
+  last_reflection: "The decoder gate is released; Qwen3-VL Vript-HAL vanilla is complete at F1 50.49, replay passes 20/20, and rollback/shared-control identity passes 5/5. Formal Qwen3 ours is running."
 
 workspace:
   findings: "findings.md"
