@@ -45,6 +45,9 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Registered Qwen2.5-VL shared CHAIR control (500/500 images): CHAIRs 28.20,
   CHAIRi 8.72, recall 58.27, precision 84.06, F1 68.83, and mean caption
   length 156.48 words. This is a control row, not a mitigation result.
+- Registered Qwen3-VL AllPath development audit (500/500 images): 1,684
+  mentions identify 101 unique good heads and 45 unique hallucination heads
+  with no overlap; all 36×32 bounds and finite-score checks pass.
 
 ## Patterns and Insights
 
@@ -99,7 +102,8 @@ replacement.
 
 The detector factorial is complete: cross-layer and cross-head component gates
 pass, while the positive interaction and full-mechanism gates fail. Dataset,
-formula-port, evaluator, and shard-merging audits are complete. Formal image
+formula-port, evaluator, and shard-merging audits are complete. AllPath head
+identification is now frozen for all three image architectures. Formal image
 generation and model-native sensor extraction are running; the first complete
 caption controls are LLaVA-NeXT-Video on Vript-HAL and Qwen2.5-VL on CHAIR.
 Corrected PAI/VCD rows remain gated by real-model identity audits.

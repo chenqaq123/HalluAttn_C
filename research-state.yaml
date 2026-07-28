@@ -83,7 +83,7 @@ experiments:
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The detector mechanism is resolved as two supported but redundant main effects. Two shared controls are now formal (LLaVA video and Qwen2.5 CHAIR); mitigation rows remain paired to them, and PAI/VCD stay locked pending corrected real-model identity audits."
+  last_reflection: "The detector mechanism is resolved as two supported but redundant main effects. Two shared controls are formal, AllPath heads are frozen for all three image architectures, and mitigation rows remain paired to controls; PAI/VCD stay locked pending corrected real-model identity audits."
 
 workspace:
   findings: "findings.md"
