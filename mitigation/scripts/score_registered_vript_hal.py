@@ -41,6 +41,15 @@ class OfficialHalMetric:
         self.util = util
         self.nlp = spacy.load("en_core_web_lg")
         self.sentence_model = SentenceTransformer("all-mpnet-base-v2")
+        self._gt_embedding_cache: dict[tuple[str, ...], Any] = {}
+
+    def _gt_embedding(self, gt_words: list[str]):
+        key = tuple(gt_words)
+        if key not in self._gt_embedding_cache:
+            self._gt_embedding_cache[key] = self.sentence_model.encode(
+                gt_words, convert_to_tensor=True
+            )
+        return self._gt_embedding_cache[key]
 
     def extract_verbs_and_nouns(self, text: str) -> list[str]:
         doc = self.nlp(text)
@@ -71,9 +80,7 @@ class OfficialHalMetric:
         )
         if not pred_words or not gt_words:
             return 0.0, 0.0, pred_words, [False] * len(pred_words)
-        gt_embedding = self.sentence_model.encode(
-            gt_words, convert_to_tensor=True
-        )
+        gt_embedding = self._gt_embedding(gt_words)
         pred_embedding = self.sentence_model.encode(
             pred_words, convert_to_tensor=True
         )
@@ -95,9 +102,7 @@ class OfficialHalMetric:
         lemmas = self.remove_stopword_and_stemming([word])
         if not lemmas:
             return False
-        gt_embedding = self.sentence_model.encode(
-            gt_words, convert_to_tensor=True
-        )
+        gt_embedding = self._gt_embedding(gt_words)
         embedding = self.sentence_model.encode(
             [lemmas[0]], convert_to_tensor=True
         )[0]
