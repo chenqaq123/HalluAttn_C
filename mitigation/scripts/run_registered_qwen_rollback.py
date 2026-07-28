@@ -22,6 +22,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from mitigation.src.probe_sensor import MeanProbeSensor, OOFProbeSensor
+from mitigation.src.registered_llava_probe import RegisteredLlavaCaptioner
 from mitigation.src.registered_qwen_probe import (
     RegisteredQwen25Captioner,
     RegisteredQwen3Captioner,
@@ -30,7 +31,16 @@ from mitigation.src.registered_qwen_probe import (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--kind", choices=["qwen25", "qwen3"], required=True)
+    parser.add_argument(
+        "--kind",
+        choices=[
+            "llava_next",
+            "llava_next_video",
+            "qwen25",
+            "qwen3",
+        ],
+        required=True,
+    )
     parser.add_argument("--media", choices=["image", "video"], required=True)
     parser.add_argument("--model_path", required=True)
     parser.add_argument("--manifest", required=True)
@@ -78,16 +88,25 @@ class RollbackRunner:
 
         self.args = args
         self.device = torch.device(args.device)
-        captioner_class = (
-            RegisteredQwen25Captioner
-            if args.kind == "qwen25"
-            else RegisteredQwen3Captioner
-        )
-        self.captioner = captioner_class(
-            args.model_path,
-            self.device,
-            max_new_tokens=args.max_new_tokens,
-        )
+        if args.kind == "qwen25":
+            self.captioner = RegisteredQwen25Captioner(
+                args.model_path,
+                self.device,
+                max_new_tokens=args.max_new_tokens,
+            )
+        elif args.kind == "qwen3":
+            self.captioner = RegisteredQwen3Captioner(
+                args.model_path,
+                self.device,
+                max_new_tokens=args.max_new_tokens,
+            )
+        else:
+            self.captioner = RegisteredLlavaCaptioner(
+                args.model_path,
+                self.device,
+                kind=args.kind,
+                max_new_tokens=args.max_new_tokens,
+            )
         self.nlp = spacy.load("en_core_web_lg")
         sensor_class = (
             MeanProbeSensor
