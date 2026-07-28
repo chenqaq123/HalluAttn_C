@@ -60,7 +60,11 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   passes 5/5. This is a validated control, not a mitigation result.
 - Corrected Qwen2.5 two-branch decoding passes VCD no-op identity 5/5,
   rollback/shared-control identity 5/5, and frozen vanilla replay 20/20.
-  Formal PAI/VCD still waits for the independent LLaVA decoder gate.
+  The independent LLaVA decoder gate and committed validation manifest also
+  pass, so corrected formal PAI/VCD execution is released.
+- Corrected LLaVA-NeXT active PAI changes 20/20 outputs and exercises every
+  frozen layer 2--31; mean content tokens change 198.85→176.00 with no
+  premature EOS in either branch. This validates activity, not efficacy.
 
 ## Patterns and Insights
 

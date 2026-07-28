@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 125
+  total_runs: 126
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -91,11 +91,15 @@ experiments:
       experiment: "Qwen3-VL shared Vript-HAL vanilla control"
       result: "122/122 clips; released P=71.62, R=39.84, F1=50.49"
       primary_value: 50.4927
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT corrected active PAI gate"
+      result: "20/20 outputs changed; layers 2--31 active; mean content tokens 198.85→176.00; premature EOS 0→0"
+      primary_value: 1.0
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The decoder gate is released; Qwen3-VL Vript-HAL vanilla is complete at F1 50.49, replay passes 20/20, and rollback/shared-control identity passes 5/5. Formal Qwen3 ours is running."
+  last_reflection: "Qwen3 video control/replay/rollback gates pass and formal ours is running. LLaVA active PAI passes 20/20 without length collapse; its missing video replay/rollback producers are restored ahead of formal rows."
 
 workspace:
   findings: "findings.md"
