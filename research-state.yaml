@@ -56,7 +56,7 @@ hypotheses:
     priority: high
   - id: H3
     statement: "Detection performance requires joint cross-layer and per-head identity structure; a single layer or head-averaged representation cannot match the all-layer/per-head probe under position-balanced evaluation."
-    status: active
+    status: supported_main_effects_only
     motivation: "Existing mechanism results strongly suggest a distributed head-deviation fingerprint; the requested ablation needs one consolidated confirmatory table."
     parent: null
     priority: high
@@ -65,13 +65,17 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 0
-  trajectory: []
+  total_runs: 117
+  trajectory:
+    - date: "2026-07-28"
+      experiment: "capacity-controlled layer breadth x head treatment factorial"
+      result: "cross-layer pass; cross-head pass; positive interaction fail"
+      primary_value: 0.8768
 
 outer_loop:
-  cycle: 0
-  last_direction: "broaden"
-  last_reflection: "Broaden the existing COCO/Qwen results to independent image benchmarks, modern model families, matched video baselines, and a consolidated mechanism ablation."
+  cycle: 1
+  last_direction: "execute"
+  last_reflection: "The consolidated factorial confirms both requested main effects under equal capacity, but rejects positive synergy; keep the narrowed redundant-distributed interpretation while executing the caption matrices."
 
 workspace:
   findings: "findings.md"

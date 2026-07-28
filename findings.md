@@ -34,12 +34,20 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Existing LLaVA detector mechanism audit: all-layer/per-head within-bin AUROC
   0.8812; head-mean 0.7966; head deviations 0.8805; best single layer 0.7354;
   no fixed eight-layer band is sufficient.
+- Confirmatory capacity-controlled factorial (16,426 mentions):
+  all-layer/per-head 0.8768 versus nested selected single-layer 0.8404,
+  fixed eight-layer bands 0.8062--0.8682, halves 0.8679/0.8697, and
+  all-layer head-mean 0.8030. Both main-effect gates pass; head-deviation
+  reaches 0.8797. The positive interaction gate fails (-0.1824).
 
 ## Patterns and Insights
 
 The allocation fingerprint is distributed across layers and dozens of heads,
 with head-relative differences carrying much more signal than the layer-wise
-mean trajectory. Detection strength does not imply candidate-ranking ability:
+mean trajectory. The new factorial confirms both broad-layer and relative-head
+main effects under equal capacity, but finds that they are partly redundant
+rather than positively synergistic. Detection strength does not imply
+candidate-ranking ability:
 same-prefix counterfactual audits show native likelihood is stronger for
 choosing alternatives. The intervention therefore uses the detector only
 after a mention is emitted and obtains value primarily through deletion, not
@@ -68,10 +76,12 @@ replacement.
   benchmarks without benchmark test labels leaking into decoding?
 - Does video-native sensing transfer to LLaVA-NeXT-Video and Qwen3-VL, or must
   it be retrained per architecture?
-- Can matched parameter-capacity controls distinguish genuine layer breadth
-  from input-dimensionality advantage?
+- Why are the confirmed cross-layer and cross-head components negatively
+  interactive: shared post-row evidence, redundant layer bands, or fold-local
+  compression?
 
 ## Optimization Trajectory
 
-New experiment runs have not started. Protocol and asset audits are in
-progress.
+The detector factorial is complete: cross-layer and cross-head component gates
+pass, while the positive interaction and full-mechanism gates fail. Image and
+video caption matrices remain in execution preparation.

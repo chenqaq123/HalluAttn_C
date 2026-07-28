@@ -832,6 +832,28 @@ signal is post-target attention reorganization. The defensible mechanism is a
 distributed cross-layer relative-head pattern, dominated by the post row, not
 target-object verification localized to a few heads.
 
+**2026-07-28 confirmatory factorial.** A separately registered,
+capacity-controlled `layer breadth × head treatment` experiment on all 16,426
+mentions confirms both main components of that interpretation. With identical
+64-dimensional fold-local transforms and the same grouped five-fold detector,
+all-layer/per-head reaches 0.8768 within-position-bin AUROC. It exceeds the
+nested train-selected single layer (0.8404), every fixed eight-layer band
+(0.8062--0.8682), and both fixed halves (0.8679/0.8697); all seven registered
+paired cluster-bootstrap contrasts have Holm-corrected intervals above zero.
+It also exceeds the all-layer head mean (0.8030) by 0.0736
+(`95% CI [0.0642, 0.0836]`, Holm `p=0.0020`). Removing each layerwise head
+mean and retaining only head deviations reaches 0.8797, slightly above the
+full per-head representation, so the head result is specifically relative
+head identity rather than more raw mass.
+
+The stricter positive layer-by-head interaction gate fails: the registered
+interaction is negative (`-0.1824`, `95% CI [-0.2035, -0.1615]`). Thus the
+supported claim is two additive, partly redundant requirements -- broad
+cross-layer coverage and within-layer head differences -- not a positive
+synergy between them. The full-mechanism gate is therefore recorded as failed
+even though both component gates pass. This narrows, rather than reopens, the
+constructive claim.
+
 ### 4.5 Registered spatial-allocation audit
 
 The current allocation probe discards the 24x24 visual layout by reducing every
