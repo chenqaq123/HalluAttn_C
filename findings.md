@@ -97,6 +97,11 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   falls 65.62→62.43, and F1 significantly falls 72.91→70.57. Captions are
   45.29 words shorter. This is a valid active full-PAI negative result, not
   the earlier POPE attention-only no-op.
+- Registered LLaVA-NeXT CHAIR AllPath (500/500): CHAIRs/CHAIRi point
+  estimates improve 34.40/9.75→31.80/8.43 but both intervals cross zero;
+  recall and F1 significantly rise. Captions expand 164.14→268.45 words,
+  repetition rises 0.435→0.643, and 162/500 hit the token cap. The coverage
+  gain is therefore entangled with severe verbosity/repetition.
 
 ## Patterns and Insights
 

@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 132
+  total_runs: 133
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -119,11 +119,15 @@ experiments:
       experiment: "LLaVA-NeXT CHAIR full PAI"
       result: "CHAIRs unchanged 34.40; CHAIRi 9.75→14.54 significantly worse; Recall 65.62→62.43 and F1 72.91→70.57 significantly lower"
       primary_value: 14.5445
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT CHAIR AllPath"
+      result: "CHAIRs=31.80 and CHAIRi=8.43 with CIs crossing zero; Recall=67.80 and F1=74.93 significantly higher; severe 268-word/repetition expansion"
+      primary_value: 31.8
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "LLaVA full PAI backfires on CHAIR by worsening CHAIRi, recall, and F1 while shortening captions; this extends the intervention-unreliability evidence beyond the old POPE attention-only no-op. Other image rows and all matched video controls continue."
+  last_reflection: "LLaVA AllPath significantly raises recall/F1 but more than halves the remaining token budget through 268-word repetitive captions; its hallucination intervals cross zero. Together with full-PAI backfire, matched companion metrics remain essential. Other image rows and video controls continue."
 
 workspace:
   findings: "findings.md"
