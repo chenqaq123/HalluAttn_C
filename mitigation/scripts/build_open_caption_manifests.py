@@ -32,6 +32,12 @@ def parse_args() -> argparse.Namespace:
         "--output_root",
         default="/tmp/sinkdetect_datasets/open_caption_manifests",
     )
+    parser.add_argument(
+        "--benchmarks",
+        nargs="+",
+        choices=["chair", "amber-generative", "throne-objects365"],
+        default=["chair", "amber-generative", "throne-objects365"],
+    )
     return parser.parse_args()
 
 
@@ -150,13 +156,17 @@ def main() -> None:
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    ids = _chair_ids(args.allpath_benchmarks)
+    selected_benchmarks = set(args.benchmarks)
     outputs = {}
-    for name, records in [
-        ("chair", _chair_records(coco_root, ids)),
-        ("amber-generative", _amber_records(amber_root)),
-        ("throne-objects365", _throne_records(throne_root)),
-    ]:
+    builders = {
+        "chair": lambda: _chair_records(
+            coco_root, _chair_ids(args.allpath_benchmarks)
+        ),
+        "amber-generative": lambda: _amber_records(amber_root),
+        "throne-objects365": lambda: _throne_records(throne_root),
+    }
+    for name in args.benchmarks:
+        records = builders[name]()
         path = output_root / f"{name}.jsonl"
         count, digest = _atomic_jsonl(path, records)
         outputs[name] = {
@@ -165,25 +175,34 @@ def main() -> None:
             "sha256": digest,
         }
 
-    source_files = {
-        "chair_id_source": Path(args.allpath_benchmarks),
-        "coco_instances": coco_root
-        / "annotations"
-        / "instances_val2014.json",
-        "coco_captions": coco_root
-        / "annotations"
-        / "captions_val2014.json",
-        "amber_annotations": amber_root
-        / "official"
-        / "data"
-        / "annotations.json",
-        "throne_annotations": throne_root
-        / "metadata"
-        / "zhiyuan_objv2_val_fixname.json",
-        "throne_subset": throne_root
-        / "metadata"
-        / "objects365_subset.txt",
-    }
+    source_files = {}
+    if "chair" in selected_benchmarks:
+        source_files.update(
+            {
+                "chair_id_source": Path(args.allpath_benchmarks),
+                "coco_instances": coco_root
+                / "annotations"
+                / "instances_val2014.json",
+                "coco_captions": coco_root
+                / "annotations"
+                / "captions_val2014.json",
+            }
+        )
+    if "amber-generative" in selected_benchmarks:
+        source_files["amber_annotations"] = (
+            amber_root / "official" / "data" / "annotations.json"
+        )
+    if "throne-objects365" in selected_benchmarks:
+        source_files.update(
+            {
+                "throne_annotations": throne_root
+                / "metadata"
+                / "zhiyuan_objv2_val_fixname.json",
+                "throne_subset": throne_root
+                / "metadata"
+                / "objects365_subset.txt",
+            }
+        )
     metadata = {
         "outputs": outputs,
         "sources": {

@@ -328,11 +328,19 @@ class OpenCaptionModel:
             "do_sample": bool(do_sample),
             "max_new_tokens": self.max_new_tokens,
             "use_cache": True,
+            # Do not inherit checkpoint-specific sampling or repetition
+            # processors: the registered control is plain greedy decoding, and
+            # PAI/VCD use explicit deterministic logits below.
+            "repetition_penalty": 1.0,
+            "top_k": None,
+            "top_p": None,
         }
         if do_sample:
             kwargs["temperature"] = float(
                 temperature if temperature is not None else 0.7
             )
+        else:
+            kwargs["temperature"] = None
         if generator is not None:
             kwargs["generator"] = generator
         with torch.inference_mode():
