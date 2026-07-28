@@ -87,6 +87,11 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - LLaVA-NeXT image vanilla replay passes 20/20 and rollback
   token/caption/shared-control identity passes 5/5 with the audited sensor,
   releasing formal CHAIR/AMBER ours.
+- Registered Qwen3-VL Vript-HAL ours (122/122): precision/recall/F1
+  71.62/39.84/50.49→71.92/40.38/51.01. Paired deltas are
+  +0.30/+0.54/+0.52 points, but all 95% intervals include zero, so the
+  model-level H2 gate fails. Removal precision is 65.09% over 318 completed
+  rollbacks; captions remain the same length and have no premature EOS.
 
 ## Patterns and Insights
 
