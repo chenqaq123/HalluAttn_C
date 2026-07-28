@@ -54,6 +54,9 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Qwen3-VL video-native sensor (122/122 clips, 6,191 mentions): OOF
   overall/within-bin/matched AUROC 0.7564/0.7519/0.7568; the frozen
   threshold realizes a 2.020% grounded trigger rate.
+- Registered Qwen3-VL shared Vript-HAL control (122/122 clips): released
+  precision 71.62, recall 39.84, F1 50.49, and mean caption length 271.12
+  words. This is a control row, not a mitigation result.
 - Corrected Qwen2.5 two-branch decoding passes VCD no-op identity 5/5,
   rollback/shared-control identity 5/5, and frozen vanilla replay 20/20.
   Formal PAI/VCD still waits for the independent LLaVA decoder gate.
