@@ -187,8 +187,14 @@ def _atomic_json(path: Path, payload: Any) -> None:
     os.replace(temporary, path)
 
 
-def main() -> None:
-    args = parse_args()
+def run_registered_aqa(
+    args: argparse.Namespace,
+    *,
+    tokenizer=None,
+    model=None,
+) -> dict[str, Any]:
+    """Run one caption-row/evaluator shard with optional model reuse."""
+
     if not 0 <= args.shard_idx < args.num_shards:
         raise ValueError("Invalid shard")
     manifest_path = Path(args.manifest)
@@ -233,21 +239,22 @@ def main() -> None:
         )
     pending = [image_id for image_id in selected_ids if image_id not in completed]
 
-    from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-
     model_path = Path(args.evaluator_model_path)
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_path, local_files_only=True
-    )
-    model = AutoModelForSeq2SeqLM.from_pretrained(
-        model_path,
-        local_files_only=True,
-        torch_dtype=torch.bfloat16,
-        device_map={"": args.device},
-    )
-    model.eval()
-    for parameter in model.parameters():
-        parameter.requires_grad_(False)
+    if tokenizer is None or model is None:
+        from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_path, local_files_only=True
+        )
+        model = AutoModelForSeq2SeqLM.from_pretrained(
+            model_path,
+            local_files_only=True,
+            torch_dtype=torch.bfloat16,
+            device_map={"": args.device},
+        )
+        model.eval()
+        for parameter in model.parameters():
+            parameter.requires_grad_(False)
 
     started = time.perf_counter()
     with checkpoint.open("a") as handle, torch.inference_mode():
@@ -340,6 +347,11 @@ def main() -> None:
     metadata_path = output_path.with_suffix(output_path.suffix + ".meta.json")
     _atomic_json(metadata_path, metadata)
     print(json.dumps(metadata, indent=2))
+    return metadata
+
+
+def main() -> None:
+    run_registered_aqa(parse_args())
 
 
 if __name__ == "__main__":
