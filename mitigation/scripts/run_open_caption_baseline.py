@@ -27,6 +27,7 @@ from mitigation.src.formula_ports import (
     FormulaPortConfig,
     generate_pai_greedy,
 )
+from mitigation.src.generation_audit import continuation_audit
 from mitigation.src.open_caption_models import (
     OpenCaptionModel,
     realized_vision_shapes,
@@ -275,16 +276,20 @@ def main() -> None:
             caption = captioner.decode_continuation(
                 full_ids, prompt_length
             )
-            generated_tokens = int(full_ids.shape[-1] - prompt_length)
+            termination = continuation_audit(
+                full_ids,
+                prompt_length,
+                captioner.tokenizer,
+                max_new_tokens=args.max_new_tokens,
+            )
             result = {
                 "sample_id": record["sample_id"],
                 "benchmark": record["benchmark"],
                 "caption": caption,
                 "method": args.method,
                 "prompt": record["prompt"],
-                "generated_tokens": generated_tokens,
+                **termination,
                 "words": len(caption.split()),
-                "premature_eos": generated_tokens < args.max_new_tokens,
                 "wall_seconds": time.perf_counter() - started,
                 "peak_memory_bytes": (
                     int(torch.cuda.max_memory_allocated(captioner.device))

@@ -22,6 +22,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from mitigation.src.probe_sensor import MeanProbeSensor, OOFProbeSensor
+from mitigation.src.generation_audit import continuation_audit
 from mitigation.src.registered_llava_probe import RegisteredLlavaCaptioner
 from mitigation.src.registered_qwen_probe import (
     RegisteredQwen25Captioner,
@@ -249,6 +250,7 @@ class RollbackRunner:
         ]
         return {
             "caption": current["caption"],
+            "full_ids": current["full_ids"],
             "mentions": [
                 {
                     key: mention[key]
@@ -342,6 +344,12 @@ def main() -> None:
             ours = runner.intervene(
                 sample_index, inputs, vanilla
             )
+            termination = continuation_audit(
+                ours["full_ids"],
+                int(inputs["input_ids"].shape[-1]),
+                runner.captioner.tokenizer,
+                max_new_tokens=args.max_new_tokens,
+            )
             row = {
                 id_key: record[id_key],
                 "benchmark": record["benchmark"],
@@ -368,11 +376,7 @@ def main() -> None:
                 "actions": ours["actions"],
                 "unresolved_triggers": ours["unresolved_triggers"],
                 "frame_indices": frame_indices,
-                "generated_tokens": int(
-                    runner.captioner.tokenizer(
-                        ours["caption"], add_special_tokens=False
-                    ).input_ids.__len__()
-                ),
+                **termination,
                 "words": len(ours["caption"].split()),
                 "wall_seconds": time.perf_counter() - started,
                 "peak_memory_bytes": (

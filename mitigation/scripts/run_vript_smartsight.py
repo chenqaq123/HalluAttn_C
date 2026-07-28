@@ -25,6 +25,7 @@ from mitigation.src.open_caption_models import (
     OpenCaptionModel,
     realized_vision_shapes,
 )
+from mitigation.src.generation_audit import continuation_audit
 from mitigation.src.smartsight import (
     TemporalAttentionCapture,
     frame_groups,
@@ -194,14 +195,18 @@ def main() -> None:
                 caption = captioner.decode_continuation(
                     full_ids, prompt_length
                 )
+                termination = continuation_audit(
+                    full_ids,
+                    prompt_length,
+                    captioner.tokenizer,
+                    max_new_tokens=args.max_new_tokens,
+                )
                 candidates.append(
                     {
                         "index": candidate_index,
                         "seed": seed,
                         "caption": caption,
-                        "generated_tokens": int(
-                            full_ids.shape[-1] - prompt_length
-                        ),
+                        **termination,
                         **score,
                     }
                 )
@@ -218,10 +223,11 @@ def main() -> None:
                 "method": "smartsight-disclosed-core",
                 "selected_index": selected_index,
                 "generated_tokens": selected["generated_tokens"],
+                "content_tokens": selected["content_tokens"],
+                "terminated_by_eos": selected["terminated_by_eos"],
+                "hit_max_new_tokens": selected["hit_max_new_tokens"],
                 "words": len(selected["caption"].split()),
-                "premature_eos": (
-                    selected["generated_tokens"] < args.max_new_tokens
-                ),
+                "premature_eos": selected["premature_eos"],
                 "frame_indices": indices,
                 "segments": segments,
                 "segment_count": len(segments),

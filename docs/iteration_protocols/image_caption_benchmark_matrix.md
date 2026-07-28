@@ -102,6 +102,9 @@ from another model.
   on CHAIR, THRONE, or AMBER test labels.
 - Methods may change token probabilities, but not the prompt or stopping rule.
   Premature-EOS frequency and length are reported to expose truncation.
+  Before any full matrix generation, this audit was operationalized as EOS
+  after fewer than 16 non-EOS continuation tokens; ordinary later EOS and
+  max-token termination are logged separately.
 
 ## Metrics and audits
 

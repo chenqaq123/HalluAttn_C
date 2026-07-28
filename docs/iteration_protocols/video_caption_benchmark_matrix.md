@@ -124,3 +124,11 @@ but never substituted for a missing local cell.
 5. Evaluate, audit paired deletions, and append full results to
    `docs/experiment_results.md`.
 
+## Pre-result termination-audit clarification (2026-07-28)
+
+Before any full matrix row was generated, `premature EOS` was operationalized
+as EOS after fewer than 16 non-EOS continuation tokens. A normal later EOS and
+termination at `max_new_tokens` are logged separately. This corrects an audit
+implementation that had classified every EOS before the 512-token cap as
+premature; it does not alter decoding, stopping, captions, method parameters,
+or any primary benchmark metric.

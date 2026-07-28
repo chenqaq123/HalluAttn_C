@@ -21,6 +21,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from mitigation.src.formula_ports import generate_vcd_greedy_multimodal
+from mitigation.src.generation_audit import continuation_audit
 from mitigation.src.open_caption_models import (
     OpenCaptionModel,
     realized_vision_shapes,
@@ -163,7 +164,12 @@ def main() -> None:
             caption = captioner.decode_continuation(
                 full_ids, prompt_length
             )
-            generated_tokens = int(full_ids.shape[-1] - prompt_length)
+            termination = continuation_audit(
+                full_ids,
+                prompt_length,
+                captioner.tokenizer,
+                max_new_tokens=args.max_new_tokens,
+            )
             result = {
                 "clip_id": record["clip_id"],
                 "benchmark": "vript-hal",
@@ -172,9 +178,8 @@ def main() -> None:
                 "prompt": record["prompt"],
                 "system": record.get("system"),
                 "frame_indices": indices,
-                "generated_tokens": generated_tokens,
+                **termination,
                 "words": len(caption.split()),
-                "premature_eos": generated_tokens < args.max_new_tokens,
                 "wall_seconds": time.perf_counter() - started,
                 "peak_memory_bytes": (
                     int(torch.cuda.max_memory_allocated(captioner.device))
