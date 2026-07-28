@@ -102,6 +102,12 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   recall and F1 significantly rise. Captions expand 164.14→268.45 words,
   repetition rises 0.435→0.643, and 162/500 hit the token cap. The coverage
   gain is therefore entangled with severe verbosity/repetition.
+- Registered Qwen2.5-VL CHAIR AllPath (500/500): CHAIRs/CHAIRi significantly
+  improve 28.20/8.72→18.20/4.87 and precision rises
+  84.06→89.31, while recall and F1 intervals include zero. Captions expand
+  156.48→372.81 words, repetition rises 0.481→0.797, and 378/500 hit the
+  token cap. This is a significant native-score gain under an extreme
+  verbosity/repetition confound, not a clean quality improvement.
 
 ## Patterns and Insights
 
