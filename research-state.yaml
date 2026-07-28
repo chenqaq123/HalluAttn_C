@@ -1,0 +1,82 @@
+project:
+  title: "SinkDetect: cross-model caption mitigation and allocation-ablation study"
+  question: "Does detector-gated rollback deletion reduce open-ended image/video hallucination across modern LVLMs, and is its detector signal specifically carried by cross-layer and cross-head allocation differences?"
+  status: active
+  started: "2026-07-28"
+  domain: "vision-language hallucination detection and mitigation"
+
+literature:
+  key_papers:
+    - id: "pai2024"
+      title: "Paying More Attention to Image: A Training-Free Method for Alleviating Hallucination in LVLMs"
+      authors: "Liu et al."
+      year: 2024
+      relevance: "Image-caption attention/contrastive mitigation baseline."
+    - id: "clearsight2025"
+      title: "ClearSight: Visual Signal Enhancement for Object Hallucination Mitigation"
+      authors: "Jiang et al."
+      year: 2025
+      relevance: "Image-caption visual-attention amplification baseline."
+    - id: "diml2025"
+      title: "Devils in Middle Layers of Large Vision-Language Models"
+      authors: "Jiang et al."
+      year: 2025
+      relevance: "Middle-layer VAR detector and heads-guided attention intervention baseline."
+    - id: "allpath2025"
+      title: "Intervene-All-Paths: Unified Mitigation of LVLM Hallucinations across Alignment Formats"
+      authors: "Qian et al."
+      year: 2025
+      relevance: "Head/path-specific image hallucination mitigation baseline."
+    - id: "smartsight2026"
+      title: "SmartSight: Mitigating Hallucination in Video-LLMs Without Compromising Video Understanding via Temporal Attention Collapse"
+      authors: "Sun et al."
+      year: 2026
+      relevance: "Vript-HAL sampling-and-attention-selection baseline."
+  open_problems:
+    - "Most image-caption interventions publish architecture-specific LLaVA-1.5 ports, not matched modern-model transfers."
+    - "Open-domain image-caption mitigation evidence beyond COCO is sparse."
+    - "Published SmartSight does not release code and leaves its segment threshold under-specified."
+  evidence_gaps:
+    - "Matched CHAIR, THRONE-Objects365, and AMBER-generative results on LLaVA-NeXT, Qwen2.5-VL, and Qwen3-VL."
+    - "Matched Vript-HAL VCD, SmartSight, and detector-gated deletion results on the same three model families."
+    - "A clean factorial test of layer breadth and head averaging under position control."
+
+hypotheses:
+  - id: H1
+    statement: "Detector-gated rollback deletion lowers object hallucination while preserving more object coverage than architecture-specific attention interventions across the three image-caption benchmarks."
+    status: active
+    motivation: "The existing LLaVA and Qwen3 COCO pilots show high-precision deletion, but independent non-COCO validation is missing."
+    parent: null
+    priority: high
+  - id: H2
+    statement: "A video-native detector-gated rollback policy improves Vript-HAL precision on all video-capable target models without lowering paired F1."
+    status: active
+    motivation: "Qwen2.5-VL already shows a significant precision gain, but model breadth and matched VCD/SmartSight controls are missing."
+    parent: null
+    priority: high
+  - id: H3
+    statement: "Detection performance requires joint cross-layer and per-head identity structure; a single layer or head-averaged representation cannot match the all-layer/per-head probe under position-balanced evaluation."
+    status: active
+    motivation: "Existing mechanism results strongly suggest a distributed head-deviation fingerprint; the requested ablation needs one consolidated confirmatory table."
+    parent: null
+    priority: high
+
+experiments:
+  proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
+  baseline_value: null
+  best_value: null
+  total_runs: 0
+  trajectory: []
+
+outer_loop:
+  cycle: 0
+  last_direction: "broaden"
+  last_reflection: "Broaden the existing COCO/Qwen results to independent image benchmarks, modern model families, matched video baselines, and a consolidated mechanism ablation."
+
+workspace:
+  findings: "findings.md"
+  log: "research-log.md"
+  literature_dir: "literature/"
+  experiments_dir: "experiments/"
+  to_human_dir: "to_human/"
+  paper_dir: "paper_repo/"

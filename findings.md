@@ -1,0 +1,77 @@
+# Research Findings
+
+## Research Question
+
+Does detector-gated rollback deletion reduce open-ended image/video
+hallucination across modern LVLMs, and is its detector signal specifically
+carried by cross-layer and cross-head allocation differences?
+
+## Current Understanding
+
+The durable negative result is two-pronged: coarse attention is not reliable
+target-object verification when read as a detector after position control, and
+pushing attention can add answer bias or destabilize generation. A supervised
+post-row No-RoPE allocation probe nevertheless detects emitted hallucinated
+mentions. Its useful action is deliberately narrow: trigger rollback and ban
+the detected object's first subtoken, so generation can omit it. Existing COCO
+pilots support high-precision deletion on LLaVA-1.5 and Qwen3-VL; an existing
+video-native Qwen2.5-VL run supports a precision gain on Vript-HAL.
+
+The current expansion asks whether that constructive corollary survives
+independent open-caption benchmarks and modern model families, under matched
+baselines. It also consolidates the detector mechanism claim into a direct
+single-layer/multi-layer/all-layer by head-mean/per-head comparison.
+
+## Key Results
+
+- LLaVA-1.5 COCO rollback pilot: CHAIRs 0.491 to 0.431, CHAIRi 0.1397 to
+  0.1194, removal precision 0.870.
+- Qwen3-VL COCO rollback pilot: CHAIRs 0.451 to 0.255, CHAIRi 0.0981 to
+  0.0529, removal precision 0.893.
+- Qwen2.5-VL video-native Vript-HAL: detector OOF within-bin AUROC 0.7475,
+  removal audit 0.735, caption precision +1.65 points with a positive
+  clip-bootstrap confidence interval, and approximately flat F1.
+- Existing LLaVA detector mechanism audit: all-layer/per-head within-bin AUROC
+  0.8812; head-mean 0.7966; head deviations 0.8805; best single layer 0.7354;
+  no fixed eight-layer band is sufficient.
+
+## Patterns and Insights
+
+The allocation fingerprint is distributed across layers and dozens of heads,
+with head-relative differences carrying much more signal than the layer-wise
+mean trajectory. Detection strength does not imply candidate-ranking ability:
+same-prefix counterfactual audits show native likelihood is stronger for
+choosing alternatives. The intervention therefore uses the detector only
+after a mention is emitted and obtains value primarily through deletion, not
+replacement.
+
+## Lessons and Constraints
+
+- Keep model-native baseline reproductions separate from new
+  cross-architecture ports.
+- Do not report full PAI when only its attention component was run.
+- DIML's published LLaVA layer range and AllPath's identified heads cannot be
+  transferred silently to Qwen architectures.
+- SmartSight's disclosed core uses ten temperature-0.7 candidates, TAC
+  selection, 32 frames at resolution 392, alpha 1.2, and window 10. Its
+  segment-boundary threshold is not disclosed in the paper and official code
+  is unavailable, so any local implementation requires a frozen,
+  clearly-labelled completion of that detail.
+- Generated artifacts remain under ignored experiment directories; benchmark
+  data belongs under `/home/chenguanxu/common_dataset`.
+
+## Open Questions
+
+- Does rollback deletion preserve gains on THRONE-Objects365 and
+  AMBER-generative, where COCO-80 labels are not the sole ontology?
+- Can one probe vocabulary/labeling recipe be made fair across all three image
+  benchmarks without benchmark test labels leaking into decoding?
+- Does video-native sensing transfer to LLaVA-NeXT-Video and Qwen3-VL, or must
+  it be retrained per architecture?
+- Can matched parameter-capacity controls distinguish genuine layer breadth
+  from input-dimensionality advantage?
+
+## Optimization Trajectory
+
+New experiment runs have not started. Protocol and asset audits are in
+progress.
