@@ -319,31 +319,62 @@ def _eos_ids(model, tokenizer) -> set[int]:
     return result
 
 
-def _forward_branch(
-    model,
-    current_ids: torch.Tensor,
-    attention_mask: torch.Tensor,
-    *,
-    first_inputs: Mapping[str, Any],
-    past_key_values: Any | None,
-) -> tuple[torch.Tensor, Any]:
-    kwargs: dict[str, Any] = {
-        "input_ids": current_ids,
-        "attention_mask": attention_mask,
-        "past_key_values": past_key_values,
-        "use_cache": True,
-        "return_dict": True,
+def _initialize_generation_branch(
+    model, inputs: Mapping[str, Any]
+) -> tuple[torch.Tensor, dict[str, Any]]:
+    """Initialize the same cache/position state used by GenerationMixin."""
+
+    input_ids = inputs["input_ids"]
+    model_kwargs = {
+        key: value for key, value in inputs.items() if key != "input_ids"
     }
-    if past_key_values is None:
-        kwargs.update(
-            {
-                key: value
-                for key, value in first_inputs.items()
-                if key not in {"input_ids", "attention_mask"}
-            }
-        )
-    output = model(**kwargs)
-    return output.logits[:, -1, :], output.past_key_values
+    model_kwargs["use_cache"] = True
+    # GenerationMixin.generate() requests only the final-token logits when the
+    # model supports that optimization.  Besides saving memory, this is
+    # semantically required for models such as LLaVA-NeXT-Video whose
+    # prepare_inputs_for_generation() default is logits_to_keep=None: passing
+    # None indexes the hidden states with a new axis and returns rank-4 logits.
+    if (
+        model._supports_logits_to_keep()
+        and "logits_to_keep" not in model_kwargs
+    ):
+        model_kwargs["logits_to_keep"] = 1
+    # Qwen-VL requires cache_position so prepare_inputs_for_generation can
+    # construct multimodal RoPE indices and propagate rope_deltas. Directly
+    # calling forward happened to match LLaVA but silently diverged on Qwen.
+    model_kwargs = model._get_initial_cache_position(
+        input_ids.shape[-1], input_ids.device, model_kwargs
+    )
+    return input_ids, model_kwargs
+
+
+def _generation_branch_step(
+    model,
+    sequence: torch.Tensor,
+    model_kwargs: dict[str, Any],
+) -> tuple[torch.Tensor, dict[str, Any]]:
+    rope_owner = getattr(model, "model", None)
+    branch_rope_deltas = model_kwargs.pop(
+        "_sinkdetect_rope_deltas", None
+    )
+    if (
+        branch_rope_deltas is not None
+        and rope_owner is not None
+        and hasattr(rope_owner, "rope_deltas")
+    ):
+        rope_owner.rope_deltas = branch_rope_deltas
+    model_inputs = model.prepare_inputs_for_generation(
+        sequence, **model_kwargs
+    )
+    output = model(**model_inputs, return_dict=True)
+    model_kwargs = model._update_model_kwargs_for_generation(
+        output,
+        model_kwargs,
+        is_encoder_decoder=model.config.is_encoder_decoder,
+    )
+    if rope_owner is not None and hasattr(rope_owner, "rope_deltas"):
+        model_kwargs["_sinkdetect_rope_deltas"] = rope_owner.rope_deltas
+    return output.logits[:, -1, :], model_kwargs
 
 
 def generate_pai_greedy(
@@ -359,38 +390,32 @@ def generate_pai_greedy(
 ) -> tuple[torch.Tensor, dict[str, Any]]:
     """Deterministic PAI CFG, matching the official log-softmax formula."""
 
-    conditional_ids = conditional_inputs["input_ids"]
-    unconditional_ids = unconditional_inputs["input_ids"]
-    conditional_mask = conditional_inputs.get(
-        "attention_mask", torch.ones_like(conditional_ids)
+    conditional_ids, conditional_kwargs = _initialize_generation_branch(
+        model, conditional_inputs
     )
-    unconditional_mask = unconditional_inputs.get(
-        "attention_mask", torch.ones_like(unconditional_ids)
+    unconditional_ids, unconditional_kwargs = _initialize_generation_branch(
+        model, unconditional_inputs
     )
     current_conditional = conditional_ids
     current_unconditional = unconditional_ids
-    conditional_past = None
-    unconditional_past = None
     generated: list[torch.Tensor] = []
     eos = _eos_ids(model, tokenizer)
     stopped_by_eos = False
 
     with torch.inference_mode():
         for _ in range(int(max_new_tokens)):
-            conditional_logits, conditional_past = _forward_branch(
+            conditional_logits, conditional_kwargs = _generation_branch_step(
                 model,
                 current_conditional,
-                conditional_mask,
-                first_inputs=conditional_inputs,
-                past_key_values=conditional_past,
+                conditional_kwargs,
             )
             with port.suspended():
-                unconditional_logits, unconditional_past = _forward_branch(
-                    model,
-                    current_unconditional,
-                    unconditional_mask,
-                    first_inputs=unconditional_inputs,
-                    past_key_values=unconditional_past,
+                unconditional_logits, unconditional_kwargs = (
+                    _generation_branch_step(
+                        model,
+                        current_unconditional,
+                        unconditional_kwargs,
+                    )
                 )
 
             scores = torch.log_softmax(conditional_logits.float(), dim=-1)
@@ -413,13 +438,11 @@ def generate_pai_greedy(
                 stopped_by_eos = True
                 break
             generated.append(next_token)
-            current_conditional = next_token[:, None]
-            current_unconditional = next_token[:, None]
-            conditional_mask = torch.cat(
-                [conditional_mask, torch.ones_like(current_conditional)], dim=-1
+            current_conditional = torch.cat(
+                [current_conditional, next_token[:, None]], dim=-1
             )
-            unconditional_mask = torch.cat(
-                [unconditional_mask, torch.ones_like(current_unconditional)], dim=-1
+            current_unconditional = torch.cat(
+                [current_unconditional, next_token[:, None]], dim=-1
             )
 
     if generated:
@@ -518,17 +541,12 @@ def generate_vcd_greedy_multimodal(
             inputs[key], noise_step=noise_step, generator=generator
         )
 
-    input_ids = inputs["input_ids"]
-    attention_mask = inputs.get(
-        "attention_mask", torch.ones_like(input_ids)
-    )
-    distorted_mask = distorted.get(
-        "attention_mask", torch.ones_like(input_ids)
+    input_ids, clean_kwargs = _initialize_generation_branch(model, inputs)
+    distorted_ids, distorted_kwargs = _initialize_generation_branch(
+        model, distorted
     )
     current = input_ids
-    current_distorted = input_ids
-    past = None
-    past_distorted = None
+    current_distorted = distorted_ids
     generated: list[torch.Tensor] = []
     eos = _eos_ids(model, tokenizer)
     stopped_by_eos = False
@@ -537,12 +555,10 @@ def generate_vcd_greedy_multimodal(
 
     with torch.inference_mode():
         for _ in range(int(max_new_tokens)):
-            logits, past = _forward_branch(
+            logits, clean_kwargs = _generation_branch_step(
                 model,
                 current,
-                attention_mask,
-                first_inputs=inputs,
-                past_key_values=past,
+                clean_kwargs,
             )
             # On long video prompts the second full-sequence branch can exceed
             # a 24 GB card solely because the first branch's KV cache remains
@@ -550,18 +566,21 @@ def generate_vcd_greedy_multimodal(
             # branch's initial prompt pass, then restore it unchanged.  Both
             # caches stay on GPU for all single-token decoding steps.
             restore_clean_cache = (
-                past_distorted is None and _offload_dynamic_cache(past)
+                branch_calls == 0
+                and _offload_dynamic_cache(
+                    clean_kwargs.get("past_key_values")
+                )
             )
             clean_initial_cache_offloads += int(restore_clean_cache)
-            distorted_logits, past_distorted = _forward_branch(
+            distorted_logits, distorted_kwargs = _generation_branch_step(
                 model,
                 current_distorted,
-                distorted_mask,
-                first_inputs=distorted,
-                past_key_values=past_distorted,
+                distorted_kwargs,
             )
             if restore_clean_cache:
-                _prefetch_dynamic_cache(past)
+                _prefetch_dynamic_cache(
+                    clean_kwargs.get("past_key_values")
+                )
             branch_calls += 1
             adjusted = (1.0 + float(alpha)) * logits - float(alpha) * (
                 distorted_logits
@@ -578,13 +597,9 @@ def generate_vcd_greedy_multimodal(
                 stopped_by_eos = True
                 break
             generated.append(next_token)
-            current = next_token[:, None]
-            current_distorted = next_token[:, None]
-            attention_mask = torch.cat(
-                [attention_mask, torch.ones_like(current)], dim=-1
-            )
-            distorted_mask = torch.cat(
-                [distorted_mask, torch.ones_like(current_distorted)], dim=-1
+            current = torch.cat([current, next_token[:, None]], dim=-1)
+            current_distorted = torch.cat(
+                [current_distorted, next_token[:, None]], dim=-1
             )
 
     if generated:

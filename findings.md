@@ -92,9 +92,11 @@ replacement.
 - A direct two-branch decoder that bypasses
   `prepare_inputs_for_generation` is invalid for Qwen-VL because it omits
   multimodal RoPE/cache-position state. The earlier Qwen2.5 PAI pilot is
-  invalidated. The GenerationMixin-equivalent repair now passes Qwen2.5
-  real-model identity, but formal PAI/VCD rows stay locked until the
-  independent LLaVA real-model gate also passes.
+  invalidated. Branch initialization must also mirror GenerationMixin's
+  `logits_to_keep=1` support path: LLaVA-NeXT-Video otherwise returns rank-4
+  logits through its `None` default. The final repair passes fresh 5/5 gates
+  on both Qwen2.5 and LLaVA-NeXT-Video, including 512-token continuations,
+  without changing Qwen's audited output.
 
 ## Open Questions
 
@@ -117,4 +119,5 @@ identification is frozen for all three image architectures, and Qwen3's
 video-native OOF sensor is complete. Formal image generation is running; the
 first mitigation row, Qwen2.5 CHAIR ClearSight, has nominally favorable but
 inconclusive paired hallucination deltas. Corrected PAI/VCD rows remain gated
-by real-model identity audits.
+only by recording the audited decoder commit and validation manifest; the
+fresh dual-model identities and 37-test suite pass.
