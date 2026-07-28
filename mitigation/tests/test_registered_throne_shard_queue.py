@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
+from mitigation.scripts.run_open_caption_formula_suite import (
+    parse_args as parse_formula_args,
+)
 from mitigation.scripts.run_registered_throne_shard_queue import (
     EVALUATORS,
     METHODS,
@@ -23,6 +27,28 @@ class ThroneShardQueueTests(unittest.TestCase):
         self.assertIn("--shard_idx 3 --num_shards 8", joined)
         self.assertIn("--max_new_tokens 512 --seed 927", joined)
         self.assertIn("--pai_gate", command)
+        with patch("sys.argv", command[1:]):
+            parsed = parse_formula_args()
+        self.assertEqual(parsed.seed, 927)
+        self.assertEqual(parsed.shard_idx, 3)
+        self.assertEqual(len(parsed.job), 5)
+
+    def test_llava_gate_paths_match_promoted_audits(self):
+        config = MODELS["llava_next"]
+        self.assertEqual(
+            config["replay"],
+            (
+                "experiments/registered_caption/llava_next/"
+                "vanilla_replay_20.json"
+            ),
+        )
+        self.assertEqual(
+            config["rollback"],
+            (
+                "experiments/registered_caption/llava_next/"
+                "rollback_identity_5.json"
+            ),
+        )
 
     def test_ours_command_is_image_rollback_with_frozen_budget(self):
         command = ours_command("llava_next", MODELS["llava_next"], 7, 8)

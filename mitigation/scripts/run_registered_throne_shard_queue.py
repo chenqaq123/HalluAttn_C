@@ -44,11 +44,11 @@ MODELS = {
             "pai_active_20_generationmix.json"
         ),
         "replay": (
-            "experiments/registered_caption/llava_next/chair/"
+            "experiments/registered_caption/llava_next/"
             "vanilla_replay_20.json"
         ),
         "rollback": (
-            "experiments/registered_caption/llava_next/chair/"
+            "experiments/registered_caption/llava_next/"
             "rollback_identity_5.json"
         ),
     },
