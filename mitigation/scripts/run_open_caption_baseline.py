@@ -181,8 +181,13 @@ def _atomic_metadata(path: Path, payload: dict[str, Any]) -> None:
     os.replace(temporary, path)
 
 
-def main() -> None:
-    args = parse_args()
+def run_registered_shard(
+    args: argparse.Namespace,
+    *,
+    captioner: OpenCaptionModel | None = None,
+) -> None:
+    """Run one registered shard, optionally reusing an already loaded model."""
+
     if not 0 <= args.shard_idx < args.num_shards:
         raise ValueError("Invalid shard")
     random.seed(args.seed)
@@ -206,12 +211,13 @@ def main() -> None:
     pending = [
         record for record in records if record["sample_id"] not in completed
     ]
-    captioner = OpenCaptionModel(
-        args.kind,
-        args.model_path,
-        args.device,
-        max_new_tokens=args.max_new_tokens,
-    )
+    if captioner is None:
+        captioner = OpenCaptionModel(
+            args.kind,
+            args.model_path,
+            args.device,
+            max_new_tokens=args.max_new_tokens,
+        )
     metadata: dict[str, Any] = {
         "model": captioner.metadata(),
         "method": args.method,
@@ -315,6 +321,10 @@ def main() -> None:
     _atomic_metadata(
         output_path.with_suffix(output_path.suffix + ".meta.json"), metadata
     )
+
+
+def main() -> None:
+    run_registered_shard(parse_args())
 
 
 if __name__ == "__main__":
