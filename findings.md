@@ -42,6 +42,9 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
 - Registered LLaVA-NeXT-Video shared Vript-HAL control (122/122 clips):
   official precision 70.12, recall 23.91, F1 35.19, and mean caption length
   193.69 words. This is a control row, not a mitigation result.
+- Registered Qwen2.5-VL shared CHAIR control (500/500 images): CHAIRs 28.20,
+  CHAIRi 8.72, recall 58.27, precision 84.06, F1 68.83, and mean caption
+  length 156.48 words. This is a control row, not a mitigation result.
 
 ## Patterns and Insights
 
@@ -98,5 +101,5 @@ The detector factorial is complete: cross-layer and cross-head component gates
 pass, while the positive interaction and full-mechanism gates fail. Dataset,
 formula-port, evaluator, and shard-merging audits are complete. Formal image
 generation and model-native sensor extraction are running; the first complete
-caption row is the LLaVA-NeXT-Video shared Vript-HAL control. Corrected
-PAI/VCD rows remain gated by real-model identity audits.
+caption controls are LLaVA-NeXT-Video on Vript-HAL and Qwen2.5-VL on CHAIR.
+Corrected PAI/VCD rows remain gated by real-model identity audits.
