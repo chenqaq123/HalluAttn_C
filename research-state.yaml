@@ -91,7 +91,7 @@ experiments:
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The full live matrix is queue-complete. The final decoder repair passes fresh LLaVA and Qwen identities 5/5 each plus all 37 mitigation tests; record the audited commit and validation manifest to release active/formal PAI/VCD."
+  last_reflection: "The full live matrix is queue-complete. The final decoder repair is committed at 87e0261 and its validated dual-model manifest releases active/formal PAI/VCD; continue execution and record each completed row."
 
 workspace:
   findings: "findings.md"

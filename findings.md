@@ -118,6 +118,6 @@ formula-port, evaluator, and shard-merging audits are complete. AllPath head
 identification is frozen for all three image architectures, and Qwen3's
 video-native OOF sensor is complete. Formal image generation is running; the
 first mitigation row, Qwen2.5 CHAIR ClearSight, has nominally favorable but
-inconclusive paired hallucination deltas. Corrected PAI/VCD rows remain gated
-only by recording the audited decoder commit and validation manifest; the
-fresh dual-model identities and 37-test suite pass.
+inconclusive paired hallucination deltas. The corrected PAI/VCD decoder is
+committed and its hash-bearing dual-model validation manifest now releases
+the active and formal queues.
