@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 127
+  total_runs: 130
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -99,11 +99,23 @@ experiments:
       experiment: "Qwen2.5-VL CHAIR DIML"
       result: "CHAIRs=15.60 (significant) but Recall=50.29 and F1=64.38 significantly lower"
       primary_value: 15.6
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT shared CHAIR vanilla control"
+      result: "500/500; CHAIRs=34.40, CHAIRi=9.75, Recall=65.62, F1=72.91"
+      primary_value: 34.4
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT CHAIR ClearSight"
+      result: "CHAIRs=33.40 and F1=73.87; every paired CI includes zero"
+      primary_value: 33.4
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT CHAIR DIML"
+      result: "CHAIRs=31.20 and F1=74.32; every paired CI includes zero; shorter captions"
+      primary_value: 31.2
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "Qwen2.5 CHAIR DIML significantly lowers CHAIRs but also recall and F1, a coverage trade-off. Qwen3 video ours is running; LLaVA video replay/rollback is queued ahead of formal rows."
+  last_reflection: "LLaVA CHAIR ClearSight and DIML are nominally favorable but inconclusive; DIML lacks the significant recall/F1 loss seen on Qwen2.5, confirming architecture-dependent behavior. Other rows continue."
 
 workspace:
   findings: "findings.md"

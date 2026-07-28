@@ -55,6 +55,12 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   precision 84.06→89.43 significantly improve, while recall 58.27→50.29
   and F1 68.83→64.38 significantly decline. This is a coverage trade-off,
   not a Pareto improvement.
+- Registered LLaVA-NeXT CHAIR control (500/500): CHAIRs 34.40, CHAIRi 9.75,
+  recall 65.62, and F1 72.91.
+- LLaVA-NeXT CHAIR ClearSight and DIML reach CHAIRs/F1
+  33.40/73.87 and 31.20/74.32, respectively, but every paired interval
+  includes zero. DIML shortens captions substantially without a significant
+  recall/F1 loss, unlike its Qwen2.5 coverage trade-off.
 - Qwen3-VL video-native sensor (122/122 clips, 6,191 mentions): OOF
   overall/within-bin/matched AUROC 0.7564/0.7519/0.7568; the frozen
   threshold realizes a 2.020% grounded trigger rate.
