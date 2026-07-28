@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 import zlib
@@ -247,8 +248,9 @@ def _prepare_compact(args: argparse.Namespace) -> None:
         raise ValueError(f"Unexpected allocation shape: {allocation.shape}")
     output = Path(args.compact_cache)
     output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = output.with_name(output.stem + ".tmp.npz")
     np.savez_compressed(
-        output,
+        temporary,
         allocation=allocation,
         object_id=data["object_id"].astype(np.int64),
         image_id=data["image_id"].astype(np.int64),
@@ -258,6 +260,7 @@ def _prepare_compact(args: argparse.Namespace) -> None:
         word=data["word"].astype(str),
         source_features_glob=np.asarray(args.features_glob),
     )
+    os.replace(temporary, output)
     print(
         json.dumps(
             {
