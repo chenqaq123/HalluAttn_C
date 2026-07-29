@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 135
+  total_runs: 136
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -131,11 +131,15 @@ experiments:
       experiment: "Qwen2.5-VL CHAIR detector-gated rollback"
       result: "CHAIRs/CHAIRi=26.20/7.98 with both paired CIs crossing zero; model-level CHAIR gate fail; 61.82% removal precision over 55 CHAIR-scored removals"
       primary_value: 26.2
+    - date: "2026-07-28"
+      experiment: "Qwen2.5-VL shared AMBER-generative vanilla control"
+      result: "1004/1004 images; released CHAIR=4.30, Cover=52.92, Hal=21.51, Cog=1.04"
+      primary_value: 4.2996
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "Qwen2.5 rollback preserves the vanilla generation regime and points in a favorable CHAIR direction, but both hallucination intervals cross zero and the model-level gate fails. Its 61.82% CHAIR-scored removal precision is insufficient to produce a significant end metric, while most open-vocabulary actions are outside CHAIR's 80-object ontology. Cross-benchmark rows are essential to separate weak policy precision from evaluator-vocabulary mismatch."
+  last_reflection: "Qwen2.5 AMBER now has a frozen 1,004-image control under the released generative scorer, enabling the needed open-vocabulary comparison after the CHAIR rollback gate failed. Formula and rollback rows remain paired to this exact control; no AMBER method claim is made before their completion."
 
 workspace:
   findings: "findings.md"

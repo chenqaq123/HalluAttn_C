@@ -114,6 +114,10 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   captions exactly match the frozen vanilla row. Of 1,953 completed
   rollbacks, CHAIR can score 55 removals: 34 hallucinated and 21 grounded,
   for 61.82% removal precision. The model-level CHAIR gate fails.
+- Registered Qwen2.5-VL AMBER-generative control (1,004/1,004): released
+  CHAIR 4.30, Cover 52.92, Hal 21.51, Cog 1.04, 83.33 mean words, and
+  6.56 selected object nouns. This is the frozen paired control, not a
+  mitigation result.
 
 ## Patterns and Insights
 
