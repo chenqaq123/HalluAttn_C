@@ -142,6 +142,10 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   CHAIR/Cover/Hal/Cog=4.37/53.26/21.51/1.16 versus
   4.30/52.92/21.51/1.04 vanilla; every paired interval includes zero.
   Record as neutral/inconclusive.
+- Registered Qwen2.5-VL AMBER DIML (1,004/1,004): Hal and Cog
+  significantly improve to 15.04/0.67, while normalized CHAIR 3.57 remains
+  inconclusive. Cover significantly falls 52.92→46.95 and words fall
+  83.33→69.75. This is a hallucination/coverage trade-off.
 
 ## Patterns and Insights
 

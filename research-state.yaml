@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 142
+  total_runs: 143
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -159,11 +159,15 @@ experiments:
       experiment: "Qwen2.5-VL AMBER-generative ClearSight"
       result: "CHAIR/Cover/Hal/Cog=4.37/53.26/21.51/1.16; every paired CI includes zero"
       primary_value: 4.3663
+    - date: "2026-07-28"
+      experiment: "Qwen2.5-VL AMBER-generative DIML"
+      result: "Hal=15.04 and Cog=0.67 significantly improve; CHAIR=3.57 inconclusive; Cover significantly falls to 46.95"
+      primary_value: 3.5651
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "Qwen2.5 AMBER ClearSight is neutral, matching its inconclusive CHAIR row and the LLaVA AMBER result. Across the three completed ClearSight settings, visual amplification has not yielded a statistically reliable caption-hallucination improvement."
+  last_reflection: "Qwen2.5 DIML repeats the AMBER coverage trade-off seen on LLaVA: Hal/Cog improve, but Cover and length fall; normalized CHAIR is narrowly inconclusive. DIML's direction is cross-model stable, yet neither architecture supplies a Pareto-clean result."
 
 workspace:
   findings: "findings.md"
