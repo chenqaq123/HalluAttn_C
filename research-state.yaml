@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 144
+  total_runs: 145
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -167,11 +167,15 @@ experiments:
       experiment: "Qwen2.5-VL AMBER-generative detector-gated rollback"
       result: "CHAIR/Cover/Hal inconclusive; only Cog improves; 51.83% removal precision; AMBER gate fail and cross-model H1 unsupported"
       primary_value: 4.5561
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT CHAIR detector-gated rollback"
+      result: "CHAIRs/CHAIRi=33.40/9.04 and F1=73.90; every paired CI crosses zero; CHAIR gate fail; 69.23% precision over 26 scored removals"
+      primary_value: 33.4
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "Qwen2.5 rollback fails both registered image benchmarks: CHAIR is nominally favorable but inconclusive, while AMBER normalized CHAIR is nominally worse and Hal inconclusive; AMBER scored removal precision is near chance at 51.83%. The pre-registered all-model H1 is therefore unsupported even though remaining rows are still needed to map model and benchmark boundaries."
+  last_reflection: "LLaVA rollback is nominally favorable on CHAIR but all paired intervals cross zero. Its 69.23% scored removal precision is estimated from only 26 in-vocabulary actions, while 98.96% of rollbacks are outside CHAIR's evaluator ontology and 6,908 triggers remain unresolved. This reinforces the detector/benchmark-domain mismatch already exposed by Qwen2.5."
 
 workspace:
   findings: "findings.md"

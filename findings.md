@@ -151,6 +151,12 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   scores 99 hallucinated and 92 grounded removals (51.83% precision), with
   917 unresolved triggers. The AMBER gate fails; with the failed Qwen2.5
   CHAIR gate, cross-model H1 is unsupported.
+- Registered LLaVA-NeXT CHAIR ours (500/500): CHAIRs/CHAIRi improve
+  nominally by 1.00/0.71 points and recall/F1 rise by 0.96/0.99 points, but
+  every paired interval includes zero and the CHAIR gate fails. Scored
+  removal precision is 69.23% (18 hallucinated, eight grounded), while
+  2,469/2,495 actions are outside CHAIR's vocabulary and 6,908 triggers
+  remain unresolved.
 
 ## Patterns and Insights
 
