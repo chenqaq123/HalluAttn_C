@@ -215,6 +215,10 @@ replacement.
   Legacy termination fields therefore label the rare latter stop as neither
   EOS nor cap. Primary captions and benchmark scores are unchanged; unified
   reporting must include both generation-config stop IDs.
+- A rollback implementation must release the logits/output of its explicit
+  first-token prefill before calling `generate()`, which performs another
+  multimodal prefill. Retaining both peaks OOMs LLaVA-NeXT-Video at 32
+  frames on a 24 GB card even though the two passes fit separately.
 
 ## Open Questions
 
