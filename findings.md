@@ -157,6 +157,10 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   removal precision is 69.23% (18 hallucinated, eight grounded), while
   2,469/2,495 actions are outside CHAIR's vocabulary and 6,908 triggers
   remain unresolved.
+- Shared Qwen2.5-VL Vript-HAL vanilla control (122/122): released
+  precision/recall/F1 are 75.46/21.13/31.54 with 189.48 mean words. All
+  clip IDs/order and 32-frame lists match. The low-recall control freezes
+  the paired comparison regime; it is not a mitigation claim.
 
 ## Patterns and Insights
 
@@ -206,6 +210,11 @@ replacement.
   model launch, not only before the first command. An external process can
   acquire the card during teardown; `set -e` then exits after a pre-row OOM.
   A zero-byte resumable JSONL with no metadata is not a completed row.
+- Qwen2.5 configures both `<|im_end|>` and `<|endoftext|>` as generation
+  stops, while its tokenizer exposes only the former as `eos_token_id`.
+  Legacy termination fields therefore label the rare latter stop as neither
+  EOS nor cap. Primary captions and benchmark scores are unchanged; unified
+  reporting must include both generation-config stop IDs.
 
 ## Open Questions
 

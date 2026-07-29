@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 145
+  total_runs: 146
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -171,11 +171,15 @@ experiments:
       experiment: "LLaVA-NeXT CHAIR detector-gated rollback"
       result: "CHAIRs/CHAIRi=33.40/9.04 and F1=73.90; every paired CI crosses zero; CHAIR gate fail; 69.23% precision over 26 scored removals"
       primary_value: 33.4
+    - date: "2026-07-28"
+      experiment: "Qwen2.5-VL shared Vript-HAL vanilla control"
+      result: "122/122 clips; released P=75.46, R=21.13, F1=31.54; exact IDs and 32-frame lists"
+      primary_value: 31.5352
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "LLaVA rollback is nominally favorable on CHAIR but all paired intervals cross zero. Its 69.23% scored removal precision is estimated from only 26 in-vocabulary actions, while 98.96% of rollbacks are outside CHAIR's evaluator ontology and 6,908 triggers remain unresolved. This reinforces the detector/benchmark-domain mismatch already exposed by Qwen2.5."
+  last_reflection: "The Qwen2.5 shared Vript-HAL control is valid but occupies a high-precision/low-recall regime (75.46/21.13). All mitigation claims must therefore remain paired within model. The audit also exposes a metadata-only second-EOS omission that unified reporting must correct without changing captions or primary scores."
 
 workspace:
   findings: "findings.md"
