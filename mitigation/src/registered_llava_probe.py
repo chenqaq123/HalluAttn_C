@@ -321,6 +321,10 @@ class RegisteredLlavaCaptioner:
             remaining = max(0, self.max_new_tokens - used)
             if remaining == 0:
                 return resumed
+            # The first full-sequence forward can materialize a very large
+            # logits tensor for video prompts.  Do not keep it alive while
+            # generate() performs its own prefilling pass.
+            del output, logits
             return self.model.generate(
                 input_ids=resumed,
                 attention_mask=torch.ones_like(resumed),
