@@ -146,6 +146,11 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   significantly improve to 15.04/0.67, while normalized CHAIR 3.57 remains
   inconclusive. Cover significantly falls 52.92→46.95 and words fall
   83.33→69.75. This is a hallucination/coverage trade-off.
+- Registered Qwen2.5-VL AMBER ours (1,004/1,004): CHAIR/Cover/Hal are all
+  inconclusive; only Cog improves significantly. Of 3,036 rollbacks, AMBER
+  scores 99 hallucinated and 92 grounded removals (51.83% precision), with
+  917 unresolved triggers. The AMBER gate fails; with the failed Qwen2.5
+  CHAIR gate, cross-model H1 is unsupported.
 
 ## Patterns and Insights
 

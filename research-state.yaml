@@ -44,8 +44,8 @@ literature:
 hypotheses:
   - id: H1
     statement: "Detector-gated rollback deletion lowers object hallucination while preserving more object coverage than architecture-specific attention interventions across the three image-caption benchmarks."
-    status: active
-    motivation: "The existing LLaVA and Qwen3 COCO pilots show high-precision deletion, but independent non-COCO validation is missing."
+    status: unsupported_cross_model
+    motivation: "The earlier LLaVA/Qwen3 COCO pilots remain positive, but registered Qwen2.5 rows fail both the CHAIR and AMBER model-level hallucination gates; AMBER removal precision is only 51.83%. Remaining models and THRONE are required for the full comparison, not to rescue the already-failed all-model claim."
     parent: null
     priority: high
   - id: H2
@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 143
+  total_runs: 144
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -163,11 +163,15 @@ experiments:
       experiment: "Qwen2.5-VL AMBER-generative DIML"
       result: "Hal=15.04 and Cog=0.67 significantly improve; CHAIR=3.57 inconclusive; Cover significantly falls to 46.95"
       primary_value: 3.5651
+    - date: "2026-07-28"
+      experiment: "Qwen2.5-VL AMBER-generative detector-gated rollback"
+      result: "CHAIR/Cover/Hal inconclusive; only Cog improves; 51.83% removal precision; AMBER gate fail and cross-model H1 unsupported"
+      primary_value: 4.5561
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "Qwen2.5 DIML repeats the AMBER coverage trade-off seen on LLaVA: Hal/Cog improve, but Cover and length fall; normalized CHAIR is narrowly inconclusive. DIML's direction is cross-model stable, yet neither architecture supplies a Pareto-clean result."
+  last_reflection: "Qwen2.5 rollback fails both registered image benchmarks: CHAIR is nominally favorable but inconclusive, while AMBER normalized CHAIR is nominally worse and Hal inconclusive; AMBER scored removal precision is near chance at 51.83%. The pre-registered all-model H1 is therefore unsupported even though remaining rows are still needed to map model and benchmark boundaries."
 
 workspace:
   findings: "findings.md"
