@@ -122,6 +122,11 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   CHAIR 9.79, Cover 62.10, Hal 55.58, Cog 4.16, 144.11 mean words, and
   10.52 selected object nouns. This is the frozen paired control, not a
   mitigation result.
+- Registered LLaVA-NeXT AMBER full PAI (1,004/1,004): normalized CHAIR
+  9.79→8.93 is inconclusive; Hal 55.58→29.88 and Cog 4.16→0.77
+  significantly improve, but Cover significantly falls 62.10→46.03.
+  Words halve to 69.14 and selected object nouns fall to 6.13. This is a
+  coverage/length trade-off, not a clean gain.
 
 ## Patterns and Insights
 
