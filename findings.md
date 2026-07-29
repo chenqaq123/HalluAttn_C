@@ -187,6 +187,10 @@ replacement.
   per-image mention-count mismatch, duplicate object ID, or partial source
   coverage must fail closed. Readiness is established by full registered-set
   and tensor audit, never by JSONL line count alone.
+- Sequential shared-GPU chains need a fresh free-memory wait before every
+  model launch, not only before the first command. An external process can
+  acquire the card during teardown; `set -e` then exits after a pre-row OOM.
+  A zero-byte resumable JSONL with no metadata is not a completed row.
 
 ## Open Questions
 
