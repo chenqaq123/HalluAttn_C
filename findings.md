@@ -118,6 +118,10 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   CHAIR 4.30, Cover 52.92, Hal 21.51, Cog 1.04, 83.33 mean words, and
   6.56 selected object nouns. This is the frozen paired control, not a
   mitigation result.
+- Registered LLaVA-NeXT AMBER-generative control (1,004/1,004): released
+  CHAIR 9.79, Cover 62.10, Hal 55.58, Cog 4.16, 144.11 mean words, and
+  10.52 selected object nouns. This is the frozen paired control, not a
+  mitigation result.
 
 ## Patterns and Insights
 
