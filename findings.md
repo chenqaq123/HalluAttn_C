@@ -134,6 +134,10 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   significantly improve, but Cover falls 62.10→57.28, words fall
   144.11→100.88, and 59 captions hit the token cap. This is a significant
   hallucination/coverage trade-off, not a Pareto gain.
+- Registered LLaVA-NeXT-Video Vript-HAL VCD (122/122): released
+  precision/recall/F1 move 70.12/23.91/35.19→68.59/23.40/34.51, with
+  every paired interval including zero. Exact frames and active VCD branches
+  pass. Record as inconclusive with unfavorable point estimates.
 
 ## Patterns and Insights
 

@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 140
+  total_runs: 141
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -151,11 +151,15 @@ experiments:
       experiment: "LLaVA-NeXT AMBER-generative DIML"
       result: "CHAIR=6.44, Hal=33.37, Cog=2.52 significantly improve; Cover falls significantly to 57.28 and words fall to 100.88"
       primary_value: 6.436
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT-Video Vript-HAL VCD"
+      result: "P/R/F1=68.59/23.40/34.51 versus 70.12/23.91/35.19 vanilla; all paired CIs include zero"
+      primary_value: 34.5135
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "LLaVA AMBER separates the attention baselines: ClearSight is neutral, while DIML significantly improves all three hallucination metrics at a smaller but still significant Cover/length cost than PAI. Neither DIML nor PAI is Pareto-clean, reinforcing coverage as a mandatory companion endpoint."
+  last_reflection: "LLaVA video VCD is validly active but gives uniformly unfavorable P/R/F1 point estimates with all intervals crossing zero. Together with Qwen3 rollback's nominal but inconclusive gain, the registered video matrix has not yet produced cross-model evidence; LLaVA ours and all SmartSight rows remain decisive comparisons."
 
 workspace:
   findings: "findings.md"
