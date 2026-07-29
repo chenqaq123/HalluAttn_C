@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 146
+  total_runs: 147
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -175,11 +175,15 @@ experiments:
       experiment: "Qwen2.5-VL shared Vript-HAL vanilla control"
       result: "122/122 clips; released P=75.46, R=21.13, F1=31.54; exact IDs and 32-frame lists"
       primary_value: 31.5352
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT AMBER-generative AllPath"
+      result: "CHAIR/Hal nominally worsen to 10.46/58.47 with all CIs crossing zero; 233.69 words, 0.614 repetition, 266 token caps"
+      primary_value: 10.4602
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "The Qwen2.5 shared Vript-HAL control is valid but occupies a high-precision/low-recall regime (75.46/21.13). All mitigation claims must therefore remain paired within model. The audit also exposes a metadata-only second-EOS omission that unified reporting must correct without changing captions or primary scores."
+  last_reflection: "LLaVA AMBER AllPath provides no hallucination evidence: all intervals cross zero and the point directions for CHAIR/Hal/Cog are worse. Its large expansion, object count, repetition, and cap rate reproduce the generation-regime shift seen on CHAIR, so any apparent native-score movement must be reported with length controls."
 
 workspace:
   findings: "findings.md"

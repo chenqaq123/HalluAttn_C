@@ -161,6 +161,12 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   precision/recall/F1 are 75.46/21.13/31.54 with 189.48 mean words. All
   clip IDs/order and 32-frame lists match. The low-recall control freezes
   the paired comparison regime; it is not a mitigation claim.
+- Registered LLaVA-NeXT AMBER AllPath (1,004/1,004): all four paired metric
+  intervals cross zero, with CHAIR/Hal/Cog nominally worse. Captions expand
+  from 144.11 to 233.69 words, selected object nouns from 10.52 to 24.09,
+  repetition from 0.425 to 0.614, and token caps from 3 to 266. This repeats
+  AllPath's large generation-regime shift without an AMBER hallucination
+  gain.
 
 ## Patterns and Insights
 
