@@ -108,6 +108,12 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   156.48→372.81 words, repetition rises 0.481→0.797, and 378/500 hit the
   token cap. This is a significant native-score gain under an extreme
   verbosity/repetition confound, not a clean quality improvement.
+- Registered Qwen2.5-VL CHAIR ours (500/500): CHAIRs/CHAIRi move
+  28.20/8.72→26.20/7.98, but both paired intervals include zero; recall,
+  precision, and F1 are likewise inconclusive. All 500 embedded source
+  captions exactly match the frozen vanilla row. Of 1,953 completed
+  rollbacks, CHAIR can score 55 removals: 34 hallucinated and 21 grounded,
+  for 61.82% removal precision. The model-level CHAIR gate fails.
 
 ## Patterns and Insights
 
