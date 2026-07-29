@@ -138,6 +138,10 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   precision/recall/F1 move 70.12/23.91/35.19→68.59/23.40/34.51, with
   every paired interval including zero. Exact frames and active VCD branches
   pass. Record as inconclusive with unfavorable point estimates.
+- Registered Qwen2.5-VL AMBER ClearSight (1,004/1,004):
+  CHAIR/Cover/Hal/Cog=4.37/53.26/21.51/1.16 versus
+  4.30/52.92/21.51/1.04 vanilla; every paired interval includes zero.
+  Record as neutral/inconclusive.
 
 ## Patterns and Insights
 

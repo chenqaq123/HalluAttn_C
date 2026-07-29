@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 141
+  total_runs: 142
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -155,11 +155,15 @@ experiments:
       experiment: "LLaVA-NeXT-Video Vript-HAL VCD"
       result: "P/R/F1=68.59/23.40/34.51 versus 70.12/23.91/35.19 vanilla; all paired CIs include zero"
       primary_value: 34.5135
+    - date: "2026-07-28"
+      experiment: "Qwen2.5-VL AMBER-generative ClearSight"
+      result: "CHAIR/Cover/Hal/Cog=4.37/53.26/21.51/1.16; every paired CI includes zero"
+      primary_value: 4.3663
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "LLaVA video VCD is validly active but gives uniformly unfavorable P/R/F1 point estimates with all intervals crossing zero. Together with Qwen3 rollback's nominal but inconclusive gain, the registered video matrix has not yet produced cross-model evidence; LLaVA ours and all SmartSight rows remain decisive comparisons."
+  last_reflection: "Qwen2.5 AMBER ClearSight is neutral, matching its inconclusive CHAIR row and the LLaVA AMBER result. Across the three completed ClearSight settings, visual amplification has not yielded a statistically reliable caption-hallucination improvement."
 
 workspace:
   findings: "findings.md"
