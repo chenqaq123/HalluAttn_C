@@ -65,7 +65,7 @@ experiments:
   proxy_metric: "Primary: CHAIRs/CHAIRi or benchmark-native precision-recall-F1; detector primary: image-grouped OOF within-position-bin AUROC."
   baseline_value: null
   best_value: null
-  total_runs: 138
+  total_runs: 140
   trajectory:
     - date: "2026-07-28"
       experiment: "capacity-controlled layer breadth x head treatment factorial"
@@ -143,11 +143,19 @@ experiments:
       experiment: "LLaVA-NeXT AMBER-generative full PAI"
       result: "CHAIR=8.93 inconclusive; Hal=29.88 and Cog=0.77 significantly lower, but Cover collapses to 46.03 and words halve"
       primary_value: 8.9315
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT AMBER-generative ClearSight"
+      result: "CHAIR/Cover/Hal/Cog=9.42/62.15/54.28/4.31; every paired CI includes zero"
+      primary_value: 9.4242
+    - date: "2026-07-28"
+      experiment: "LLaVA-NeXT AMBER-generative DIML"
+      result: "CHAIR=6.44, Hal=33.37, Cog=2.52 significantly improve; Cover falls significantly to 57.28 and words fall to 100.88"
+      primary_value: 6.436
 
 outer_loop:
   cycle: 1
   last_direction: "execute"
-  last_reflection: "LLaVA full PAI reproduces the same coverage-suppression mechanism across CHAIR and AMBER: AMBER Hal/Cog improve, but normalized CHAIR is inconclusive, Cover loses 16 points, and captions halve in length. Metric-specific hallucination gains cannot be separated from omission without companion coverage and length."
+  last_reflection: "LLaVA AMBER separates the attention baselines: ClearSight is neutral, while DIML significantly improves all three hallucination metrics at a smaller but still significant Cover/length cost than PAI. Neither DIML nor PAI is Pareto-clean, reinforcing coverage as a mandatory companion endpoint."
 
 workspace:
   findings: "findings.md"

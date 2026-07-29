@@ -127,6 +127,13 @@ single-layer/multi-layer/all-layer by head-mean/per-head comparison.
   significantly improve, but Cover significantly falls 62.10→46.03.
   Words halve to 69.14 and selected object nouns fall to 6.13. This is a
   coverage/length trade-off, not a clean gain.
+- Registered LLaVA-NeXT AMBER ClearSight (1,004/1,004): all four paired
+  metric intervals include zero, while length and selected-object coverage
+  remain close to vanilla. Record as neutral/inconclusive.
+- Registered LLaVA-NeXT AMBER DIML (1,004/1,004): CHAIR, Hal, and Cog
+  significantly improve, but Cover falls 62.10→57.28, words fall
+  144.11→100.88, and 59 captions hit the token cap. This is a significant
+  hallucination/coverage trade-off, not a Pareto gain.
 
 ## Patterns and Insights
 
