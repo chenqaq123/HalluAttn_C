@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Matched width-10 comparison of VAR-MLP and the SinkDetect sensor.
+"""Fixed-split width-10 comparison of VAR-MLP and SinkDetect features.
 
 Protocol: docs/iteration_protocols/var_mlp_matched_within_bin.md.
 """
@@ -46,7 +46,6 @@ from detection.scripts.evaluate_position_balanced_oof import (  # noqa: E402
 from detection.scripts.evaluate_visual_value_evidence import (  # noqa: E402
     _apply_bin_means,
     _bin_means,
-    _image_folds,
     _load_npz_parts,
     _spearman,
 )
@@ -62,6 +61,24 @@ MODEL_SEEDS = (17, 927, 1701)
 CAPACITY_MODES = ("native", "pca64")
 
 
+def fixed_image_split(
+    image_ids: np.ndarray,
+    train_images: int,
+    seed: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return one deterministic, label-blind image-level train/test split."""
+
+    unique_ids = np.unique(np.asarray(image_ids, dtype=np.int64))
+    if unique_ids.size != image_ids.size:
+        raise ValueError("Caption manifest image IDs must be unique")
+    if train_images <= 0 or train_images >= unique_ids.size:
+        raise ValueError(
+            f"train_images must be in [1, {unique_ids.size - 1}]"
+        )
+    permutation = np.random.default_rng(seed).permutation(unique_ids)
+    return permutation[:train_images], permutation[train_images:]
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -75,8 +92,13 @@ def parse_args() -> argparse.Namespace:
             "allocation_mass.npz"
         ),
     )
-    parser.add_argument("--folds", type=int, default=5)
-    parser.add_argument("--fold_seed", type=int, default=17)
+    parser.add_argument(
+        "--generation_manifest",
+        default="experiments/coco_llava_7b/generation.json",
+        help="Frozen 5,000-image caption manifest used to define the split.",
+    )
+    parser.add_argument("--train_images", type=int, default=4000)
+    parser.add_argument("--split_seed", type=int, default=17)
     parser.add_argument(
         "--model_seeds",
         default=",".join(str(value) for value in MODEL_SEEDS),
@@ -225,102 +247,95 @@ def _fit_representation(
     raw: np.ndarray,
     labels: np.ndarray,
     positions: np.ndarray,
-    test_masks: list[np.ndarray],
+    train_indices: np.ndarray,
+    test_indices: np.ndarray,
     model_seeds: tuple[int, ...],
     capacity_mode: str,
     args: argparse.Namespace,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, list[dict]]:
-    n = labels.size
-    seed_scores = np.full((len(model_seeds), n), np.nan, dtype=np.float64)
-    seed_residuals = np.full_like(seed_scores, np.nan)
-    seed_decisions = np.full((len(model_seeds), n), np.nan, dtype=np.float32)
-    seed_thresholds = np.full(
-        (len(model_seeds), len(test_masks)), np.nan, dtype=np.float64
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+    seed_scores = np.full(
+        (len(model_seeds), test_indices.size), np.nan, dtype=np.float64
     )
-    transforms = []
+    seed_residuals = np.full_like(seed_scores, np.nan)
+    seed_decisions = np.full(
+        (len(model_seeds), test_indices.size), np.nan, dtype=np.float32
+    )
+    seed_thresholds = np.full(len(model_seeds), np.nan, dtype=np.float64)
     device = torch.device(args.device)
-    for fold_index, test_mask in enumerate(test_masks):
-        train_indices = np.where(~test_mask)[0]
-        test_indices = np.where(test_mask)[0]
-        if capacity_mode == "native":
-            transformed = raw
-            transform = {
-                "fold": fold_index,
-                "raw_dim": int(raw.shape[1]),
-                "output_dim": int(raw.shape[1]),
-                "method": "identity",
-                "explained_variance_fraction": 1.0,
-            }
-        elif capacity_mode == "pca64":
-            transformed, transform = capacity_transform(
-                raw,
-                train_indices,
-                args.pca_dim,
-                device,
-                seed=args.pca_seed + fold_index,
-                pca_iterations=args.pca_iterations,
-            )
-            transform = {"fold": fold_index, **transform}
-        else:
-            raise ValueError(f"Unknown capacity mode: {capacity_mode}")
-        transforms.append(transform)
+    if capacity_mode == "native":
+        transformed = raw
+        transform = {
+            "raw_dim": int(raw.shape[1]),
+            "output_dim": int(raw.shape[1]),
+            "method": "identity",
+            "explained_variance_fraction": 1.0,
+        }
+    elif capacity_mode == "pca64":
+        transformed, transform = capacity_transform(
+            raw,
+            train_indices,
+            args.pca_dim,
+            device,
+            seed=args.pca_seed,
+            pca_iterations=args.pca_iterations,
+        )
+    else:
+        raise ValueError(f"Unknown capacity mode: {capacity_mode}")
 
-        for seed_index, model_seed in enumerate(model_seeds):
-            fit_seed = model_seed + fold_index
-            model, mean, std = _fit_model(
-                transformed,
-                labels,
-                positions,
-                train_indices,
-                args,
-                fit_seed,
-            )
-            train_standardized = (
-                transformed[train_indices].astype(np.float32) - mean
-            ) / std
-            test_standardized = (
-                transformed[test_indices].astype(np.float32) - mean
-            ) / std
-            train_scores = _predict_standardized(
-                model,
-                train_standardized,
-                device,
-                args.batch_size * 4,
-            )
-            test_scores = _predict_standardized(
-                model,
-                test_standardized,
-                device,
-                args.batch_size * 4,
-            )
-            threshold = best_balanced_threshold(
-                labels[train_indices], train_scores
-            )
-            seed_scores[seed_index, test_indices] = test_scores
-            seed_residuals[seed_index, test_indices] = _apply_bin_means(
-                test_scores,
-                positions[test_indices],
-                _bin_means(
-                    train_scores,
-                    positions[train_indices],
-                    args.bin_width,
-                ),
+    for seed_index, model_seed in enumerate(model_seeds):
+        model, mean, std = _fit_model(
+            transformed,
+            labels,
+            positions,
+            train_indices,
+            args,
+            model_seed,
+        )
+        train_standardized = (
+            transformed[train_indices].astype(np.float32) - mean
+        ) / std
+        test_standardized = (
+            transformed[test_indices].astype(np.float32) - mean
+        ) / std
+        train_scores = _predict_standardized(
+            model,
+            train_standardized,
+            device,
+            args.batch_size * 4,
+        )
+        test_scores = _predict_standardized(
+            model,
+            test_standardized,
+            device,
+            args.batch_size * 4,
+        )
+        threshold = best_balanced_threshold(labels[train_indices], train_scores)
+        seed_scores[seed_index] = test_scores
+        seed_residuals[seed_index] = _apply_bin_means(
+            test_scores,
+            positions[test_indices],
+            _bin_means(
+                train_scores,
+                positions[train_indices],
                 args.bin_width,
-            )
-            seed_decisions[seed_index, test_indices] = (
-                test_scores >= threshold
-            ).astype(np.float32)
-            seed_thresholds[seed_index, fold_index] = threshold
-            del model, train_standardized, test_standardized
-            if device.type == "cuda":
-                torch.cuda.empty_cache()
-        if capacity_mode == "pca64":
-            del transformed
+            ),
+            args.bin_width,
+        )
+        seed_decisions[seed_index] = (test_scores >= threshold).astype(
+            np.float32
+        )
+        seed_thresholds[seed_index] = threshold
+        del model, train_standardized, test_standardized
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
         print(
-            f"{capacity_mode}: completed fold {fold_index + 1}/"
-            f"{len(test_masks)} for {raw.shape[1]} raw features",
+            f"{capacity_mode}: completed seed {seed_index + 1}/"
+            f"{len(model_seeds)} for {raw.shape[1]} raw features",
             flush=True,
         )
+
+    if capacity_mode == "pca64":
+        del transformed
 
     for name, values in (
         ("scores", seed_scores),
@@ -335,7 +350,7 @@ def _fit_representation(
         seed_residuals,
         seed_decisions,
         seed_thresholds,
-        transforms,
+        transform,
     )
 
 
@@ -365,7 +380,7 @@ def _metric_summary(
         "average_precision": average_precision(labels, scores),
         "matched_pair_auroc": matched["auc"],
         "matched_pair_count": matched["pairs"],
-        "train_fold_residual_auroc": roc_auc(labels, residuals),
+        "train_residual_auroc": roc_auc(labels, residuals),
         "balanced_accuracy_train_threshold": float(
             0.5
             * (
@@ -512,7 +527,7 @@ def _markdown(output: dict) -> str:
         [
             "## Decision",
             "",
-            f"- Reproduction gate: **{output['decisions']['reproduction_gate']}**",
+            f"- Integrity gate: **{output['decisions']['integrity_gate']}**",
             f"- Native named contrast: **{output['decisions']['native_named_positive']}**",
             f"- 64-D named contrast: **{output['decisions']['pca64_named_positive']}**",
             f"- Feature-advantage gate: **{output['decisions']['feature_advantage_gate']}**",
@@ -557,12 +572,40 @@ def main() -> None:
         )
     if np.unique(image_ids).size != 4977:
         raise ValueError("Frozen image count mismatch")
-    folds = _image_folds(image_ids, args.folds, args.fold_seed)
-    test_masks = [np.isin(image_ids, fold_images) for fold_images in folds]
-    heldout_count = np.stack(test_masks).sum(axis=0)
-    if not np.array_equal(heldout_count, np.ones(labels.size, dtype=np.int64)):
-        raise ValueError("Every mention must occur in exactly one held-out fold")
+
+    generation_manifest = Path(args.generation_manifest)
+    generation_records = json.loads(generation_manifest.read_text())
+    manifest_image_ids = np.asarray(
+        [int(record["image_id"]) for record in generation_records],
+        dtype=np.int64,
+    )
+    if manifest_image_ids.size != 5000:
+        raise ValueError(
+            "Frozen generation manifest must contain exactly 5,000 images"
+        )
+    train_image_ids, test_image_ids = fixed_image_split(
+        manifest_image_ids,
+        args.train_images,
+        args.split_seed,
+    )
+    train_mask = np.isin(image_ids, train_image_ids)
+    test_mask = np.isin(image_ids, test_image_ids)
+    if np.any(train_mask & test_mask) or not np.all(train_mask | test_mask):
+        raise ValueError("Every mention must map to exactly one split")
+    train_indices = np.flatnonzero(train_mask)
+    test_indices = np.flatnonzero(test_mask)
+    if (
+        train_indices.size != 13132
+        or test_indices.size != 3294
+        or np.unique(image_ids[train_indices]).size != 3985
+        or np.unique(image_ids[test_indices]).size != 992
+    ):
+        raise ValueError("Frozen fixed-split eligible counts changed")
     caption_proxy = _caption_length_proxy(image_ids, token_positions)
+    test_labels = labels[test_indices]
+    test_positions = positions[test_indices]
+    test_image_mentions = image_ids[test_indices]
+    test_caption_proxy = caption_proxy[test_indices]
 
     metrics: dict[str, dict] = {}
     score_maps: dict[str, dict[str, np.ndarray]] = {}
@@ -580,12 +623,13 @@ def main() -> None:
                 seed_residuals,
                 seed_decisions,
                 seed_thresholds,
-                transforms,
+                transform,
             ) = _fit_representation(
                 raw,
                 labels,
                 positions,
-                test_masks,
+                train_indices,
+                test_indices,
                 model_seeds,
                 mode,
                 args,
@@ -594,8 +638,8 @@ def main() -> None:
             residuals = seed_residuals.mean(axis=0)
             decisions = seed_decisions.mean(axis=0)
             value = _metric_summary(
-                labels,
-                positions,
+                test_labels,
+                test_positions,
                 scores,
                 residuals,
                 decisions,
@@ -607,8 +651,8 @@ def main() -> None:
             value["raw_input_dim"] = int(raw.shape[1])
             value["seed_metrics"] = [
                 _metric_summary(
-                    labels,
-                    positions,
+                    test_labels,
+                    test_positions,
                     seed_scores[index],
                     seed_residuals[index],
                     seed_decisions[index],
@@ -617,23 +661,23 @@ def main() -> None:
                 for index in range(len(model_seeds))
             ]
             value["confounds"] = {
-                "spearman_position": _spearman(scores, positions),
+                "spearman_position": _spearman(scores, test_positions),
                 "within_bin_spearman_position": _within_bin_spearman(
                     scores,
-                    positions,
-                    labels,
-                    positions,
+                    test_positions,
+                    test_labels,
+                    test_positions,
                     args.bin_width,
                 ),
                 "spearman_caption_length_proxy": _spearman(
-                    scores, caption_proxy
+                    scores, test_caption_proxy
                 ),
                 "within_bin_spearman_caption_length_proxy": (
                     _within_bin_spearman(
                         scores,
-                        caption_proxy,
-                        labels,
-                        positions,
+                        test_caption_proxy,
+                        test_labels,
+                        test_positions,
                         args.bin_width,
                     )
                 ),
@@ -644,7 +688,7 @@ def main() -> None:
             score_arrays[f"residual__{mode}__{name}"] = residuals
             score_arrays[f"seed_score__{mode}__{name}"] = seed_scores
             fit_metadata[mode][name] = {
-                "transforms": transforms,
+                "transform": transform,
                 "thresholds": seed_thresholds.tolist(),
             }
 
@@ -654,7 +698,7 @@ def main() -> None:
         for name in REPRESENTATIONS
     }
     balanced, balanced_count, balanced_bins = _position_balanced(
-        labels, positions, balanced_input, args
+        test_labels, test_positions, balanced_input, args
     )
     for mode in capacity_modes:
         for name in REPRESENTATIONS:
@@ -666,19 +710,13 @@ def main() -> None:
     for mode in capacity_modes:
         print(f"bootstrapping {mode} contrasts", flush=True)
         contrasts[mode] = _bootstrap_contrasts(
-            labels,
-            positions,
-            image_ids,
+            test_labels,
+            test_positions,
+            test_image_mentions,
             score_maps[mode],
             _contrast_weights(),
             args,
         )
-
-    seed17_ours = metrics["native"]["no_rope_l00_31"][
-        "seed_metrics"
-    ][0]["within_bin_auroc"]
-    reproduction_error = abs(float(seed17_ours) - 0.8859)
-    reproduction_gate = reproduction_error <= 0.002
 
     def positive(mode: str) -> bool:
         if mode not in contrasts:
@@ -686,20 +724,29 @@ def main() -> None:
         value = contrasts[mode]["sinkdetect_minus_var_mlp"]
         return bool(value["low"] > 0.0 and value["p_holm"] < 0.05)
 
+    split_gate = bool(
+        manifest_image_ids.size == 5000
+        and train_image_ids.size == 4000
+        and test_image_ids.size == 1000
+        and np.intersect1d(train_image_ids, test_image_ids).size == 0
+        and train_indices.size + test_indices.size == labels.size
+    )
+    feature_identity_gate = provenance["max_no_rope_cache_error"] <= 1e-6
+    integrity_gate = bool(split_gate and feature_identity_gate)
     decisions = {
-        "reproduction_gate": bool(reproduction_gate),
-        "seed17_ours_within_bin": float(seed17_ours),
-        "seed17_reproduction_abs_error": float(reproduction_error),
+        "split_gate": split_gate,
+        "feature_identity_gate": bool(feature_identity_gate),
+        "integrity_gate": integrity_gate,
         "native_named_positive": positive("native"),
         "pca64_named_positive": positive("pca64"),
         "feature_advantage_gate": bool(
-            reproduction_gate
+            integrity_gate
             and positive("native")
             and positive("pca64")
         ),
     }
     if "native" not in capacity_modes:
-        raise ValueError("Registered reproduction gate requires native mode")
+        raise ValueError("Registered feature-identity gate requires native mode")
     if set(capacity_modes) != set(CAPACITY_MODES):
         raise ValueError("Formal run requires both registered capacity modes")
 
@@ -707,12 +754,26 @@ def main() -> None:
         "protocol": (
             "docs/iteration_protocols/var_mlp_matched_within_bin.md"
         ),
-        "n": int(labels.size),
-        "images": int(np.unique(image_ids).size),
-        "hallucinated": int(labels.sum()),
-        "grounded": int((labels == 0).sum()),
-        "folds": args.folds,
-        "fold_seed": args.fold_seed,
+        "caption_manifest_images": int(manifest_image_ids.size),
+        "eligible_images": int(np.unique(image_ids).size),
+        "eligible_mentions": int(labels.size),
+        "hallucinated_mentions": int(labels.sum()),
+        "grounded_mentions": int((labels == 0).sum()),
+        "split": {
+            "seed": args.split_seed,
+            "train_manifest_images": int(train_image_ids.size),
+            "test_manifest_images": int(test_image_ids.size),
+            "train_eligible_images": int(
+                np.unique(image_ids[train_indices]).size
+            ),
+            "test_eligible_images": int(
+                np.unique(image_ids[test_indices]).size
+            ),
+            "train_mentions": int(train_indices.size),
+            "test_mentions": int(test_indices.size),
+            "train_hallucinated": int(labels[train_indices].sum()),
+            "test_hallucinated": int(test_labels.sum()),
+        },
         "model_seeds": list(model_seeds),
         "bin_width": args.bin_width,
         "capacity_modes": list(capacity_modes),
@@ -727,7 +788,11 @@ def main() -> None:
             "seed": args.bootstrap_seed,
             "holm_family_size": len(_contrast_weights()),
         },
-        "provenance": provenance,
+        "provenance": {
+            **provenance,
+            "generation_manifest": str(generation_manifest),
+            "generation_manifest_sha256": sha256_file(generation_manifest),
+        },
         "representations": {
             name: {
                 "raw_dim": int(representations[name].shape[1]),
@@ -747,25 +812,40 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     output_json = output_dir / "summary.json"
-    output_npz = output_dir / "oof_scores.npz"
+    output_npz = output_dir / "heldout_scores.npz"
     output_markdown = output_dir / "summary.md"
+    split_manifest = output_dir / "split_manifest.json"
     output_json.write_text(json.dumps(output, indent=2) + "\n")
+    split_manifest.write_text(
+        json.dumps(
+            {
+                "source_manifest": str(generation_manifest),
+                "algorithm": "sort IDs then numpy default_rng permutation",
+                "seed": args.split_seed,
+                "train_image_ids": [int(value) for value in train_image_ids],
+                "test_image_ids": [int(value) for value in test_image_ids],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
     np.savez_compressed(
         output_npz,
-        object_id=reference["object_id"],
-        image_id=image_ids,
-        token_pos=token_positions,
-        gen_pos=positions,
-        label=labels,
-        word=reference["word"],
-        caption_length_proxy=caption_proxy,
+        object_id=reference["object_id"][test_indices],
+        image_id=test_image_mentions,
+        token_pos=token_positions[test_indices],
+        gen_pos=test_positions,
+        label=test_labels,
+        word=reference["word"][test_indices],
+        caption_length_proxy=test_caption_proxy,
         model_seeds=np.asarray(model_seeds, dtype=np.int64),
         **score_arrays,
     )
     output_markdown.write_text(_markdown(output) + "\n")
     print(json.dumps(decisions, indent=2), flush=True)
     print(
-        f"wrote {output_json}, {output_npz}, and {output_markdown}",
+        f"wrote {output_json}, {output_npz}, {output_markdown}, and "
+        f"{split_manifest}",
         flush=True,
     )
 
