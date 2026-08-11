@@ -1,7 +1,8 @@
 # Registered protocol: VAR-MLP versus SinkDetect allocation probe
 
 **Registration date:** 2026-08-11  
-**Status:** frozen before fitting or inspecting any comparison result  
+**Status:** revised and frozen before any comparison result was serialized or
+inspected  
 **Purpose:** determine whether the deployed SinkDetect sensor has a
 position-controlled detection advantage over the VAR-MLP feature from *Devils
 in Middle Layers*, and attribute any difference to attention source or layer
@@ -12,18 +13,28 @@ breadth rather than to data splits or classifier capacity.
 On the same LLaVA-1.5-7B captions and CHAIR mention labels, does the SinkDetect
 post-row, all-layer, No-RoPE allocation representation outperform the
 published VAR-MLP post-row, native-attention, layers-5--18 representation when
-both use the same image-grouped folds, training-only preprocessing, classifier,
-position-conditional loss, and width-10 evaluation?
+both use the same fixed image-level training/test split, training-only
+preprocessing, classifier, position-conditional loss, and width-10 evaluation?
 
 This is a detector comparison only. It does not run rollback generation and
 cannot establish that either detector verifies candidate objects.
 
 ## 2. Frozen data and feature identity
 
-- Population: the existing 16,426 first-unique COCO/CHAIR object mentions from
-  4,977 images, including 4,009 hallucinated and 12,417 grounded mentions.
+- Caption universe: all 5,000 records in the frozen COCO val2014 generation
+  manifest. Of these, 4,977 images contain at least one eligible COCO-80 object
+  mention; the other 23 remain in the image split but cannot contribute a
+  mention-level detection example.
+- Mention population: the existing 16,426 first-unique COCO/CHAIR object
+  mentions, including 4,009 hallucinated and 12,417 grounded mentions.
 - Model/captions: frozen `llava-hf/llava-1.5-7b-hf` caption cache already used
   by the allocation and position-prior audits. No caption is regenerated.
+- Split: sort all 5,000 manifest image IDs, apply
+  `numpy.random.default_rng(17).permutation`, assign the first 4,000 image IDs
+  to training and the remaining 1,000 to test. This label-blind split is shared
+  without modification by every representation and baseline. It contains
+  13,132 eligible training mentions from 3,985 images and 3,294 eligible test
+  mentions from 992 images; 15/8 train/test images have no eligible mention.
 - Join key/order: `object_id`; `image_id`, `gen_pos`, label, word, and token
   position must agree exactly between the raw/no-RoPE VVE shards and the
   retained allocation cache.
@@ -67,21 +78,21 @@ The registered contrasts are:
 - breadth effect under No-RoPE attention: L0--31 minus L5--18;
 - source-by-breadth difference-in-differences.
 
-## 4. Shared readout and capacity controls
+## 4. Shared fixed-split readout and capacity controls
 
 The primary **method-faithful-input** table preserves each representation's
-native dimension but holds the readout fixed: train-fold standardization,
+native dimension but holds the readout fixed: training-set standardization,
 one-hidden-layer width-256 GELU MLP, scalar hallucination logit, AdamW
-(`lr=1e-3`, `weight_decay=1e-4`), batch size 128, ten epochs. The five
-image-grouped folds are the existing seed-17 folds. Fit seeds are `17`, `927`,
-and `1701`; average their held-out logits before scoring.
+(`lr=1e-3`, `weight_decay=1e-4`), batch size 128, ten epochs. Every
+representation uses the single frozen 4,000/1,000 image split above. Fit seeds
+are `17`, `927`, and `1701`; average their test logits before scoring.
 
 Because the raw input dimensions differ, a co-primary **capacity-matched**
-table transforms every representation to exactly 64 inputs using fold-local
+table transforms every representation to exactly 64 inputs using training-only
 PCA when the raw dimension exceeds 64 and zero padding otherwise. The PCA is
-fit on training rows only, using deterministic randomized-PCA seed
-`20260811 + fold_index` and four power iterations. All other training settings
-and held-out examples are identical. Method superiority requires a favorable
+fit on training rows only, using deterministic randomized-PCA seed `20260811`
+and four power iterations. All other training settings and test examples are
+identical. Method superiority requires a favorable
 named-method contrast in both native-dimension and 64-D tables; disagreement
 is reported as a capacity-sensitive result.
 
@@ -96,13 +107,13 @@ an exact reproduction of the author's ReLU/grid-search training script.
 
 ## 5. Frozen evaluation
 
-Primary metric: size-weighted width-10 within-position-bin OOF AUROC over bins
-with at least 30 examples and both labels.
+Primary metric: size-weighted width-10 within-position-bin AUROC on the fixed
+test set, over bins with at least 30 test examples and both labels.
 
 Mandatory secondary outputs:
 
-- overall AUROC, average precision, matched-pair AUROC, and train-fold residual
-  AUROC;
+- overall AUROC, average precision, matched-pair AUROC, and training-set
+  residual AUROC evaluated on the test set;
 - the complete per-position-bin AUROC vector;
 - literal position-balanced AUROC and zero-logit balanced accuracy on the same
   1,000 seed-1701 draws for every row;
@@ -124,11 +135,12 @@ Before interpreting the comparison:
 
 1. the reconstructed No-RoPE all-layer post feature must match the retained
    post-only cache within `1e-6` elementwise after object-ID alignment;
-2. the seed-17 native-dimension SinkDetect row must reproduce the retained
-   post-only within-bin AUROC 0.8859 within 0.002;
-3. all OOF predictions must be finite and every image must occur in exactly one
-   held-out fold;
-4. no fit, standardizer, PCA, or threshold may consume held-out labels.
+2. the split manifest must contain exactly 5,000 unique images, with exactly
+   4,000 assigned to train and 1,000 assigned to test, and no image overlap;
+3. all 16,426 mentions must map to exactly one side of the image split and all
+   test predictions must be finite;
+4. no fit, standardizer, PCA, threshold, layer/head choice, or sign choice may
+   consume test labels.
 
 Interpretation:
 
@@ -148,7 +160,17 @@ Interpretation:
 ## 7. Required artifacts
 
 Write ignored artifacts under `experiments/var_mlp_matched/`: config and cache
-hashes, aligned feature manifest, fold assignments, per-seed and ensembled OOF
-predictions, native/64-D metric tables, paired bootstrap contrasts, per-bin
-tables, and a machine-readable summary. Append the result and decision to the
-three living research documents without overwriting history.
+hashes, the exact 5,000-image split manifest, aligned feature manifest,
+per-seed and ensembled test predictions, native/64-D metric tables, paired
+bootstrap contrasts, per-bin tables, and a machine-readable summary. Append
+the result and decision to the three living research documents without
+overwriting history.
+
+## 8. Revision history
+
+The first committed draft specified five-fold image-grouped OOF evaluation.
+Before the interrupted bootstrap could write or expose any result artifact,
+the user replaced that setting with one shared fixed train/test split. The
+interrupted in-memory fits are discarded and are not evidence. This revision
+therefore freezes the requested simpler design before the formal fixed-split
+run.
