@@ -79,10 +79,11 @@ and `1701`; average their held-out logits before scoring.
 Because the raw input dimensions differ, a co-primary **capacity-matched**
 table transforms every representation to exactly 64 inputs using fold-local
 PCA when the raw dimension exceeds 64 and zero padding otherwise. The PCA is
-fit on training rows only. All other training settings and held-out examples
-are identical. Method superiority requires a favorable named-method contrast
-in both native-dimension and 64-D tables; disagreement is reported as a
-capacity-sensitive result.
+fit on training rows only, using deterministic randomized-PCA seed
+`20260811 + fold_index` and four power iterations. All other training settings
+and held-out examples are identical. Method superiority requires a favorable
+named-method contrast in both native-dimension and 64-D tables; disagreement
+is reported as a capacity-sensitive result.
 
 Training uses the existing width-10 position-conditional `size` weights: inside
 each training position bin the two labels receive equal total loss weight,
@@ -106,7 +107,8 @@ Mandatory secondary outputs:
 - literal position-balanced AUROC and zero-logit balanced accuracy on the same
   1,000 seed-1701 draws for every row;
 - macro average over valid position-bin AUROCs and the fixed late range
-  positions 80--139;
+  positions 80--139 (the latter is weighted by the registered bin sample
+  counts);
 - score correlation with generation position and the caption-length proxy;
 - three-seed range before logit averaging.
 
