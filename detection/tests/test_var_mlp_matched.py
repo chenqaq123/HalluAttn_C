@@ -13,16 +13,15 @@ def test_build_representations_uses_post_row_and_registered_layers() -> None:
     no_rope = raw + 100_000.0
     views = build_representations(raw, no_rope)
 
-    assert views["native_l05_18"].shape == (2, 14 * 32)
-    assert views["native_l00_31"].shape == (2, 32 * 32)
-    assert views["no_rope_l05_18"].shape == (2, 14 * 32)
-    assert views["no_rope_l00_31"].shape == (2, 32 * 32)
+    assert set(views) == {"var_mlp", "ours"}
+    assert views["var_mlp"].shape == (2, 14 * 32)
+    assert views["ours"].shape == (2, 32 * 32)
 
     np.testing.assert_array_equal(
-        views["native_l05_18"], raw[:, 5:19, 1, :].reshape(2, -1)
+        views["var_mlp"], raw[:, 5:19, 1, :].reshape(2, -1)
     )
     np.testing.assert_array_equal(
-        views["no_rope_l00_31"], no_rope[:, :, 1, :].reshape(2, -1)
+        views["ours"], no_rope[:, :, 1, :].reshape(2, -1)
     )
 
 
