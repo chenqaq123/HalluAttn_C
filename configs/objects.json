@@ -1,0 +1,409 @@
+{
+  "schema": "sinkdetect-object-candidate-vocabulary-v1",
+  "benchmarks": {
+    "objects": {
+      "entries": [
+        {
+          "identity": "person",
+          "surface": "person",
+          "origin": "coco"
+        },
+        {
+          "identity": "bicycle",
+          "surface": "bicycle",
+          "origin": "coco"
+        },
+        {
+          "identity": "car",
+          "surface": "car",
+          "origin": "coco"
+        },
+        {
+          "identity": "motorcycle",
+          "surface": "motorcycle",
+          "origin": "coco"
+        },
+        {
+          "identity": "airplane",
+          "surface": "airplane",
+          "origin": "coco"
+        },
+        {
+          "identity": "bus",
+          "surface": "bus",
+          "origin": "coco"
+        },
+        {
+          "identity": "train",
+          "surface": "train",
+          "origin": "coco"
+        },
+        {
+          "identity": "truck",
+          "surface": "truck",
+          "origin": "coco"
+        },
+        {
+          "identity": "boat",
+          "surface": "boat",
+          "origin": "coco"
+        },
+        {
+          "identity": "traffic light",
+          "surface": "traffic light",
+          "origin": "coco"
+        },
+        {
+          "identity": "fire hydrant",
+          "surface": "fire hydrant",
+          "origin": "coco"
+        },
+        {
+          "identity": "stop sign",
+          "surface": "stop sign",
+          "origin": "coco"
+        },
+        {
+          "identity": "parking meter",
+          "surface": "parking meter",
+          "origin": "coco"
+        },
+        {
+          "identity": "bench",
+          "surface": "bench",
+          "origin": "coco"
+        },
+        {
+          "identity": "bird",
+          "surface": "bird",
+          "origin": "coco"
+        },
+        {
+          "identity": "cat",
+          "surface": "cat",
+          "origin": "coco"
+        },
+        {
+          "identity": "dog",
+          "surface": "dog",
+          "origin": "coco"
+        },
+        {
+          "identity": "horse",
+          "surface": "horse",
+          "origin": "coco"
+        },
+        {
+          "identity": "sheep",
+          "surface": "sheep",
+          "origin": "coco"
+        },
+        {
+          "identity": "cow",
+          "surface": "cow",
+          "origin": "coco"
+        },
+        {
+          "identity": "elephant",
+          "surface": "elephant",
+          "origin": "coco"
+        },
+        {
+          "identity": "bear",
+          "surface": "bear",
+          "origin": "coco"
+        },
+        {
+          "identity": "zebra",
+          "surface": "zebra",
+          "origin": "coco"
+        },
+        {
+          "identity": "giraffe",
+          "surface": "giraffe",
+          "origin": "coco"
+        },
+        {
+          "identity": "backpack",
+          "surface": "backpack",
+          "origin": "coco"
+        },
+        {
+          "identity": "umbrella",
+          "surface": "umbrella",
+          "origin": "coco"
+        },
+        {
+          "identity": "handbag",
+          "surface": "handbag",
+          "origin": "coco"
+        },
+        {
+          "identity": "tie",
+          "surface": "tie",
+          "origin": "coco"
+        },
+        {
+          "identity": "suitcase",
+          "surface": "suitcase",
+          "origin": "coco"
+        },
+        {
+          "identity": "frisbee",
+          "surface": "frisbee",
+          "origin": "coco"
+        },
+        {
+          "identity": "skis",
+          "surface": "skis",
+          "origin": "coco"
+        },
+        {
+          "identity": "snowboard",
+          "surface": "snowboard",
+          "origin": "coco"
+        },
+        {
+          "identity": "sports ball",
+          "surface": "sports ball",
+          "origin": "coco"
+        },
+        {
+          "identity": "kite",
+          "surface": "kite",
+          "origin": "coco"
+        },
+        {
+          "identity": "baseball bat",
+          "surface": "baseball bat",
+          "origin": "coco"
+        },
+        {
+          "identity": "baseball glove",
+          "surface": "baseball glove",
+          "origin": "coco"
+        },
+        {
+          "identity": "skateboard",
+          "surface": "skateboard",
+          "origin": "coco"
+        },
+        {
+          "identity": "surfboard",
+          "surface": "surfboard",
+          "origin": "coco"
+        },
+        {
+          "identity": "tennis racket",
+          "surface": "tennis racket",
+          "origin": "coco"
+        },
+        {
+          "identity": "bottle",
+          "surface": "bottle",
+          "origin": "coco"
+        },
+        {
+          "identity": "wine glass",
+          "surface": "wine glass",
+          "origin": "coco"
+        },
+        {
+          "identity": "cup",
+          "surface": "cup",
+          "origin": "coco"
+        },
+        {
+          "identity": "fork",
+          "surface": "fork",
+          "origin": "coco"
+        },
+        {
+          "identity": "knife",
+          "surface": "knife",
+          "origin": "coco"
+        },
+        {
+          "identity": "spoon",
+          "surface": "spoon",
+          "origin": "coco"
+        },
+        {
+          "identity": "bowl",
+          "surface": "bowl",
+          "origin": "coco"
+        },
+        {
+          "identity": "banana",
+          "surface": "banana",
+          "origin": "coco"
+        },
+        {
+          "identity": "apple",
+          "surface": "apple",
+          "origin": "coco"
+        },
+        {
+          "identity": "sandwich",
+          "surface": "sandwich",
+          "origin": "coco"
+        },
+        {
+          "identity": "orange",
+          "surface": "orange",
+          "origin": "coco"
+        },
+        {
+          "identity": "broccoli",
+          "surface": "broccoli",
+          "origin": "coco"
+        },
+        {
+          "identity": "carrot",
+          "surface": "carrot",
+          "origin": "coco"
+        },
+        {
+          "identity": "hot dog",
+          "surface": "hot dog",
+          "origin": "coco"
+        },
+        {
+          "identity": "pizza",
+          "surface": "pizza",
+          "origin": "coco"
+        },
+        {
+          "identity": "donut",
+          "surface": "donut",
+          "origin": "coco"
+        },
+        {
+          "identity": "cake",
+          "surface": "cake",
+          "origin": "coco"
+        },
+        {
+          "identity": "chair",
+          "surface": "chair",
+          "origin": "coco"
+        },
+        {
+          "identity": "couch",
+          "surface": "couch",
+          "origin": "coco"
+        },
+        {
+          "identity": "potted plant",
+          "surface": "potted plant",
+          "origin": "coco"
+        },
+        {
+          "identity": "bed",
+          "surface": "bed",
+          "origin": "coco"
+        },
+        {
+          "identity": "dining table",
+          "surface": "dining table",
+          "origin": "coco"
+        },
+        {
+          "identity": "toilet",
+          "surface": "toilet",
+          "origin": "coco"
+        },
+        {
+          "identity": "tv",
+          "surface": "tv",
+          "origin": "coco"
+        },
+        {
+          "identity": "laptop",
+          "surface": "laptop",
+          "origin": "coco"
+        },
+        {
+          "identity": "mouse",
+          "surface": "mouse",
+          "origin": "coco"
+        },
+        {
+          "identity": "remote",
+          "surface": "remote",
+          "origin": "coco"
+        },
+        {
+          "identity": "keyboard",
+          "surface": "keyboard",
+          "origin": "coco"
+        },
+        {
+          "identity": "cell phone",
+          "surface": "cell phone",
+          "origin": "coco"
+        },
+        {
+          "identity": "microwave",
+          "surface": "microwave",
+          "origin": "coco"
+        },
+        {
+          "identity": "oven",
+          "surface": "oven",
+          "origin": "coco"
+        },
+        {
+          "identity": "toaster",
+          "surface": "toaster",
+          "origin": "coco"
+        },
+        {
+          "identity": "sink",
+          "surface": "sink",
+          "origin": "coco"
+        },
+        {
+          "identity": "refrigerator",
+          "surface": "refrigerator",
+          "origin": "coco"
+        },
+        {
+          "identity": "book",
+          "surface": "book",
+          "origin": "coco"
+        },
+        {
+          "identity": "clock",
+          "surface": "clock",
+          "origin": "coco"
+        },
+        {
+          "identity": "vase",
+          "surface": "vase",
+          "origin": "coco"
+        },
+        {
+          "identity": "scissors",
+          "surface": "scissors",
+          "origin": "coco"
+        },
+        {
+          "identity": "teddy bear",
+          "surface": "teddy bear",
+          "origin": "coco"
+        },
+        {
+          "identity": "hair drier",
+          "surface": "hair drier",
+          "origin": "coco"
+        },
+        {
+          "identity": "toothbrush",
+          "surface": "toothbrush",
+          "origin": "coco"
+        }
+      ]
+    }
+  }
+}
