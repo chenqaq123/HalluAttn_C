@@ -1,2 +1,0 @@
-"""Baseline metric implementations."""
-

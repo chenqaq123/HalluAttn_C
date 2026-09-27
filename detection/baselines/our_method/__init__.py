@@ -1,2 +1,0 @@
-"""SinkDetect score alignment helpers."""
-

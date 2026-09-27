@@ -1,0 +1,42 @@
+{
+  "llava15_7b": {
+    "backbone": "llava-hf/llava-1.5-7b-hf",
+    "layers": 32,
+    "heads_per_layer": 32,
+    "selected_edges": 5238,
+    "g_features": 96,
+    "file": "checkpoints/llava15_7b/s_mlp.pt",
+    "bytes": 2786347,
+    "sha256": "61cad2afa6056afbe042bea25d277bb733752694660cfa18a846a6bb96e9991e"
+  },
+  "llava16_7b": {
+    "backbone": "llava-hf/llava-v1.6-mistral-7b-hf",
+    "layers": 32,
+    "heads_per_layer": 32,
+    "selected_edges": 5238,
+    "g_features": 96,
+    "file": "checkpoints/llava16_7b/s_mlp.pt",
+    "bytes": 2786347,
+    "sha256": "44d14867175945f7fdbadd20065c6e4060cdcbd1544a47fd371c062329ab0711"
+  },
+  "qwen25_7b": {
+    "backbone": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "layers": 28,
+    "heads_per_layer": 28,
+    "selected_edges": 3070,
+    "g_features": 84,
+    "file": "checkpoints/qwen25_7b/s_mlp.pt",
+    "bytes": 1641579,
+    "sha256": "976454f2198fc9ade92557add11b25b1c1befa182935763e0471682b3d0f09a2"
+  },
+  "qwen3_8b": {
+    "backbone": "Qwen/Qwen3-VL-8B-Instruct",
+    "layers": 36,
+    "heads_per_layer": 32,
+    "selected_edges": 6630,
+    "g_features": 108,
+    "file": "checkpoints/qwen3_8b/s_mlp.pt",
+    "bytes": 3521323,
+    "sha256": "df8a8a61c0eaa2bab43833c58603ee31177ec175c777a25053a1977a1b583576"
+  }
+}

@@ -1,1 +1,0 @@
-"""Detection baseline reproduction package."""
