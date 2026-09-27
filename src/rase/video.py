@@ -82,8 +82,7 @@ def video_inputs(processor, row, prompt, *, min_pixels, max_pixels, device, dtyp
     inputs = processor(text=[prompt], videos=[torch.from_numpy(frames).permute(0, 3, 1, 2)],
         return_tensors='pt', videos_kwargs=dict(do_sample_frames=False, fps=sampled_fps,
             do_resize=True, size=dict(shortest_edge=min_pixels,longest_edge=max_pixels)))
-    # This Transformers version keeps video_processor.size independent of the
-    # legacy min_pixels/max_pixels attributes. Validate actual processed grids.
+    # Validate the effective pixel area from the processed video grid.
     grid=inputs['video_grid_thw'][0]
     area=int(grid[1])*int(grid[2])*int(processor.video_processor.patch_size)**2
     if not min_pixels <= area <= max_pixels:

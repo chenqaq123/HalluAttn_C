@@ -4,7 +4,7 @@ import pytest
 import torch
 
 from rase.candidate_vocab import ObjectCandidateVocabulary
-from rase.online_s_rollback import OnlineSRollback, PrefixObjectMatcher
+from rase.decoding import OnlineRollback, PrefixObjectMatcher
 from test_candidate_vocab import _NLP
 
 
@@ -51,7 +51,7 @@ class Model:
             assert kw['cache_position'].item()==len(cache.tokens)
             assert len(ids)==1
             cache.tokens.extend(ids)
-        if self.backend=='pure_s_canonical_capture': self.last_probe_token=ids[-1]
+        if self.backend=='rase_attention_capture': self.last_probe_token=ids[-1]
         self.calls.append((self.backend,list(cache.tokens),id(cache)))
         logits=torch.full((1,1,40),-1000.)
         for rank,token in enumerate(self.policy(cache.tokens[1:])):
@@ -61,20 +61,19 @@ class Model:
 
 
 def runner(monkeypatch,pieces,words,policy,risks):
-    import rase.online_s_rollback as module
-    r=object.__new__(OnlineSRollback)
+    import rase.decoding as module
+    r=object.__new__(OnlineRollback)
     r.model=Model(policy);r.threshold=.49;r.max_new_tokens=512;r.device='cpu'
     r.capture={};r.candidate_vocabulary=vocabulary(words);r.nlp=_NLP()
     r.tokenizer=types.SimpleNamespace(decode=lambda ids,**kw: ''.join(pieces[i] for i in ids if i!=0))
     r._set_attention=lambda backend:setattr(r.model,'backend',backend)
-    r._capture_visual_distributions=lambda visual:(torch.tensor([[[risks.get(r.model.last_probe_token,.1)]]]),[False])
-    r.detector=types.SimpleNamespace(score_many=lambda x:[float(x.flatten()[0])])
-    r.analyze=lambda *a,**kw:(_ for _ in ()).throw(AssertionError('Offline analysis is forbidden'))
+    r._online_signal=lambda visual:(torch.tensor([risks.get(r.model.last_probe_token,.1)]),False)
+    r._pending_score=lambda signal:float(signal.item())
     monkeypatch.setattr(module,'visual_layout',lambda *a,**kw:types.SimpleNamespace(positions=torch.tensor([0])))
     return r
 
 
-def test_unlimited_retry_exceeds_both_old_budgets_and_restores_kv(monkeypatch):
+def test_repeated_rejection_restores_kv_and_accumulates_bans(monkeypatch):
     pieces={i:'obj'+str(i-10) for i in range(10,23)}
     r=runner(monkeypatch,pieces,list(pieces.values()),
         lambda ids:list(range(10,23)) if not ids else [0],{i:.9 for i in range(10,22)})
@@ -82,7 +81,6 @@ def test_unlimited_retry_exceeds_both_old_budgets_and_restores_kv(monkeypatch):
     assert out['caption']=='obj12'
     assert out['total_rollbacks']==out['max_rollbacks_at_one_prefix']==12
     assert out['counters']['kv_restores']==12
-    assert out['counters']['full_caption_replays']==0
     assert out['counters']['generation_prefills']==1
     assert [x['prefix_attempt'] for x in out['actions']]==list(range(1,13))
     assert [x['banned_first_ids'] for x in out['actions']]==[list(range(10,11+i)) for i in range(12)]
@@ -121,5 +119,5 @@ def test_length_boundary_does_not_force_accept_high_risk_token(monkeypatch):
     assert out['stopping_reason']=='length_limit_after_candidate_checks'
     assert out['mentions'][0]['risk']<r.threshold
     gen=[x[2] for x in r.model.calls if x[0]=='sdpa'][1:]
-    probe=[x[2] for x in r.model.calls if x[0]=='pure_s_canonical_capture']
+    probe=[x[2] for x in r.model.calls if x[0]=='rase_attention_capture']
     assert gen and probe and all(g!=p for g,p in zip(gen,probe))

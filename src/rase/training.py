@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from sklearn.metrics import precision_recall_curve, roc_auc_score
-from .learned_s import SmallSMLP, FrozenSDetector, image_folds
+from .learned_s import SmallSMLP, image_folds
 from .detector import SemanticMLP, RiskFusion
 
 

@@ -81,7 +81,7 @@ def prefix_fingerprint(prompt, generated):
     return hashlib.sha256(json.dumps([*prompt, *generated], separators=(',', ':')).encode()).hexdigest()
 
 
-class OnlineSRollback(RuntimeBase):
+class OnlineRollback(RuntimeBase):
     """Incremental generation with prefix-specific object rejection."""
 
     def _before_online_prefill(self, visual):
@@ -94,19 +94,17 @@ class OnlineSRollback(RuntimeBase):
         pass
 
     def _online_signal(self, visual):
-        distribution, fallback = self._capture_visual_distributions(visual)
-        return distribution.detach(), bool(fallback[0])
+        raise NotImplementedError("The evidence adapter supplies the current token signal")
 
     def _pending_score(self, signal):
-        return float(self.detector.score_many(signal)[0])
+        raise NotImplementedError("The detector adapter supplies the object risk")
 
     def _finish_online(self):
         pass
 
     def _online_visual_positions(self, inputs):
-        # Explicit extension point; the established image path is unchanged.
-        return visual_layout(self.model, inputs, inputs['input_ids'],
-                             scope='all', llava_base_tokens=576).positions.to(self.device)
+        # Video adapters override visual-token resolution.
+        return visual_layout(self.model, inputs, inputs['input_ids']).positions.to(self.device)
 
     @torch.inference_mode()
     def generate_online(self, inputs, *, benchmark, intervene=True, forced_ids=None,
@@ -141,7 +139,7 @@ class OnlineSRollback(RuntimeBase):
         text = ''; pending_action = None
         counters = dict(generation_prefills=1, probe_prefill_copies=1,
             generation_token_forwards=0, probe_token_forwards=0, kv_restores=0,
-            full_caption_replays=0, peak_pending_attention_rows=0)
+            peak_pending_attention_rows=0)
 
         def risk_at(index):
             signal, fallback = signals[index]
@@ -187,7 +185,7 @@ class OnlineSRollback(RuntimeBase):
                     out = self.model(**common, past_key_values=gen_cache, output_attentions=False)
                     gen_cache = out.past_key_values; logits = out.logits[:, -1, :].float().clone()
                     del out; counters['generation_token_forwards'] += 1
-                    self._set_attention('pure_s_canonical_capture')
+                    self._set_attention('rase_attention_capture')
                     self.capture.update(raw={}, attention={})
                     self._before_online_probe(token)
                     out = self.model(**common, past_key_values=probe_cache, output_attentions=True)
@@ -208,7 +206,7 @@ class OnlineSRollback(RuntimeBase):
                         raise AssertionError('Missing original first-subtoken signal for a streaming candidate')
                     risk, fallback = risk_at(first)
                     mention = dict(**candidate, token_pos=n+first-1, query_pos=n+first,
-                        gen_pos=first-1, first_id=ids[first], risk=risk, nll=None,
+                        gen_pos=first-1, first_id=ids[first], risk=risk,
                         observed_through_gen_pos=len(ids)-1,
                         recognition_delay_tokens=len(ids)-1-first,
                         underflow_fallback=fallback)
@@ -218,13 +216,13 @@ class OnlineSRollback(RuntimeBase):
                             raise AssertionError('A banned first token returned under the same prefix')
                         forbidden.add(ids[first]); attempts[prefix] += 1
                         action = dict(slot=n+first-1, word=mention['word'], surface=mention['surface'],
-                            risk=risk, nll=None, matched_term=mention['matched_term'],
+                            risk=risk, matched_term=mention['matched_term'],
                             vocabulary_origin=mention['vocabulary_origin'], banned_first_id=ids[first],
                             banned_first_ids=sorted(forbidden), prefix_attempt=attempts[prefix],
                             retry_key_sha256=prefix_fingerprint(prompt,prefix),
                             detected_at_generated_tokens=len(ids),
                             discarded_generated_tokens=len(ids)-first,
-                            detected_prefix=text, replacement=None)
+                            detected_prefix=text)
                         actions.append(action); pending_action=action
                         restore_length = n+first
                         gen_cache.crop(restore_length); probe_cache.crop(restore_length)
@@ -274,7 +272,6 @@ class OnlineSRollback(RuntimeBase):
                 mentions=mentions, actions=actions, rollback_counts_by_prefix=counts,
                 rollback_counts_by_absolute_slot=dict(Counter(a['slot'] for a in actions)),
                 total_rollbacks=len(actions), max_rollbacks_at_one_prefix=max(attempts.values(), default=0),
-                unresolved_triggers=[], blocked_triggers=[], residual_high_risk_mentions=[],
                 stopping_reason='eos_after_candidate_checks' if ids and ids[-1] in eos else 'length_limit_after_candidate_checks',
                 counters=counters, cache_checks=cache_checks, audit_scores=audited_scores,
                 underflow_fallback_mentions=sum(m['underflow_fallback'] for m in mentions))

@@ -23,5 +23,5 @@ def install_causal_capture(model):
         state['attention'][int(module.layer_idx)] = weights.detach()
         return output, weights
 
-    ALL_ATTENTION_FUNCTIONS.register('pure_s_canonical_capture', capture)
+    ALL_ATTENTION_FUNCTIONS.register('rase_attention_capture', capture)
     return state

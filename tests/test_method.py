@@ -115,3 +115,16 @@ def test_source_video_string_ids_stay_in_one_fold():
     ids=np.repeat([f'video_{i}' for i in range(10)],3)
     folds=image_folds(ids,5,42)
     assert all(len(set(folds[ids==i]))==1 for i in np.unique(ids))
+
+
+@pytest.mark.parametrize('family', ['llava', 'llava_next', 'qwen2_5_vl', 'qwen3_vl'])
+def test_visual_layout_preserves_all_native_tokens(family):
+    from rase.model_adapter import visual_layout
+    config = SimpleNamespace(model_type=family, image_token_index=99,
+        image_token_id=99, vision_config=SimpleNamespace(spatial_merge_size=2))
+    model = SimpleNamespace(config=config)
+    ids = torch.tensor([[1] + [99] * 640 + [2]])
+    inputs = {'image_grid_thw': torch.tensor([[1,32,80]])}
+    layout = visual_layout(model, inputs, ids)
+    assert layout.positions.tolist() == list(range(1,641))
+    assert layout.expanded_count == 640

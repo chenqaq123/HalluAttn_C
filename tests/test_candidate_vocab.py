@@ -64,7 +64,7 @@ class _Tokenizer:
 def _vocabulary():
     return ObjectCandidateVocabulary(
         {
-            "schema": "sinkdetect-object-candidate-vocabulary-v1",
+            "schema": "rase-object-candidate-vocabulary-v1",
             "benchmarks": {
                 "amber-generative": {
                     "entries": [

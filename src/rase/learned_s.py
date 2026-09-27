@@ -32,23 +32,15 @@ class FrozenSDetector:
             raise ValueError("detector normalization width mismatch")
         if not torch.isfinite(self.mean).all() or not torch.isfinite(self.scale).all() or (self.scale <= 0).any():
             raise ValueError("invalid detector normalization")
-        kind = payload.get("classifier_type", "logistic")
-        self.model = None
-        if kind == "s_mlp_v1":
-            self.model = SmallSMLP(width, tuple(payload["hidden"]), float(payload["dropout"])).to(device)
-            self.model.load_state_dict(payload["state_dict"], strict=True)
-            self.model.eval()
-        elif kind == "logistic":
-            self.weight = payload["weight"].to(device=device, dtype=torch.float32)
-            self.bias = payload["bias"].to(device=device, dtype=torch.float32)
-            if self.weight.shape != (width,):
-                raise ValueError("detector weight width mismatch")
-        else:
-            raise ValueError(f"unknown S classifier type: {kind}")
+        if payload.get("classifier_type") != "s_mlp_v1":
+            raise ValueError("expected a structural MLP checkpoint")
+        self.model = SmallSMLP(width, tuple(payload["hidden"]), float(payload["dropout"])).to(device)
+        self.model.load_state_dict(payload["state_dict"], strict=True)
+        self.model.eval()
 
     @torch.inference_mode()
     def __call__(self, s_values):
         values = s_values.half().float()
         values.sub_(self.mean).div_(self.scale)
-        logits = self.model(values) if self.model is not None else values @ self.weight + self.bias
+        logits = self.model(values)
         return torch.sigmoid(logits)

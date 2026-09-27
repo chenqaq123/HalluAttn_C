@@ -147,7 +147,7 @@ Tests cover the paper's feature formulas, head-pair selection, checkpoint integr
 | `src/rase/detector.py` | S scoring, semantic MLP, and risk fusion |
 | `src/rase/training.py` | Image-level cross-fitting and threshold calibration |
 | `src/rase/pipeline.py` | First-subtoken evidence collection |
-| `src/rase/online_s_rollback.py` | Online rollback and token reselection |
+| `src/rase/decoding.py` | Online rollback and token reselection |
 | `src/rase/model_adapter.py` | Four image-model adapters |
 | `src/rase/video.py` | Native Qwen2.5-VL video adapter |
 | `src/rase/cli.py` | Extraction, training, scoring, and captioning commands |

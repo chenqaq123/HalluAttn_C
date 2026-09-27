@@ -84,7 +84,7 @@ def extract(args):
             else:
                 inputs, _ = prepared_inputs(model, processor, Image.open(row['image']).convert('RGB'),
                     row.get('prompt', args.prompt), args.device, dtype)
-                visual = visual_layout(model, inputs, inputs['input_ids'], scope='all', llava_base_tokens=576).positions.to(args.device)
+                visual = visual_layout(model, inputs, inputs['input_ids']).positions.to(args.device)
             evidence.before_prefill(visual)
             set_attention_implementation(model, 'sdpa')
             output = model(**inputs, use_cache=True, logits_to_keep=1, return_dict=True)
@@ -96,7 +96,7 @@ def extract(args):
             if len(targets) != len(row['mentions']) or any(i < 0 or i >= len(tokens) for i in targets):
                 raise ValueError('Mention token indices must be unique and within generated_ids')
             prompt_length = inputs['input_ids'].shape[-1]
-            set_attention_implementation(model, 'pure_s_canonical_capture')
+            set_attention_implementation(model, 'rase_attention_capture')
             for index, token in enumerate(tokens[:max(targets, default=-1)+1]):
                 evidence.before_token(token, want=index in targets)
                 position = prompt_length + index

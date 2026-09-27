@@ -28,36 +28,12 @@ def decoder_layers(model: Any):
     return model.model.language_model.layers
 
 
-def text_config(model: Any):
-    return model.config.text_config
-
-
 def set_attention_implementation(model: Any, name: str) -> None:
     """Select the text decoder attention backend."""
 
     model.config._attn_implementation = name
     model.config.text_config._attn_implementation = name
     model.model.language_model.config._attn_implementation = name
-
-
-def effective_prompt(processor: Any, family: str, instruction: str) -> str:
-    """Build the exact model-facing prompt from a human-readable instruction."""
-
-    if family in {"llava", "llava_next"}:
-        return instruction
-    return processor.apply_chat_template(
-        [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image"},
-                    {"type": "text", "text": instruction},
-                ],
-            }
-        ],
-        tokenize=False,
-        add_generation_prompt=True,
-    )
 
 
 def processor_inputs(processor: Any, family: str, image: Any, prompt: str):
@@ -79,18 +55,14 @@ class VisualLayout:
     positions: torch.Tensor
     grid: tuple[int, int] | None
     expanded_count: int
-    scope: str
 
 
 def visual_layout(
     model: Any,
     inputs: dict,
     input_ids: torch.Tensor,
-    *,
-    scope: str,
-    llava_base_tokens: int,
 ) -> VisualLayout:
-    """Resolve visual key positions and their native post-merge spatial grid."""
+    """Resolve every native visual token and its post-merge spatial grid."""
 
     family = model_type(model)
     positions = torch.where(input_ids[0] == image_token_id(model))[0]
@@ -98,26 +70,11 @@ def visual_layout(
         raise ValueError("processor output contains no expanded image tokens")
     expanded = int(positions.numel())
     if family in {"llava", "llava_next"}:
-        if expanded < llava_base_tokens:
-            raise ValueError(
-                f"LLaVA-NeXT emitted {expanded} image tokens, fewer than "
-                f"the {llava_base_tokens} base-grid tokens"
-            )
-        if scope == "base":
-            return VisualLayout(
-                positions=positions[:llava_base_tokens],
-                grid=(24, 24),
-                expanded_count=expanded,
-                scope=scope,
-            )
         return VisualLayout(
             positions=positions,
             grid=None,
             expanded_count=expanded,
-            scope=scope,
         )
-    if scope != "all":
-        raise ValueError(f"{family} supports only --visual-token-scope all")
     grid_thw = inputs.get("image_grid_thw")
     if not isinstance(grid_thw, torch.Tensor) or grid_thw.shape != (1, 3):
         raise ValueError("Qwen image replay requires one image_grid_thw row")
@@ -135,7 +92,6 @@ def visual_layout(
         positions=positions,
         grid=grid,
         expanded_count=expanded,
-        scope=scope,
     )
 
 

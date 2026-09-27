@@ -5,7 +5,7 @@ import torch
 from .candidate_vocab import ObjectCandidateVocabulary
 from .features import conditional_attention, semantic_features
 from .model_adapter import decoder_layers, model_type, processor_inputs
-from .online_s_rollback import OnlineSRollback
+from .decoding import OnlineRollback
 from .capture import install_causal_capture
 
 def dimensions(config):
@@ -100,7 +100,7 @@ class SGEvidence:
         for handle in self.handles:
             handle.remove()
 
-class OnlineRASE(OnlineSRollback):
+class OnlineRASE(OnlineRollback):
     """Collect first-subtoken evidence and apply RASE risk during decoding."""
     def __init__(self, model, processor, nlp, vocabulary_path, detector, *,
                  threshold, device, dtype, max_new_tokens, prompt):
@@ -111,7 +111,6 @@ class OnlineRASE(OnlineSRollback):
         self.heads_per_layer = int(model.config.text_config.num_attention_heads)
         self.detector = detector
         self.threshold, self.max_new_tokens = float(threshold), int(max_new_tokens)
-        self.max_actions = self.same_slot_retries = None
         self.prompt = prompt
         self.evidence = SGEvidence(model)
         self.capture = self.evidence.capture

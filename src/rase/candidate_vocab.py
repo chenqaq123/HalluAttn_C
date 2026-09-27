@@ -28,7 +28,7 @@ class _VocabularyEntry:
 class ObjectCandidateVocabulary:
     """Match object phrases from a configured vocabulary."""
 
-    SCHEMA = "sinkdetect-object-candidate-vocabulary-v1"
+    SCHEMA = "rase-object-candidate-vocabulary-v1"
 
     def __init__(self, payload: dict[str, Any], nlp: Any) -> None:
         if payload.get("schema") != self.SCHEMA:
