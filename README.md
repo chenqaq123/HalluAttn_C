@@ -128,26 +128,3 @@ rase caption --model models/Qwen2.5-VL-7B-Instruct \
 
 Video training groups clips by source video when constructing folds. The paper's video setting trains on VidOR and evaluates object-level hallucination on Vript-HAL.
 
-## Evaluation and tests
-
-The paper evaluates object-level detection on COCO and image-captioning mitigation on COCO, AMBER-G, and NoCaps. Detection scores support AUROC, accuracy, precision, recall, and F1. Caption-level evaluation uses CHAIR and object coverage for COCO/NoCaps, and CHAIR, Hal, Cover, and Cog for AMBER-G.
-
-```bash
-pytest -q
-```
-
-Tests cover the paper's feature formulas, head-pair selection, checkpoint integrity, image folds, training and fusion inference, native video layout, candidate boundaries, and prefix-specific cache restoration.
-
-## Source layout
-
-| File | Purpose |
-|---|---|
-| `src/rase/s_relations.py` | Bhattacharyya head-pair similarities |
-| `src/rase/features.py` | Semantic evidence |
-| `src/rase/detector.py` | S scoring, semantic MLP, and risk fusion |
-| `src/rase/training.py` | Image-level cross-fitting and threshold calibration |
-| `src/rase/pipeline.py` | First-subtoken evidence collection |
-| `src/rase/decoding.py` | Online rollback and token reselection |
-| `src/rase/model_adapter.py` | Four image-model adapters |
-| `src/rase/video.py` | Native Qwen2.5-VL video adapter |
-| `src/rase/cli.py` | Extraction, training, scoring, and captioning commands |
