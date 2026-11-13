@@ -1871,3 +1871,39 @@ The following tables report the mean AUROC in each of the 1,000 shared draws.
   that the probe can rank alternative object continuations sharing the same
   image, prefix, and position, nor that deleting grounded mentions preserves
   caption coverage.
+
+## 2026-08-11 — Minimal fixed-split VAR-MLP versus ours
+
+**Setup:** Frozen LLaVA-1.5-7B COCO-val2014 captions and CHAIR labels. The full
+5,000-image manifest was permuted once with NumPy seed 17 and split by image
+into 4,000 training and 1,000 test images. These contain 13,132 training
+mentions from 3,985 eligible images and 3,294 test mentions from 992 eligible
+images; the 8 remaining test images have no COCO-80 mention. Both methods use
+the identical split, width-256 GELU MLP, seed 17, position-conditional width-10
+training weights, AdamW settings, and 10 epochs. Thresholds were selected only
+from training predictions.
+
+**Representations:** VAR-MLP uses native post-RoPE, post-row visual-attention
+ratio from every head in L5--18 (448 inputs). Ours uses post-row No-RoPE visual
+mass from every head in L0--31 (1,024 inputs). This is the VAR-MLP feature under
+our controlled readout, not an exact reproduction of the authors' classifier.
+
+| method | inputs | overall AUROC | width-10 WB-AUROC | accuracy | balanced accuracy |
+|---|---:|---:|---:|---:|---:|
+| VAR-MLP | 448 | 0.8869 | 0.8612 | 0.8039 | 0.8145 |
+| ours | 1,024 | **0.9119** | **0.8748** | **0.8406** | **0.8344** |
+| ours - VAR-MLP | — | +0.0251 | +0.0137 | +0.0367 | +0.0199 |
+
+**Interpretation:** On this single shared test split, ours is better on every
+reported metric, but the controlled with-bin advantage is modest (+0.0137)
+relative to the overall gain (+0.0251). Because the user requested the minimal
+baseline, there is no multi-seed, PCA, resampling, bootstrap, or significance
+analysis; the result is descriptive and does not isolate whether the remaining
+gain comes from No-RoPE or the broader L0--31 feature set.
+
+**Integrity:** All gates pass: 5,000 unique manifest images; exact 4,000/1,000
+split with zero overlap; all 16,426 mentions assigned once; maximum No-RoPE
+cache error 0; all 3,294 test scores finite. Artifact SHA-256 values are
+`summary.json` `0a0eb912...f348`, `heldout_scores.npz`
+`3c4a8295...84d8`, and `split_manifest.json` `c0b3efd9...31db` under
+`experiments/var_mlp_matched/` (git-ignored).

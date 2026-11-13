@@ -913,6 +913,17 @@ is therefore primarily a post-target reorganization across layers and heads,
 not an anticipatory object-verification signal. Pre remains predictive, but it
 is neither dominant nor complementary in this readout.
 
+**Direct VAR-MLP comparison.** On one user-requested fixed COCO image split
+(4,000 train / 1,000 test), the same seed-17 width-256 readout gives the
+published VAR feature (native post-RoPE L5--18, 448 inputs) 0.8869 overall and
+0.8612 width-10 within-bin AUROC, versus 0.9119 and 0.8748 for our post-row
+No-RoPE L0--31 representation (1,024 inputs). Accuracy is 0.8039 versus 0.8406.
+Thus ours has a modest descriptive within-bin advantage of +0.0137 under a
+shared split/readout. This minimal run has no PCA, resampling, bootstrap, or
+multi-seed analysis and does not separate the effects of No-RoPE and layer
+breadth; it supports a small empirical advantage, not a distinct verification
+architecture claim.
+
 ### 4.7 Registered per-position detector comparison
 
 The temporal result must be read against prior detectors on the same literal

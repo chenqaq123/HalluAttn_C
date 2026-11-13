@@ -1808,3 +1808,29 @@ alone is not claimed as novel.
 proposal. The next concrete work item is Iteration 0 only. Do not implement the
 rollback decoder, add an external grounder, or tune an intervention threshold
 until the same-prefix actionability gate has been frozen and evaluated.
+
+## 2026-08-11 — Completed minimal fixed-split VAR-MLP comparison
+
+**What changed:** Implemented and ran the final minimal evaluator. It fits only
+two native representations once each: VAR-MLP native L5--18 (448 inputs) and
+ours No-RoPE L0--31 (1,024 inputs). Both use the same 4,000 training images,
+1,000 test images, width-256 GELU readout, seed 17, optimizer, conditional
+width-10 weights, epochs, and training-only threshold selection.
+
+**Result:** VAR-MLP reaches overall/with-bin AUROC 0.8869/0.8612, accuracy
+0.8039, and balanced accuracy 0.8145. Ours reaches 0.9119/0.8748, 0.8406, and
+0.8344, respectively. The descriptive ours-minus-VAR difference is +0.0251
+overall and +0.0137 within bins.
+
+**Evidence/refs:** `experiments/var_mlp_matched/{summary.json,summary.md,
+heldout_scores.npz,split_manifest.json}`; evaluator
+`detection/scripts/compare_var_mlp_within_bin.py`; locked protocol
+`docs/iteration_protocols/var_mlp_matched_within_bin.md`. All split, feature-
+identity, assignment, and finite-score gates pass.
+
+**Implications / next:** Under the requested simple comparison, ours has a
+small controlled advantage over the VAR-MLP feature, not a decisive
+architecture separation. The run does not attribute that +0.0137 to No-RoPE
+versus layer breadth and provides no uncertainty claim. Additional PCA,
+bridge-row, bootstrap, or multi-seed work remains out of scope unless separately
+requested.
